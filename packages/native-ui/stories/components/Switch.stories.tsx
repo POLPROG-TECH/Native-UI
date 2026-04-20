@@ -54,7 +54,7 @@ export const Playground: Story = {
   args: { value: false, label: 'Dark Mode', disabled: false, onValueChange: fn() },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const toggle = canvas.getByRole('switch');
+    const toggle = canvas.getByLabelText('Dark Mode');
     await expect(toggle).toBeInTheDocument();
     await userEvent.click(toggle);
     await expect(args.onValueChange).toHaveBeenCalled();
