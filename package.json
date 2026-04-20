@@ -1,0 +1,51 @@
+{
+  "name": "native-ui-monorepo",
+  "private": true,
+  "description": "Monorepo for @polprog/native-ui - production-grade React Native design system for iOS and Android.",
+  "homepage": "https://github.com/POLPROG-TECH/native-ui#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/POLPROG-TECH/native-ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/POLPROG-TECH/native-ui/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "POLPROG",
+    "url": "https://polprog.pl/"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "npm run build --workspace=@polprog/native-ui",
+    "typecheck": "npm run typecheck --workspace=@polprog/native-ui",
+    "lint": "npm run lint --workspace=@polprog/native-ui",
+    "test": "npm run test --workspace=@polprog/native-ui",
+    "storybook": "npm run storybook --workspace=@polprog/storybook",
+    "build-storybook": "npm run build --workspace=@polprog/storybook",
+    "stories:check": "npm run stories:check --workspace=@polprog/native-ui",
+    "contract-test": "bash scripts/contract-test.sh",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "changeset publish",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "packages/native-ui/src/**/*.{ts,tsx}": [
+      "bash -c 'cd packages/native-ui && npx eslint --max-warnings 0'"
+    ],
+    "packages/native-ui/**/*.{ts,tsx,js,json,md}": []
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.30.0",
+    "@storybook/react-vite": "^10.3.5",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "types": ["vite/client"],
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@polprog/native-ui": ["../../packages/native-ui/src/index.ts"],
+      "@polprog/native-ui/*": ["../../packages/native-ui/src/*"],
+      "react-native": ["../../packages/native-ui/node_modules/react-native"]
+    }
+  },
+  "include": [
+    ".storybook/**/*",
+    "docs/**/*",
+    "../../packages/native-ui/src",
+    "../../packages/native-ui/stories"
+  ],
+  "exclude": ["node_modules", "storybook-static"]
+}

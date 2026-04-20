@@ -1,0 +1,15 @@
+# Full CI-equivalent check before pushing. Runs lint + typecheck + full test suite + build.
+# Mirrors .github/workflows/ci.yml so failures won't surprise you on GitHub.
+
+set -e
+echo "▸ lint"
+npm run lint --workspace=@polprog/native-ui --silent
+echo "▸ typecheck"
+npm run typecheck --workspace=@polprog/native-ui --silent
+echo "▸ full test suite"
+npm run test:ci --workspace=@polprog/native-ui --silent
+echo "▸ stories coverage"
+npm run stories:check --workspace=@polprog/native-ui --silent
+echo "▸ build"
+npm run build --workspace=@polprog/native-ui --silent
+echo "✓ pre-push OK"

@@ -1,0 +1,147 @@
+{
+  "name": "@polprog/native-ui",
+  "version": "1.0.0",
+  "description": "Production-grade React Native design system and component library - native-feeling components on iOS and Android",
+  "source": "src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "react-native": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./primitives/*": {
+      "types": "./dist/primitives/*.d.ts",
+      "import": "./dist/primitives/*.mjs",
+      "require": "./dist/primitives/*.js"
+    },
+    "./components/*": {
+      "types": "./dist/components/*.d.ts",
+      "import": "./dist/components/*.mjs",
+      "require": "./dist/components/*.js"
+    },
+    "./tokens": {
+      "types": "./dist/tokens/index.d.ts",
+      "import": "./dist/tokens/index.mjs",
+      "require": "./dist/tokens/index.js"
+    },
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "import": "./dist/theme/index.mjs",
+      "require": "./dist/theme/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "build:watch": "tsup --watch",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run clean && npm run build",
+    "typecheck": "tsc --noEmit -p tsconfig.build.json",
+    "typecheck:all": "tsc --noEmit",
+    "typecheck:tests": "tsc --noEmit -p tsconfig.test.json",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings 0",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --maxWorkers=2",
+    "stories:check": "node scripts/generate-stories.mjs --check",
+    "stories:generate": "node scripts/generate-stories.mjs --fix",
+    "audit": "node scripts/audit-consumer.mjs",
+    "verify-tarball": "node scripts/verify-tarball.mjs"
+  },
+  "keywords": [
+    "react-native",
+    "design-system",
+    "ui-library",
+    "ui-kit",
+    "components",
+    "typescript",
+    "ios",
+    "android",
+    "theming",
+    "accessible",
+    "a11y"
+  ],
+  "author": {
+    "name": "POLPROG",
+    "url": "https://polprog.pl/"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/POLPROG-TECH/native-ui#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/POLPROG-TECH/native-ui.git",
+    "directory": "packages/native-ui"
+  },
+  "bugs": {
+    "url": "https://github.com/POLPROG-TECH/native-ui/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-native": ">=0.72.0",
+    "react-native-reanimated": ">=3.0.0",
+    "react-native-safe-area-context": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-native-reanimated": {
+      "optional": true
+    },
+    "react-native-safe-area-context": {
+      "optional": false
+    }
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.29.2",
+    "@babel/preset-flow": "^7.27.1",
+    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
+    "@eslint/js": "^10.0.1",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.2.14",
+    "@typescript-eslint/eslint-plugin": "^8.59.0",
+    "@typescript-eslint/parser": "^8.59.0",
+    "babel-jest": "^30.3.0",
+    "eslint": "^10.2.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-native": "^5.0.0",
+    "globals": "^17.5.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-native": "^0.85.2",
+    "react-native-reanimated": "^4.3.0",
+    "react-native-safe-area-context": "^5.7.0",
+    "react-test-renderer": "^19.2.5",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.9",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3"
+  }
+}

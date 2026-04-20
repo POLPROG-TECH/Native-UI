@@ -1,0 +1,15 @@
+<style>
+  /*
+   * Bootstrap Docs overflow fix - applied between HTML parse and preview
+   * JS boot. The preview bundle re-applies the same rule via a
+   * MutationObserver so that @storybook/blocks' Emotion styles, which
+   * are injected LATER on SPA navigation, can't outrank us on source
+   * order. Without that observer, navigating between Docs pages without
+   * a hard refresh leaves stories mis-sized ("rozjechane") until F5.
+   *
+   * Scoped to `.sb-show-main` so the Manager chrome is untouched.
+   */
+  .sb-show-main .docs-story,
+  .sb-show-main .docs-story > div,
+  .sb-show-main .sbdocs-preview { overflow: visible !important; }
+</style>

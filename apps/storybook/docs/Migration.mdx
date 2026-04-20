@@ -1,0 +1,148 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Migration" />
+
+# Migration Guide
+
+This guide helps you migrate from app-specific UI implementations to native-ui shared components.
+
+## Strategy: Re-export pattern
+
+The recommended migration strategy uses **barrel re-exports** so existing import paths continue to work:
+
+```tsx
+// shared/ui/Button.tsx (before: full implementation, after: 2 lines)
+export { Button, type ButtonProps } from '@polprog/native-ui';
+```
+
+This means:
+- Screen files don't change their import paths
+- Migration is incremental - one component at a time
+- Rollback is easy - just restore the original file
+
+## Theme migration
+
+### Before (app-specific)
+```tsx
+import { ThemeProvider, useTheme } from '@shared/theme';
+const theme = useTheme(); // returns { colors, typography, spacing }
+```
+
+### After (native-ui wrapper)
+```tsx
+// shared/theme/ThemeContext.tsx - thin wrapper
+import { NativeUIProvider } from '@polprog/native-ui';
+
+export function ThemeProvider({ children }) {
+  const config = useAppStore(s => ({
+    colorMode: s.colorMode,
+    preset: s.themePreset,
+    // ... map your app state to NativeUIConfig
+  }));
+
+  return (
+    <NativeUIProvider config={config}>
+      {children}
+    </NativeUIProvider>
+  );
+}
+```
+
+The `useTheme()` hook returns the same shape (`colors`, `typography`, `spacing`, etc.), so downstream code works unchanged.
+
+## Component mapping
+
+| App component | native-ui replacement | Notes |
+|---|---|---|
+| `Button` | `Button` | Same API, added `icon`, `fullWidth` |
+| `Card` | `Card` | Same API, added `padded` prop |
+| `Input` | `Input` | Same API, extends TextInputProps |
+| `EmptyState` | `EmptyState` | Same API |
+| `ScreenContainer` | `ScreenContainer` | Same API, added `edges` |
+| `Chip` / `ChipGroup` | `Chip` / `ChipGroup` | Same API |
+| `ProgressBar` | `ProgressBar` | Same API |
+| `Skeleton` | `Skeleton` | Same API |
+| `SearchBar` | `SearchBar` | Added `debounceMs` |
+| `Divider` | `Divider` | Added `inset` prop |
+| `Section` | `Section` | Same API |
+| `Badge` | `Badge` | Same API |
+| `PressableScale` | `PressableScale` | Same API |
+| `Toast` | `Toast` + `useToast` | Imperative API unchanged |
+| `LoadingScreen` | `Spinner` | Renamed for clarity |
+| `RadioIndicator` | `Radio` | Renamed, same visual |
+
+## Settings screen migration
+
+### Before
+```tsx
+import { SettingsRow, SettingsSection, SettingsHeader } from '@shared/ui';
+
+<SettingsSection title="Preferences">
+  <SettingsRow icon="🌙" label="Dark Mode" rightElement={<Switch />} />
+  <SettingsRow icon="🔔" label="Notifications" onPress={goToNotifs} />
+  <SettingsRow icon="🗑️" label="Delete Account" destructive isLast />
+</SettingsSection>
+```
+
+### After
+```tsx
+import { ListSection, ListItem, ListSwitchItem } from '@polprog/native-ui';
+
+<ListSection title="Preferences">
+  <ListSwitchItem icon={<EmojiIcon>🌙</EmojiIcon>} label="Dark Mode" value={isDark} onValueChange={toggle} />
+  <ListItem icon={<EmojiIcon>🔔</EmojiIcon>} title="Notifications" onPress={goToNotifs} />
+  <ListItem icon={<EmojiIcon>🗑️</EmojiIcon>} title="Delete Account" destructive hideDivider />
+</ListSection>
+```
+
+### Prop mapping
+
+| Old prop (SettingsRow) | New prop (ListItem) |
+|---|---|
+| `label` | `title` |
+| `isLast` | `hideDivider` |
+| `rightElement` | `trailing` |
+| `icon` (emoji string) | `icon` (ReactNode) |
+| `showChevron` | `showChevron` (auto-detected) |
+
+## Typography migration
+
+The library uses generic naming instead of domain-specific names:
+
+| App name | Library name | Description |
+|---|---|---|
+| `amount` | `mono` | Tabular-number display (20px, bold) |
+| `amountLarge` | `monoLarge` | Large tabular display (32px) |
+| `amountSmall` | `monoSmall` | Small tabular display (15px) |
+
+The old names (`amount`, `amountLarge`, `amountSmall`) are available as **deprecated aliases** for backward compatibility.
+
+## Haptics migration
+
+### Before
+```tsx
+import haptics from 'react-native-haptic-feedback';
+haptics.trigger('impactMedium');
+```
+
+### After
+```tsx
+// In App.tsx (once)
+import { configureHaptics } from '@polprog/native-ui';
+configureHaptics({
+  light: () => haptics.trigger('impactLight'),
+  medium: () => haptics.trigger('impactMedium'),
+  // ...
+});
+
+// Components use haptics automatically - no manual triggering needed
+```
+
+## What stays in the app
+
+These components are **not extracted** because they contain domain-specific logic:
+
+- **ErrorBoundary** - App-specific error reporting
+- **DatePickerInput** - Depends on `@react-native-community/datetimepicker` + i18n
+- **InputPrompt** - Cross-platform Alert.prompt wrapper
+- **BrandIcon / BrandWordmark** - App-specific SVG branding

@@ -1,0 +1,95 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Accessibility" />
+
+# Accessibility Guidelines
+
+native-ui is built with accessibility as a first-class concern. Every interactive component includes proper roles, labels, and states for assistive technologies.
+
+## Built-in accessibility features
+
+### Semantic roles
+All interactive components set appropriate `accessibilityRole`:
+- `Button` → `"button"`
+- `Checkbox` → `"checkbox"`
+- `Switch` → `"switch"` (via React Native Switch)
+- `Radio` → `"radio"`
+- `Input` / `TextArea` → inherited from TextInput
+- `SearchBar` → `"search"`
+- `ProgressBar` → `"progressbar"`
+- `Modal` → presented as modal dialog
+- `Heading` → `"header"`
+- `ListItem` → `"button"` (when pressable)
+
+### State announcements
+Interactive components expose `accessibilityState`:
+- `disabled` - Announced as disabled by screen readers
+- `checked` - For checkboxes and switches
+- `selected` - For radio buttons and chips
+- `busy` - For loading states (Button loading)
+
+### Live regions
+Error messages use `accessibilityLiveRegion="polite"` so screen readers announce validation errors as they appear (Input, TextArea, Select).
+
+## Touch targets
+
+All interactive elements meet minimum touch target guidelines:
+- **iOS**: 44×44pt minimum (recommended by iOS Human Interface Guidelines)
+- **Android**: 48×48dp minimum (recommended by Material Design)
+
+The library uses platform-specific `hitSlop` values:
+```tsx
+// Built-in hit slop
+hitSlop: {
+  ios: { top: 8, bottom: 8, left: 8, right: 8 },
+  android: { top: 10, bottom: 10, left: 10, right: 10 },
+}
+```
+
+## Color contrast
+
+- Text on colored backgrounds uses `getContrastText()` to ensure WCAG AA compliance
+- The `highContrast` theme option strengthens text colors for low-vision users
+- Semantic colors (error, success, warning) are chosen for sufficient contrast against surfaces
+
+## Motion and animations
+
+For users who prefer reduced motion:
+```tsx
+<NativeUIProvider config={{ reduceAnimations: true }}>
+```
+
+When enabled:
+- `PressableScale` skips the scale animation
+- `Skeleton` stops shimmer animation
+- `BottomSheet` / `Toast` use instant transitions
+- All spring animations are replaced with instant state changes
+
+## Font scaling
+
+The library supports three font scale levels:
+- `default` - Standard sizing
+- `medium` - +2px on all font sizes
+- `large` - +4px on all font sizes
+
+This is additive to the system font scale set in device accessibility settings.
+
+## Icon buttons
+
+`IconButton` **requires** `accessibilityLabel` as a prop - it won't accept an icon-only button without a label. This prevents unlabeled buttons from reaching production.
+
+## Best practices for consuming apps
+
+### Do
+- ✅ Always provide `accessibilityLabel` to icon-only buttons
+- ✅ Use semantic `Text` variants (`h1`, `h2`, `body`) for proper heading hierarchy
+- ✅ Use `Heading` component for section headings (sets `accessibilityRole="header"`)
+- ✅ Test with VoiceOver (iOS) and TalkBack (Android)
+- ✅ Respect `reduceAnimations` when adding custom animations
+
+### Don't
+- ❌ Don't disable accessibility labels to save space
+- ❌ Don't rely on color alone to convey state - add icons or text
+- ❌ Don't use `Text` for headings - use `Heading` instead
+- ❌ Don't override `hitSlop` to make touch targets smaller
+- ❌ Don't add custom animations that ignore `reduceAnimations`

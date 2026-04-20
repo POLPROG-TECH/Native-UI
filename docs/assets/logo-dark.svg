@@ -1,0 +1,35 @@
+<!-- native-ui square icon — "Bracket N" glyph (dark variant) -->
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" fill="none" role="img" aria-label="native-ui">
+  <defs>
+    <linearGradient id="nud-bg" x1="0" y1="0" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#111827"/>
+      <stop offset="0.55" stop-color="#0B1220"/>
+      <stop offset="1" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="nud-tint" x1="0" y1="140" x2="140" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3B6BFF" stop-opacity="0"/>
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity="0.45"/>
+    </linearGradient>
+    <linearGradient id="nud-hl" x1="0" y1="0" x2="0" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="nud-stroke" x1="0" y1="0" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60A5FA"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(10 10)">
+    <rect x="0" y="0" width="140" height="140" rx="34" fill="url(#nud-bg)"/>
+    <rect x="0" y="0" width="140" height="140" rx="34" fill="url(#nud-tint)"/>
+    <rect x="0" y="0" width="140" height="140" rx="34" fill="url(#nud-hl)"/>
+    <rect x="0.75" y="0.75" width="138.5" height="138.5" rx="33.25" fill="none" stroke="url(#nud-stroke)" stroke-opacity="0.55" stroke-width="1.5"/>
+
+    <path d="M 42 30 L 28 30 L 28 110 L 42 110"
+          stroke="url(#nud-stroke)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M 98 30 L 112 30 L 112 110 L 98 110"
+          stroke="url(#nud-stroke)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <rect x="22" y="64" width="96" height="12" rx="6" transform="rotate(52 70 70)" fill="url(#nud-stroke)"/>
+  </g>
+</svg>

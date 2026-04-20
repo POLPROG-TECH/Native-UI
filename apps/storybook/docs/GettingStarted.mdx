@@ -1,0 +1,139 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Getting Started" />
+
+# Getting Started
+
+## Prerequisites
+
+- React Native ≥ 0.72
+- React ≥ 18
+- TypeScript ≥ 5.0
+- `react-native-reanimated` ≥ 3.0
+- `react-native-safe-area-context` ≥ 4.0
+
+native-ui runs on React Native and works on both iOS and Android.
+
+## Installation
+
+```bash
+npm install @polprog/native-ui
+```
+
+### Peer dependencies
+
+```bash
+npm install react-native-reanimated react-native-safe-area-context
+```
+
+## Setup
+
+### 1. Wrap your app with the provider
+
+```tsx
+import { NativeUIProvider } from '@polprog/native-ui';
+
+export default function App() {
+  return (
+    <NativeUIProvider
+      config={{
+        colorMode: 'system',   // 'light' | 'dark' | 'system'
+        preset: 'default',      // Theme color preset
+        fontSize: 'default',    // 'default' | 'medium' | 'large'
+        reduceAnimations: false, // Respect user motion preferences
+      }}
+    >
+      {/* Your app content */}
+    </NativeUIProvider>
+  );
+}
+```
+
+### 2. Import and use components
+
+```tsx
+import { Button, Card, Text, VStack } from '@polprog/native-ui';
+
+function MyScreen() {
+  return (
+    <Card>
+      <VStack gap="md">
+        <Text variant="h2">Hello World</Text>
+        <Text variant="body" color="textSecondary">
+          This is a native-ui card.
+        </Text>
+        <Button title="Continue" onPress={() => {}} />
+      </VStack>
+    </Card>
+  );
+}
+```
+
+### 3. Configure haptics (optional)
+
+native-ui supports haptic feedback on interactive components. To enable it, provide a haptics implementation:
+
+```tsx
+import { configureHaptics } from '@polprog/native-ui';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+configureHaptics({
+  light: () => ReactNativeHapticFeedback.trigger('impactLight'),
+  medium: () => ReactNativeHapticFeedback.trigger('impactMedium'),
+  success: () => ReactNativeHapticFeedback.trigger('notificationSuccess'),
+  warning: () => ReactNativeHapticFeedback.trigger('notificationWarning'),
+  error: () => ReactNativeHapticFeedback.trigger('notificationError'),
+});
+```
+
+## Provider configuration
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `colorMode` | `'light' \| 'dark' \| 'system'` | `'system'` | Color mode |
+| `preset` | `ThemePreset` | `'default'` | Color preset (7 available) |
+| `fontColor` | `FontColor` | `'default'` | Font color warmth |
+| `fontSize` | `FontSize` | `'default'` | Accessibility font scale |
+| `highContrast` | `boolean` | `false` | High contrast mode |
+| `reduceAnimations` | `boolean` | `false` | Reduce motion |
+| `customAccent` | `string \| null` | `null` | Custom accent hex color |
+
+## Theme access in components
+
+```tsx
+import { useTheme, useColors } from '@polprog/native-ui';
+
+function MyComponent() {
+  const theme = useTheme();           // Full theme object
+  const colors = useColors();          // Just the color scheme
+
+  return (
+    <View style={{ backgroundColor: colors.surface, padding: theme.spacing.lg }}>
+      <Text style={theme.typography.h2}>Themed content</Text>
+    </View>
+  );
+}
+```
+
+## Monorepo usage
+
+For monorepo setups where the package is linked via `file:` dependency:
+
+### Metro config
+```js
+const path = require('path');
+module.exports = {
+  watchFolders: [path.resolve(__dirname, '../../packages/native-ui')],
+};
+```
+
+### TypeScript path mapping
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "@polprog/native-ui": ["../../packages/native-ui/src/index"]
+    }
+  }
+}
+```

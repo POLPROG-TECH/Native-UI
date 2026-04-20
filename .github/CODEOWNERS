@@ -1,0 +1,20 @@
+# Default owners for the entire repo
+* @polprog
+
+# Library source
+/packages/native-ui/ @polprog
+
+# Storybook
+/apps/storybook/ @polprog
+
+# CI & release automation
+/.github/ @polprog
+/.changeset/ @polprog
+
+# Top-level documentation and policy files
+/README.md @polprog
+/CONTRIBUTING.md @polprog
+/CODE_OF_CONDUCT.md @polprog
+/SECURITY.md @polprog
+/LICENSE @polprog
+/docs/ @polprog

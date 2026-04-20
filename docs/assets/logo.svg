@@ -1,0 +1,32 @@
+<!-- native-ui square icon — "Bracket N" glyph -->
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" fill="none" role="img" aria-label="native-ui">
+  <defs>
+    <linearGradient id="nu-sq-bg" x1="0" y1="0" x2="140" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0A84FF"/>
+      <stop offset="0.55" stop-color="#3B6BFF"/>
+      <stop offset="1" stop-color="#6366F1"/>
+    </linearGradient>
+    <linearGradient id="nu-sq-tint" x1="0" y1="140" x2="140" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0A84FF" stop-opacity="0"/>
+      <stop offset="1" stop-color="#8B5CF6" stop-opacity="0.45"/>
+    </linearGradient>
+    <linearGradient id="nu-sq-hl" x1="0" y1="0" x2="0" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.38"/>
+      <stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(10 10)">
+    <rect x="0" y="0" width="140" height="140" rx="34" fill="url(#nu-sq-bg)"/>
+    <rect x="0" y="0" width="140" height="140" rx="34" fill="url(#nu-sq-tint)"/>
+    <rect x="0" y="0" width="140" height="140" rx="34" fill="url(#nu-sq-hl)"/>
+    <rect x="0.75" y="0.75" width="138.5" height="138.5" rx="33.25" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="1.5"/>
+
+    <path d="M 42 30 L 28 30 L 28 110 L 42 110"
+          stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M 98 30 L 112 30 L 112 110 L 98 110"
+          stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <rect x="22" y="64" width="96" height="12" rx="6" transform="rotate(52 70 70)" fill="#FFFFFF"/>
+  </g>
+</svg>

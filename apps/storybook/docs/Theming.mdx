@@ -1,0 +1,124 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Theming" />
+
+# Theming
+
+native-ui provides a powerful theming system with 7 built-in color presets, automatic light/dark mode, accessibility options, and custom accent color support.
+
+## Color presets
+
+| Preset | Accent | Best for |
+|---|---|---|
+| `default` | Indigo (#4F46E5) | General-purpose enterprise apps |
+| `midnight` | Slate Blue (#6366F1) | Professional/corporate apps |
+| `ocean` | Cyan (#0891B2) | Fresh, modern interfaces |
+| `forest` | Emerald (#059669) | Nature, health, sustainability |
+| `sunset` | Amber (#D97706) | Warm, inviting interfaces |
+| `rose` | Pink (#E11D48) | Consumer, lifestyle apps |
+| `amoled` | Pure white on black | Battery-saving dark displays |
+
+## Color modes
+
+```tsx
+<NativeUIProvider config={{ colorMode: 'system' }}>
+  {/* Automatically follows device preference */}
+</NativeUIProvider>
+```
+
+Each preset defines both light and dark variants. The provider resolves the full `ColorScheme` (25+ semantic tokens) from the preset + mode combination.
+
+## Color scheme structure
+
+The resolved color scheme includes:
+
+### Surfaces
+- `background` - App background
+- `surface` - Card/container background
+- `surfaceElevated` - Elevated surface (modals, sheets)
+- `surfaceSecondary` - Secondary surface (grouped content)
+
+### Text
+- `textPrimary` - Primary content text
+- `textSecondary` - Secondary/helper text
+- `textTertiary` - Muted/placeholder text
+- `textInverse` - Text on colored backgrounds
+
+### Semantic colors
+- `primary` / `primaryLight` / `primaryDark` - Brand accent
+- `success` / `successLight` - Positive states
+- `warning` / `warningLight` - Caution states
+- `error` / `errorLight` - Error/destructive states
+- `info` - Informational
+
+### System
+- `border` / `borderLight` - Borders and separators
+- `divider` - Thin dividers
+- `shadow` - Shadow color
+- `overlay` - Backdrop overlay
+
+## Custom accent colors
+
+```tsx
+<NativeUIProvider config={{ customAccent: '#7C3AED' }}>
+  {/* All primary colors derive from the custom accent */}
+</NativeUIProvider>
+```
+
+When `customAccent` is set, the system automatically generates `primary`, `primaryLight`, and `primaryDark` variants.
+
+## Accessibility options
+
+```tsx
+<NativeUIProvider
+  config={{
+    fontSize: 'large',        // Increases base font size by 4px
+    highContrast: true,        // Stronger text contrast
+    reduceAnimations: true,    // Disables spring/scale animations
+    fontColor: 'warm',         // Warm-tinted text (easier on eyes)
+  }}
+>
+```
+
+### Font scaling
+
+| Level | Adjustment | Use case |
+|---|---|---|
+| `default` | +0px | Standard reading |
+| `medium` | +2px | Slightly larger |
+| `large` | +4px | Accessibility-friendly |
+
+## Consuming theme values
+
+```tsx
+import { useTheme, useColors } from '@polprog/native-ui';
+
+// Full theme (colors + typography + spacing + all tokens)
+const theme = useTheme();
+theme.colors.primary;
+theme.typography.h1;
+theme.spacing.lg;
+theme.borderRadius.md;
+
+// Just colors (lighter)
+const colors = useColors();
+colors.primary;
+colors.error;
+```
+
+## Creating brand-specific themes
+
+To create a custom brand theme, combine `customAccent` with other options:
+
+```tsx
+const brandConfig = {
+  colorMode: 'system' as const,
+  customAccent: '#0066CC',     // Your brand blue
+  fontColor: 'cool' as const,
+  fontSize: 'default' as const,
+  highContrast: false,
+  reduceAnimations: false,
+};
+
+<NativeUIProvider config={brandConfig}>
+```

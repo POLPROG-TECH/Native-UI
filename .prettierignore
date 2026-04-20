@@ -1,0 +1,11 @@
+node_modules
+dist
+storybook-static
+coverage
+.DS_Store
+*.log
+
+# MDX docs use hand-tuned JSX/SVG formatting where whitespace affects rendering
+# (e.g. <div>native<span>-</span>ui</div>). Prettier reformatting breaks the
+# Introduction hero layout — keep these files out of auto-format.
+apps/storybook/docs/*.mdx

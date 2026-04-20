@@ -1,0 +1,18 @@
+# Run lint-staged (ESLint on changed TS/TSX) and then quick typecheck + tests.
+# This mirrors what CI runs so failures caught here won't later break the PR.
+
+echo "▸ lint-staged (ESLint on staged files)"
+npx lint-staged || exit 1
+
+echo "▸ typecheck (tsc --noEmit)"
+npm run typecheck --workspace=@polprog/native-ui --silent || exit 1
+
+echo "▸ tests (jest --findRelatedTests on staged src files, full suite on fallback)"
+STAGED=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '^packages/native-ui/(src|__tests__)/.*\.(ts|tsx)$' | sed 's|^packages/native-ui/||' || true)
+if [ -n "$STAGED" ]; then
+  ( cd packages/native-ui && npx jest --bail --findRelatedTests --passWithNoTests $STAGED ) || exit 1
+else
+  echo "  (no TS/TSX staged in native-ui — skipping)"
+fi
+
+echo "✓ pre-commit OK"

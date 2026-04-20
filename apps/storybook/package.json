@@ -1,0 +1,42 @@
+{
+  "name": "@polprog/storybook",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Design system documentation portal for @polprog/native-ui",
+  "scripts": {
+    "dev": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6006",
+    "build": "storybook build -o storybook-static",
+    "build-storybook": "storybook build -o storybook-static",
+    "serve": "npx serve storybook-static -p 6006",
+    "test-runner": "test-storybook",
+    "test-runner:ci": "concurrently -k -s first -n SB,TESTS \"http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && test-storybook --url http://127.0.0.1:6006\"",
+    "chromatic": "npx chromatic --project-token=${CHROMATIC_PROJECT_TOKEN}"
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "^10.3.5",
+    "@storybook/addon-docs": "^10.3.5",
+    "@storybook/addon-links": "^10.3.5",
+    "@storybook/react": "^10.3.5",
+    "@storybook/react-vite": "^10.3.5",
+    "@storybook/test-runner": "^0.24.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^6.0.1",
+    "axe-playwright": "^2.0.3",
+    "chromatic": "^16.3.0",
+    "concurrently": "^9.2.1",
+    "http-server": "^14.1.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-native-web": "^0.21.2",
+    "storybook": "^10.3.5",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.9",
+    "wait-on": "^9.0.5"
+  },
+  "dependencies": {
+    "@fontsource/space-grotesk": "^5.2.10",
+    "@polprog/native-ui": "*"
+  }
+}

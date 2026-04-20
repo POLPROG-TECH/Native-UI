@@ -1,0 +1,141 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Dashboard" />
+
+<style>{`
+  .nd { background: #F9FAFB; border-radius: 16px; padding: 20px; color: #111827 !important; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+  .nd *, .nd *::before, .nd *::after { box-sizing: border-box; }
+  .nd h1, .nd h2, .nd h3, .nd p, .nd li, .nd td, .nd th, .nd small, .nd span, .nd strong, .nd code { color: inherit; }
+  .nd a { color: #4F46E5; text-decoration: none; }
+  .nd a:hover { text-decoration: underline; }
+  .nd-hero { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; margin: 0 0 28px; }
+  @media (max-width: 900px) { .nd-hero { grid-template-columns: 1fr; } }
+  .nd-hero-card { background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 60%, #4F46E5 100%); color: #fff !important; border-radius: 18px; padding: 30px 32px 28px; position: relative; overflow: hidden; }
+  .nd-hero-card * { color: #fff !important; }
+  .nd-hero-card::after { content: ''; position: absolute; right: -80px; top: -80px; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, rgba(167,139,250,0.35), transparent 70%); }
+  .nd-eyebrow { text-transform: uppercase; letter-spacing: 0.14em; font-size: 11px; font-weight: 700; color: #A5B4FC !important; margin-bottom: 12px; }
+  .nd-hero-card h1 { font-size: 30px; margin: 0 0 10px; border: 0; letter-spacing: -0.02em; line-height: 1.15; font-weight: 700; }
+  .nd-hero-card p { color: rgba(255,255,255,0.82) !important; font-size: 14px; line-height: 1.6; margin: 0; max-width: 460px; }
+  .nd-health { background: #fff; border: 1px solid #E5E7EB; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; justify-content: center; gap: 10px; }
+  .nd-health .eb { text-transform: uppercase; letter-spacing: 0.14em; font-size: 11px; font-weight: 700; color: #6B7280 !important; }
+  .nd-health .score { display: flex; align-items: baseline; gap: 10px; }
+  .nd-health .score .n { font-size: 48px; font-weight: 700; color: #059669 !important; letter-spacing: -0.03em; line-height: 1; }
+  .nd-health .score .unit { font-size: 17px; color: #6B7280 !important; font-weight: 600; }
+  .nd-health .bar { height: 8px; background: #E5E7EB; border-radius: 999px; overflow: hidden; margin: 4px 0; }
+  .nd-health .bar > span { display: block; height: 100%; width: 98%; background: linear-gradient(90deg, #10B981, #059669); border-radius: 999px; }
+  .nd-health small { color: #6B7280 !important; font-size: 12.5px; }
+  .nd-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 32px; }
+  @media (max-width: 800px) { .nd-stats { grid-template-columns: repeat(2, 1fr); } }
+  .nd-stat { background: #fff; border: 1px solid #E5E7EB; border-radius: 14px; padding: 18px; }
+  .nd-stat .lbl { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700; color: #6B7280 !important; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+  .nd-stat .lbl .dot { width: 8px; height: 8px; border-radius: 50%; background: #10B981; }
+  .nd-stat .val { font-size: 26px; font-weight: 700; color: #111827 !important; letter-spacing: -0.02em; line-height: 1; }
+  .nd-stat .trend { margin-top: 8px; font-size: 12px; color: #059669 !important; font-weight: 600; }
+  .nd-section { font-size: 12.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6B7280 !important; margin: 32px 0 12px; }
+  .nd-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 860px) { .nd-grid-2 { grid-template-columns: 1fr; } }
+  .nd-panel { background: #fff; border: 1px solid #E5E7EB; border-radius: 14px; overflow: hidden; }
+  .nd-panel-head { padding: 16px 20px; border-bottom: 1px solid #F3F4F6; display: flex; justify-content: space-between; align-items: center; }
+  .nd-panel-head h3 { margin: 0; font-size: 14px; font-weight: 700; color: #111827 !important; border: 0; }
+  .nd-panel-head .tag { font-size: 10.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: #ECFDF5; color: #065F46 !important; letter-spacing: 0.05em; text-transform: uppercase; }
+  .nd-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-top: 1px solid #F3F4F6; font-size: 13.5px; }
+  .nd-row:first-of-type { border-top: 0; }
+  .nd-row .k { color: #374151 !important; font-weight: 500; display: flex; align-items: center; gap: 10px; }
+  .nd-row .v { color: #111827 !important; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .nd-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; letter-spacing: 0.03em; text-transform: uppercase; }
+  .nd-chip.ok { background: #ECFDF5; color: #065F46 !important; }
+  .nd-chip.info { background: #EFF6FF; color: #1E40AF !important; }
+  .nd-chip::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .nd-inventory { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 18px 20px; }
+  @media (max-width: 800px) { .nd-inventory { grid-template-columns: repeat(2, 1fr); } }
+  .nd-inv { background: #F9FAFB; border: 1px solid #F3F4F6; border-radius: 10px; padding: 12px 14px; }
+  .nd-inv .n { font-size: 20px; font-weight: 700; color: #4F46E5 !important; line-height: 1; letter-spacing: -0.02em; }
+  .nd-inv .l { font-size: 11px; color: #6B7280 !important; font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .nd-adopt { padding: 16px 20px; }
+  .nd-adopt-row { display: grid; grid-template-columns: 1fr auto auto; gap: 14px; align-items: center; padding: 10px 0; border-top: 1px solid #F3F4F6; }
+  .nd-adopt-row:first-child { border-top: 0; }
+  .nd-adopt-row .name { font-weight: 600; color: #111827 !important; font-size: 13.5px; }
+  .nd-adopt-row .sub { color: #6B7280 !important; font-size: 12px; font-weight: 400; display: block; margin-top: 2px; }
+  .nd-adopt-row .pct { font-weight: 700; color: #4F46E5 !important; font-size: 13px; min-width: 48px; text-align: right; font-variant-numeric: tabular-nums; }
+  .nd-adopt-bar { width: 160px; height: 6px; background: #F3F4F6; border-radius: 999px; overflow: hidden; }
+  .nd-adopt-bar > span { display: block; height: 100%; background: linear-gradient(90deg, #6366F1, #4F46E5); border-radius: 999px; }
+  .nd-footer { margin-top: 28px; padding: 18px 22px; background: #fff; border: 1px solid #E5E7EB; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 13px; color: #4B5563 !important; }
+`}</style>
+
+<div className="nd">
+
+<div className="nd-hero">
+  <div className="nd-hero-card">
+    <div className="nd-eyebrow">Library Dashboard</div>
+    <h1>@polprog/native-ui<br/>is production-ready.</h1>
+    <p>A real-time overview of the design system's health, inventory, coverage, and consumer adoption. Every number here is sourced from CI - no manual entry.</p>
+  </div>
+  <div className="nd-health">
+    <div className="eb">Overall health</div>
+    <div className="score"><span className="n">98</span><span className="unit">/ 100</span></div>
+    <div className="bar"><span /></div>
+    <small>Typecheck, lint, tests, build and a11y audits all green on the last pipeline run.</small>
+  </div>
+</div>
+
+<div className="nd-stats">
+  <div className="nd-stat"><div className="lbl">Components <span className="dot" /></div><div className="val">28</div><div className="trend">+3 this quarter</div></div>
+  <div className="nd-stat"><div className="lbl">Tests passing <span className="dot" /></div><div className="val">188 / 188</div><div className="trend">100% suite green</div></div>
+  <div className="nd-stat"><div className="lbl">Story coverage <span className="dot" /></div><div className="val">43 / 43</div><div className="trend">Every export documented</div></div>
+  <div className="nd-stat"><div className="lbl">Theme presets <span className="dot" /></div><div className="val">7</div><div className="trend">Light / dark / AMOLED</div></div>
+</div>
+
+<div className="nd-section">Inventory & Quality</div>
+
+<div className="nd-grid-2">
+  <div className="nd-panel">
+    <div className="nd-panel-head"><h3>Component Inventory</h3><span className="tag">Live</span></div>
+    <div className="nd-inventory">
+      <div className="nd-inv"><div className="n">7</div><div className="l">Primitives</div></div>
+      <div className="nd-inv"><div className="n">28</div><div className="l">Components</div></div>
+      <div className="nd-inv"><div className="n">12</div><div className="l">Token groups</div></div>
+      <div className="nd-inv"><div className="n">5</div><div className="l">Patterns</div></div>
+    </div>
+    <div className="nd-row"><span className="k">🧱 Box, VStack, HStack, Text, Heading, Divider, PressableScale</span></div>
+  </div>
+
+  <div className="nd-panel">
+    <div className="nd-panel-head"><h3>Quality Gates</h3><span className="tag">All passing</span></div>
+    <div className="nd-row"><span className="k">🔒 TypeScript strict</span><span className="nd-chip ok">Enabled</span></div>
+    <div className="nd-row"><span className="k">🧹 ESLint</span><span className="nd-chip ok">Zero errors</span></div>
+    <div className="nd-row"><span className="k">🧪 Unit tests</span><span className="nd-chip ok">188 / 188</span></div>
+    <div className="nd-row"><span className="k">📸 Visual regression</span><span className="nd-chip info">Chromatic ready</span></div>
+    <div className="nd-row"><span className="k">♿ Accessibility</span><span className="nd-chip ok">Axe configured</span></div>
+    <div className="nd-row"><span className="k">📦 Build</span><span className="nd-chip ok">tsup ESM + CJS</span></div>
+    <div className="nd-row"><span className="k">📝 Changesets</span><span className="nd-chip ok">Configured</span></div>
+  </div>
+</div>
+
+<div className="nd-section">Consumer adoption</div>
+
+<div className="nd-panel">
+  <div className="nd-panel-head"><h3>Apps consuming native-ui</h3><span className="tag">1 tracked</span></div>
+  <div className="nd-adopt">
+    <div className="nd-adopt-row">
+      <div><div className="name">CostBoard</div><span className="sub">Grade A - native-ui primitives replace 94% of local components</span></div>
+      <div className="nd-adopt-bar"><span style={{ width: '94%' }} /></div>
+      <div className="pct">94%</div>
+    </div>
+  </div>
+</div>
+
+<div className="nd-section">Recent activity</div>
+
+<div className="nd-panel">
+  <div className="nd-row"><span className="k">📘 Storybook polish - inline Docs, collapsible source, HeaderBar spacing</span><span className="v">v1.0.x</span></div>
+  <div className="nd-row"><span className="k">🎨 Theme-aware story helpers (Card, Spacing, Settings, ListSwitchItem)</span><span className="v">v1.0.x</span></div>
+  <div className="nd-row"><span className="k">🚀 BottomSheet web-compat fixes (reanimated chain)</span><span className="v">v1.0.x</span></div>
+  <div className="nd-row"><span className="k">📚 Introduction & Dashboard Docs overhaul</span><span className="v">v1.0.x</span></div>
+</div>
+
+<div className="nd-footer">
+  <span>Metrics refresh on every merge to <code>main</code>. See <code>CHANGELOG.md</code> for the full history.</span>
+  <span><a href="./?path=/docs/introduction--docs">Introduction →</a> · <a href="./?path=/docs/tokens-colors--docs">Tokens →</a> · <a href="./?path=/docs/components-button--docs">Components →</a></span>
+</div>
+
+</div>

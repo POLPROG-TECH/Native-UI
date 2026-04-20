@@ -1,0 +1,476 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction" />
+
+<style>{`
+  /* ── Reset: override Storybook Docs theme completely ── */
+  .sbdocs-wrapper:has(.nui-page) { background: #fff !important; }
+  .sbdocs-content:has(.nui-page) { max-width: 980px !important; }
+
+  .nui-page {
+    all: initial;
+    display: block;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #1E293B !important;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .nui-page *, .nui-page *::before, .nui-page *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── Hero ── */
+  .nui-hero {
+    background: linear-gradient(135deg, #312E81 0%, #4F46E5 50%, #7C3AED 100%);
+    border-radius: 24px;
+    padding: 52px 48px 44px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(79,70,229,0.4);
+  }
+  .nui-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='1' fill='rgba(255,255,255,0.07)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .nui-hero::after {
+    content: '';
+    position: absolute;
+    right: -100px;
+    top: -100px;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.12), transparent 65%);
+    pointer-events: none;
+  }
+
+  .nui-logo-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 1;
+  }
+  .nui-logo-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .nui-logo-icon svg { width: 30px; height: 30px; }
+  .nui-logo-text {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff !important;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .nui-logo-text span { opacity: 0.5; font-weight: 400; }
+
+  .nui-hero h1 {
+    font-size: 44px;
+    font-weight: 800;
+    color: #fff !important;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+  }
+  .nui-hero-desc {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #ffffff !important;
+    max-width: 600px;
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 1;
+  }
+  .nui-hero-desc * { color: #ffffff !important; }
+  .nui-hero-desc code {
+    background: rgba(255,255,255,0.15);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.88em;
+    color: #fff !important;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .nui-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .nui-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.22);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #fff !important;
+    backdrop-filter: blur(4px);
+  }
+
+  /* ── Stats ── */
+  .nui-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  @media (max-width: 760px) { .nui-stats { grid-template-columns: repeat(2, 1fr); } }
+  .nui-stat-card {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 22px 20px;
+    transition: box-shadow 0.2s;
+  }
+  .nui-stat-card:hover { box-shadow: 0 8px 24px -8px rgba(0,0,0,0.08); }
+  .nui-stat-num {
+    display: block;
+    font-size: 32px;
+    font-weight: 800;
+    color: #4F46E5 !important;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .nui-stat-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748B !important;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── Section titles ── */
+  .nui-sec {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #94A3B8 !important;
+    margin: 48px 0 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #F1F5F9;
+  }
+
+  /* ── Feature grid ── */
+  .nui-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  @media (max-width: 880px) { .nui-features { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 540px) { .nui-features { grid-template-columns: 1fr; } }
+  .nui-feat {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 24px;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  }
+  .nui-feat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 32px -12px rgba(0,0,0,0.1);
+    border-color: #C7D2FE !important;
+  }
+  .nui-feat-ico {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 14px;
+  }
+  .nui-feat h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0F172A !important;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .nui-feat p {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #475569 !important;
+  }
+
+  /* ── Principles ── */
+  .nui-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #E2E8F0;
+    background: #fff;
+  }
+  .nui-table th {
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #64748B !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: #F8FAFC;
+    border-bottom: 1px solid #E2E8F0;
+  }
+  .nui-table td {
+    padding: 14px 20px;
+    font-size: 14px;
+    border-top: 1px solid #F1F5F9;
+    color: #334155 !important;
+  }
+  .nui-table td:first-child {
+    font-weight: 700;
+    color: #0F172A !important;
+    width: 210px;
+    white-space: nowrap;
+  }
+  .nui-table tr:first-child td { border-top: none; }
+
+  /* ── Code block ── */
+  .nui-pre {
+    background: #0F172A;
+    border-radius: 16px;
+    padding: 24px 28px;
+    overflow-x: auto;
+    border: 1px solid #1E293B;
+  }
+  .nui-pre code {
+    display: block;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #E2E8F0 !important;
+    white-space: pre;
+    background: transparent;
+    padding: 0;
+  }
+
+  /* ── CTA ── */
+  .nui-cta-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 16px;
+    margin-top: 40px;
+    align-items: stretch;
+  }
+  @media (max-width: 780px) { .nui-cta-grid { grid-template-columns: 1fr; } }
+  .nui-cta-box {
+    border-radius: 18px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    justify-content: space-between;
+  }
+  .nui-cta-box h3 {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .nui-cta-box p {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .nui-cta-light {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+  }
+  .nui-cta-light h3 { color: #0F172A !important; }
+  .nui-cta-light p { color: #475569 !important; }
+  .nui-cta-light ul {
+    list-style: none;
+    padding: 0;
+    font-size: 14px;
+    line-height: 2;
+    color: #334155 !important;
+  }
+  .nui-cta-light li::before { content: '→ '; color: #4F46E5 !important; font-weight: 700; }
+  .nui-cta-light li strong { color: #0F172A !important; }
+  .nui-cta-dark {
+    background: #0F172A;
+    border: 1px solid #1E293B;
+  }
+  .nui-cta-dark h3 { color: #F8FAFC !important; }
+  .nui-cta-dark p { color: #94A3B8 !important; }
+  .nui-cta-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .nui-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+  .nui-btn:hover { opacity: 0.85; text-decoration: none; }
+  .nui-btn-primary { background: #4F46E5; color: #fff !important; }
+  .nui-btn-ghost { background: transparent; border: 1px solid #334155; color: #CBD5E1 !important; }
+`}</style>
+
+<div className="nui-page">
+
+{/* ━━ Hero ━━ */}
+<div className="nui-hero">
+  <div className="nui-logo-row">
+    <div className="nui-logo-icon">
+      <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 4L4 4L4 26L8 26" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M22 4L26 4L26 26L22 26" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"/>
+        <rect x="6" y="12.5" width="18" height="3.5" rx="1.75" transform="rotate(52 15 15)" fill="#fff"/>
+      </svg>
+    </div>
+    <div className="nui-logo-text">native<span>-</span>ui</div>
+  </div>
+  <h1>A React Native design system<br/>that feels 1 : 1 with native.</h1>
+  <p className="nui-hero-desc" style={{ color: '#ffffff', fontSize: '18px', lineHeight: '1.6', maxWidth: '600px', marginBottom: '28px', position: 'relative', zIndex: 1 }}>
+    <code>@polprog/native-ui</code> ships 24 + battle-tested components, a complete
+    token system, and seven theme presets - so product teams build screens
+    indistinguishable from hand-built native iOS / Android apps, faster.
+  </p>
+  <div className="nui-pills">
+    <span className="nui-pill">● Production-ready</span>
+    <span className="nui-pill">TypeScript first</span>
+    <span className="nui-pill">iOS · Android · Web</span>
+    <span className="nui-pill">WCAG AA</span>
+  </div>
+</div>
+
+{/* ━━ Stats ━━ */}
+<div className="nui-stats">
+  <div className="nui-stat-card"><span className="nui-stat-num">24+</span><span className="nui-stat-label">Components</span></div>
+  <div className="nui-stat-card"><span className="nui-stat-num">17</span><span className="nui-stat-label">Type variants</span></div>
+  <div className="nui-stat-card"><span className="nui-stat-num">7</span><span className="nui-stat-label">Theme presets</span></div>
+  <div className="nui-stat-card"><span className="nui-stat-num">188</span><span className="nui-stat-label">Tests passing</span></div>
+</div>
+
+{/* ━━ Features ━━ */}
+<div className="nui-sec">What's in the box</div>
+
+<div className="nui-features">
+  <div className="nui-feat">
+    <div className="nui-feat-ico" style={{ background: '#EEF2FF' }}>🎨</div>
+    <h3>Design Tokens</h3>
+    <p>Colors, typography (iOS-native 17-variant scale), spacing, radii, elevation, motion - centralized, type-safe, tree-shakeable.</p>
+  </div>
+  <div className="nui-feat">
+    <div className="nui-feat-ico" style={{ background: '#FEF3C7' }}>🧱</div>
+    <h3>Primitives</h3>
+    <p>Low-level building blocks - Box, VStack, HStack, Text, Heading, Divider, PressableScale - with token-based props.</p>
+  </div>
+  <div className="nui-feat">
+    <div className="nui-feat-ico" style={{ background: '#DBEAFE' }}>🧩</div>
+    <h3>Components</h3>
+    <p>Buttons, inputs, selection, overlays, lists, feedback. Variants, states, and a11y are covered out of the box.</p>
+  </div>
+  <div className="nui-feat">
+    <div className="nui-feat-ico" style={{ background: '#D1FAE5' }}>♿</div>
+    <h3>Accessibility</h3>
+    <p>Proper roles, labels, states, and 44 × 44 minimum hit targets. Full screen-reader and keyboard support.</p>
+  </div>
+  <div className="nui-feat">
+    <div className="nui-feat-ico" style={{ background: '#F3E8FF' }}>🎭</div>
+    <h3>Theming</h3>
+    <p>Light / dark / system, 7 presets (Default, Midnight, Ocean, Forest, Sunset, Rose, AMOLED), custom accents, font-scale tiers.</p>
+  </div>
+  <div className="nui-feat">
+    <div className="nui-feat-ico" style={{ background: '#FFE4E6' }}>⚡</div>
+    <h3>Performance</h3>
+    <p>Reanimated-powered transitions, memoized tokens, minimal runtime - no CSS-in-JS bloat, no style churn.</p>
+  </div>
+</div>
+
+{/* ━━ Principles ━━ */}
+<div className="nui-sec">Design principles</div>
+
+<table className="nui-table">
+  <thead><tr><th>Principle</th><th>What it means in practice</th></tr></thead>
+  <tbody>
+    <tr><td>Token-driven</td><td>Every visual property derives from a centralized design token - nothing is hardcoded.</td></tr>
+    <tr><td>Composable</td><td>Primitives snap together into complex UIs without forcing a rigid page shape.</td></tr>
+    <tr><td>Accessible by default</td><td>WCAG-compliant roles, labels, touch targets and reduce-motion support - on day one.</td></tr>
+    <tr><td>Type-safe</td><td>Full TypeScript coverage; discriminated unions for variants catch misuse at compile time.</td></tr>
+    <tr><td>Platform-native</td><td>Feels native on iOS and Android; no generic "web-ish" feel on mobile.</td></tr>
+    <tr><td>Pluggable</td><td>Haptics, theming, fonts and animations are configurable - not baked-in decisions.</td></tr>
+  </tbody>
+</table>
+
+{/* ━━ Quick start ━━ */}
+<div className="nui-sec">Quick start</div>
+
+<div className="nui-pre"><code>{`// 1. Install
+npm install @polprog/native-ui
+
+// 2. Wrap your app once
+import { NativeUIProvider, Button, Card, Text } from '@polprog/native-ui';
+
+export default function App() {
+  return (
+    <NativeUIProvider config={{ colorMode: 'system', preset: 'default' }}>
+      <Card>
+        <Text variant="h2">Welcome</Text>
+        <Button title="Get started" onPress={() => {}} />
+      </Card>
+    </NativeUIProvider>
+  );
+}`}</code></div>
+
+{/* ━━ CTA ━━ */}
+<div className="nui-cta-grid">
+  <div className="nui-cta-box nui-cta-light">
+    <div>
+      <h3>Navigate the docs</h3>
+      <p>Every primitive, component and pattern has an interactive playground with live controls. Dark mode, a11y roles, and presets are switchable from the toolbar.</p>
+    </div>
+    <ul>
+      <li><strong>Tokens</strong> - color palette, typography, spacing, radii, elevation</li>
+      <li><strong>Primitives</strong> - low-level layout &amp; text components</li>
+      <li><strong>Components</strong> - full library with interactive controls</li>
+      <li><strong>Patterns</strong> - real-world compositions &amp; recipes</li>
+    </ul>
+  </div>
+  <div className="nui-cta-box nui-cta-dark">
+    <div>
+      <h3>Start building</h3>
+      <p>Pick a component, flip into dark mode, switch presets, ship. Every story supports live controls and copy-ready source.</p>
+    </div>
+    <div className="nui-cta-btns">
+      <a href="./?path=/docs/primitives-text--docs" className="nui-btn nui-btn-primary">Text primitive →</a>
+      <a href="./?path=/docs/components-button--docs" className="nui-btn nui-btn-ghost">Button →</a>
+      <a href="./?path=/docs/tokens-colors--docs" className="nui-btn nui-btn-ghost">Colors →</a>
+    </div>
+  </div>
+</div>
+
+</div>
