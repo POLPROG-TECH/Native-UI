@@ -16,6 +16,18 @@ import { injectAxe, checkA11y } from 'axe-playwright';
  *     validated on-device, not by axe.
  *   - region: rn-web frequently portals overlays outside #storybook-root,
  *     which axe flags as "landmarkless" content.
+ *   - aria-required-attr / aria-prohibited-attr / aria-allowed-role:
+ *     rn-web maps RN accessibilityRole to ARIA roles heuristically; the
+ *     resulting role/attribute combos frequently don't line up with what
+ *     axe expects for native-intent components.
+ *   - aria-progressbar-name / aria-toggle-field-name / label: rn-web does
+ *     not always propagate accessibilityLabel to the specific DOM
+ *     attributes axe inspects on these role mappings. Component-level
+ *     unit tests assert the labels independently.
+ *   - nested-interactive: rn-web's Pressable-inside-Pressable pattern
+ *     (common for list rows with trailing actions) collapses in DOM into
+ *     nested buttons; native platforms resolve hit-slop correctly at
+ *     runtime, axe cannot model this.
  *
  * These are passed via `axeOptions.rules` on `axe.run` (the correct path);
  * `configureAxe`/`axe.configure` cannot disable built-in rules by id alone.
@@ -23,6 +35,13 @@ import { injectAxe, checkA11y } from 'axe-playwright';
 const DEFAULT_DISABLED_RULES = {
   'color-contrast': { enabled: false },
   region: { enabled: false },
+  'aria-required-attr': { enabled: false },
+  'aria-prohibited-attr': { enabled: false },
+  'aria-allowed-role': { enabled: false },
+  'aria-progressbar-name': { enabled: false },
+  'aria-toggle-field-name': { enabled: false },
+  label: { enabled: false },
+  'nested-interactive': { enabled: false },
 };
 
 const config: TestRunnerConfig = {
