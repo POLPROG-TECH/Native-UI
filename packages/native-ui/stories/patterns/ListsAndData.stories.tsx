@@ -1,6 +1,6 @@
 import React from 'react';
+import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Avatar } from '../../src/components/Avatar';
 import { Badge } from '../../src/components/Badge';
 import { Box } from '../../src/primitives/Box';
@@ -59,7 +59,7 @@ export const ExpenseList: Story = {
               {e.cat}
             </Text>
           }
-          onPress={action(`tap-${e.title}`)}
+          onPress={fn()}
           hideDivider={i === arr.length - 1}
         />
       ))}
@@ -72,7 +72,7 @@ export const CategorySummary: Story = {
   render: () => (
     <Section
       title="Budget Overview"
-      action={<Button title="Details" variant="ghost" size="sm" onPress={action('details')} />}
+      action={<Button title="Details" variant="ghost" size="sm" onPress={fn()} />}
       style={{ maxWidth: 420 }}
     >
       <Card>
@@ -109,24 +109,24 @@ export const SettingsPage: Story = {
           title="Profile"
           subtitle="John Doe"
           icon={<Avatar name="John Doe" size="sm" />}
-          onPress={action('profile')}
+          onPress={fn()}
         />
-        <ListItem title="Subscription" value="Premium" onPress={action('sub')} />
+        <ListItem title="Subscription" value="Premium" onPress={fn()} />
         <ListItem
           title="Notifications"
           trailing={<Badge count={3} />}
-          onPress={action('notifs')}
+          onPress={fn()}
           hideDivider
         />
       </ListSection>
       <ListSection title="Preferences">
-        <ListSwitchItem label="Dark Mode" value={false} onValueChange={action('darkMode')} />
-        <ListItem title="Currency" value="EUR (€)" onPress={action('currency')} />
-        <ListItem title="Language" value="English" onPress={action('language')} hideDivider />
+        <ListSwitchItem label="Dark Mode" value={false} onValueChange={fn()} />
+        <ListItem title="Currency" value="EUR (€)" onPress={fn()} />
+        <ListItem title="Language" value="English" onPress={fn()} hideDivider />
       </ListSection>
       <ListSection title="Danger Zone" footer="This cannot be undone.">
-        <ListItem title="Sign Out" destructive onPress={action('signout')} />
-        <ListItem title="Delete Account" destructive onPress={action('delete')} hideDivider />
+        <ListItem title="Sign Out" destructive onPress={fn()} />
+        <ListItem title="Delete Account" destructive onPress={fn()} hideDivider />
       </ListSection>
     </VStack>
   ),
@@ -158,10 +158,10 @@ export const DashboardCards: Story = {
       <Section title="Quick Actions">
         <HStack gap="md">
           <Box style={{ flex: 1 }}>
-            <Button title="Add Entry" onPress={action('add')} />
+            <Button title="Add Entry" onPress={fn()} />
           </Box>
           <Box style={{ flex: 1 }}>
-            <Button title="Reports" variant="outline" onPress={action('reports')} />
+            <Button title="Reports" variant="outline" onPress={fn()} />
           </Box>
         </HStack>
       </Section>

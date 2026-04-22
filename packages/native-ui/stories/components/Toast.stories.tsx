@@ -1,7 +1,7 @@
 import React from 'react';
+import { fn } from 'storybook/test';
 import { View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Toast, useToast } from '../../src/components/Toast';
 import { Button } from '../../src/components/Button';
 import { VStack } from '../../src/primitives/Stack';
@@ -124,7 +124,7 @@ export const BasicToast: StoryObj = {
 export const WithAction: StoryObj = {
   name: 'With Action',
   render: () => (
-    <ToastTrigger message="Entry deleted" actionLabel="Undo" onAction={action('undo')} />
+    <ToastTrigger message="Entry deleted" actionLabel="Undo" onAction={fn()} />
   ),
 };
 
@@ -145,9 +145,9 @@ export const MultipleExamples: StoryObj = {
     <VStack gap="sm">
       <Text variant="label" color="textSecondary">Common toast patterns</Text>
       <ToastTrigger message="Changes saved" />
-      <ToastTrigger message="Item deleted" actionLabel="Undo" onAction={action('undo')} />
+      <ToastTrigger message="Item deleted" actionLabel="Undo" onAction={fn()} />
       <ToastTrigger message="Network error. Please try again." />
-      <ToastTrigger message="Export complete" actionLabel="View" onAction={action('view')} />
+      <ToastTrigger message="Export complete" actionLabel="View" onAction={fn()} />
     </VStack>
   ),
 };

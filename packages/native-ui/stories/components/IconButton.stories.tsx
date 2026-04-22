@@ -1,7 +1,7 @@
 import React from 'react';
+import { fn, within, userEvent, expect } from 'storybook/test';
 import { Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Box } from '../../src/primitives/Box';
 import { HStack, VStack } from '../../src/primitives/Stack';
 import { IconButton } from '../../src/components/IconButton';
@@ -61,7 +61,34 @@ export const Playground: Story = {
     variant: 'default',
     size: 'md',
     disabled: false,
-    onPress: action('onPress'),
+    onPress: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: /settings/i });
+    await expect(button).toBeInTheDocument();
+    await userEvent.click(button);
+    await expect(args.onPress).toHaveBeenCalledTimes(1);
+    await userEvent.click(button);
+    await expect(args.onPress).toHaveBeenCalledTimes(2);
+  },
+};
+
+/** Disabled button must NOT fire `onPress` even when clicked. */
+export const DisabledDoesNotFire: Story = {
+  name: 'Interaction · Disabled never fires',
+  args: {
+    icon: <EmojiIcon>⚙️</EmojiIcon>,
+    accessibilityLabel: 'Settings (disabled)',
+    disabled: true,
+    onPress: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: /settings/i });
+    await userEvent.click(button);
+    await userEvent.click(button);
+    await expect(args.onPress).not.toHaveBeenCalled();
   },
 };
 
@@ -71,7 +98,7 @@ export const AllVariants: Story = {
     <HStack gap="lg">
       {(['default', 'primary', 'ghost', 'danger'] as const).map((variant) => (
         <VStack key={variant} gap="xs" align="center">
-          <IconButton icon={<EmojiIcon>⚙️</EmojiIcon>} variant={variant} accessibilityLabel={variant} onPress={action(variant)} />
+          <IconButton icon={<EmojiIcon>⚙️</EmojiIcon>} variant={variant} accessibilityLabel={variant} onPress={fn()} />
           <Text variant="caption" color="textTertiary">{variant}</Text>
         </VStack>
       ))}
@@ -85,7 +112,7 @@ export const AllSizes: Story = {
     <HStack gap="lg" align="center">
       {(['sm', 'md', 'lg'] as const).map((size) => (
         <VStack key={size} gap="xs" align="center">
-          <IconButton icon={<EmojiIcon>🔔</EmojiIcon>} size={size} accessibilityLabel={`Notifications ${size}`} onPress={action(size)} />
+          <IconButton icon={<EmojiIcon>🔔</EmojiIcon>} size={size} accessibilityLabel={`Notifications ${size}`} onPress={fn()} />
           <Text variant="caption" color="textTertiary">{size}</Text>
         </VStack>
       ))}
@@ -98,7 +125,7 @@ export const DisabledState: Story = {
   render: () => (
     <HStack gap="lg">
       {(['default', 'primary', 'ghost', 'danger'] as const).map((variant) => (
-        <IconButton key={variant} icon={<EmojiIcon>🔒</EmojiIcon>} variant={variant} disabled accessibilityLabel="Locked" onPress={action(variant)} />
+        <IconButton key={variant} icon={<EmojiIcon>🔒</EmojiIcon>} variant={variant} disabled accessibilityLabel="Locked" onPress={fn()} />
       ))}
     </HStack>
   ),
@@ -110,12 +137,12 @@ export const ToolbarExample: Story = {
     <Box p="sm" bg="surface" radius="md" elevation="sm" style={{ maxWidth: 360 }}>
       <HStack justify="space-between">
         <HStack gap="xs">
-          <IconButton icon={<EmojiIcon>◀️</EmojiIcon>} variant="ghost" size="sm" accessibilityLabel="Back" onPress={action('back')} />
+          <IconButton icon={<EmojiIcon>◀️</EmojiIcon>} variant="ghost" size="sm" accessibilityLabel="Back" onPress={fn()} />
         </HStack>
         <Text variant="label">Document Title</Text>
         <HStack gap="xs">
-          <IconButton icon={<EmojiIcon>🔍</EmojiIcon>} variant="ghost" size="sm" accessibilityLabel="Search" onPress={action('search')} />
-          <IconButton icon={<EmojiIcon>⋯</EmojiIcon>} variant="ghost" size="sm" accessibilityLabel="More options" onPress={action('more')} />
+          <IconButton icon={<EmojiIcon>🔍</EmojiIcon>} variant="ghost" size="sm" accessibilityLabel="Search" onPress={fn()} />
+          <IconButton icon={<EmojiIcon>⋯</EmojiIcon>} variant="ghost" size="sm" accessibilityLabel="More options" onPress={fn()} />
         </HStack>
       </HStack>
     </Box>

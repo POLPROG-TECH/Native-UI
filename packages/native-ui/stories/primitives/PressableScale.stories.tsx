@@ -57,8 +57,8 @@ export const Playground: Story = {
     const theme = useTheme();
     return (
       <PressableScale {...args}>
-        <View style={{ backgroundColor: theme.colors.primary, paddingHorizontal: 24, paddingVertical: 14, borderRadius: 12 }}>
-          <RNText style={{ color: theme.colors.textInverse, fontSize: 15, fontWeight: '600', textAlign: 'center' }}>
+        <View style={{ backgroundColor: theme.colors.primaryLight, paddingHorizontal: 24, paddingVertical: 14, borderRadius: 12 }}>
+          <RNText style={{ color: theme.colors.primary, fontSize: 15, fontWeight: '600', textAlign: 'center' }}>
             Press me (scale to {args.scaleTo})
           </RNText>
         </View>
@@ -75,8 +75,8 @@ export const ScaleValues: Story = {
       <HStack gap="md" wrap>
         {[0.9, 0.93, 0.95, 0.97, 0.99].map((scale) => (
           <PressableScale key={scale} scaleTo={scale} onPress={() => {}}>
-            <View style={{ backgroundColor: theme.colors.primary, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 10 }}>
-              <RNText style={{ color: theme.colors.textInverse, fontSize: 13, fontWeight: '600' }}>{scale}</RNText>
+            <View style={{ backgroundColor: theme.colors.primaryLight, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 10 }}>
+              <RNText style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>{scale}</RNText>
             </View>
           </PressableScale>
         ))}
@@ -128,8 +128,8 @@ export const RespectReduceAnimations: Story = {
     return (
       <VStack gap="md" style={{ maxWidth: 360 }}>
         <PressableScale onPress={() => {}}>
-          <View style={{ backgroundColor: theme.colors.primary, padding: 14, borderRadius: 10 }}>
-            <RNText style={{ color: theme.colors.textInverse, fontWeight: '600' }}>Default (respects reduce-motion)</RNText>
+          <View style={{ backgroundColor: theme.colors.primaryLight, padding: 14, borderRadius: 10 }}>
+            <RNText style={{ color: theme.colors.primary, fontWeight: '600' }}>Default (respects reduce-motion)</RNText>
           </View>
         </PressableScale>
         <PressableScale onPress={() => {}} respectReduceAnimations={false}>

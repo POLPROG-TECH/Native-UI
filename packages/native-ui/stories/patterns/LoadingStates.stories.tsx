@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { fn } from 'storybook/test';
 import { View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Box } from '../../src/primitives/Box';
 import { Button } from '../../src/components/Button';
 import { Card } from '../../src/components/Card';
@@ -107,7 +107,7 @@ export const EmptyStatePatterns: Story = {
           icon="📋"
           title="No entries yet"
           message="Start tracking your expenses by adding your first entry."
-          action={<Button title="Add Entry" size="sm" onPress={action('add')} />}
+          action={<Button title="Add Entry" size="sm" onPress={fn()} />}
         />
       </Card>
       <Card>
@@ -122,7 +122,7 @@ export const EmptyStatePatterns: Story = {
           icon="⚠️"
           title="Connection error"
           message="Please check your internet connection and try again."
-          action={<Button title="Retry" variant="outline" size="sm" onPress={action('retry')} />}
+          action={<Button title="Retry" variant="outline" size="sm" onPress={fn()} />}
         />
       </Card>
     </VStack>
@@ -133,7 +133,7 @@ const ButtonLoadingDemo = () => {
   const [loading, setLoading] = useState(false);
   const handlePress = () => {
     setLoading(true);
-    action('submit')();
+    fn()();
     setTimeout(() => setLoading(false), 2000);
   };
   return (

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Box } from '../../src/primitives/Box';
 import { Button } from '../../src/components/Button';
 import { ErrorBoundary, withErrorBoundary } from '../../src/components/ErrorBoundary';
@@ -58,7 +58,7 @@ function Crasher({ label = 'Crash the subtree' }: { label?: string }) {
 export const DefaultFallback: Story = {
   name: 'Default Fallback',
   render: () => (
-    <ErrorBoundary onError={(e, info) => action('onError')(e.message, info.componentStack)}>
+    <ErrorBoundary onError={(e, info) => fn()(e.message, info.componentStack)}>
       <Box p="lg" bg="surface" radius="lg">
         <VStack gap="md">
           <Text variant="h3">Dashboard widget</Text>

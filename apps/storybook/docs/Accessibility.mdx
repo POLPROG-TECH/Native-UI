@@ -2,94 +2,249 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 <Meta title="Accessibility" />
 
-# Accessibility Guidelines
+# Accessibility
 
-native-ui is built with accessibility as a first-class concern. Every interactive component includes proper roles, labels, and states for assistive technologies.
+Native-UI targets **WCAG 2.2 Level AA** on both iOS and Android. Every
+interactive component ships with semantic roles, labelled states, a
+44 × 44 pt minimum hit target, and respects the user's OS-level
+preferences (Reduce Motion, Dynamic Type, Bold Text, High Contrast,
+Reduce Transparency).
 
-## Built-in accessibility features
+> **Principle.** Accessibility is not a list of things you remember to
+> do when you use the library - it is a set of defaults that ship with
+> every component and that your code cannot accidentally opt out of.
 
-### Semantic roles
-All interactive components set appropriate `accessibilityRole`:
-- `Button` → `"button"`
-- `Checkbox` → `"checkbox"`
-- `Switch` → `"switch"` (via React Native Switch)
-- `Radio` → `"radio"`
-- `Input` / `TextArea` → inherited from TextInput
-- `SearchBar` → `"search"`
-- `ProgressBar` → `"progressbar"`
-- `Modal` → presented as modal dialog
-- `Heading` → `"header"`
-- `ListItem` → `"button"` (when pressable)
+---
 
-### State announcements
-Interactive components expose `accessibilityState`:
-- `disabled` - Announced as disabled by screen readers
-- `checked` - For checkboxes and switches
-- `selected` - For radio buttons and chips
-- `busy` - For loading states (Button loading)
+## 1. What you get for free
 
-### Live regions
-Error messages use `accessibilityLiveRegion="polite"` so screen readers announce validation errors as they appear (Input, TextArea, Select).
+### 1.1 Semantic roles
 
-## Touch targets
+Every interactive primitive sets the correct `accessibilityRole`:
 
-All interactive elements meet minimum touch target guidelines:
-- **iOS**: 44×44pt minimum (recommended by iOS Human Interface Guidelines)
-- **Android**: 48×48dp minimum (recommended by Material Design)
+| Component | Role | Notes |
+|---|---|---|
+| `Button` | `button` | `busy` while `loading`, `disabled` when disabled |
+| `IconButton` | `button` | `accessibilityLabel` is **required** (compile error without it) |
+| `Checkbox` | `checkbox` | Exposes `checked` as `true`, `false` or `'mixed'` |
+| `Radio` | `radio` | Nested in `radiogroup` container for arrow-key nav |
+| `Switch` | `switch` | Native role via React Native `<Switch>` |
+| `Input` / `TextArea` | inherited | Error messages use `accessibilityLiveRegion="polite"` |
+| `SearchBar` | `search` | Announces result count changes when wired to results |
+| `ProgressBar` | `progressbar` | `accessibilityValue.now/min/max` auto-filled |
+| `Modal` / `BottomSheet` | modal dialog | Focus trapped on open, restored on close |
+| `Heading` | `header` | Screen readers announce heading level |
+| `ListItem` | `button` (pressable) / `text` | Role matches whether `onPress` is provided |
+| `Toast` | `alert` | Announced by screen readers on enter |
 
-The library uses platform-specific `hitSlop` values:
+### 1.2 State announcements
+
+Interactive components expose complete `accessibilityState` objects:
+
+- `disabled` - announced as "dimmed" / "disabled".
+- `checked` - tri-state for `Checkbox` indeterminate.
+- `selected` - for `Radio` and selected `Chip`.
+- `busy` - for `Button` during `loading`, for `SearchBar` while
+  debouncing.
+- `expanded` - for `BottomSheet` and collapsible `Section`.
+
+### 1.3 Live regions
+
+Validation errors (`Input`, `TextArea`, `Select`) use
+`accessibilityLiveRegion="polite"`. When the error message flips from
+empty to populated, the screen reader announces it without interrupting
+the current focus context.
+
+Toasts use `alert` role (`aria-live="assertive"` on web) so critical
+messages are announced immediately.
+
+---
+
+## 2. Touch targets
+
+Every pressable meets platform minimums:
+
+| Platform | Minimum | How the library enforces it |
+|---|---|---|
+| iOS | 44 × 44 pt (HIG) | `hitSlop.ios = { top: 8, bottom: 8, left: 8, right: 8 }` around any smaller visual |
+| Android | 48 × 48 dp (Material) | `hitSlop.android = { top: 10, bottom: 10, left: 10, right: 10 }` |
+
 ```tsx
-// Built-in hit slop
-hitSlop: {
-  ios: { top: 8, bottom: 8, left: 8, right: 8 },
-  android: { top: 10, bottom: 10, left: 10, right: 10 },
-}
+// Built-in token (exported for custom components)
+import { hitSlop } from '@polprog/native-ui';
+
+<Pressable hitSlop={hitSlop.ios} /* or platform-select */>
 ```
 
-## Color contrast
+> **Do not** override `hitSlop` to shrink targets. If a visual is
+> smaller than 44 pt, keep the default slop - the extra invisible area
+> is what makes the button tappable for users with tremors or oily /
+> gloved fingers.
 
-- Text on colored backgrounds uses `getContrastText()` to ensure WCAG AA compliance
-- The `highContrast` theme option strengthens text colors for low-vision users
-- Semantic colors (error, success, warning) are chosen for sufficient contrast against surfaces
+---
 
-## Motion and animations
+## 3. Color contrast (WCAG 2.2 AA)
 
-For users who prefer reduced motion:
+- Every `textOn<Background>` token is picked by `getContrastText()` to
+  guarantee a contrast ratio of **≥ 4.5 : 1** for body copy and
+  **≥ 3 : 1** for large text (≥ 18 pt / 14 pt bold).
+- Semantic `success` / `warning` / `error` colors are tuned against
+  surface tokens, not just white - so errors on dark mode are still
+  legible.
+- `highContrast: true` strengthens `textSecondary` and `textTertiary`
+  toward `textPrimary` for low-vision users without changing layout.
+
+### Verifying contrast in stories
+
+The **a11y** addon panel at the bottom of every story runs axe-core
+live. Violations appear as red items you can click to expand. The CI
+`test-storybook` run fails on new violations.
+
+---
+
+## 4. Motion and animation
+
+The `reduceAnimations` config toggle (or the OS "Reduce Motion"
+setting surfaced through it) flips the whole library into a
+no-animation branch:
+
+| Component | Default | `reduceAnimations: true` |
+|---|---|---|
+| `PressableScale` | Spring scale to 0.97 on press | No-op (instant) |
+| `Skeleton` | Linear shimmer | Static base color |
+| `Toast` | Slide + fade 300 ms | Instant appear / disappear |
+| `BottomSheet` | Spring slide 250 ms | Instant open / close |
+| `Modal` | Fade 200 ms | Instant |
+| `ConfettiOverlay` | 60 fps particle burst | No-op (visual stays, no motion) |
+
 ```tsx
-<NativeUIProvider config={{ reduceAnimations: true }}>
+import { AccessibilityInfo } from 'react-native';
+// real-world wiring:
+const [reduce, setReduce] = useState(false);
+useEffect(() => {
+  AccessibilityInfo.isReduceMotionEnabled().then(setReduce);
+  const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduce);
+  return () => sub.remove();
+}, []);
+
+<NativeUIProvider config={{ reduceAnimations: reduce }}>
 ```
 
-When enabled:
-- `PressableScale` skips the scale animation
-- `Skeleton` stops shimmer animation
-- `BottomSheet` / `Toast` use instant transitions
-- All spring animations are replaced with instant state changes
+---
 
-## Font scaling
+## 5. Font scaling (Dynamic Type)
 
-The library supports three font scale levels:
-- `default` - Standard sizing
-- `medium` - +2px on all font sizes
-- `large` - +4px on all font sizes
+Three library-level scale tiers that **compose on top of** the system
+font scale from OS accessibility settings:
 
-This is additive to the system font scale set in device accessibility settings.
+| Tier | Library adjustment | With OS "XL" text scale |
+|---|---|---|
+| `default` | ±0 px | still respects OS scale |
+| `medium` | +2 px | +2 + OS |
+| `large` | +4 px | +4 + OS |
 
-## Icon buttons
+Every type variant is defined via `fontSize` + `lineHeight` tokens that
+scale together, so no paragraph ever clips vertically under Dynamic
+Type.
 
-`IconButton` **requires** `accessibilityLabel` as a prop - it won't accept an icon-only button without a label. This prevents unlabeled buttons from reaching production.
+> **Tip.** To mirror iOS "Large Text" exactly, use
+> `PixelRatio.getFontScale()` and map > 1.2 -> `'large'`, > 1.0 ->
+> `'medium'`, else `'default'`.
 
-## Best practices for consuming apps
+---
 
-### Do
-- ✅ Always provide `accessibilityLabel` to icon-only buttons
-- ✅ Use semantic `Text` variants (`h1`, `h2`, `body`) for proper heading hierarchy
-- ✅ Use `Heading` component for section headings (sets `accessibilityRole="header"`)
-- ✅ Test with VoiceOver (iOS) and TalkBack (Android)
-- ✅ Respect `reduceAnimations` when adding custom animations
+## 6. Icon-only buttons
 
-### Don't
-- ❌ Don't disable accessibility labels to save space
-- ❌ Don't rely on color alone to convey state - add icons or text
-- ❌ Don't use `Text` for headings - use `Heading` instead
-- ❌ Don't override `hitSlop` to make touch targets smaller
-- ❌ Don't add custom animations that ignore `reduceAnimations`
+`IconButton` **requires** `accessibilityLabel` at the TypeScript level:
+
+```tsx
+// ❌ compile error - no accessibilityLabel
+<IconButton icon={<SearchIcon />} onPress={open} />
+
+// ✅
+<IconButton icon={<SearchIcon />} accessibilityLabel="Search" onPress={open} />
+```
+
+This is a deliberate library-level escape hatch elimination: you cannot
+ship an unlabelled icon button even by accident.
+
+---
+
+## 7. Focus management
+
+- `Modal` and `BottomSheet` trap focus inside on open and restore it to
+  the opening trigger on close.
+- `Input` exposes a `focus()` / `blur()` ref API so forms can drive
+  focus explicitly.
+- `BottomTabBar` sets `accessibilityRole="tablist"` with each tab as
+  `tab` + `accessibilityState.selected` so VoiceOver announces "Tab 1
+  of 4, selected".
+
+---
+
+## 8. RTL support
+
+Native-UI uses `I18nManager.isRTL` where layout direction matters
+(`HStack`, `PressableScale` pressed highlights, `HeaderBar` back
+button). Stories expose the `Locale` toolbar with an **AR** option that
+flips the storybook canvas to `direction: 'rtl'` live.
+
+---
+
+## 9. Best practices for consuming apps
+
+### Do ✅
+
+- Provide `accessibilityLabel` to **every** icon-only button.
+- Use semantic `Text` variants (`h1`, `h2`, `body`, `caption`) for
+  proper heading hierarchy - screen readers parse them.
+- Use `<Heading level={n}>` for section headings
+  (`accessibilityRole="header"` + `aria-level={n}` on web).
+- Run VoiceOver (iOS: triple-click side button) and TalkBack (Android:
+  Settings > Accessibility > TalkBack) on every new screen **before**
+  code review.
+- Respect `reduceAnimations` in any custom animations you add.
+- Test in **Larger Accessibility Sizes** on iOS to catch truncation.
+- Pair color with icon or text when conveying state - colour is a cue,
+  never the sole signal.
+
+### Don't ❌
+
+- Don't disable `accessibilityLabel` to save keystrokes.
+- Don't rely on color alone (red = error) - always add an icon / word.
+- Don't use `<Text variant="h2">` as a visual style while
+  semantically a subtitle - use the right variant and adjust via
+  `semantic` tokens if needed.
+- Don't override `hitSlop` to shrink touch targets.
+- Don't add custom animations that ignore `reduceAnimations`.
+- Don't interrupt the user's task with `Toast` variant `error` when a
+  validation error inside a form would do.
+
+---
+
+## 10. Pre-release a11y checklist
+
+Run this before every release tag.
+
+- [ ] **Axe** panel clean on every story (0 violations in `build-storybook`).
+- [ ] **VoiceOver** sweep of each flagship screen - titles, buttons,
+      form errors all announce correctly.
+- [ ] **TalkBack** sweep - focus order matches visual order.
+- [ ] Dynamic Type at **XL** on iOS - no clipped text, no overlap.
+- [ ] **Reduce Motion** on iOS - no parallax, no bouncy transitions.
+- [ ] **High Contrast** on iOS / **High Contrast Text** on Android - all
+      semantic state colors still legible.
+- [ ] **RTL** (`I18nManager.forceRTL(true)`) - `HeaderBar` back button
+      flips, lists right-align.
+- [ ] Color-blind sanity check (`protanopia` / `deuteranopia` / `tritanopia`) -
+      no state conveyed by colour alone.
+
+---
+
+## What to read next
+
+- **Theming** - how `highContrast` / `fontSize` / `reduceAnimations`
+  interact with the preset system.
+- **Components / Button**, **Components / Input** - the "Do / Don't" and
+  "HighContrastPreview" stories show every a11y rule in action.
+- **Patterns / Forms** - live-region error announcement patterns.

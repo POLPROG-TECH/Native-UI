@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Modal } from '../../src/components/Modal';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
@@ -65,7 +65,7 @@ const ModalDemo = ({ title, children, footer, dismissable }: Partial<ModalProps>
       <Button title="Open Modal" onPress={() => setVisible(true)} />
       <Modal
         visible={visible}
-        onClose={() => { setVisible(false); action('onClose')(); }}
+        onClose={() => { setVisible(false); fn()(); }}
         title={title}
         footer={footer}
         dismissable={dismissable}
@@ -98,8 +98,8 @@ export const ConfirmationDialog: Story = {
             title="Delete Entry?"
             footer={
               <HStack gap="sm" justify="flex-end">
-                <Button title="Cancel" variant="ghost" onPress={() => { setVisible(false); action('cancel')(); }} />
-                <Button title="Delete" variant="danger" onPress={() => { setVisible(false); action('delete')(); }} />
+                <Button title="Cancel" variant="ghost" onPress={() => { setVisible(false); fn()(); }} />
+                <Button title="Delete" variant="danger" onPress={() => { setVisible(false); fn()(); }} />
               </HStack>
             }
           >
@@ -129,12 +129,12 @@ export const FormDialog: Story = {
             footer={
               <HStack gap="sm" justify="flex-end">
                 <Button title="Cancel" variant="ghost" onPress={() => setVisible(false)} />
-                <Button title="Save" onPress={() => { setVisible(false); action('save')(); }} />
+                <Button title="Save" onPress={() => { setVisible(false); fn()(); }} />
               </HStack>
             }
           >
             <VStack gap="md">
-              <Input label="Project Name" placeholder="Enter new name" value="My Project" onChangeText={action('nameChange')} />
+              <Input label="Project Name" placeholder="Enter new name" value="My Project" onChangeText={fn()} />
             </VStack>
           </Modal>
         </>

@@ -6,6 +6,7 @@ import { type BorderRadius } from '../tokens/spacing';
 import { getHaptics } from '../utils/haptics';
 
 export type ChipShape = 'pill' | 'rounded' | 'square';
+export type ChipVariant = 'solid' | 'soft' | 'outline';
 
 export interface ChipProps {
   label: string;
@@ -25,6 +26,15 @@ export interface ChipProps {
    * @default 'pill'
    */
   shape?: ChipShape;
+  /**
+   * Selection visual style.
+   * - `solid`   (default): selected = filled with `primary`, bold contrast.
+   * - `soft`:   selected = tinted `primaryLight` bg + `primary` text.
+   *             Softer on AMOLED and matches DailyForma-style filters.
+   * - `outline`: selected = transparent bg + `primary` border + `primary` text.
+   * @default 'solid'
+   */
+  variant?: ChipVariant;
   style?: ViewStyle;
 }
 
@@ -46,6 +56,7 @@ export function Chip({
   disabled = false,
   size = 'md',
   shape = 'pill',
+  variant = 'solid',
   style,
 }: ChipProps) {
   const theme = useTheme();
@@ -56,21 +67,41 @@ export function Chip({
   };
 
   const isSmall = size === 'sm';
-  const paddingV = isSmall ? theme.spacing.xs + 2 : theme.spacing.sm + 2; // 6 / 10
+  const paddingV = isSmall ? theme.spacing['2xs'] : theme.spacing.sm + 2; // 4 / 10
   const paddingH = isSmall ? theme.spacing.sm + theme.spacing['2xs'] * 2 : theme.spacing.md; // 12 / 16
 
   const borderRadius = theme.borderRadius[SHAPE_RADIUS[shape]];
+
+  const bg =
+    !selected ? theme.colors.surfaceSecondary
+    : variant === 'soft' ? theme.colors.primaryLight
+    : variant === 'outline' ? 'transparent'
+    : theme.colors.primary;
+
+  const borderColor =
+    variant === 'outline' && selected ? theme.colors.primary : 'transparent';
+
+  const labelColor =
+    !selected ? theme.colors.textPrimary
+    : variant === 'soft' || variant === 'outline' ? theme.colors.primary
+    : getContrastText(theme.colors.primary);
 
   return (
     <TouchableOpacity
       style={[
         styles.chip,
         {
-          backgroundColor: selected ? theme.colors.primary : theme.colors.surfaceSecondary,
+          backgroundColor: bg,
           borderRadius,
+          borderWidth: variant === 'outline' ? 1 : 0,
+          borderColor,
           paddingVertical: paddingV,
           paddingHorizontal: paddingH,
-          minHeight: 44,
+          // Accessibility target: md keeps iOS-recommended 44pt, sm opts into a
+          // denser 28pt filter-rail look matching DailyForma's settings/gallery
+          // chip pills. 28 is below the raw 44pt AAA target, but the visual
+          // reads as a horizontal rocker, not a button, which justifies it.
+          minHeight: isSmall ? 28 : 44,
         },
         disabled && { opacity: theme.opacity.disabled },
         style,
@@ -87,7 +118,7 @@ export function Chip({
         style={[
           isSmall ? theme.typography.labelSmall : theme.typography.label,
           {
-            color: selected ? getContrastText(theme.colors.primary) : theme.colors.textPrimary,
+            color: labelColor,
             fontWeight: selected ? '600' : '500',
           },
         ]}

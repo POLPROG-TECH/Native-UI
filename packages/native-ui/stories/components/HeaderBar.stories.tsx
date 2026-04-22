@@ -1,6 +1,6 @@
 import React from 'react';
+import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { View } from 'react-native';
 import { HeaderBar } from '../../src/components/HeaderBar';
 import { Text } from '../../src/primitives/Text';
@@ -36,6 +36,7 @@ const meta: Meta<HeaderBarProps> = {
   title: 'Components/HeaderBar',
   component: HeaderBar,
   parameters: {
+    canvasPadding: 0,
     docs: {
       description: {
         component:
@@ -57,7 +58,7 @@ type Story = StoryObj<HeaderBarProps>;
 export const Playground: Story = {
   args: {
     title: 'Settings',
-    onBack: action('onBack'),
+    onBack: fn(),
   },
 };
 
@@ -104,14 +105,14 @@ export const Default: Story = {
 export const WithBackButton: Story = {
   args: {
     title: 'Profile',
-    onBack: action('onBack'),
+    onBack: fn(),
   },
 };
 
 export const WithRightSlot: Story = {
   args: {
     title: 'Inbox',
-    onBack: action('onBack'),
+    onBack: fn(),
     right: (
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <ThemedButtonText>Edit</ThemedButtonText>
@@ -122,7 +123,7 @@ export const WithRightSlot: Story = {
 
 export const Untitled: Story = {
   args: {
-    onBack: action('onBack'),
+    onBack: fn(),
   },
 };
 
@@ -137,7 +138,7 @@ export const CustomRenderTitle: Story = {
     },
   },
   args: {
-    onBack: action('onBack'),
+    onBack: fn(),
     renderTitle: () => <BrandWordmark />,
   },
 };
@@ -145,7 +146,7 @@ export const CustomRenderTitle: Story = {
 export const StackedTitleAndSubtitle: Story = {
   name: 'Two-line title via `renderTitle`',
   args: {
-    onBack: action('onBack'),
+    onBack: fn(),
     right: <ThemedButtonText>Edit</ThemedButtonText>,
     renderTitle: () => <StackedTitle />,
   },

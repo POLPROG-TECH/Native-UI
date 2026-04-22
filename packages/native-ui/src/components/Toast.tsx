@@ -161,8 +161,8 @@ export function Toast({ offset = 80, defaultPosition = 'bottom' }: ToastProps = 
 
   if (!config) return null;
 
-  // Background: subtle overlay that reads on both light and dark modes.
-  const bgColor = theme.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  // Toast surface: routed through theme so preset/custom themes can override.
+  const bgColor = theme.colors.surfaceElevated;
   const animDuration = theme.reduceAnimations ? 0 : 250;
 
   const variant: ToastVariant = config.variant ?? 'default';
@@ -189,6 +189,7 @@ export function Toast({ offset = 80, defaultPosition = 'bottom' }: ToastProps = 
       style={[
         styles.container,
         positionStyle,
+        theme.elevation.lg,
         {
           backgroundColor: bgColor,
           borderRadius: theme.borderRadius.md,
@@ -260,7 +261,9 @@ function renderDefaultIcon(variant: ToastVariant, color: string): React.ReactNod
       style={{
         width: 20,
         textAlign: 'center',
+        // 15pt semibold glyph - small but readable, aligns with labelSmall baseline.
         fontSize: 15,
+        lineHeight: 18,
         fontWeight: '700',
         color,
       }}
@@ -281,11 +284,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 12,
     gap: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 6,
     zIndex: 9999,
   },
   iconContainer: {

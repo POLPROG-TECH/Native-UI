@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="native-ui" src="https://raw.githubusercontent.com/POLPROG-TECH/native-ui/master/docs/assets/logo-full.svg" width="520">
+  <img alt="native-ui" src="https://raw.githubusercontent.com/polprog-tech/native-ui/master/docs/assets/logo-full.svg" width="520">
 </p>
 
 <p align="center">
@@ -8,8 +8,8 @@
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-6366f1?style=flat-square" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/TypeScript-strict-0A84FF?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript strict">
   <img src="https://img.shields.io/badge/tests-188%20passed-22c55e?style=flat-square&logo=jest&logoColor=white" alt="Tests: 188 passed">
-  <a href="https://github.com/POLPROG-TECH/native-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/POLPROG-TECH/native-ui/ci.yml?branch=master&style=flat-square" alt="CI"></a>
-  <a href="https://POLPROG-TECH.github.io/native-ui"><img src="https://img.shields.io/badge/Storybook-ff4785?style=flat-square&logo=storybook&logoColor=white" alt="Storybook"></a>
+  <a href="https://github.com/polprog-tech/native-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/polprog-tech/native-ui/ci.yml?branch=master&style=flat-square" alt="CI"></a>
+  <a href="https://polprog-tech.github.io/native-ui"><img src="https://img.shields.io/badge/Storybook-ff4785?style=flat-square&logo=storybook&logoColor=white" alt="Storybook"></a>
   <img src="https://img.shields.io/badge/React%20Native-0.74%2B-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React Native 0.74+">
 </p>
 
@@ -237,7 +237,7 @@ peer dependency installed - it is declared optional.
 ## Component Reference
 
 > Browse the full catalogue with live examples, accessibility notes and code
-> snippets in **[Storybook](https://POLPROG-TECH.github.io/native-ui)**.
+> snippets in **[Storybook](https://polprog-tech.github.io/native-ui)**.
 
 ### Primitives
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Card } from '../../src/components/Card';
 import { Radio } from '../../src/components/Radio';
 import { Text } from '../../src/primitives/Text';
@@ -48,16 +48,16 @@ export default meta;
 type Story = StoryObj<RadioProps>;
 
 export const Playground: Story = {
-  args: { selected: false, label: 'Option A', disabled: false, onPress: action('onPress') },
+  args: { selected: false, label: 'Option A', disabled: false, onPress: fn() },
 };
 
 export const States: Story = {
   render: () => (
     <VStack gap="md">
-      <Radio selected={false} label="Unselected" onPress={action('press')} />
-      <Radio selected={true} label="Selected" onPress={action('press')} />
-      <Radio selected={false} label="Disabled (unselected)" disabled onPress={action('press')} />
-      <Radio selected={true} label="Disabled (selected)" disabled onPress={action('press')} />
+      <Radio selected={false} label="Unselected" onPress={fn()} />
+      <Radio selected={true} label="Selected" onPress={fn()} />
+      <Radio selected={false} label="Disabled (unselected)" disabled onPress={fn()} />
+      <Radio selected={true} label="Disabled (selected)" disabled onPress={fn()} />
     </VStack>
   ),
 };
@@ -78,7 +78,7 @@ const RadioGroupExample = () => {
             key={opt.value}
             selected={selected === opt.value}
             label={opt.label}
-            onPress={() => { setSelected(opt.value); action('selected')(opt.value); }}
+            onPress={() => { setSelected(opt.value); fn()(opt.value); }}
           />
         ))}
       </VStack>
@@ -96,8 +96,8 @@ export const WithoutLabel: Story = {
   render: () => (
     <VStack gap="md">
       <Text variant="caption" color="textTertiary">Used as trailing element in ListItem</Text>
-      <Radio selected={false} onPress={action('press')} accessibilityLabel="Option A" />
-      <Radio selected={true} onPress={action('press')} accessibilityLabel="Option B" />
+      <Radio selected={false} onPress={fn()} accessibilityLabel="Option A" />
+      <Radio selected={true} onPress={fn()} accessibilityLabel="Option B" />
     </VStack>
   ),
 };

@@ -80,14 +80,14 @@
     "url": "https://polprog.pl/"
   },
   "license": "MIT",
-  "homepage": "https://github.com/POLPROG-TECH/native-ui#readme",
+  "homepage": "https://github.com/polprog-tech/native-ui#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/POLPROG-TECH/native-ui.git",
+    "url": "git+https://github.com/polprog-tech/native-ui.git",
     "directory": "packages/native-ui"
   },
   "bugs": {
-    "url": "https://github.com/POLPROG-TECH/native-ui/issues"
+    "url": "https://github.com/polprog-tech/native-ui/issues"
   },
   "publishConfig": {
     "access": "public",

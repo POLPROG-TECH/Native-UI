@@ -16,7 +16,7 @@ major release to keep receiving security fixes.
 
 Please **do not** open a public issue. Instead, report privately via
 GitHub's **"Report a vulnerability"** feature on
-<https://github.com/POLPROG-TECH/native-ui/security/advisories/new>.
+<https://github.com/polprog-tech/native-ui/security/advisories/new>.
 
 Include:
 

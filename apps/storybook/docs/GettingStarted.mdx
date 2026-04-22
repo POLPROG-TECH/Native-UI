@@ -4,74 +4,127 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Getting Started
 
-## Prerequisites
+A one-page, production-grade checklist to get `@polprog/native-ui`
+running in your React Native app - from fresh install to first themed
+screen in under five minutes.
 
-- React Native ≥ 0.72
-- React ≥ 18
-- TypeScript ≥ 5.0
-- `react-native-reanimated` ≥ 3.0
-- `react-native-safe-area-context` ≥ 4.0
+> **Who this is for.** Teams that already have a React Native project
+> (bare RN or Expo SDK 50+) and want a drop-in design system that is
+> token-driven, accessible by default, and production-ready.
 
-native-ui runs on React Native and works on both iOS and Android.
+---
 
-## Installation
+## 1. Prerequisites
+
+| Requirement | Minimum | Notes |
+|---|---|---|
+| React Native | **0.72** | 0.76+ recommended for New Architecture |
+| React | **18.0** | Required for automatic JSX + concurrent features |
+| TypeScript | **5.0** | Types ship inside the package; `skipLibCheck` optional |
+| `react-native-reanimated` | **3.0** | Powers `PressableScale`, `BottomSheet`, `Skeleton` |
+| `react-native-safe-area-context` | **4.0** | Required by `ScreenContainer` + `BottomTabBar` |
+
+Native-UI is framework-agnostic: it works under the React Native CLI,
+Expo (managed or bare), and - for documentation purposes - under
+`react-native-web` inside Storybook / Vite.
+
+---
+
+## 2. Install
 
 ```bash
-npm install @polprog/native-ui
+# Package + peer deps
+npm install @polprog/native-ui react-native-reanimated react-native-safe-area-context
+
+# Pod install for iOS (bare RN only)
+cd ios && pod install && cd ..
 ```
 
-### Peer dependencies
+> **Reanimated setup.** If this is a brand-new project, follow the
+> Reanimated
+> [installation guide](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation)
+> to add the Babel plugin - otherwise `PressableScale` will throw on
+> first render.
 
-```bash
-npm install react-native-reanimated react-native-safe-area-context
-```
+---
 
-## Setup
+## 3. Wrap your app
 
-### 1. Wrap your app with the provider
+A single provider is the whole setup. Everything downstream reads theme,
+typography, spacing and motion tokens from it.
 
 ```tsx
 import { NativeUIProvider } from '@polprog/native-ui';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function App() {
   return (
-    <NativeUIProvider
-      config={{
-        colorMode: 'system',   // 'light' | 'dark' | 'system'
-        preset: 'default',      // Theme color preset
-        fontSize: 'default',    // 'default' | 'medium' | 'large'
-        reduceAnimations: false, // Respect user motion preferences
-      }}
-    >
-      {/* Your app content */}
-    </NativeUIProvider>
+    <SafeAreaProvider>
+      <NativeUIProvider
+        config={{
+          colorMode: 'system',      // 'light' | 'dark' | 'system'
+          preset: 'default',         // 7 built-in presets + customAccent
+          fontSize: 'default',       // a11y scale: default | medium | large
+          reduceAnimations: false,   // respect OS "Reduce Motion"
+        }}
+      >
+        <RootNavigator />
+      </NativeUIProvider>
+    </SafeAreaProvider>
   );
 }
 ```
 
-### 2. Import and use components
+> **Order matters.** `SafeAreaProvider` **must** wrap `NativeUIProvider`
+> so `ScreenContainer` and `BottomTabBar` can read insets synchronously
+> on first render - otherwise you will see a one-frame layout jump on
+> iPhone Pro / Dynamic Island devices.
+
+---
+
+## 4. First screen
 
 ```tsx
-import { Button, Card, Text, VStack } from '@polprog/native-ui';
+import {
+  Button,
+  Card,
+  Heading,
+  ScreenContainer,
+  Text,
+  VStack,
+} from '@polprog/native-ui';
 
-function MyScreen() {
+export function HomeScreen() {
   return (
-    <Card>
-      <VStack gap="md">
-        <Text variant="h2">Hello World</Text>
-        <Text variant="body" color="textSecondary">
-          This is a native-ui card.
-        </Text>
-        <Button title="Continue" onPress={() => {}} />
+    <ScreenContainer>
+      <VStack gap="lg" style={{ padding: 16 }}>
+        <Heading level={1}>Welcome back</Heading>
+        <Card>
+          <VStack gap="md">
+            <Text variant="body">
+              This card inherits surface, text and spacing tokens from the
+              provider. No explicit colors or font sizes anywhere.
+            </Text>
+            <Button title="Continue" onPress={() => {}} />
+          </VStack>
+        </Card>
       </VStack>
-    </Card>
+    </ScreenContainer>
   );
 }
 ```
 
-### 3. Configure haptics (optional)
+That is a full screen: themed surface, safe-area handling, semantic
+typography, token-driven spacing, accessible pressable - zero setup
+beyond step 3.
 
-native-ui supports haptic feedback on interactive components. To enable it, provide a haptics implementation:
+---
+
+## 5. Haptic feedback (optional)
+
+Interactive primitives (`Button`, `PressableScale`, `Toast`) call into a
+pluggable haptics interface. Wire it once at app boot, then every
+component benefits.
 
 ```tsx
 import { configureHaptics } from '@polprog/native-ui';
@@ -86,48 +139,81 @@ configureHaptics({
 });
 ```
 
-## Provider configuration
+> **Graceful degradation.** If you never call `configureHaptics`, every
+> component silently skips haptics - no crashes, no warnings, no bundle
+> bloat. Perfect for Expo Go dev.
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `colorMode` | `'light' \| 'dark' \| 'system'` | `'system'` | Color mode |
-| `preset` | `ThemePreset` | `'default'` | Color preset (7 available) |
-| `fontColor` | `FontColor` | `'default'` | Font color warmth |
-| `fontSize` | `FontSize` | `'default'` | Accessibility font scale |
-| `highContrast` | `boolean` | `false` | High contrast mode |
-| `reduceAnimations` | `boolean` | `false` | Reduce motion |
-| `customAccent` | `string \| null` | `null` | Custom accent hex color |
+---
 
-## Theme access in components
+## 6. Consume tokens in custom components
+
+The provider exposes the full resolved theme through three tiny hooks:
 
 ```tsx
-import { useTheme, useColors } from '@polprog/native-ui';
+import { useTheme, useColors, useSemantic } from '@polprog/native-ui';
 
-function MyComponent() {
-  const theme = useTheme();           // Full theme object
-  const colors = useColors();          // Just the color scheme
+function CustomCard() {
+  const theme = useTheme();        // colors + typography + spacing + radii + ...
+  const colors = useColors();       // just the color scheme (cheaper)
+  const semantic = useSemantic();   // designer-facing aliases
 
   return (
-    <View style={{ backgroundColor: colors.surface, padding: theme.spacing.lg }}>
-      <Text style={theme.typography.h2}>Themed content</Text>
+    <View
+      style={{
+        backgroundColor: colors.surface,
+        padding: theme.spacing.lg,
+        borderRadius: theme.borderRadius.md,
+      }}
+    >
+      <Text style={theme.typography.h2}>Themed</Text>
     </View>
   );
 }
 ```
 
-## Monorepo usage
+Pick the smallest hook that covers your need - each one only re-renders
+its consumers when the values it reads actually change.
 
-For monorepo setups where the package is linked via `file:` dependency:
+---
 
-### Metro config
+## 7. Provider configuration reference
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `colorMode` | `'light'` / `'dark'` / `'system'` | `'system'` | Follows `useColorScheme()` when `'system'` |
+| `preset` | `ThemePreset` | `'default'` | One of 7 built-in color presets |
+| `customAccent` | `string` or `null` | `null` | Hex color that overrides `primary`/`primaryLight`/`primaryDark` |
+| `fontColor` | `'default'` / `'warm'` / `'cool'` | `'default'` | Tints text tokens (accessibility-friendly) |
+| `fontSize` | `'default'` / `'medium'` / `'large'` | `'default'` | Global a11y scale (+0 / +2 / +4 px) |
+| `highContrast` | `boolean` | `false` | Strengthens text-on-surface contrast |
+| `reduceAnimations` | `boolean` | `false` | Disables springs / shimmer / scale animations |
+| `typography` | `'regular'` / `'compact'` / `Typography` | `'regular'` | Density preset (compact saves ~12 % vertical) |
+| `fontFamilies` | `FontFamilies` | system | Override to ship your brand font |
+| `semantic` | `SemanticTokens` | defaults | Override semantic color / spacing / type tokens |
+
+See **Theming** for a deep dive on each of these.
+
+---
+
+## 8. Monorepo setup
+
+For teams shipping multiple apps from one repo:
+
+### Metro config (`metro.config.js`)
+
 ```js
 const path = require('path');
-module.exports = {
-  watchFolders: [path.resolve(__dirname, '../../packages/native-ui')],
-};
+const { getDefaultConfig } = require('@react-native/metro-config');
+
+const config = getDefaultConfig(__dirname);
+config.watchFolders = [
+  path.resolve(__dirname, '../../packages/native-ui'),
+];
+module.exports = config;
 ```
 
-### TypeScript path mapping
+### TypeScript path mapping (`tsconfig.json`)
+
 ```json
 {
   "compilerOptions": {
@@ -137,3 +223,17 @@ module.exports = {
   }
 }
 ```
+
+> **Symlink vs file dep.** For CI reliability, prefer `"file:../../packages/native-ui"` in
+> `package.json` over `npm link` - it survives `npm ci` and locks the
+> exact source tree used by the build.
+
+---
+
+## What to read next
+
+- **Theming** - presets, custom accents, brand overrides, dark mode.
+- **Migration** - moving off an app-specific UI layer with zero breakage.
+- **Accessibility** - WCAG 2.2 AA checklist and live-region patterns.
+- **Patterns / AppShell** - composing `HeaderBar` + `BottomTabBar` +
+  `ScreenContainer` into the canonical app layout.

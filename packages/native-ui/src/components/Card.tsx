@@ -3,6 +3,9 @@ import { StyleSheet, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { PressableScale } from '../primitives/PressableScale';
 
+export type CardSize = 'compact' | 'regular' | 'spacious';
+export type CardElevation = 'xs' | 'sm' | 'md' | 'lg';
+
 export interface CardProps {
   /** Content rendered inside the card surface. */
   children: React.ReactNode;
@@ -13,6 +16,20 @@ export interface CardProps {
    * @default true
    */
   padded?: boolean;
+  /**
+   * Density preset controlling inner padding and border radius.
+   * - `compact`  - list-row cards (padding `md`, radius `md`)
+   * - `regular`  - default (padding `lg`, radius `lg`)
+   * - `spacious` - hero cards (padding `xl`, radius `lg`)
+   * @default 'regular'
+   */
+  size?: CardSize;
+  /**
+   * Shadow depth. Use `xs`/`sm` for list cards, `md` for standard cards
+   * (default), and `lg` for floating emphasis.
+   * @default 'md'
+   */
+  elevation?: CardElevation;
   /** Tap handler - when provided the card becomes pressable with scale feedback. */
   onPress?: () => void;
   /** Long-press handler - when provided the card becomes pressable. */
@@ -69,6 +86,8 @@ export function Card({
   children,
   style,
   padded = true,
+  size = 'regular',
+  elevation = 'md',
   onPress,
   onLongPress,
   accessibilityHint,
@@ -79,15 +98,24 @@ export function Card({
   const theme = useTheme();
   const hint = accessibilityHint ?? longPressHint;
 
+  const paddingValue =
+    size === 'compact' ? theme.spacing.md
+    : size === 'spacious' ? theme.spacing.xl
+    : theme.spacing.lg;
+  const radiusValue =
+    size === 'compact' ? theme.borderRadius.md : theme.borderRadius.lg;
+
+  const elevationStyle = theme.elevation[elevation] as ViewStyle;
+
   const cardStyle: ViewStyle[] = [
     styles.card,
     {
       backgroundColor: theme.colors.surface,
-      borderRadius: theme.borderRadius.lg,
+      borderRadius: radiusValue,
       borderColor: theme.colors.borderLight,
     },
-    theme.elevation.md as ViewStyle,
-    padded ? { padding: theme.spacing.lg } : undefined,
+    elevationStyle,
+    padded ? { padding: paddingValue } : undefined,
     style,
   ].filter(Boolean) as ViewStyle[];
 

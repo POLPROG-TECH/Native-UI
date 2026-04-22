@@ -2,6 +2,7 @@ import type { StorybookConfig } from '@storybook/react-vite';
 import { mergeConfig } from 'vite';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import remarkGfm from 'remark-gfm';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -16,11 +17,27 @@ const config: StorybookConfig = {
     // ── Documentation pages (owned by the docs host) ──
     '../docs/**/*.mdx',
 
+    // ── Storybook-host stories (MSW-backed patterns, integration demos) ──
+    '../stories/**/*.stories.@(ts|tsx)',
+
     // ── Stories (owned by the library, close to source) ──
     `${libraryRoot}/stories/**/*.@(stories.tsx|mdx)`,
   ],
 
-  addons: ['@storybook/addon-a11y', '@storybook/addon-docs', '@storybook/addon-links'],
+  addons: [
+    '@storybook/addon-a11y',
+    {
+      name: '@storybook/addon-docs',
+      options: {
+        mdxPluginOptions: {
+          mdxCompileOptions: {
+            remarkPlugins: [remarkGfm],
+          },
+        },
+      },
+    },
+    '@storybook/addon-links',
+  ],
 
   staticDirs: [{ from: '../../../docs/assets', to: '/brand' }],
 
@@ -36,6 +53,7 @@ const config: StorybookConfig = {
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
       shouldExtractLiteralValuesFromEnum: true,
+      shouldExtractValuesFromUnion: true,
       shouldRemoveUndefinedFromOptional: true,
       propFilter: (prop) => {
         if (!prop.parent) return true;

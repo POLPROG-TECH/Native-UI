@@ -6,8 +6,8 @@
   <a href="https://www.npmjs.com/package/@polprog/native-ui"><img src="https://img.shields.io/npm/v/@polprog/native-ui.svg?style=flat-square&color=0A84FF" alt="npm version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-6366f1?style=flat-square" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/tests-188%20passed-22c55e?style=flat-square&logo=jest&logoColor=white" alt="Tests: 188 passed">
-  <a href="https://github.com/POLPROG-TECH/native-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/POLPROG-TECH/native-ui/ci.yml?branch=master&style=flat-square" alt="CI"></a>
-  <a href="https://POLPROG-TECH.github.io/native-ui"><img src="https://img.shields.io/badge/Storybook-ff4785?style=flat-square&logo=storybook&logoColor=white" alt="Storybook"></a>
+  <a href="https://github.com/polprog-tech/native-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/polprog-tech/native-ui/ci.yml?branch=master&style=flat-square" alt="CI"></a>
+  <a href="https://polprog-tech.github.io/native-ui"><img src="https://img.shields.io/badge/Storybook-ff4785?style=flat-square&logo=storybook&logoColor=white" alt="Storybook"></a>
   <img src="https://img.shields.io/badge/React%20Native-0.74%2B-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React Native 0.74+">
 </p>
 
@@ -24,6 +24,10 @@
   <a href="#storybook">Storybook</a> .
   <a href="#development">Development</a> .
   <a href="#license">License</a>
+</p>
+
+<p align="center">
+  <a href="https://buymeacoffee.com/polprog"><img src="https://img.shields.io/badge/Support%20this%20project-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Support this project"></a>
 </p>
 
 ---
@@ -67,7 +71,7 @@ export default function App() {
 ## Components
 
 Browse the full catalogue with live examples, accessibility notes, and code
-snippets in [**Storybook**](https://POLPROG-TECH.github.io/native-ui).
+snippets in [**Storybook**](https://polprog-tech.github.io/native-ui).
 
 ## Theming
 
@@ -99,7 +103,7 @@ const semantic = useSemantic();     // { background, surface, primary, ... }
 Storybook hosts the full component gallery, interactive controls, and design
 token documentation. It auto-deploys to GitHub Pages on every push to `master`.
 
-Live: **<https://POLPROG-TECH.github.io/native-ui>**
+Live: **<https://polprog-tech.github.io/native-ui>**
 
 Run locally:
 

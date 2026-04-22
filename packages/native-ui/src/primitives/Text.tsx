@@ -48,12 +48,6 @@ export function Text({
     <RNText
       style={[
         base,
-        theme.fontScale
-          ? {
-              fontSize: base.fontSize + theme.fontScale,
-              lineHeight: base.lineHeight + theme.fontScale,
-            }
-          : null,
         {
           color: theme.colors[color],
           textAlign: align,

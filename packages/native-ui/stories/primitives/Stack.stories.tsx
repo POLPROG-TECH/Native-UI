@@ -7,9 +7,10 @@ import { useTheme } from '../../src/theme/ThemeProvider';
 
 const Placeholder = ({ label, color }: { label: string; color?: string }) => {
   const theme = useTheme();
+  const bg = color ?? theme.colors.primaryLight;
   return (
-    <View style={{ backgroundColor: color ?? theme.colors.primary, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 8, opacity: 0.85 }}>
-      <RNText style={{ color: theme.colors.textInverse, fontSize: 13, fontWeight: '600' }}>{label}</RNText>
+    <View style={{ backgroundColor: bg, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 8 }}>
+      <RNText style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>{label}</RNText>
     </View>
   );
 };

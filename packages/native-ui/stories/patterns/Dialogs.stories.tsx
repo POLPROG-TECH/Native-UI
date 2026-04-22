@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { fn } from 'storybook/test';
 import { View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Modal } from '../../src/components/Modal';
 import { Button } from '../../src/components/Button';
 import { Input } from '../../src/components/Input';
@@ -47,10 +47,10 @@ const DeleteConfirmation = () => {
           </Text>
           <HStack gap="md">
             <Box style={{ flex: 1 }}>
-              <Button title="Cancel" variant="outline" onPress={() => { setVisible(false); action('cancel')(); }} />
+              <Button title="Cancel" variant="outline" onPress={() => { setVisible(false); fn()(); }} />
             </Box>
             <Box style={{ flex: 1 }}>
-              <Button title="Delete" variant="destructive" onPress={() => { setVisible(false); action('confirmDelete')(); }} />
+              <Button title="Delete" variant="destructive" onPress={() => { setVisible(false); fn()(); }} />
             </Box>
           </HStack>
         </VStack>
@@ -87,10 +87,10 @@ const QuickAddEntry = () => {
             options={categoryOptions}
             onChange={(v) => {
               setCategory(v);
-              action('category')(v);
+              fn()(v);
             }}
           />
-          <Button title="Save" onPress={() => { setVisible(false); action('save')(); }} />
+          <Button title="Save" onPress={() => { setVisible(false); fn()(); }} />
         </VStack>
       </Modal>
     </View>

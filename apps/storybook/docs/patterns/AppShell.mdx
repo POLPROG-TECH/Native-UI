@@ -1,0 +1,112 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Patterns/AppShell" />
+
+# App shell pattern
+
+A production React Native app typically shares the same structural
+skeleton: a full-screen container, a header bar, scrollable body, and
+optionally a bottom tab rail. This page shows the one **canonical way**
+to assemble those primitives so screens stay visually consistent across
+your app.
+
+## Anatomy
+
+<div style={{ margin: '16px 0', padding: 16, background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 12 }}>
+  <div style={{ padding: '6px 10px', background: '#E5E7EB', color: '#4B5563', fontSize: 11, fontWeight: 600, textAlign: 'center', borderRadius: 6, textTransform: 'uppercase', letterSpacing: 1 }}>SafeArea top</div>
+  <div style={{ marginTop: 10, border: '1px solid #C7D2FE', borderRadius: 10, overflow: 'hidden', background: '#FFFFFF' }}>
+    <div style={{ padding: 12, background: '#EEF2FF', fontWeight: 600, color: '#3730A3', fontSize: 13 }}>HeaderBar (title · actions)</div>
+    <div style={{ padding: 16, fontSize: 13, color: '#1F2937', background: '#FFFFFF', minHeight: 140 }}>
+      <div style={{ fontWeight: 600, marginBottom: 8, color: '#6B7280', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>ScreenContainer (scrollable body)</div>
+      <div style={{ display: 'grid', gap: 6 }}>
+        <div style={{ padding: '8px 10px', background: '#F3F4F6', borderRadius: 6 }}>• Section</div>
+        <div style={{ padding: '8px 10px', background: '#F3F4F6', borderRadius: 6 }}>• Section</div>
+        <div style={{ padding: '8px 10px', background: '#F3F4F6', borderRadius: 6, opacity: 0.6 }}>• ...</div>
+      </div>
+    </div>
+    <div style={{ padding: 12, background: '#ECFDF5', fontWeight: 600, color: '#047857', fontSize: 13, borderTop: '1px solid #E5E7EB' }}>BottomTabBar (optional)</div>
+  </div>
+  <div style={{ marginTop: 10, padding: '6px 10px', background: '#E5E7EB', color: '#4B5563', fontSize: 11, fontWeight: 600, textAlign: 'center', borderRadius: 6, textTransform: 'uppercase', letterSpacing: 1 }}>SafeArea bottom</div>
+</div>
+
+## Canonical composition
+
+```tsx
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  ScreenContainer,
+  HeaderBar,
+  BottomTabBar,
+  Section,
+  VStack,
+} from '@polprog/native-ui';
+
+export function HomeScreen() {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <ScreenContainer
+      scroll
+      header={<HeaderBar title="Home" />}
+      footer={
+        <BottomTabBar
+          items={TABS}
+          activeKey="home"
+          safeBottomInset={insets.bottom}
+          onSelect={navigate}
+        />
+      }
+    >
+      <VStack gap="lg" p="lg">
+        <Section title="Today">…</Section>
+        <Section title="Recent">…</Section>
+      </VStack>
+    </ScreenContainer>
+  );
+}
+```
+
+## Rules
+
+1. **`ScreenContainer` owns safe-area top.** Never add `paddingTop: insets.top`
+   manually - it is handled internally via `<SafeAreaView edges={['top']}>`.
+2. **`BottomTabBar` owns safe-area bottom.** Pass `safeBottomInset` explicitly
+   so the bar grows past the home indicator. `ScreenContainer` must NOT add
+   bottom padding when a footer is present.
+3. **Header and footer never scroll.** They are slotted outside the scroll
+   view. Body scrolling is clamped between them.
+4. **Use `Section` for grouped content.** Sections define their own padding
+   and rhythm - do not nest `Card` inside `Section` unless explicitly needed.
+5. **Screens are locale-agnostic.** Titles and actions pass through i18n
+   at call site. The library components never hardcode copy.
+6. **Use `VStack gap="lg"` as the body separator.** Not `<Divider>`, not
+   `paddingBottom: 24` - a single `gap` keeps the cadence consistent.
+
+## Platform parity
+
+| Surface | iOS behaviour | Android behaviour |
+|---|---|---|
+| Status bar | translucent; `ScreenContainer` renders under it | translucent; material colour inherited |
+| Header | 44 pt tall (regular) / 96 pt tall (large-title mode) | 56 dp tall |
+| Bottom bar | 4 pt top + 4 pt bottom + safe inset (≈ 34 pt) | 4 pt top + 8 pt bottom + gesture inset (≈ 24 pt) |
+| Keyboard | `KeyboardAvoidingView` behaviour=`padding` | behaviour=`height` |
+
+## Anti-patterns
+
+❌ Do **not** wrap `ScreenContainer` in an outer `SafeAreaView`. Double
+safe-area insets create visible gutters above the header.
+
+❌ Do **not** stack two `HeaderBar`s (e.g. "app bar" + "section bar"). Use
+`Section title="…"` for sub-section titles; reserve `HeaderBar` for the
+screen-level title.
+
+❌ Do **not** put the bottom tab inside the scroll view. It must remain
+statically pinned to the viewport bottom.
+
+❌ Do **not** hardcode `paddingBottom: 90` to "make room for the tab bar".
+Use the footer slot; `ScreenContainer` computes content inset automatically.
+
+## Reference
+
+See the **BottomTabBar**, **HeaderBar** and **ScreenContainer** stories
+for interactive examples of each primitive used in this pattern.

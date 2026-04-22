@@ -2,13 +2,13 @@
   "name": "native-ui-monorepo",
   "private": true,
   "description": "Monorepo for @polprog/native-ui - production-grade React Native design system for iOS and Android.",
-  "homepage": "https://github.com/POLPROG-TECH/native-ui#readme",
+  "homepage": "https://github.com/polprog-tech/native-ui#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/POLPROG-TECH/native-ui.git"
+    "url": "git+https://github.com/polprog-tech/native-ui.git"
   },
   "bugs": {
-    "url": "https://github.com/POLPROG-TECH/native-ui/issues"
+    "url": "https://github.com/polprog-tech/native-ui/issues"
   },
   "license": "MIT",
   "author": {
@@ -47,5 +47,10 @@
     "@storybook/react-vite": "^10.3.5",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "apps/storybook/public"
+    ]
   }
 }

@@ -135,8 +135,22 @@ export function NativeUIProvider({ config = {}, children }: NativeUIProviderProp
 
   const typography: Typography = useMemo(() => {
     const resolver = typographyResolverFor(typographyOverride);
-    return typeof resolver === 'function' ? resolver(resolvedFontFamilies) : resolver;
-  }, [resolvedFontFamilies, typographyOverride]);
+    const base = typeof resolver === 'function' ? resolver(resolvedFontFamilies) : resolver;
+    if (!fontScale) return base;
+    // Apply the fontSize toolbar uniformly across every typography variant
+    // so any component reading `theme.typography.<variant>` (Button, Input,
+    // HeaderBar, etc.) scales - not only the <Text> primitive.
+    const scaled = {} as Typography;
+    for (const key of Object.keys(base) as Array<keyof Typography>) {
+      const variant = base[key];
+      scaled[key] = {
+        ...variant,
+        fontSize: variant.fontSize + fontScale,
+        lineHeight: variant.lineHeight + fontScale,
+      };
+    }
+    return scaled;
+  }, [resolvedFontFamilies, typographyOverride, fontScale]);
 
   const semanticKey = semanticOverrides ? JSON.stringify(semanticOverrides) : '';
   const semantic = useMemo<SemanticTokens>(

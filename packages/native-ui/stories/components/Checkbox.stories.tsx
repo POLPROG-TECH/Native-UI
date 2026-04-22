@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { Card } from '../../src/components/Card';
 import type { CheckboxProps } from '../../src/components/Checkbox';
@@ -58,7 +57,7 @@ const Interactive = ({ label = 'Accept terms', ...rest }: Partial<CheckboxProps>
       checked={checked}
       onChange={(v) => {
         setChecked(v);
-        action('onChange')(v);
+        fn()(v);
       }}
       label={label}
       {...rest}
@@ -80,8 +79,8 @@ export const Playground: Story = {
 export const Checked: Story = {
   render: () => (
     <VStack gap="md">
-      <Checkbox checked={false} onChange={action('onChange')} label="Unchecked" />
-      <Checkbox checked={true} onChange={action('onChange')} label="Checked" />
+      <Checkbox checked={false} onChange={fn()} label="Unchecked" />
+      <Checkbox checked={true} onChange={fn()} label="Checked" />
     </VStack>
   ),
 };
@@ -89,8 +88,8 @@ export const Checked: Story = {
 export const Sizes: Story = {
   render: () => (
     <VStack gap="md">
-      <Checkbox checked={true} onChange={action('onChange')} label="Small (sm)" size="sm" />
-      <Checkbox checked={true} onChange={action('onChange')} label="Medium (md)" size="md" />
+      <Checkbox checked={true} onChange={fn()} label="Small (sm)" size="sm" />
+      <Checkbox checked={true} onChange={fn()} label="Medium (md)" size="md" />
     </VStack>
   ),
 };
@@ -98,8 +97,8 @@ export const Sizes: Story = {
 export const Disabled: Story = {
   render: () => (
     <VStack gap="md">
-      <Checkbox checked={false} onChange={action('onChange')} label="Disabled unchecked" disabled />
-      <Checkbox checked={true} onChange={action('onChange')} label="Disabled checked" disabled />
+      <Checkbox checked={false} onChange={fn()} label="Disabled unchecked" disabled />
+      <Checkbox checked={true} onChange={fn()} label="Disabled checked" disabled />
     </VStack>
   ),
 };
@@ -108,9 +107,9 @@ export const WithoutLabel: Story = {
   name: 'Without Label',
   render: () => (
     <HStack gap="lg">
-      <Checkbox checked={false} onChange={action('onChange')} />
-      <Checkbox checked={true} onChange={action('onChange')} />
-      <Checkbox checked={true} onChange={action('onChange')} disabled />
+      <Checkbox checked={false} onChange={fn()} />
+      <Checkbox checked={true} onChange={fn()} />
+      <Checkbox checked={true} onChange={fn()} disabled />
     </HStack>
   ),
 };

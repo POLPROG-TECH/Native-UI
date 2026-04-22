@@ -65,6 +65,7 @@ const View = React.forwardRef(function View({ style, children, accessibilityRole
     'aria-label': accessibilityLabel,
     'aria-disabled': accessibilityState?.disabled,
     'aria-checked': accessibilityState?.checked,
+    'aria-selected': accessibilityState?.selected,
     'aria-live': accessibilityLiveRegion,
     ...props,
   }, children);
@@ -91,11 +92,16 @@ const TextInput = React.forwardRef(function TextInput({ style, onChangeText, edi
   });
 });
 
-const TouchableOpacity = React.forwardRef(function TouchableOpacity({ children, style, onPress, ...props }, ref) {
+const TouchableOpacity = React.forwardRef(function TouchableOpacity({ children, style, onPress, disabled, accessibilityRole, accessibilityState, accessibilityLabel, ...props }, ref) {
   return React.createElement('div', {
     ref,
     style: flattenAndTranslate(style),
-    onClick: onPress,
+    onClick: disabled ? undefined : onPress,
+    role: accessibilityRole,
+    'aria-label': accessibilityLabel,
+    'aria-disabled': disabled || accessibilityState?.disabled,
+    'aria-selected': accessibilityState?.selected,
+    'aria-checked': accessibilityState?.checked,
     ...props,
   }, children);
 });
@@ -110,6 +116,8 @@ const Pressable = React.forwardRef(function Pressable({ children, style, onPress
     role: accessibilityRole || 'button',
     'aria-label': accessibilityLabel,
     'aria-disabled': disabled || accessibilityState?.disabled,
+    'aria-selected': accessibilityState?.selected,
+    'aria-checked': accessibilityState?.checked,
     ...props,
   }, children);
 });
@@ -125,7 +133,7 @@ const SwitchComponent = React.forwardRef(function Switch({ value, onValueChange,
     role: 'switch',
     checked: value,
     disabled,
-    onChange: onValueChange ? () => onValueChange(!value) : undefined,
+    onChange: !disabled && onValueChange ? () => onValueChange(!value) : undefined,
     ...props,
   });
 });

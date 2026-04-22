@@ -40,6 +40,14 @@ export interface HeaderBarProps {
    * provided. Keeps the title visually centered. Defaults to `true`.
    */
   symmetric?: boolean;
+  /**
+   * Visual density.
+   * - `regular` (default) - 17/22 600 title (iOS navigation-bar style).
+   * - `large`             - 22/28 700 title, slightly more breathing room.
+   *                         Use on hero/landing screens.
+   * @default 'regular'
+   */
+  variant?: 'regular' | 'large';
   style?: ViewStyle;
 }
 
@@ -59,12 +67,14 @@ export function HeaderBar({
   renderBackIcon,
   right,
   symmetric = true,
+  variant = 'regular',
   style,
 }: HeaderBarProps) {
   const theme = useTheme();
 
   const BTN_SIZE = 36;
   const ICON_SIZE = 20;
+  const titleStyle = variant === 'large' ? theme.typography.heading : theme.typography.title;
 
   const backIcon = renderBackIcon ? (
     renderBackIcon({ size: ICON_SIZE, color: theme.colors.textPrimary })
@@ -111,7 +121,7 @@ export function HeaderBar({
     titleNode = (
       <Text
         numberOfLines={1}
-        style={[theme.typography.title, styles.title, { color: theme.colors.textPrimary }]}
+        style={[titleStyle, styles.title, { color: theme.colors.textPrimary }]}
         accessibilityRole="header"
       >
         {title}

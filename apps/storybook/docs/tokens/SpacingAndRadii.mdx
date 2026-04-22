@@ -1,0 +1,123 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Tokens/Spacing & Radii" />
+
+# Spacing & Radii
+
+A calm, 4-point grid. Consume via `theme.spacing.md`, the `p="md"` prop on
+`Box`, or `gap="md"` on `Stack`.
+
+> **Never hardcode.** If you catch yourself writing `marginTop: 12`, you are
+> going off-scale. Use `spacing.md` (= 16) or `spacing.sm` (= 8) instead.
+
+## Spacing scale
+
+| Token | Value | Common use |
+|---|---|---|
+| `2xs` | **2 px** | Hairline separators, fine border offsets |
+| `xs`  | **4 px** | Icon-to-label gap, badge padding |
+| `sm`  | **8 px** | List-item vertical rhythm, inline chip gap |
+| `md`  | **16 px** | **Default** - card padding, form field gap |
+| `lg`  | **24 px** | Section spacing, screen side margin |
+| `xl`  | **32 px** | Hero padding, large block separation |
+| `2xl` | **40 px** | Landing-page sections |
+| `3xl` | **56 px** | Exceptional emphasis only |
+
+<div className="nui-scale-row">
+  {[
+    { k: '2xs', v: 2 },
+    { k: 'xs', v: 4 },
+    { k: 'sm', v: 8 },
+    { k: 'md', v: 16 },
+    { k: 'lg', v: 24 },
+    { k: 'xl', v: 32 },
+    { k: '2xl', v: 40 },
+    { k: '3xl', v: 56 },
+  ].map(({ k, v }) => (
+    <div key={k} className="nui-scale-cell">
+      <div className="nui-scale-bar" style={{ width: v, height: 24 }} />
+      <div className="nui-scale-label">
+        <code>{k}</code>
+        <span>{v}px</span>
+      </div>
+    </div>
+  ))}
+</div>
+
+## Border radii
+
+| Token | Value | Common use |
+|---|---|---|
+| `xs`   | **6 px**  | Tags, chips, small inputs |
+| `sm`   | **10 px** | Inline controls, compact cards |
+| `md`   | **14 px** | **Default** for `Card`, `Input`, `Button` (md) |
+| `lg`   | **18 px** | Card with elevated surface, modal headers |
+| `xl`   | **24 px** | Hero cards, bottom sheets |
+| `2xl`  | **32 px** | Full-bleed result screens |
+| `full` | **9999 px** | Pills, avatars, circular icon buttons |
+
+<div className="nui-radius-row">
+  {[
+    { k: 'xs', v: 6 },
+    { k: 'sm', v: 10 },
+    { k: 'md', v: 14 },
+    { k: 'lg', v: 18 },
+    { k: 'xl', v: 24 },
+    { k: '2xl', v: 32 },
+    { k: 'full', v: 36 },
+  ].map(({ k, v }) => (
+    <div key={k} className="nui-radius-cell">
+      <div className="nui-radius-swatch" style={{ borderRadius: v }} />
+      <div className="nui-radius-label">
+        <code>{k}</code>
+        <span>{v === 36 ? 'full' : `${v}px`}</span>
+      </div>
+    </div>
+  ))}
+</div>
+
+## Icon sizes
+
+| Token | Value | Use case |
+|---|---|---|
+| `sm` | **16 px** | Inline icons in body text, input affixes |
+| `md` | **20 px** | Default icon button, list-item lead |
+| `lg` | **24 px** | Header bar, tab bar |
+| `xl` | **32 px** | Empty states, feature cards |
+
+## Touch targets
+
+Minimum tap target follows platform guidelines:
+
+- **iOS**: `8 px` hitSlop → 44×44 effective target
+- **Android**: `10 px` hitSlop → 48×48 effective target
+
+`IconButton` and `Button` apply these automatically; `Pressable` children
+should call `hitSlop={theme.hitSlop.ios}` on interactive icons smaller than
+the platform minimum.
+
+## Do's & Don'ts
+
+✅ **Do** reach for the closest valid token. If a 12px margin feels right, pick
+`sm` (8) or `md` (16) - never introduce `12`.
+
+✅ **Do** scale with `theme.spacing[key]` in StyleSheet when you cannot use
+`Box` / `Stack` primitives.
+
+❌ **Don't** mix `padding: 20` with `gap="md"` - the grid breaks as soon as
+fonts re-render.
+
+❌ **Don't** hardcode `borderRadius: 12`. Use `radii.sm` (10) or `radii.md`
+(14). Visual tolerance is 2 px; users notice anything larger.
+
+<style>{`
+  .sbdocs-content { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Roboto, sans-serif; }
+  .nui-scale-row { display: grid; gap: 12px; margin: 16px 0 28px; }
+  .nui-scale-cell { display: grid; grid-template-columns: 1fr 140px; align-items: center; gap: 16px; }
+  .nui-scale-bar { background: linear-gradient(90deg, #4F46E5, #7C3AED); border-radius: 3px; }
+  .nui-scale-label { display: flex; justify-content: space-between; align-items: center; color: #475569; font-size: 13px; }
+  .nui-radius-row { display: flex; flex-wrap: wrap; gap: 20px; margin: 16px 0 28px; }
+  .nui-radius-cell { text-align: center; }
+  .nui-radius-swatch { width: 72px; height: 72px; background: linear-gradient(135deg, #4F46E5, #7C3AED); margin-bottom: 8px; }
+  .nui-radius-label { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: #475569; }
+`}</style>

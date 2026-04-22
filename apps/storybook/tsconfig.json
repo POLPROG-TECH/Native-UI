@@ -12,7 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
     "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
@@ -24,6 +24,7 @@
   "include": [
     ".storybook/**/*",
     "docs/**/*",
+    "stories/**/*",
     "../../packages/native-ui/src",
     "../../packages/native-ui/stories"
   ],

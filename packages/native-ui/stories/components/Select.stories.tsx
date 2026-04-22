@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { fn, within, userEvent, expect, waitFor } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Select } from '../../src/components/Select';
 import { Text } from '../../src/primitives/Text';
 import { VStack } from '../../src/primitives/Stack';
@@ -54,26 +54,85 @@ const meta: Meta = {
 
 export default meta;
 
-const ControlledSelect = (props: Partial<SelectProps<string>> & { options: SelectOption<string>[] }) => {
+const ControlledSelect = (
+  props: Partial<SelectProps<string>> & {
+    options: SelectOption<string>[];
+    spy?: (v: string) => void;
+  },
+) => {
+  const { spy, ...rest } = props;
   const [value, setValue] = useState<string | null>(null);
   return (
     <Select
-      {...(props as any)}
+      {...(rest as any)}
       value={value}
       onChange={(v: string) => {
         setValue(v);
-        action('onChange')(v);
+        spy?.(v);
       }}
     />
   );
 };
 
-export const Playground: StoryObj = {
-  render: () => (
+export const Playground: StoryObj<{ onChange: (v: string) => void }> = {
+  args: { onChange: fn() },
+  render: (args) => (
     <VStack gap="md" style={{ maxWidth: 360 }}>
-      <ControlledSelect label="Category" options={categoryOptions} placeholder="Choose a category..." />
+      <ControlledSelect
+        label="Category"
+        options={categoryOptions}
+        placeholder="Choose a category..."
+        spy={args.onChange}
+      />
     </VStack>
   ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    // The trigger exposes accessibilityLabel = label ?? placeholder
+    const trigger = await canvas.findByRole('button', { name: /category/i });
+    await userEvent.click(trigger);
+    // The modal portals into body - query the wider screen.
+    const screen = within(document.body);
+    const option = await waitFor(
+      () => screen.getByRole('radio', { name: /food & drink/i }),
+      { timeout: 3000 },
+    );
+    await userEvent.click(option);
+    await waitFor(
+      async () => {
+        await expect(args.onChange).toHaveBeenCalledWith('food');
+      },
+      { timeout: 3000 },
+    );
+  },
+};
+
+/** Cancelling the modal must NOT call `onChange`. */
+export const CancelInteraction: StoryObj<{ onChange: (v: string) => void }> = {
+  name: 'Interaction · Cancel does not fire onChange',
+  args: { onChange: fn() },
+  render: (args) => (
+    <VStack gap="md" style={{ maxWidth: 360 }}>
+      <ControlledSelect
+        label="Category"
+        options={categoryOptions}
+        placeholder="Choose a category..."
+        spy={args.onChange}
+      />
+    </VStack>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const trigger = await canvas.findByRole('button', { name: /category/i });
+    await userEvent.click(trigger);
+    const screen = within(document.body);
+    const cancel = await waitFor(
+      () => screen.getByRole('button', { name: /cancel/i }),
+      { timeout: 3000 },
+    );
+    await userEvent.click(cancel);
+    await expect(args.onChange).not.toHaveBeenCalled();
+  },
 };
 
 export const WithIcons: StoryObj = {
@@ -102,7 +161,7 @@ export const ErrorState: StoryObj = {
         label="Category"
         value={null}
         options={categoryOptions}
-        onChange={action('onChange')}
+        onChange={fn()}
         error="Please select a category"
         required
       />
@@ -114,7 +173,7 @@ export const Disabled: StoryObj = {
   name: 'Disabled',
   render: () => (
     <VStack gap="md" style={{ maxWidth: 360 }}>
-      <Select label="Category" value="food" options={categoryOptions} onChange={action('onChange')} disabled />
+      <Select label="Category" value="food" options={categoryOptions} onChange={fn()} disabled />
       <Text variant="caption" color="textTertiary">Disabled selects show the selected value but cannot be changed</Text>
     </VStack>
   ),

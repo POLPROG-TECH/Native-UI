@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Button } from '../../src/components/Button';
 import { InputPrompt } from '../../src/components/InputPrompt';
 import { Text } from '../../src/primitives/Text';
@@ -61,8 +61,8 @@ export const Playground: Story = {
     visible: true,
     title: 'Rename Item',
     placeholder: 'Enter new name',
-    onSubmit: action('onSubmit'),
-    onCancel: action('onCancel'),
+    onSubmit: fn(),
+    onCancel: fn(),
   },
 };
 
@@ -74,8 +74,8 @@ const PromptDemo = (props: Omit<InputPromptProps, 'visible' | 'onSubmit' | 'onCa
       <InputPrompt
         {...props}
         visible={visible}
-        onSubmit={(value) => { setVisible(false); action('onSubmit')(value); }}
-        onCancel={() => { setVisible(false); action('onCancel')(); }}
+        onSubmit={(value) => { setVisible(false); fn()(value); }}
+        onCancel={() => { setVisible(false); fn()(); }}
       />
     </>
   );
@@ -134,8 +134,8 @@ export const Hidden: Story = {
       <InputPrompt
         visible={false}
         title="Hidden Prompt"
-        onSubmit={action('onSubmit')}
-        onCancel={action('onCancel')}
+        onSubmit={fn()}
+        onCancel={fn()}
       />
     </VStack>
   ),

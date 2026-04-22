@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { within, userEvent, expect, fn } from 'storybook/test';
 import { Box } from '../../src/primitives/Box';
 import { Input } from '../../src/components/Input';
@@ -80,9 +79,9 @@ export const WithLabel: Story = {
   name: 'With Label',
   render: () => (
     <VStack gap="md" style={{ maxWidth: 360 }}>
-      <Input label="Full Name" placeholder="John Doe" onChangeText={action('name changed')} />
-      <Input label="Email" placeholder="john@example.com" keyboardType="email-address" onChangeText={action('email changed')} />
-      <Input label="Password" placeholder="Enter password" secureTextEntry onChangeText={action('password changed')} />
+      <Input label="Full Name" placeholder="John Doe" onChangeText={fn()} />
+      <Input label="Email" placeholder="john@example.com" keyboardType="email-address" onChangeText={fn()} />
+      <Input label="Password" placeholder="Enter password" secureTextEntry onChangeText={fn()} />
     </VStack>
   ),
 };
@@ -91,7 +90,7 @@ export const Required: Story = {
   name: 'Required Field',
   render: () => (
     <VStack gap="md" style={{ maxWidth: 360 }}>
-      <Input label="Project Name" placeholder="My Project" required onChangeText={action('changed')} />
+      <Input label="Project Name" placeholder="My Project" required onChangeText={fn()} />
       <Text variant="caption" color="textTertiary">Required fields show * next to the label</Text>
     </VStack>
   ),
@@ -105,14 +104,14 @@ export const ErrorState: Story = {
         label="Email"
         value="not-an-email"
         error="Please enter a valid email address"
-        onChangeText={action('changed')}
+        onChangeText={fn()}
       />
       <Input
         label="Amount"
         value=""
         error="Amount is required"
         required
-        onChangeText={action('changed')}
+        onChangeText={fn()}
       />
     </VStack>
   ),
@@ -132,11 +131,11 @@ export const KeyboardTypes: Story = {
   name: 'Keyboard Types',
   render: () => (
     <VStack gap="md" style={{ maxWidth: 360 }}>
-      <Input label="Default" placeholder="Any text" keyboardType="default" onChangeText={action('changed')} />
-      <Input label="Email" placeholder="email@example.com" keyboardType="email-address" onChangeText={action('changed')} />
-      <Input label="Numeric" placeholder="12345" keyboardType="numeric" onChangeText={action('changed')} />
-      <Input label="Decimal" placeholder="0.00" keyboardType="decimal-pad" onChangeText={action('changed')} />
-      <Input label="Phone" placeholder="+48 123 456 789" keyboardType="phone-pad" onChangeText={action('changed')} />
+      <Input label="Default" placeholder="Any text" keyboardType="default" onChangeText={fn()} />
+      <Input label="Email" placeholder="email@example.com" keyboardType="email-address" onChangeText={fn()} />
+      <Input label="Numeric" placeholder="12345" keyboardType="numeric" onChangeText={fn()} />
+      <Input label="Decimal" placeholder="0.00" keyboardType="decimal-pad" onChangeText={fn()} />
+      <Input label="Phone" placeholder="+48 123 456 789" keyboardType="phone-pad" onChangeText={fn()} />
     </VStack>
   ),
 };
@@ -182,11 +181,11 @@ export const FormLayout: Story = {
     <Box p="lg" bg="surface" radius="lg" elevation="sm" style={{ maxWidth: 400 }}>
       <VStack gap="md">
         <Text variant="h2">Contact Information</Text>
-        <Input label="First Name" placeholder="John" required onChangeText={action('first')} />
-        <Input label="Last Name" placeholder="Doe" required onChangeText={action('last')} />
-        <Input label="Email" placeholder="john@example.com" keyboardType="email-address" required onChangeText={action('email')} />
-        <Input label="Phone" placeholder="+48 123 456 789" keyboardType="phone-pad" onChangeText={action('phone')} />
-        <Input label="Notes" placeholder="Optional notes..." onChangeText={action('notes')} />
+        <Input label="First Name" placeholder="John" required onChangeText={fn()} />
+        <Input label="Last Name" placeholder="Doe" required onChangeText={fn()} />
+        <Input label="Email" placeholder="john@example.com" keyboardType="email-address" required onChangeText={fn()} />
+        <Input label="Phone" placeholder="+48 123 456 789" keyboardType="phone-pad" onChangeText={fn()} />
+        <Input label="Notes" placeholder="Optional notes..." onChangeText={fn()} />
       </VStack>
     </Box>
   ),

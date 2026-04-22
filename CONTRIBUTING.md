@@ -13,7 +13,7 @@ versioning, and releasing.
 ## One-time setup
 
 ```bash
-git clone https://github.com/POLPROG-TECH/native-ui.git
+git clone https://github.com/polprog-tech/native-ui.git
 cd native-ui
 npm install
 ```

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { fn } from 'storybook/test';
 import { Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Box } from '../../src/primitives/Box';
 import { ListSwitchItem } from '../../src/components/ListSwitchItem';
 import { VStack } from '../../src/primitives/Stack';
@@ -50,11 +50,11 @@ type Story = StoryObj<ListSwitchItemProps>;
 
 const Interactive = (props: Partial<ListSwitchItemProps> & { label: string }) => {
   const [val, setVal] = useState(false);
-  return <ListSwitchItem value={val} onValueChange={(v) => { setVal(v); action('onValueChange')(v); }} {...props} />;
+  return <ListSwitchItem value={val} onValueChange={(v) => { setVal(v); fn()(v); }} {...props} />;
 };
 
 export const Playground: Story = {
-  args: { label: 'Dark Mode', value: false, hideDivider: false, onValueChange: action('onValueChange') },
+  args: { label: 'Dark Mode', value: false, hideDivider: false, onValueChange: fn() },
 };
 
 export const Default: Story = {

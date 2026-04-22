@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { BottomSheet } from '../../src/components/BottomSheet';
 import { Button } from '../../src/components/Button';
 import { VStack } from '../../src/primitives/Stack';
@@ -76,7 +76,7 @@ export const Playground: Story = {
       <VStack gap="md" style={{ padding: 16 }}>
         <Text variant="h2">Sheet Content</Text>
         <Text variant="body" color="textSecondary">This content slides up from the bottom. Tap the backdrop{dismissable === false ? ' (disabled here)' : ''} to dismiss.</Text>
-        <Button title="Close" variant="secondary" onPress={action('close')} />
+        <Button title="Close" variant="secondary" onPress={fn()} />
       </VStack>
     </SheetDemo>
   ),
@@ -88,11 +88,11 @@ export const ActionMenu: Story = {
     <SheetDemo>
       <VStack style={{ padding: 16 }}>
         <Text variant="h3" style={{ marginBottom: 8 }}>Actions</Text>
-        <ListItem title="Edit" icon={<Text variant="body">✏️</Text>} onPress={action('edit')} />
-        <ListItem title="Duplicate" icon={<Text variant="body">📋</Text>} onPress={action('duplicate')} />
-        <ListItem title="Share" icon={<Text variant="body">📤</Text>} onPress={action('share')} />
+        <ListItem title="Edit" icon={<Text variant="body">✏️</Text>} onPress={fn()} />
+        <ListItem title="Duplicate" icon={<Text variant="body">📋</Text>} onPress={fn()} />
+        <ListItem title="Share" icon={<Text variant="body">📤</Text>} onPress={fn()} />
         <Divider />
-        <ListItem title="Delete" icon={<Text variant="body">🗑️</Text>} destructive onPress={action('delete')} hideDivider />
+        <ListItem title="Delete" icon={<Text variant="body">🗑️</Text>} destructive onPress={fn()} hideDivider />
       </VStack>
     </SheetDemo>
   ),
@@ -107,21 +107,21 @@ export const FilterSheet: Story = {
         <VStack gap="sm">
           <Text variant="label">Category</Text>
           <ChipGroup>
-            <Chip label="🍕 Food" selected onPress={action('filter')} />
-            <Chip label="🚗 Transport" onPress={action('filter')} />
-            <Chip label="🛍️ Shopping" onPress={action('filter')} />
-            <Chip label="🎬 Fun" onPress={action('filter')} />
+            <Chip label="🍕 Food" selected onPress={fn()} />
+            <Chip label="🚗 Transport" onPress={fn()} />
+            <Chip label="🛍️ Shopping" onPress={fn()} />
+            <Chip label="🎬 Fun" onPress={fn()} />
           </ChipGroup>
         </VStack>
         <VStack gap="sm">
           <Text variant="label">Status</Text>
           <ChipGroup>
-            <Chip label="Paid" selected onPress={action('filter')} />
-            <Chip label="Pending" onPress={action('filter')} />
-            <Chip label="Overdue" selected onPress={action('filter')} />
+            <Chip label="Paid" selected onPress={fn()} />
+            <Chip label="Pending" onPress={fn()} />
+            <Chip label="Overdue" selected onPress={fn()} />
           </ChipGroup>
         </VStack>
-        <Button title="Apply Filters" onPress={action('apply')} fullWidth />
+        <Button title="Apply Filters" onPress={fn()} fullWidth />
       </VStack>
     </SheetDemo>
   ),

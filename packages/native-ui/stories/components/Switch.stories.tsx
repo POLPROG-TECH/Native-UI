@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { within, userEvent, expect, fn } from 'storybook/test';
 import { Card } from '../../src/components/Card';
 import { Switch } from '../../src/components/Switch';
@@ -47,7 +46,7 @@ type Story = StoryObj<SwitchProps>;
 
 const Interactive = (props: Partial<SwitchProps> & { label?: string }) => {
   const [val, setVal] = useState(false);
-  return <Switch value={val} onValueChange={(v) => { setVal(v); action('onValueChange')(v); }} {...props} />;
+  return <Switch value={val} onValueChange={(v) => { setVal(v); fn()(v); }} {...props} />;
 };
 
 export const Playground: Story = {
@@ -64,10 +63,10 @@ export const Playground: Story = {
 export const States: Story = {
   render: () => (
     <VStack gap="md" style={{ maxWidth: 360 }}>
-      <Switch value={false} onValueChange={action('change')} label="Off" />
-      <Switch value={true} onValueChange={action('change')} label="On" />
-      <Switch value={false} onValueChange={action('change')} label="Disabled (off)" disabled />
-      <Switch value={true} onValueChange={action('change')} label="Disabled (on)" disabled />
+      <Switch value={false} onValueChange={fn()} label="Off" />
+      <Switch value={true} onValueChange={fn()} label="On" />
+      <Switch value={false} onValueChange={fn()} label="Disabled (off)" disabled />
+      <Switch value={true} onValueChange={fn()} label="Disabled (on)" disabled />
     </VStack>
   ),
 };

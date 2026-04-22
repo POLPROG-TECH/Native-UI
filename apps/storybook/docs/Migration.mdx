@@ -4,76 +4,123 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Migration Guide
 
-This guide helps you migrate from app-specific UI implementations to native-ui shared components.
+Moving from an app-specific UI layer to `@polprog/native-ui` without
+breaking existing screens. This guide is the playbook for incrementally
+replacing bespoke UI folders with the shared library - zero product
+downtime, incremental rollout, easy rollback.
 
-## Strategy: Re-export pattern
+> **Philosophy.** Treat the migration as a long-running refactor that
+> can be paused, rolled back or split across branches at any commit.
+> Never merge a "big bang" replacement PR.
 
-The recommended migration strategy uses **barrel re-exports** so existing import paths continue to work:
+---
+
+## 1. Migration strategy: barrel re-exports
+
+Keep the app's existing `shared/ui/` directory. Replace each component
+file with a two-line re-export from the library.
 
 ```tsx
-// shared/ui/Button.tsx (before: full implementation, after: 2 lines)
+// shared/ui/Button.tsx  (before: 180 lines, after: 2 lines)
 export { Button, type ButtonProps } from '@polprog/native-ui';
 ```
 
-This means:
-- Screen files don't change their import paths
-- Migration is incremental - one component at a time
-- Rollback is easy - just restore the original file
+Benefits:
 
-## Theme migration
+| | Direct-import replacement | Re-export barrel (recommended) |
+|---|---|---|
+| Screen files changed | **Many** - every import touched | **None** - import paths identical |
+| Rollback granularity | Per-screen (noisy) | Per-component (single file) |
+| PR size | Often 2k+ lines | 20-50 lines per component |
+| Merge conflicts | Frequent (shared files) | Rare (isolated diffs) |
+| Feature-flag gating | Hard - can't toggle imports | Easy - re-export behind a flag |
+
+> **Outcome after phase 1.** Every screen keeps working with zero
+> import changes. You can now migrate components one at a time, merge
+> each in its own PR, and revert any single one by restoring the
+> original file.
+
+---
+
+## 2. Theme migration
 
 ### Before (app-specific)
+
 ```tsx
-import { ThemeProvider, useTheme } from '@shared/theme';
-const theme = useTheme(); // returns { colors, typography, spacing }
+// shared/theme/ThemeContext.tsx
+export const ThemeProvider = ({ children }) => {
+  const [mode, setMode] = useState('light');
+  const theme = useMemo(() => buildTheme(mode), [mode]);
+  return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;
+};
+
+export const useTheme = () => useContext(ThemeContext);
 ```
 
-### After (native-ui wrapper)
-```tsx
-// shared/theme/ThemeContext.tsx - thin wrapper
-import { NativeUIProvider } from '@polprog/native-ui';
+### After (thin wrapper over `NativeUIProvider`)
 
-export function ThemeProvider({ children }) {
-  const config = useAppStore(s => ({
+```tsx
+// shared/theme/ThemeContext.tsx - stays as the app's seam
+import { NativeUIProvider, useTheme as useNativeTheme } from '@polprog/native-ui';
+
+export function ThemeProvider({ children }: PropsWithChildren) {
+  const config = useAppStore((s) => ({
     colorMode: s.colorMode,
     preset: s.themePreset,
-    // ... map your app state to NativeUIConfig
+    fontSize: s.fontSize,
+    highContrast: s.highContrast,
+    reduceAnimations: s.reduceAnimations,
   }));
 
-  return (
-    <NativeUIProvider config={config}>
-      {children}
-    </NativeUIProvider>
-  );
+  return <NativeUIProvider config={config}>{children}</NativeUIProvider>;
 }
+
+export const useTheme = useNativeTheme;  // identical shape
 ```
 
-The `useTheme()` hook returns the same shape (`colors`, `typography`, `spacing`, etc.), so downstream code works unchanged.
+> **Why keep the wrapper?** So future library-level changes (e.g. the
+> library renames `colorMode` -> `appearance`) become a one-file change
+> in the app instead of a repo-wide find/replace.
 
-## Component mapping
+`useTheme()` returns the same shape (`colors`, `typography`, `spacing`,
+`borderRadius`, `elevation`, ...) so every screen works unchanged.
 
-| App component | native-ui replacement | Notes |
+---
+
+## 3. Component mapping
+
+Direct-replacement candidates - the library API is a superset of the
+app-specific one, so existing call sites compile and behave identically.
+
+| App component | native-ui replacement | Additional props |
 |---|---|---|
-| `Button` | `Button` | Same API, added `icon`, `fullWidth` |
-| `Card` | `Card` | Same API, added `padded` prop |
-| `Input` | `Input` | Same API, extends TextInputProps |
-| `EmptyState` | `EmptyState` | Same API |
-| `ScreenContainer` | `ScreenContainer` | Same API, added `edges` |
-| `Chip` / `ChipGroup` | `Chip` / `ChipGroup` | Same API |
-| `ProgressBar` | `ProgressBar` | Same API |
-| `Skeleton` | `Skeleton` | Same API |
-| `SearchBar` | `SearchBar` | Added `debounceMs` |
-| `Divider` | `Divider` | Added `inset` prop |
-| `Section` | `Section` | Same API |
-| `Badge` | `Badge` | Same API |
-| `PressableScale` | `PressableScale` | Same API |
+| `Button` | `Button` | `icon`, `fullWidth`, `size` of `sm` / `md` / `lg` |
+| `Card` | `Card` | `padded`, `elevation`, `pressable` |
+| `Input` | `Input` | `required`, `helperText`, full `TextInputProps` passthrough |
+| `EmptyState` | `EmptyState` | `renderIcon`, `action` slot |
+| `ScreenContainer` | `ScreenContainer` | `edges`, `scrollable`, `maxWidth` |
+| `Chip` / `ChipGroup` | `Chip` / `ChipGroup` | `variant`, `selected`, `onClose` |
+| `ProgressBar` | `ProgressBar` | `indeterminate`, `height` |
+| `Skeleton` | `Skeleton` | `Skeleton.Card` preset |
+| `SearchBar` | `SearchBar` | `debounceMs` (default 300) |
+| `Divider` | `Divider` | `inset`, `vertical` |
+| `Section` | `Section` | `footer`, `insetDividers` |
+| `Badge` | `Badge` | `dot` mode, `variant` |
+| `PressableScale` | `PressableScale` | Respects `reduceAnimations` automatically |
 | `Toast` | `Toast` + `useToast` | Imperative API unchanged |
-| `LoadingScreen` | `Spinner` | Renamed for clarity |
-| `RadioIndicator` | `Radio` | Renamed, same visual |
+| `LoadingScreen` | `Spinner` | Renamed; same visual |
+| `RadioIndicator` | `Radio` | Renamed; semantic `accessibilityRole="radio"` added |
 
-## Settings screen migration
+---
+
+## 4. Settings screen migration (the complicated one)
+
+App-specific `SettingsRow` often bundled emoji-icon backgrounds with
+list semantics. The library splits them: `ListItem` is the primitive,
+`SettingsRow` is the emoji-backgrounded preset on top of it.
 
 ### Before
+
 ```tsx
 import { SettingsRow, SettingsSection, SettingsHeader } from '@shared/ui';
 
@@ -84,65 +131,147 @@ import { SettingsRow, SettingsSection, SettingsHeader } from '@shared/ui';
 </SettingsSection>
 ```
 
-### After
+### After (option A - stays on the emoji preset)
+
+```tsx
+import { SettingsRow, SettingsSwitchRow, ListSection } from '@polprog/native-ui';
+
+<ListSection title="Preferences">
+  <SettingsSwitchRow icon="🌙" label="Dark Mode" value={isDark} onValueChange={toggle} />
+  <SettingsRow icon="🔔" label="Notifications" onPress={goToNotifs} />
+  <SettingsRow icon="🗑️" label="Delete Account" destructive isLast />
+</ListSection>
+```
+
+### After (option B - drop to `ListItem` for full control)
+
 ```tsx
 import { ListSection, ListItem, ListSwitchItem } from '@polprog/native-ui';
 
 <ListSection title="Preferences">
-  <ListSwitchItem icon={<EmojiIcon>🌙</EmojiIcon>} label="Dark Mode" value={isDark} onValueChange={toggle} />
+  <ListSwitchItem
+    icon={<EmojiIcon>🌙</EmojiIcon>}
+    label="Dark Mode"
+    value={isDark}
+    onValueChange={toggle}
+  />
   <ListItem icon={<EmojiIcon>🔔</EmojiIcon>} title="Notifications" onPress={goToNotifs} />
-  <ListItem icon={<EmojiIcon>🗑️</EmojiIcon>} title="Delete Account" destructive hideDivider />
+  <ListItem
+    icon={<EmojiIcon>🗑️</EmojiIcon>}
+    title="Delete Account"
+    destructive
+    hideDivider
+  />
 </ListSection>
 ```
 
-### Prop mapping
+### Prop mapping (SettingsRow -> ListItem)
 
-| Old prop (SettingsRow) | New prop (ListItem) |
-|---|---|
-| `label` | `title` |
-| `isLast` | `hideDivider` |
-| `rightElement` | `trailing` |
-| `icon` (emoji string) | `icon` (ReactNode) |
-| `showChevron` | `showChevron` (auto-detected) |
-
-## Typography migration
-
-The library uses generic naming instead of domain-specific names:
-
-| App name | Library name | Description |
+| Old prop | New prop | Notes |
 |---|---|---|
-| `amount` | `mono` | Tabular-number display (20px, bold) |
-| `amountLarge` | `monoLarge` | Large tabular display (32px) |
-| `amountSmall` | `monoSmall` | Small tabular display (15px) |
+| `label` | `title` | Renamed for consistency with `ListItem` |
+| `isLast` | `hideDivider` | More explicit about what it does |
+| `rightElement` | `trailing` | Accepts any `ReactNode` |
+| `icon` (emoji string) | `icon` (`ReactNode`) | Upgraded to node so you can use `<Icon />` |
+| `showChevron` | auto-detected | Shown when `onPress` is provided and no `trailing` |
 
-The old names (`amount`, `amountLarge`, `amountSmall`) are available as **deprecated aliases** for backward compatibility.
+---
 
-## Haptics migration
+## 5. Typography migration
 
-### Before
+The library uses generic naming instead of domain-specific variants:
+
+| App variant | Library variant | Description |
+|---|---|---|
+| `amount` | `mono` | Tabular-number display (20 px, bold, `fontVariant: ['tabular-nums']`) |
+| `amountLarge` | `monoLarge` | Large tabular display (32 px) |
+| `amountSmall` | `monoSmall` | Small tabular display (15 px) |
+
+> **Deprecated aliases.** The old names (`amount`, `amountLarge`,
+> `amountSmall`) are still exported and log a one-time deprecation
+> warning in dev. Safe to migrate incrementally.
+
+---
+
+## 6. Haptics migration
+
+### Before (per-component call sites)
+
 ```tsx
 import haptics from 'react-native-haptic-feedback';
-haptics.trigger('impactMedium');
+
+<Pressable onPress={() => { haptics.trigger('impactMedium'); submit(); }}>
 ```
 
-### After
+### After (wired once, consumed implicitly)
+
 ```tsx
-// In App.tsx (once)
+// App.tsx - do this once at app boot
 import { configureHaptics } from '@polprog/native-ui';
 configureHaptics({
   light: () => haptics.trigger('impactLight'),
   medium: () => haptics.trigger('impactMedium'),
-  // ...
+  success: () => haptics.trigger('notificationSuccess'),
+  warning: () => haptics.trigger('notificationWarning'),
+  error: () => haptics.trigger('notificationError'),
 });
 
-// Components use haptics automatically - no manual triggering needed
+// Screen.tsx - no more explicit haptics
+<Button title="Save" onPress={submit} />
 ```
 
-## What stays in the app
+All library pressables now call the right haptic automatically (light
+on `ghost`, medium on `primary`, success on `Toast.success`, etc.).
 
-These components are **not extracted** because they contain domain-specific logic:
+---
 
-- **ErrorBoundary** - App-specific error reporting
-- **DatePickerInput** - Depends on `@react-native-community/datetimepicker` + i18n
-- **InputPrompt** - Cross-platform Alert.prompt wrapper
-- **BrandIcon / BrandWordmark** - App-specific SVG branding
+## 7. What stays in your app
+
+These components contain domain-specific logic and should **not** be
+extracted to the shared library:
+
+- **`ErrorBoundary`** - app-specific error reporting (Sentry, Datadog).
+- **`DatePickerInput`** - depends on
+  `@react-native-community/datetimepicker` + i18n currency / date
+  formatting.
+- **`BrandIcon` / `BrandWordmark`** - app-specific SVG branding.
+- **App-specific screen templates** (Dashboard, Onboarding, Paywall).
+
+Keep them in `shared/ui/` alongside the re-exports. The boundary between
+"shared library" and "app-specific" is clear: if you cannot imagine a
+second app using it as-is, it belongs to the app.
+
+---
+
+## 8. Recommended rollout order
+
+1. **Week 1:** Phase-1 (barrel re-exports) for every primitive: `Box`,
+   `Stack`, `Text`, `Heading`, `Divider`.
+2. **Week 2:** Replace `ThemeContext` with the `NativeUIProvider`
+   wrapper from **§2**. Ship behind a feature flag for 24 h.
+3. **Week 3:** Swap leaf components: `Button`, `Card`, `Input`, `Chip`,
+   `Badge`. Each in a small PR.
+4. **Week 4:** Lists + settings. This is the biggest touch surface.
+5. **Week 5+:** Patterns - `HeaderBar`, `BottomTabBar`,
+   `ScreenContainer`, `Modal`, `BottomSheet`.
+6. **Week N:** Delete `shared/ui/` files that are pure re-exports; ask
+   teams to import directly from `@polprog/native-ui`.
+
+---
+
+## 9. Pre-merge checklist (per component)
+
+- [ ] `shared/ui/<X>.tsx` is now a re-export barrel (or deleted if inlined).
+- [ ] Any deprecated props are mapped through a runtime warning, not hard-removed.
+- [ ] Snapshot tests updated (visual output identical at known breakpoints).
+- [ ] VoiceOver / TalkBack sweep passes - run the **Accessibility** doc checklist.
+- [ ] Reduce-motion setting respected - verify `PressableScale` skips animation.
+- [ ] Feature flag gate removed once stable in prod for 48 h.
+
+---
+
+## What to read next
+
+- **Theming** - how the new provider composes app state + OS prefs.
+- **Accessibility** - what the migration buys you for free.
+- **Patterns / AppShell** - the canonical layout you should converge on.

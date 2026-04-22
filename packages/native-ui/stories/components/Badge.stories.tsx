@@ -1,7 +1,7 @@
 import React from 'react';
+import { fn } from 'storybook/test';
 import { View, Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Badge } from '../../src/components/Badge';
 import { HStack, VStack } from '../../src/primitives/Stack';
 import { IconButton } from '../../src/components/IconButton';
@@ -108,19 +108,19 @@ export const OnIconButton: Story = {
   render: () => (
     <HStack gap="xl">
       <View style={{ position: 'relative' }}>
-        <IconButton icon={<RNText style={{ fontSize: 20 }}>🔔</RNText>} accessibilityLabel="Notifications" onPress={action('press')} />
+        <IconButton icon={<RNText style={{ fontSize: 20 }}>🔔</RNText>} accessibilityLabel="Notifications" onPress={fn()} />
         <View style={{ position: 'absolute', top: -4, right: -4 }}>
           <Badge count={3} />
         </View>
       </View>
       <View style={{ position: 'relative' }}>
-        <IconButton icon={<RNText style={{ fontSize: 20 }}>✉️</RNText>} accessibilityLabel="Messages" onPress={action('press')} />
+        <IconButton icon={<RNText style={{ fontSize: 20 }}>✉️</RNText>} accessibilityLabel="Messages" onPress={fn()} />
         <View style={{ position: 'absolute', top: -4, right: -4 }}>
           <Badge count={12} variant="primary" />
         </View>
       </View>
       <View style={{ position: 'relative' }}>
-        <IconButton icon={<RNText style={{ fontSize: 20 }}>⚙️</RNText>} accessibilityLabel="Settings" onPress={action('press')} />
+        <IconButton icon={<RNText style={{ fontSize: 20 }}>⚙️</RNText>} accessibilityLabel="Settings" onPress={fn()} />
         <View style={{ position: 'absolute', top: -4, right: -4 }}>
           <Badge />
         </View>

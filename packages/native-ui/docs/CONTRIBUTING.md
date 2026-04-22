@@ -35,7 +35,7 @@ Every new component starts with an **RFC** (Request for Comments).
 
 ```bash
 # Clone the monorepo
-git clone https://github.com/POLPROG-TECH/native-ui.git
+git clone https://github.com/polprog-tech/native-ui.git
 cd native-ui
 
 # Install dependencies (from repo root)

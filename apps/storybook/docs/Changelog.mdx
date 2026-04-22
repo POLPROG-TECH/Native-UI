@@ -1,0 +1,142 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Changelog" />
+
+# Changelog
+
+All notable changes to **`@polprog/native-ui`** are tracked here and
+released via
+[Changesets](https://github.com/changesets/changesets). The canonical
+source of truth is
+[`packages/native-ui/CHANGELOG.md`](https://github.com/POLPROG-TECH/Native-UI/blob/main/packages/native-ui/CHANGELOG.md) -
+this page mirrors the recent highlights for in-Storybook reading.
+
+We follow [**Semantic Versioning**](https://semver.org):
+
+- **Major** (`2.0.0`) - breaking API changes. Migration guide mandatory.
+- **Minor** (`1.2.0`) - new components, new props, non-breaking changes.
+- **Patch** (`1.1.1`) - bug fixes, docs, a11y tweaks, internal refactors.
+
+> **How to upgrade.** Run `npm install @polprog/native-ui@latest` then
+> check this page for deprecations and the **Migration** doc for any
+> breaking-change recipes. Deprecations warn once in dev; they do not
+> break the build.
+
+---
+
+## Unreleased
+
+### Added
+
+- **MSW integration** (`msw@2` + `msw-storybook-addon@2`). Patterns
+  stories now run against a mocked `/entries`, `/categories` and
+  `/auth/login` backend so Loading / Empty / Error / Slow flows can be
+  exercised - and play-tested - without a real server. See
+  `Patterns/Network - Loading States` and `Patterns/Network - Forms`.
+- **Density stories** for `ListItem` and `SettingsRow` - side-by-side
+  `regular` vs `compact` typography density showcases ~12 % vertical
+  real-estate recovery on dense screens.
+- **Global story toolbars**: `locale` (EN · PL · ES · DE · AR with
+  live RTL flip), `fontSize`, `highContrast`, `reduceMotion`. Every
+  story gets the a11y matrix for free.
+- **Real-device viewports**: iPhone 15 Pro, iPhone 16 Pro Max,
+  Pixel 8 Pro, Galaxy S24, iPad Pro 13", Pixel Tablet (plus kept
+  legacies for regression screenshots).
+- **Docgen union extraction** (`shouldExtractValuesFromUnion: true`) -
+  string-union props now render as dropdown controls automatically,
+  eliminating manual `argTypes` boilerplate.
+- **New stories**: `BottomTabBar`, `Countdown`, `StatTile` - each with
+  Playground, AllStates / AllTones, and platform-parity variants.
+- **New docs**: `Tokens / Spacing & Radii`, `Patterns / AppShell`, this
+  rewritten `Changelog`.
+- **Bundle-size gate**: `scripts/check-bundle-size.mjs` enforces
+  15 MB / 4 MB / 200 KB budgets as a CI step. Current snapshot:
+  **9.41 MB / 15 MB**.
+
+### Changed
+
+- Bulk `action('...')` -> `fn()` migration across 27 story files so
+  `play`-tests can assert handler invocations via `args.onX.mock.calls`.
+- `preview.tsx` `ThemeCanvas` now adds **20 px of inner padding** by
+  default so compact stories don't hug the canvas edge. Opt out per
+  story with `parameters.canvasPadding: 0` (used by `HeaderBar`,
+  `BottomTabBar`, `ScreenContainer`).
+- **Extended play-tests** for `IconButton` (click + disabled),
+  `SearchBar` (debounced emission + clear), `Select` (option pick +
+  cancel) - each asserts the real `args.onX` spy.
+- **Em-dashes (`—`) normalised** to standard hyphens across stories,
+  docs and config for consistency with the POLPROG terminal style.
+
+---
+
+## 1.1.0 - 2026-04-20
+
+### Added
+
+- Semantic tokens layer (`useSemantic()` hook + `semantic.colors`,
+  `semantic.spacing`, `semantic.typography`) that decouples designer
+  intent from raw scheme values.
+- New components: `BottomTabBar`, `Countdown`, `StatTile`.
+- Chromatic visual regression pipeline + GitHub Pages deploy for every
+  push to `main`.
+
+### Changed
+
+- Strict TypeScript mode enabled across the whole library; no `any` or
+  implicit return-type leaks.
+- ESLint a11y rules (`eslint-plugin-jsx-a11y`) now fail CI at
+  `--max-warnings 0`.
+- Changesets workflow replaces ad-hoc release notes.
+- `Chip`, `Toast`, `HeaderBar`, `Card` surface refinements (tighter
+  typography, better shadows in dark mode).
+
+### Fixed
+
+- `PressableScale` no longer animates when `reduceAnimations` is true.
+- `BottomSheet` focus trap on Android now restores focus to the opener.
+
+---
+
+## 1.0.0 - 2026-04-18
+
+First stable release.
+
+### Added
+
+- 34 components + 9 primitives covering every screen surface.
+- Seven color presets (`default`, `midnight`, `ocean`, `forest`,
+  `sunset`, `rose`, `amoled`) with light + dark variants.
+- Two typography density presets (`regular`, `compact`).
+- Haptic feedback plug-in (`configureHaptics`).
+- 188 Jest unit tests, strict TypeScript, 100 % typed public API.
+
+---
+
+## Deprecations
+
+Deprecations land in a minor release, log a one-time warning in dev,
+and are removed at the next major.
+
+| Deprecated | Since | Replaced by | Removed in |
+|---|---|---|---|
+| `typography.amount` / `amountLarge` / `amountSmall` | 1.0.0 | `mono` / `monoLarge` / `monoSmall` | 2.0.0 |
+| `Button` `color` prop | 0.9.0 | `variant` | 1.0.0 (already removed) |
+| `useTheme().reduceMotion` | 1.1.0 | `useTheme().reduceAnimations` | 2.0.0 |
+
+---
+
+## Release cadence
+
+- **Patch / Minor** - on demand, typically every 2-3 weeks when enough
+  changesets have accumulated.
+- **Major** - roughly twice a year, batched with a migration guide +
+  a codemod when applicable.
+- **Security patches** - out-of-band, within 48 h of disclosure.
+
+---
+
+## What to read next
+
+- **Migration** - step-by-step playbook for upgrading between majors.
+- **Getting Started** - install + first-screen checklist.
+- **Accessibility** - what each release buys you for WCAG compliance.

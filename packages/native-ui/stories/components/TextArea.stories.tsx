@@ -1,6 +1,6 @@
 import React from 'react';
+import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Text } from '../../src/primitives/Text';
 import { TextArea } from '../../src/components/TextArea';
 import { VStack } from '../../src/primitives/Stack';
@@ -63,7 +63,7 @@ export const Playground: Story = {
 export const Default: Story = {
   render: () => (
     <VStack gap="md" style={{ maxWidth: 400 }}>
-      <TextArea label="Notes" placeholder="Add your notes here..." onChangeText={action('changed')} />
+      <TextArea label="Notes" placeholder="Add your notes here..." onChangeText={fn()} />
     </VStack>
   ),
 };
@@ -73,7 +73,7 @@ export const DifferentHeights: Story = {
   render: () => (
     <VStack gap="lg" style={{ maxWidth: 400 }}>
       {[2, 4, 6, 8].map((lines) => (
-        <TextArea key={lines} label={`${lines} lines`} placeholder={`TextArea with ${lines} visible lines`} lines={lines} onChangeText={action('changed')} />
+        <TextArea key={lines} label={`${lines} lines`} placeholder={`TextArea with ${lines} visible lines`} lines={lines} onChangeText={fn()} />
       ))}
     </VStack>
   ),
@@ -83,7 +83,7 @@ export const WithError: Story = {
   name: 'Error State',
   render: () => (
     <VStack gap="md" style={{ maxWidth: 400 }}>
-      <TextArea label="Description" value="Too short" error="Description must be at least 20 characters" required onChangeText={action('changed')} />
+      <TextArea label="Description" value="Too short" error="Description must be at least 20 characters" required onChangeText={fn()} />
     </VStack>
   ),
 };

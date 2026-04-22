@@ -7,8 +7,11 @@ export type { IconButtonProps, IconButtonVariant, IconButtonSize } from './IconB
 export { HeaderBar } from './HeaderBar';
 export type { HeaderBarProps } from './HeaderBar';
 
+export { BottomTabBar } from './BottomTabBar';
+export type { BottomTabBarProps, BottomTabBarItem } from './BottomTabBar';
+
 export { Card } from './Card';
-export type { CardProps } from './Card';
+export type { CardProps, CardSize, CardElevation } from './Card';
 
 export { Input } from './Input';
 export type { InputProps } from './Input';
@@ -34,7 +37,7 @@ export { Radio } from './Radio';
 export type { RadioProps } from './Radio';
 
 export { Chip, ChipGroup } from './Chip';
-export type { ChipProps, ChipGroupProps, ChipShape } from './Chip';
+export type { ChipProps, ChipGroupProps, ChipShape, ChipVariant } from './Chip';
 
 export { Badge } from './Badge';
 export type { BadgeProps, BadgeVariant } from './Badge';
@@ -100,3 +103,9 @@ export type { ErrorBoundaryProps } from './ErrorBoundary';
 
 export { ConfettiOverlay } from './ConfettiOverlay';
 export type { ConfettiOverlayProps } from './ConfettiOverlay';
+
+export { StatTile } from './StatTile';
+export type { StatTileProps, StatTileTone, StatTileSize } from './StatTile';
+
+export { Countdown } from './Countdown';
+export type { CountdownProps, CountdownFormat } from './Countdown';

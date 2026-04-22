@@ -1,6 +1,6 @@
 import React from 'react';
+import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Badge } from '../../src/components/Badge';
 import { Box } from '../../src/primitives/Box';
 import { Button } from '../../src/components/Button';
@@ -79,7 +79,7 @@ export const Static: Story = {
 export const Pressable: Story = {
   name: 'Pressable',
   render: () => (
-    <Card onPress={action('card pressed')} accessibilityHint="Opens details">
+    <Card onPress={fn()} accessibilityHint="Opens details">
       <VStack gap="sm">
         <Heading level={2}>Pressable Card</Heading>
         <Text variant="body" color="textSecondary">
@@ -131,12 +131,12 @@ export const ComplexContent: Story = {
               </HStack>
             </VStack>
             <HStack gap="sm" justify="flex-end">
-              <Button title="Details" variant="ghost" size="sm" onPress={action('details')} />
-              <Button title="Add Entry" size="sm" onPress={action('add')} />
+              <Button title="Details" variant="ghost" size="sm" onPress={fn()} />
+              <Button title="Add Entry" size="sm" onPress={fn()} />
             </HStack>
           </VStack>
         </Card>
-        <Card onPress={action('navigate')}>
+        <Card onPress={fn()}>
           <HStack gap="md" align="center">
             <Box style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: theme.colors.primaryLight, alignItems: 'center', justifyContent: 'center' }}>
               <Text variant="h2">📊</Text>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Box } from '../../src/primitives/Box';
 import { Button } from '../../src/components/Button';
 import { Checkbox } from '../../src/components/Checkbox';
@@ -72,7 +72,7 @@ const ExpenseEntryForm = () => {
           value={category}
           onValueChange={(v) => {
             setCategory(v);
-            action('categoryChange')(v);
+            fn()(v);
           }}
           options={[
             { label: 'Food & Drinks', value: 'food' },
@@ -92,7 +92,7 @@ const ExpenseEntryForm = () => {
         />
         <Checkbox label="Recurring expense" checked={isRecurring} onChange={setRecurring} />
       </VStack>
-      <Button title="Save Entry" onPress={action('submit')} />
+      <Button title="Save Entry" onPress={fn()} />
     </VStack>
   );
 };
@@ -136,7 +136,7 @@ const FormWithValidation = () => {
         />
         <Checkbox label="I agree to the Terms of Service" checked={agreed} onChange={setAgreed} />
       </VStack>
-      <Button title="Create Account" onPress={action('signup')} disabled={!agreed} />
+      <Button title="Create Account" onPress={fn()} disabled={!agreed} />
     </VStack>
   );
 };
@@ -157,7 +157,7 @@ const FilterForm = () => {
           label="Category"
           placeholder="All categories"
           value=""
-          onValueChange={action('category')}
+          onValueChange={fn()}
           options={[
             { label: 'Food & Drinks', value: 'food' },
             { label: 'Transport', value: 'transport' },
@@ -180,10 +180,10 @@ const FilterForm = () => {
       </VStack>
       <HStack gap="md">
         <Box style={{ flex: 1 }}>
-          <Button title="Reset" variant="outline" onPress={action('reset')} />
+          <Button title="Reset" variant="outline" onPress={fn()} />
         </Box>
         <Box style={{ flex: 1 }}>
-          <Button title="Apply" onPress={action('apply')} />
+          <Button title="Apply" onPress={fn()} />
         </Box>
       </HStack>
     </VStack>

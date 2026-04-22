@@ -129,6 +129,7 @@ export {
   SettingsSwitchRow,
   InputPrompt,
   HeaderBar,
+  BottomTabBar,
   ErrorBoundary,
   withErrorBoundary,
   ConfettiOverlay,
@@ -187,6 +188,8 @@ export type {
   SettingsSwitchRowProps,
   InputPromptProps,
   HeaderBarProps,
+  BottomTabBarProps,
+  BottomTabBarItem,
   ErrorBoundaryProps,
   ConfettiOverlayProps,
 } from './components';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { fn } from 'storybook/test';
 import { View, Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
-import { action } from 'storybook/actions';
 import { Avatar } from '../../src/components/Avatar';
 import { Badge } from '../../src/components/Badge';
 import { Box } from '../../src/primitives/Box';
@@ -61,41 +61,41 @@ const FullSettingsScreen = () => {
           title="John Doe"
           subtitle="john.doe@company.com"
           icon={<Avatar name="John Doe" size="md" />}
-          onPress={action('profile')}
+          onPress={fn()}
         />
-        <ListItem title="Subscription" value="Premium" icon={<EmojiIcon>⭐</EmojiIcon>} onPress={action('subscription')} hideDivider />
+        <ListItem title="Subscription" value="Premium" icon={<EmojiIcon>⭐</EmojiIcon>} onPress={fn()} hideDivider />
       </ListSection>
 
       <ListSection title="Appearance">
         <ListSwitchItem label="Dark Mode" icon={<EmojiIcon>🌙</EmojiIcon>} value={darkMode} onValueChange={setDarkMode} />
-        <ListItem title="Color Theme" value="Indigo" icon={<EmojiIcon>🎨</EmojiIcon>} onPress={action('theme')} />
+        <ListItem title="Color Theme" value="Indigo" icon={<EmojiIcon>🎨</EmojiIcon>} onPress={fn()} />
         <ListSwitchItem label="Haptic Feedback" icon={<EmojiIcon>📳</EmojiIcon>} value={haptics} onValueChange={setHaptics} hideDivider />
       </ListSection>
 
       <ListSection title="Notifications">
         <ListSwitchItem label="Push Notifications" icon={<EmojiIcon>🔔</EmojiIcon>} value={notifications} onValueChange={setNotifications} />
-        <ListItem title="Notification Sound" value="Default" icon={<EmojiIcon>🔊</EmojiIcon>} onPress={action('sound')} hideDivider />
+        <ListItem title="Notification Sound" value="Default" icon={<EmojiIcon>🔊</EmojiIcon>} onPress={fn()} hideDivider />
       </ListSection>
 
       <ListSection title="Security">
         <ListSwitchItem label="Biometric Lock" icon={<EmojiIcon>🔐</EmojiIcon>} value={biometrics} onValueChange={setBiometrics} subtitle="Use Face ID or fingerprint" />
-        <ListItem title="Change PIN" icon={<EmojiIcon>🔢</EmojiIcon>} onPress={action('pin')} hideDivider />
+        <ListItem title="Change PIN" icon={<EmojiIcon>🔢</EmojiIcon>} onPress={fn()} hideDivider />
       </ListSection>
 
       <ListSection title="Data" footer="Exported data will be saved as CSV.">
-        <ListItem title="Export Data" icon={<EmojiIcon>📤</EmojiIcon>} onPress={action('export')} />
-        <ListItem title="Import Data" icon={<EmojiIcon>📥</EmojiIcon>} onPress={action('import')} hideDivider />
+        <ListItem title="Export Data" icon={<EmojiIcon>📤</EmojiIcon>} onPress={fn()} />
+        <ListItem title="Import Data" icon={<EmojiIcon>📥</EmojiIcon>} onPress={fn()} hideDivider />
       </ListSection>
 
       <ListSection title="About">
         <ListItem title="Version" value="1.2.0 (42)" />
-        <ListItem title="Rate the App" icon={<EmojiIcon>⭐</EmojiIcon>} onPress={action('rate')} />
-        <ListItem title="Send Feedback" icon={<EmojiIcon>💬</EmojiIcon>} onPress={action('feedback')} hideDivider />
+        <ListItem title="Rate the App" icon={<EmojiIcon>⭐</EmojiIcon>} onPress={fn()} />
+        <ListItem title="Send Feedback" icon={<EmojiIcon>💬</EmojiIcon>} onPress={fn()} hideDivider />
       </ListSection>
 
       <ListSection>
-        <ListItem title="Sign Out" destructive onPress={action('signout')} />
-        <ListItem title="Delete Account" destructive onPress={action('delete')} hideDivider />
+        <ListItem title="Sign Out" destructive onPress={fn()} />
+        <ListItem title="Delete Account" destructive onPress={fn()} hideDivider />
       </ListSection>
     </VStack>
   );

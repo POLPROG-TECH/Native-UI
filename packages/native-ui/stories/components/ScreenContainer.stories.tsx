@@ -13,6 +13,7 @@ const meta: Meta<ScreenContainerProps> = {
   title: 'Components/ScreenContainer',
   component: ScreenContainer,
   parameters: {
+    canvasPadding: 0,
     docs: {
       description: {
         component: [
