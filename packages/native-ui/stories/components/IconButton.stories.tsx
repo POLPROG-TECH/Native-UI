@@ -69,6 +69,7 @@ export const Playground: Story = {
     await expect(button).toBeInTheDocument();
     await userEvent.click(button);
     await expect(args.onPress).toHaveBeenCalledTimes(1);
+    await new Promise((resolve) => setTimeout(resolve, 350));
     await userEvent.click(button);
     await expect(args.onPress).toHaveBeenCalledTimes(2);
   },

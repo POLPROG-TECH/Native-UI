@@ -106,7 +106,7 @@ export const Playground: Story = {
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const stats = canvas.getByRole('button', { name: /stats/i });
+    const stats = canvas.getByRole('tab', { name: /stats/i });
     await userEvent.click(stats);
     await expect(args.onSelect).toHaveBeenCalledWith('stats');
   },
