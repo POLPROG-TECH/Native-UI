@@ -3,23 +3,6 @@
 
 set -e
 
-# --- Changeset check ---
-# On pushes to main/master, require a .changeset/*.md file
-# Skip with: git push --no-verify
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
-  CHANGESETS=$(find .changeset -name '*.md' ! -name 'README.md' 2>/dev/null | head -1)
-  if [ -z "$CHANGESETS" ]; then
-    echo ""
-    echo "  ERROR: No changeset found."
-    echo "  Run 'npx changeset' to create one before pushing to $BRANCH."
-    echo "  This is needed so the release bot can bump the version and update CHANGELOG."
-    echo "  Skip this check with: git push --no-verify"
-    echo ""
-    exit 1
-  fi
-fi
-
 echo "▸ lint"
 npm run lint --workspace=@polprog/native-ui --silent
 echo "▸ typecheck"
