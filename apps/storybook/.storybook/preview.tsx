@@ -20,10 +20,11 @@ import {
  * asset requests (fonts, docs, icons) free from MSW noise.
  */
 if (typeof window !== 'undefined') {
+  const workerUrl = new URL('mockServiceWorker.js', document.baseURI).toString();
   initialize(
     {
       onUnhandledRequest: 'bypass',
-      serviceWorker: { url: '/mockServiceWorker.js' },
+      serviceWorker: { url: workerUrl },
     },
     defaultHandlers,
   );
