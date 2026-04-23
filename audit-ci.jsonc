@@ -1,0 +1,19 @@
+{
+  // Fail the build on moderate+ vulnerabilities.
+  "moderate": true,
+
+  // Only scan runtime dependencies. Dev-only tooling (Storybook test runner,
+  // nyc, jest-junit) pulls in transitive advisories that never ship to users.
+  "skip-dev": true,
+
+  // Per-advisory allowlist for issues we have explicitly triaged.
+  // Keep this list short and revisit whenever dependencies are upgraded.
+  "allowlist": [
+    // uuid <14.0.0 – missing buffer bounds check in v3/v5/v6 when `buf` is
+    // provided. Reaches us only through dev tooling (@storybook/test-runner
+    // → jest-junit/nyc → uuid@8). We do not call the affected APIs and the
+    // code never runs in production builds. Remove once the upstream dev
+    // dependencies ship a uuid@>=14 upgrade.
+    "GHSA-w5hq-g745-h8pq"
+  ]
+}
