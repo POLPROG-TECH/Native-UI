@@ -72,9 +72,11 @@ export function InputPrompt({
 
   useEffect(() => {
     if (Platform.OS !== 'ios') return;
+
     const wasVisible = wasVisibleRef.current;
     wasVisibleRef.current = visible;
     if (!visible || wasVisible) return;
+
     Alert.prompt(
       title,
       message,

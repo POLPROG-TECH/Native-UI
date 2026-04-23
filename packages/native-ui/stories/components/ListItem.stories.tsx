@@ -15,6 +15,7 @@ import { useTheme } from '../../src/theme/ThemeProvider';
 
 const EmojiIcon = ({ children, bg }: { children: string; bg?: string }) => {
   const theme = useTheme();
+
   return (
     <RNText
       style={{
@@ -271,6 +272,7 @@ export const Density: Story = {
         </Box>
       </VStack>
     );
+
     return (
       <HStack gap="lg" align="flex-start" style={{ flexWrap: 'wrap' }}>
         <NativeUIProvider config={{ typography: 'regular' }}>

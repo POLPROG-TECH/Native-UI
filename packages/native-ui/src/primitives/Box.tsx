@@ -83,13 +83,21 @@ export function Box({
   const resolvedRadius = radius ?? borderRadius;
 
   if (resolvedP !== undefined) computedStyle.padding = theme.spacing[resolvedP];
+
   if (px !== undefined) computedStyle.paddingHorizontal = theme.spacing[px];
+
   if (py !== undefined) computedStyle.paddingVertical = theme.spacing[py];
+
   if (m !== undefined) computedStyle.margin = theme.spacing[m];
+
   if (mx !== undefined) computedStyle.marginHorizontal = theme.spacing[mx];
+
   if (my !== undefined) computedStyle.marginVertical = theme.spacing[my];
+
   if (bg !== undefined) computedStyle.backgroundColor = theme.colors[bg] as string;
+
   if (resolvedRadius !== undefined) computedStyle.borderRadius = theme.borderRadius[resolvedRadius];
+
   if (flex !== undefined) computedStyle.flex = flex;
 
   const elevationStyle = elev ? (theme.elevation[elev] as ViewStyle) : undefined;

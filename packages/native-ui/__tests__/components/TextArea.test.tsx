@@ -4,13 +4,11 @@ import { TextArea } from '../../src/components/TextArea';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('TextArea', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the TextArea export from the components module
 
     // WHEN its runtime type is inspected
@@ -20,7 +18,7 @@ describe('TextArea', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_the_label_when_a_label_prop_is_provided', () => {
+  it('should render the label when a label prop is provided', () => {
     // GIVEN a TextArea with a "Bio" label
 
     // WHEN the component is rendered inside a theme provider
@@ -30,7 +28,7 @@ describe('TextArea', () => {
     expect(screen.getByText('Bio')).toBeInTheDocument();
   });
 
-  it('should_render_a_required_asterisk_when_required_is_true', () => {
+  it('should render a required asterisk when required is true', () => {
     // GIVEN a TextArea with a label and required={true}
 
     // WHEN the component is rendered inside a theme provider
@@ -40,7 +38,7 @@ describe('TextArea', () => {
     expect(screen.getByText('*')).toBeInTheDocument();
   });
 
-  it('should_render_the_error_message_with_alert_role_when_provided', () => {
+  it('should render the error message with alert role when provided', () => {
     // GIVEN a TextArea with an error message
 
     // WHEN the component is rendered inside a theme provider
@@ -50,7 +48,7 @@ describe('TextArea', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('Too short');
   });
 
-  it('should_forward_onChangeText_updates_from_the_underlying_textarea', () => {
+  it('should forward onChangeText updates from the underlying textarea', () => {
     // GIVEN a TextArea with a mocked onChangeText
     const onChangeText = jest.fn();
     renderWithTheme(<TextArea label="Bio" onChangeText={onChangeText} />);
@@ -62,7 +60,7 @@ describe('TextArea', () => {
     expect(onChangeText).toHaveBeenCalledWith('hi');
   });
 
-  it('should_invoke_onFocus_and_onBlur_handlers_when_the_field_is_focused_and_blurred', () => {
+  it('should invoke onFocus and onBlur handlers when the field is focused and blurred', () => {
     // GIVEN a TextArea with mocked focus and blur handlers
     const onFocus = jest.fn();
     const onBlur = jest.fn();

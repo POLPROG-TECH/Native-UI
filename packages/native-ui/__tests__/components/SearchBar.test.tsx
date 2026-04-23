@@ -5,13 +5,11 @@ import { SearchBar } from '../../src/components/SearchBar';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('SearchBar', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the SearchBar export from the components module
 
     // WHEN its runtime type is inspected
@@ -21,7 +19,7 @@ describe('SearchBar', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_the_initial_value_in_the_text_input_when_mounted', () => {
+  it('should render the initial value in the text input when mounted', () => {
     // GIVEN a SearchBar with an initial value of "hello"
 
     // WHEN the component is rendered inside a theme provider
@@ -31,13 +29,11 @@ describe('SearchBar', () => {
     expect(screen.getByLabelText('Search')).toHaveValue('hello');
   });
 
-  it('should_debounce_onChangeText_until_the_delay_elapses', () => {
+  it('should debounce onChangeText until the delay elapses', () => {
     // GIVEN a SearchBar with a mocked onChangeText and a 300 ms debounce
     jest.useFakeTimers();
     const onChangeText = jest.fn();
-    renderWithTheme(
-      <SearchBar value="" onChangeText={onChangeText} placeholder="Search" />,
-    );
+    renderWithTheme(<SearchBar value="" onChangeText={onChangeText} placeholder="Search" />);
 
     // WHEN the user types three characters in quick succession
     const input = screen.getByLabelText('Search');
@@ -57,13 +53,11 @@ describe('SearchBar', () => {
     jest.useRealTimers();
   });
 
-  it('should_render_a_clear_button_when_the_input_has_a_value_and_clear_it_when_pressed', () => {
+  it('should render a clear button when the input has a value and clear it when pressed', () => {
     // GIVEN a SearchBar pre-populated with "abc"
     jest.useFakeTimers();
     const onChangeText = jest.fn();
-    renderWithTheme(
-      <SearchBar value="abc" onChangeText={onChangeText} placeholder="Search" />,
-    );
+    renderWithTheme(<SearchBar value="abc" onChangeText={onChangeText} placeholder="Search" />);
 
     // WHEN the clear button is clicked
     fireEvent.click(screen.getByLabelText('Clear search'));
@@ -73,7 +67,7 @@ describe('SearchBar', () => {
     jest.useRealTimers();
   });
 
-  it('should_render_renderLeft_content_in_the_leading_slot_when_provided', () => {
+  it('should render renderLeft content in the leading slot when provided', () => {
     // GIVEN a SearchBar with a renderLeft render prop
 
     // WHEN the component is rendered inside a theme provider
@@ -90,7 +84,7 @@ describe('SearchBar', () => {
     expect(screen.getByText('LEFT')).toBeInTheDocument();
   });
 
-  it('should_render_renderRight_content_in_the_trailing_slot_when_provided', () => {
+  it('should render renderRight content in the trailing slot when provided', () => {
     // GIVEN a SearchBar with a renderRight render prop
 
     // WHEN the component is rendered inside a theme provider
@@ -105,5 +99,42 @@ describe('SearchBar', () => {
 
     // THEN the trailing slot content is present
     expect(screen.getByText('RIGHT')).toBeInTheDocument();
+  });
+
+  it('should sync from prop after debounce fires when parent resets value', () => {
+    // GIVEN a SearchBar where the user typed "abc" and the parent later resets
+    jest.useFakeTimers();
+    const onChangeText = jest.fn();
+    const { rerender } = renderWithTheme(
+      <SearchBar value="" onChangeText={onChangeText} placeholder="Search" />,
+    );
+
+    // WHEN the user types
+    const input = screen.getByLabelText('Search');
+    fireEvent.change(input, { target: { value: 'abc' } });
+
+    // AND the parent mirrors the typed value into its controlled `value` prop
+    rerender(
+      <NativeUIProvider config={{ colorMode: 'light' }}>
+        <SearchBar value="abc" onChangeText={onChangeText} placeholder="Search" />
+      </NativeUIProvider>,
+    );
+
+    // AND the debounce timer elapses
+    act(() => {
+      jest.advanceTimersByTime(300);
+    });
+    expect(onChangeText).toHaveBeenCalledWith('abc');
+
+    // AND the parent then resets `value` back to ''
+    rerender(
+      <NativeUIProvider config={{ colorMode: 'light' }}>
+        <SearchBar value="" onChangeText={onChangeText} placeholder="Search" />
+      </NativeUIProvider>,
+    );
+
+    // THEN the input reflects the parent-driven reset (prop-sync is not blocked)
+    expect(screen.getByLabelText('Search')).toHaveValue('');
+    jest.useRealTimers();
   });
 });

@@ -4,13 +4,11 @@ import { Radio } from '../../src/components/Radio';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('Radio', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the Radio export from the components module
 
     // WHEN its runtime type is inspected
@@ -20,7 +18,7 @@ describe('Radio', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_only_the_indicator_when_no_onPress_and_no_label_are_provided', () => {
+  it('should render only the indicator when no onPress and no label are provided', () => {
     // GIVEN a Radio with only the selected prop
 
     // WHEN the component is rendered inside a theme provider
@@ -30,7 +28,7 @@ describe('Radio', () => {
     expect(screen.getByRole('radio')).toBeInTheDocument();
   });
 
-  it('should_render_the_label_when_a_label_is_provided', () => {
+  it('should render the label when a label is provided', () => {
     // GIVEN a Radio with a "Option A" label
 
     // WHEN the component is rendered inside a theme provider
@@ -40,7 +38,7 @@ describe('Radio', () => {
     expect(screen.getByText('Option A')).toBeInTheDocument();
   });
 
-  it('should_invoke_onPress_when_the_row_is_clicked', () => {
+  it('should invoke onPress when the row is clicked', () => {
     // GIVEN a Radio with a mocked onPress
     const onPress = jest.fn();
     renderWithTheme(<Radio selected={false} label="A" onPress={onPress} />);
@@ -52,7 +50,7 @@ describe('Radio', () => {
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  it('should_not_invoke_onPress_when_disabled', () => {
+  it('should not invoke onPress when disabled', () => {
     // GIVEN a disabled Radio with a mocked onPress
     const onPress = jest.fn();
     renderWithTheme(<Radio selected={false} label="A" onPress={onPress} disabled />);
@@ -64,7 +62,7 @@ describe('Radio', () => {
     expect(onPress).not.toHaveBeenCalled();
   });
 
-  it('should_use_the_custom_accessibilityLabel_when_provided', () => {
+  it('should use the custom accessibilityLabel when provided', () => {
     // GIVEN a Radio with an explicit accessibility label
 
     // WHEN the component is rendered inside a theme provider

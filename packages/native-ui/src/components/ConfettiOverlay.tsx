@@ -144,8 +144,10 @@ export function ConfettiOverlay({
 
   useEffect(() => {
     if (!visible) return;
+
     if (reduceAnimations && !forceAnimation) {
       onCompleteRef.current?.();
+
       return;
     }
     setBurstKey((k) => k + 1);
@@ -154,6 +156,7 @@ export function ConfettiOverlay({
       setShow(false);
       onCompleteRef.current?.();
     }, duration);
+
     return () => clearTimeout(timer);
   }, [visible, reduceAnimations, forceAnimation, duration]);
 

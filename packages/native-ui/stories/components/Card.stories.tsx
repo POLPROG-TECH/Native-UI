@@ -94,6 +94,7 @@ export const NoPadding: Story = {
   name: 'Without Padding',
   render: () => {
     const theme = useTheme();
+
     return (
       <Card padded={false} style={{ maxWidth: 360, overflow: 'hidden' }}>
         <Box style={{ height: 160, backgroundColor: theme.colors.primaryLight, alignItems: 'center', justifyContent: 'center' }}>
@@ -112,6 +113,7 @@ export const ComplexContent: Story = {
   name: 'Complex Content',
   render: () => {
     const theme = useTheme();
+
     return (
       <VStack gap="lg" style={{ maxWidth: 400 }}>
         <Card>

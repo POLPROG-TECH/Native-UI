@@ -5,13 +5,11 @@ import { SettingsRow, SettingsSwitchRow } from '../../src/components/SettingsRow
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('SettingsRow', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the SettingsRow export from the components module
 
     // WHEN its runtime type is inspected
@@ -21,7 +19,7 @@ describe('SettingsRow', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_the_label_when_provided', () => {
+  it('should render the label when provided', () => {
     // GIVEN a SettingsRow with a "Categories" label
 
     // WHEN the component is rendered inside a theme provider
@@ -31,7 +29,7 @@ describe('SettingsRow', () => {
     expect(screen.getByText('Categories')).toBeInTheDocument();
   });
 
-  it('should_render_the_emoji_icon_when_the_icon_prop_is_provided', () => {
+  it('should render the emoji icon when the icon prop is provided', () => {
     // GIVEN a SettingsRow with a "📁" emoji icon
 
     // WHEN the component is rendered inside a theme provider
@@ -41,7 +39,7 @@ describe('SettingsRow', () => {
     expect(screen.getByText('📁')).toBeInTheDocument();
   });
 
-  it('should_invoke_onPress_when_the_row_is_clicked', () => {
+  it('should invoke onPress when the row is clicked', () => {
     // GIVEN a SettingsRow with a mocked onPress
     const onPress = jest.fn();
     renderWithTheme(<SettingsRow label="Open" icon="📁" onPress={onPress} />);
@@ -53,16 +51,12 @@ describe('SettingsRow', () => {
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  it('should_prefer_renderIcon_over_the_emoji_icon_when_both_are_provided', () => {
+  it('should prefer renderIcon over the emoji icon when both are provided', () => {
     // GIVEN a SettingsRow supplying both an emoji icon and a renderIcon render prop
 
     // WHEN the component is rendered inside a theme provider
     renderWithTheme(
-      <SettingsRow
-        label="Lang"
-        icon="📁"
-        renderIcon={() => <Text>RENDERED</Text>}
-      />,
+      <SettingsRow label="Lang" icon="📁" renderIcon={() => <Text>RENDERED</Text>} />,
     );
 
     // THEN only the render prop output is present
@@ -70,7 +64,7 @@ describe('SettingsRow', () => {
     expect(screen.queryByText('📁')).not.toBeInTheDocument();
   });
 
-  it('should_render_the_fallback_icon_background_when_the_emoji_is_not_in_the_default_color_map', () => {
+  it('should render the fallback icon background when the emoji is not in the default color map', () => {
     // GIVEN a SettingsRow with an emoji outside the default colour map
 
     // WHEN the component is rendered inside a theme provider
@@ -80,19 +74,17 @@ describe('SettingsRow', () => {
     expect(screen.getByText('🦄')).toBeInTheDocument();
   });
 
-  it('should_merge_iconColorMap_on_top_of_the_default_map_without_crashing', () => {
+  it('should merge iconColorMap on top of the default map without crashing', () => {
     // GIVEN a SettingsRow with a custom color map entry
 
     // WHEN the component is rendered inside a theme provider
-    renderWithTheme(
-      <SettingsRow label="Mystery" icon="🦄" iconColorMap={{ '🦄': '#123456' }} />,
-    );
+    renderWithTheme(<SettingsRow label="Mystery" icon="🦄" iconColorMap={{ '🦄': '#123456' }} />);
 
     // THEN the emoji is still rendered
     expect(screen.getByText('🦄')).toBeInTheDocument();
   });
 
-  it('should_render_the_destructive_row_without_crashing', () => {
+  it('should render the destructive row without crashing', () => {
     // GIVEN a destructive SettingsRow
 
     // WHEN the component is rendered inside a theme provider
@@ -104,7 +96,7 @@ describe('SettingsRow', () => {
 });
 
 describe('SettingsSwitchRow', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the SettingsSwitchRow export from the components module
 
     // WHEN its runtime type is inspected
@@ -114,17 +106,12 @@ describe('SettingsSwitchRow', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_the_label_and_toggle_when_provided', () => {
+  it('should render the label and toggle when provided', () => {
     // GIVEN a SettingsSwitchRow with an emoji icon and value={true}
 
     // WHEN the component is rendered inside a theme provider
     renderWithTheme(
-      <SettingsSwitchRow
-        label="Dark Mode"
-        icon="🌙"
-        value
-        onValueChange={() => {}}
-      />,
+      <SettingsSwitchRow label="Dark Mode" icon="🌙" value onValueChange={() => {}} />,
     );
 
     // THEN the label is present and the toggle is checked
@@ -132,16 +119,11 @@ describe('SettingsSwitchRow', () => {
     expect(screen.getByRole('switch')).toBeChecked();
   });
 
-  it('should_invoke_onValueChange_with_the_opposite_value_when_the_switch_is_clicked', () => {
+  it('should invoke onValueChange with the opposite value when the switch is clicked', () => {
     // GIVEN a SettingsSwitchRow with value={false} and a mocked onValueChange
     const onValueChange = jest.fn();
     renderWithTheme(
-      <SettingsSwitchRow
-        label="Dark Mode"
-        icon="🌙"
-        value={false}
-        onValueChange={onValueChange}
-      />,
+      <SettingsSwitchRow label="Dark Mode" icon="🌙" value={false} onValueChange={onValueChange} />,
     );
 
     // WHEN the toggle is clicked
@@ -151,7 +133,7 @@ describe('SettingsSwitchRow', () => {
     expect(onValueChange).toHaveBeenCalledWith(true);
   });
 
-  it('should_render_a_custom_renderIcon_when_provided', () => {
+  it('should render a custom renderIcon when provided', () => {
     // GIVEN a SettingsSwitchRow with a custom icon render prop
 
     // WHEN the component is rendered inside a theme provider

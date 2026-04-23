@@ -38,6 +38,7 @@ import { normaliseHex } from '../tokens/colors';
 
 function getIconBg(icon: string | undefined, colorMap: Record<string, string>): string {
   if (!icon) return FALLBACK_ICON_COLOR;
+
   return colorMap[icon] ?? FALLBACK_ICON_COLOR;
 }
 
@@ -46,9 +47,11 @@ function getIconBg(icon: string | undefined, colorMap: Record<string, string>): 
 function tintColor(color: string, alpha: number): string {
   const hex = normaliseHex(color);
   if (!hex) return color;
+
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
+
   return `rgba(${r},${g},${b},${alpha})`;
 }
 

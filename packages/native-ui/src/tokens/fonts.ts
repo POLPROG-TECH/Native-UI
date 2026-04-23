@@ -87,10 +87,12 @@ export function familiesForLocale(
   preferred: FontFamilies = spaceGroteskFontFamilies,
 ): FontFamilies {
   if (!locale) return preferred;
+
   const lower = locale.toLowerCase();
   const primary = lower.split('-')[0] ?? lower;
   if (NON_LATIN_LOCALES.has(primary) || NON_LATIN_LOCALES.has(lower)) {
     return systemFontFamilies;
   }
+
   return preferred;
 }

@@ -4,13 +4,11 @@ import { Checkbox } from '../../src/components/Checkbox';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('Checkbox', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the Checkbox export from the components module
 
     // WHEN its runtime type is inspected
@@ -20,7 +18,7 @@ describe('Checkbox', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_its_label_when_the_label_prop_is_provided', () => {
+  it('should render its label when the label prop is provided', () => {
     // GIVEN a Checkbox configured with an "Accept terms" label
 
     // WHEN the component is rendered inside a theme provider
@@ -30,7 +28,7 @@ describe('Checkbox', () => {
     expect(screen.getByText('Accept terms')).toBeInTheDocument();
   });
 
-  it('should_invoke_onChange_with_the_opposite_value_when_the_row_is_pressed', () => {
+  it('should invoke onChange with the opposite value when the row is pressed', () => {
     // GIVEN an unchecked Checkbox with a mocked onChange
     const onChange = jest.fn();
     renderWithTheme(<Checkbox checked={false} onChange={onChange} label="Toggle" />);
@@ -43,7 +41,7 @@ describe('Checkbox', () => {
     expect(onChange).toHaveBeenCalledWith(true);
   });
 
-  it('should_invoke_onChange_with_false_when_a_checked_checkbox_is_pressed', () => {
+  it('should invoke onChange with false when a checked checkbox is pressed', () => {
     // GIVEN a checked Checkbox with a mocked onChange
     const onChange = jest.fn();
     renderWithTheme(<Checkbox checked onChange={onChange} label="Toggle" />);
@@ -55,7 +53,7 @@ describe('Checkbox', () => {
     expect(onChange).toHaveBeenCalledWith(false);
   });
 
-  it('should_render_a_check_glyph_only_when_checked', () => {
+  it('should render a check glyph only when checked', () => {
     // GIVEN a checked Checkbox
     renderWithTheme(<Checkbox checked onChange={() => {}} label="Done" />);
 
@@ -63,12 +61,10 @@ describe('Checkbox', () => {
     expect(screen.getByText('✓')).toBeInTheDocument();
   });
 
-  it('should_not_invoke_onChange_when_the_checkbox_is_disabled', () => {
+  it('should not invoke onChange when the checkbox is disabled', () => {
     // GIVEN a disabled Checkbox with a mocked onChange
     const onChange = jest.fn();
-    renderWithTheme(
-      <Checkbox checked={false} onChange={onChange} label="Disabled" disabled />,
-    );
+    renderWithTheme(<Checkbox checked={false} onChange={onChange} label="Disabled" disabled />);
 
     // WHEN the row is clicked
     fireEvent.click(screen.getByLabelText('Disabled'));
@@ -77,7 +73,7 @@ describe('Checkbox', () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 
-  it('should_render_every_size_without_crashing', () => {
+  it('should render every size without crashing', () => {
     // GIVEN both supported sizes
     const sizes = ['sm', 'md'] as const;
 

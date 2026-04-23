@@ -46,6 +46,7 @@ type Story = StoryObj<MarqueeTextProps>;
 
 const Frame = ({ children, width = 200 }: { children: React.ReactNode; width?: number }) => {
   const theme = useTheme();
+
   return (
     <View
       style={{
@@ -65,6 +66,7 @@ const Frame = ({ children, width = 200 }: { children: React.ReactNode; width?: n
 
 const MarqueeInFrame = ({ args }: { args: MarqueeTextProps }) => {
   const theme = useTheme();
+
   return (
     <Frame>
       <MarqueeText {...args} style={{ fontSize: 15, color: theme.colors.textPrimary }} />

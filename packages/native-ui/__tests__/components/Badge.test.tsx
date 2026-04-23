@@ -4,13 +4,11 @@ import { Badge } from '../../src/components/Badge';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('Badge', () => {
-  it('should_render_label_text_when_the_label_prop_is_provided', () => {
+  it('should render label text when the label prop is provided', () => {
     // GIVEN a Badge configured with a "New" label
 
     // WHEN the component is rendered inside a theme provider
@@ -20,7 +18,7 @@ describe('Badge', () => {
     expect(screen.getByText('New')).toBeInTheDocument();
   });
 
-  it('should_display_capped_count_with_plus_suffix_when_count_exceeds_max', () => {
+  it('should display capped count with plus suffix when count exceeds max', () => {
     // GIVEN a Badge configured with a count greater than its max
 
     // WHEN the component is rendered inside a theme provider
@@ -30,7 +28,7 @@ describe('Badge', () => {
     expect(screen.getByText('99+')).toBeInTheDocument();
   });
 
-  it('should_display_the_raw_count_when_count_is_below_max', () => {
+  it('should display the raw count when count is below max', () => {
     // GIVEN a Badge configured with a count well below its max
 
     // WHEN the component is rendered inside a theme provider
@@ -40,13 +38,11 @@ describe('Badge', () => {
     expect(screen.getByText('7')).toBeInTheDocument();
   });
 
-  it('should_render_successfully_with_the_info_variant', () => {
+  it('should render successfully with the info variant', () => {
     // GIVEN a Badge configured with the info variant and an "info" label
 
     // WHEN the component is rendered inside a theme provider
-    const { container } = renderWithTheme(
-      <Badge label="info" variant="info" />,
-    );
+    const { container } = renderWithTheme(<Badge label="info" variant="info" />);
 
     // THEN the component mounts and shows the label
     expect(container).toBeTruthy();

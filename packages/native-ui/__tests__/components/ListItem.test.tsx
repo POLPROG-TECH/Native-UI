@@ -5,13 +5,11 @@ import { ListItem } from '../../src/components/ListItem';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('ListItem', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the ListItem export from the components module
 
     // WHEN its runtime type is inspected
@@ -21,7 +19,7 @@ describe('ListItem', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_the_title_when_a_title_is_provided', () => {
+  it('should render the title when a title is provided', () => {
     // GIVEN a ListItem with a "Profile" title
 
     // WHEN the component is rendered inside a theme provider
@@ -31,7 +29,7 @@ describe('ListItem', () => {
     expect(screen.getByText('Profile')).toBeInTheDocument();
   });
 
-  it('should_render_the_subtitle_when_provided', () => {
+  it('should render the subtitle when provided', () => {
     // GIVEN a ListItem with a subtitle
 
     // WHEN the component is rendered inside a theme provider
@@ -41,7 +39,7 @@ describe('ListItem', () => {
     expect(screen.getByText('View and edit')).toBeInTheDocument();
   });
 
-  it('should_render_the_value_on_the_right_when_provided', () => {
+  it('should render the value on the right when provided', () => {
     // GIVEN a ListItem with a trailing value
 
     // WHEN the component is rendered inside a theme provider
@@ -51,7 +49,7 @@ describe('ListItem', () => {
     expect(screen.getByText('42')).toBeInTheDocument();
   });
 
-  it('should_become_pressable_and_invoke_onPress_when_onPress_is_provided', () => {
+  it('should become pressable and invoke onPress when onPress is provided', () => {
     // GIVEN a ListItem with a mocked onPress callback
     const onPress = jest.fn();
     renderWithTheme(<ListItem title="Tap me" onPress={onPress} />);
@@ -63,7 +61,7 @@ describe('ListItem', () => {
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  it('should_render_a_default_chevron_when_onPress_is_provided_and_no_trailing_element_is_given', () => {
+  it('should render a default chevron when onPress is provided and no trailing element is given', () => {
     // GIVEN a pressable ListItem without a trailing element
     renderWithTheme(<ListItem title="Go" onPress={() => {}} />);
 
@@ -71,25 +69,19 @@ describe('ListItem', () => {
     expect(screen.getByText('›')).toBeInTheDocument();
   });
 
-  it('should_not_render_the_default_chevron_when_a_trailing_element_is_provided', () => {
+  it('should not render the default chevron when a trailing element is provided', () => {
     // GIVEN a pressable ListItem with a custom trailing element
-    renderWithTheme(
-      <ListItem title="Go" onPress={() => {}} trailing={<Text>NEXT</Text>} />,
-    );
+    renderWithTheme(<ListItem title="Go" onPress={() => {}} trailing={<Text>NEXT</Text>} />);
 
     // WHEN the trailing element is rendered THEN only the trailing element is present and no default chevron
     expect(screen.getByText('NEXT')).toBeInTheDocument();
     expect(screen.queryByText('›')).not.toBeInTheDocument();
   });
 
-  it('should_use_renderIcon_when_both_icon_and_renderIcon_are_provided', () => {
+  it('should use renderIcon when both icon and renderIcon are provided', () => {
     // GIVEN a ListItem supplying both an icon node and a renderIcon render prop
     renderWithTheme(
-      <ListItem
-        title="Icons"
-        icon={<Text>RAW</Text>}
-        renderIcon={() => <Text>RENDERED</Text>}
-      />,
+      <ListItem title="Icons" icon={<Text>RAW</Text>} renderIcon={() => <Text>RENDERED</Text>} />,
     );
 
     // WHEN the component is rendered THEN only the render prop output is present
@@ -97,7 +89,7 @@ describe('ListItem', () => {
     expect(screen.queryByText('RAW')).not.toBeInTheDocument();
   });
 
-  it('should_use_renderTrailing_when_both_trailing_and_renderTrailing_are_provided', () => {
+  it('should use renderTrailing when both trailing and renderTrailing are provided', () => {
     // GIVEN a ListItem supplying both a trailing node and a renderTrailing render prop
     renderWithTheme(
       <ListItem
@@ -112,14 +104,10 @@ describe('ListItem', () => {
     expect(screen.queryByText('RAW')).not.toBeInTheDocument();
   });
 
-  it('should_render_a_custom_chevron_via_renderChevron_when_onPress_is_provided', () => {
+  it('should render a custom chevron via renderChevron when onPress is provided', () => {
     // GIVEN a pressable ListItem with a custom chevron renderer
     renderWithTheme(
-      <ListItem
-        title="Custom"
-        onPress={() => {}}
-        renderChevron={() => <Text>▶</Text>}
-      />,
+      <ListItem title="Custom" onPress={() => {}} renderChevron={() => <Text>▶</Text>} />,
     );
 
     // WHEN the component is rendered THEN the custom chevron is present and the default glyph is not
@@ -127,7 +115,7 @@ describe('ListItem', () => {
     expect(screen.queryByText('›')).not.toBeInTheDocument();
   });
 
-  it('should_not_be_pressable_when_disabled_is_true_even_if_onPress_is_provided', () => {
+  it('should not be pressable when disabled is true even if onPress is provided', () => {
     // GIVEN a disabled ListItem with a mocked onPress
     const onPress = jest.fn();
     renderWithTheme(<ListItem title="Nope" onPress={onPress} disabled />);
@@ -137,7 +125,7 @@ describe('ListItem', () => {
     expect(onPress).not.toHaveBeenCalled();
   });
 
-  it('should_render_the_destructive_title_color_without_crashing_when_destructive_is_true', () => {
+  it('should render the destructive title color without crashing when destructive is true', () => {
     // GIVEN a destructive ListItem
 
     // WHEN the component is rendered inside a theme provider

@@ -65,6 +65,7 @@ const Demo = ({ particleCount, duration, forceAnimation, colors }: Partial<Confe
 
 const DemoContent = ({ particleCount, duration, forceAnimation, colors }: Partial<ConfettiOverlayProps>) => {
   const [visible, setVisible] = useState(false);
+
   return (
     <>
       <VStack gap="md" style={{ alignItems: 'center' }}>

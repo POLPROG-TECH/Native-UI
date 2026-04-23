@@ -107,6 +107,7 @@ export const SemanticColors: Story = {
 
 const AlignmentRow = ({ align, label }: { align: 'left' | 'center' | 'right'; label: string }) => {
   const theme = useTheme();
+
   return (
     <View
       style={{

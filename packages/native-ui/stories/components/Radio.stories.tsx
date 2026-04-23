@@ -69,6 +69,7 @@ const RadioGroupExample = () => {
     { value: 'yearly', label: 'Yearly - €99.99/yr (save 17%)' },
     { value: 'lifetime', label: 'Lifetime - €199.99' },
   ];
+
   return (
     <Card style={{ maxWidth: 360 }}>
       <VStack gap="sm">

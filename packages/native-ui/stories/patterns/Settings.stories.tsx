@@ -20,6 +20,7 @@ import { useTheme } from '../../src/theme/ThemeProvider';
 
 const EmojiIcon = ({ children, bg }: { children: string; bg?: string }) => {
   const theme = useTheme();
+
   return (
     <RNText style={{ fontSize: 20, width: 36, height: 36, lineHeight: 36, textAlign: 'center', backgroundColor: bg ?? theme.colors.surfaceSecondary, borderRadius: 10, overflow: 'hidden' }}>{children}</RNText>
   );

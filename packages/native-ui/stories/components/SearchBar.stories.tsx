@@ -50,6 +50,7 @@ const InteractiveSearch = (
 ) => {
   const { spy, ...rest } = props;
   const [value, setValue] = useState('');
+
   return (
     <VStack gap="sm" style={{ maxWidth: 400 }}>
       <SearchBar
@@ -130,6 +131,7 @@ export const PrefilledSearch: Story = {
   name: 'Pre-filled Value',
   render: () => {
     const [value, setValue] = useState('office supplies');
+
     return (
       <VStack gap="sm" style={{ maxWidth: 400 }}>
         <SearchBar value={value} onChangeText={(text) => { setValue(text); fn()(text); }} placeholder="Search..." />

@@ -106,6 +106,7 @@ export const WithSwitch: Story = {
       const [darkMode, setDarkMode] = useState(false);
       const [notifs, setNotifs] = useState(true);
       const [haptics, setHaptics] = useState(true);
+
       return (
         <Box bg="surface" radius="lg" style={{ maxWidth: 400, overflow: 'hidden' }}>
           <SettingsSwitchRow label="Dark Mode" icon="🌙" value={darkMode} onValueChange={(v) => { setDarkMode(v); fn()(v); }} />
@@ -114,6 +115,7 @@ export const WithSwitch: Story = {
         </Box>
       );
     };
+
     return <SwitchDemo />;
   },
 };
@@ -145,6 +147,7 @@ export const CompleteSettingsScreen: Story = {
     const FullScreen = () => {
       const [darkMode, setDarkMode] = useState(false);
       const [notifs, setNotifs] = useState(true);
+
       return (
         <VStack gap="lg" style={{ maxWidth: 400 }}>
           <Text variant="h2">Settings</Text>
@@ -182,6 +185,7 @@ export const CompleteSettingsScreen: Story = {
         </VStack>
       );
     };
+
     return <FullScreen />;
   },
 };
@@ -208,6 +212,7 @@ export const Density: Story = {
     const Column = ({ label }: { label: string }) => {
       const [darkMode, setDarkMode] = useState(true);
       const [notifs, setNotifs] = useState(true);
+
       return (
         <VStack gap="md" style={{ flex: 1, minWidth: 300 }}>
           <Text variant="label" color="textTertiary" style={{ paddingLeft: 16 }}>
@@ -249,6 +254,7 @@ export const Density: Story = {
         </VStack>
       );
     };
+
     return (
       <HStack gap="lg" align="flex-start" style={{ flexWrap: 'wrap' }}>
         <NativeUIProvider config={{ typography: 'regular' }}>

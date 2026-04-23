@@ -1,18 +1,14 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Button } from '../../src/components/Button';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>
-      {ui}
-    </NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('Button', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the Button export from the components module
 
     // WHEN its runtime type is inspected
@@ -22,7 +18,7 @@ describe('Button', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_without_crashing_when_mounted_with_title_and_onPress', () => {
+  it('should render without crashing when mounted with title and onPress', () => {
     // GIVEN a Button configured with a "Test" title and a noop onPress
 
     // WHEN the component is rendered inside a theme provider
@@ -32,7 +28,7 @@ describe('Button', () => {
     expect(screen.getByText('Test')).toBeInTheDocument();
   });
 
-  it('should_render_the_title_text_when_title_prop_is_provided', () => {
+  it('should render the title text when title prop is provided', () => {
     // GIVEN a Button configured with the "Submit" title
 
     // WHEN the component is rendered inside a theme provider
@@ -42,7 +38,7 @@ describe('Button', () => {
     expect(screen.getByText('Submit')).toBeInTheDocument();
   });
 
-  it('should_render_every_button_variant_without_crashing', () => {
+  it('should render every button variant without crashing', () => {
     // GIVEN the full list of Button variants
     const variants = ['primary', 'secondary', 'outline', 'ghost', 'danger'] as const;
 
@@ -61,7 +57,7 @@ describe('Button', () => {
     expect(renderAll).not.toThrow();
   });
 
-  it('should_render_every_button_size_without_crashing', () => {
+  it('should render every button size without crashing', () => {
     // GIVEN the full list of Button sizes
     const sizes = ['sm', 'md', 'lg'] as const;
 
@@ -80,7 +76,7 @@ describe('Button', () => {
     expect(renderAll).not.toThrow();
   });
 
-  it('should_hide_title_and_show_progressbar_when_loading_is_true', () => {
+  it('should hide title and show progressbar when loading is true', () => {
     // GIVEN a Button configured with loading enabled
 
     // WHEN the component is rendered inside a theme provider
@@ -91,7 +87,7 @@ describe('Button', () => {
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
-  it('should_set_accessibilityRole_to_button_when_rendered', () => {
+  it('should set accessibilityRole to button when rendered', () => {
     // GIVEN a Button configured with a title and noop onPress
 
     // WHEN the component is rendered inside a theme provider
@@ -101,7 +97,7 @@ describe('Button', () => {
     expect(screen.getByRole('button')).toBeInTheDocument();
   });
 
-  it('should_set_aria_label_from_the_title_when_rendered', () => {
+  it('should set aria label from the title when rendered', () => {
     // GIVEN a Button configured with a "Save Changes" title
 
     // WHEN the component is rendered inside a theme provider
@@ -111,7 +107,7 @@ describe('Button', () => {
     expect(screen.getByLabelText('Save Changes')).toBeInTheDocument();
   });
 
-  it('should_mark_button_aria_disabled_when_disabled_prop_is_true', () => {
+  it('should mark button aria disabled when disabled prop is true', () => {
     // GIVEN a Button configured with disabled={true}
 
     // WHEN the component is rendered inside a theme provider
@@ -122,7 +118,7 @@ describe('Button', () => {
     expect(button).toHaveAttribute('aria-disabled', 'true');
   });
 
-  it('should_mark_button_aria_disabled_when_loading_prop_is_true', () => {
+  it('should mark button aria disabled when loading prop is true', () => {
     // GIVEN a Button configured with loading={true}
 
     // WHEN the component is rendered inside a theme provider
@@ -133,7 +129,7 @@ describe('Button', () => {
     expect(button).toHaveAttribute('aria-disabled', 'true');
   });
 
-  it('should_render_fullWidth_variant_without_crashing', () => {
+  it('should render fullWidth variant without crashing', () => {
     // GIVEN a Button configured with the fullWidth prop
 
     // WHEN the component is rendered inside a theme provider
@@ -143,7 +139,7 @@ describe('Button', () => {
     expect(screen.getByText('Full')).toBeInTheDocument();
   });
 
-  it('should_render_both_icon_and_title_when_icon_prop_is_provided', () => {
+  it('should render both icon and title when icon prop is provided', () => {
     // GIVEN a Button configured with a span icon and a "With Icon" title
     const icon = <span data-testid="icon">★</span>;
 
@@ -153,5 +149,89 @@ describe('Button', () => {
     // THEN both the icon and the title text are present in the document
     expect(screen.getByTestId('icon')).toBeInTheDocument();
     expect(screen.getByText('With Icon')).toBeInTheDocument();
+  });
+
+  it('should render the destructive variant without crashing', () => {
+    // GIVEN a Button configured with the destructive variant
+    // WHEN the component is rendered
+    renderWithTheme(<Button title="Delete" variant="destructive" onPress={() => {}} />);
+
+    // THEN the title text appears in the document
+    expect(screen.getByText('Delete')).toBeInTheDocument();
+  });
+
+  it('should render renderLeft and renderRight slots alongside the title', () => {
+    // GIVEN a Button with both `renderLeft` and `renderRight` render props
+    // WHEN the component is rendered
+    renderWithTheme(
+      <Button
+        title="Go"
+        onPress={() => {}}
+        renderLeft={() => <span data-testid="left">L</span>}
+        renderRight={() => <span data-testid="right">R</span>}
+      />,
+    );
+
+    // THEN both custom slots and the title are present
+    expect(screen.getByTestId('left')).toBeInTheDocument();
+    expect(screen.getByTestId('right')).toBeInTheDocument();
+    expect(screen.getByText('Go')).toBeInTheDocument();
+  });
+
+  it('should apply the glow decoration when `glow` is provided', () => {
+    // GIVEN a Button configured with a semantic glow accent
+    // WHEN the component is rendered
+    const renderGlow = () =>
+      renderWithTheme(<Button title="Shiny" onPress={() => {}} glow="primary" />);
+
+    // THEN rendering does not throw
+    expect(renderGlow).not.toThrow();
+  });
+
+  it('should use an explicit color when `glow` is passed as a hex string', () => {
+    // GIVEN a Button with an explicit hex glow color
+    // WHEN the component is rendered
+    renderWithTheme(<Button title="Glow" onPress={() => {}} glow="#ff00ff" />);
+
+    // THEN the title text still appears and no error occurs
+    expect(screen.getByText('Glow')).toBeInTheDocument();
+  });
+
+  it('should call onPress when the button is clicked', () => {
+    // GIVEN a Button with an onPress spy
+    const onPress = jest.fn();
+
+    // WHEN the button is clicked
+    renderWithTheme(<Button title="Click" onPress={onPress} />);
+    fireEvent.click(screen.getByRole('button'));
+
+    // THEN onPress is fired exactly once
+    expect(onPress).toHaveBeenCalledTimes(1);
+  });
+
+  it('should guard against a double-click within the re-press window', () => {
+    // GIVEN a Button with onPress spy under fake timers
+    jest.useFakeTimers();
+    try {
+      const onPress = jest.fn();
+      renderWithTheme(<Button title="Click" onPress={onPress} />);
+      const button = screen.getByRole('button');
+
+      // WHEN the button is clicked twice in rapid succession
+      fireEvent.click(button);
+      fireEvent.click(button);
+
+      // THEN only the first click is forwarded to onPress
+      expect(onPress).toHaveBeenCalledTimes(1);
+
+      // AND after the re-press window elapses the next click is accepted
+      act(() => {
+        jest.advanceTimersByTime(401);
+      });
+      fireEvent.click(button);
+      expect(onPress).toHaveBeenCalledTimes(2);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });

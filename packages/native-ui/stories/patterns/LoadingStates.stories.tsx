@@ -136,6 +136,7 @@ const ButtonLoadingDemo = () => {
     fn()();
     setTimeout(() => setLoading(false), 2000);
   };
+
   return (
     <VStack gap="lg" style={{ maxWidth: 420 }}>
       <Heading level={3}>Button Loading States</Heading>

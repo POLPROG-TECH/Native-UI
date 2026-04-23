@@ -46,6 +46,7 @@ const radiusKeys = Object.keys(borderRadius) as BorderRadius[];
 const ElevationTile = ({ level, desc }: { level: Elevation; desc: string }) => {
   const theme = useTheme();
   const shadow = theme.elevation[level];
+
   return (
     <View style={{ width: 180 }}>
       <View
@@ -104,6 +105,7 @@ export const ElevationOnDark: Story = {
   render: () => {
     const ElevationRow = () => {
       const theme = useTheme();
+
       return (
         <View
           style={{
@@ -126,6 +128,7 @@ export const ElevationOnDark: Story = {
         </View>
       );
     };
+
     return <ElevationRow />;
   },
 };
@@ -135,6 +138,7 @@ export const RadiusScale: Story = {
   render: () => {
     const RadiusRow = () => {
       const theme = useTheme();
+
       return (
         <VStack gap="md">
           <Text variant="body" color="textSecondary">
@@ -167,6 +171,7 @@ export const RadiusScale: Story = {
         </VStack>
       );
     };
+
     return <RadiusRow />;
   },
 };

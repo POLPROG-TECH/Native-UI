@@ -5,13 +5,11 @@ import { Card } from '../../src/components/Card';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('Card', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the Card export from the components module
 
     // WHEN its runtime type is inspected
@@ -21,7 +19,7 @@ describe('Card', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_its_children_when_used_as_a_static_container', () => {
+  it('should render its children when used as a static container', () => {
     // GIVEN a Card wrapping a text child
 
     // WHEN the component is rendered inside a theme provider
@@ -35,15 +33,12 @@ describe('Card', () => {
     expect(screen.getByText('Hello card')).toBeInTheDocument();
   });
 
-  it('should_render_header_and_footer_via_render_props', () => {
+  it('should render header and footer via render props', () => {
     // GIVEN a Card with renderHeader and renderFooter render props
 
     // WHEN the component is rendered inside a theme provider
     renderWithTheme(
-      <Card
-        renderHeader={() => <Text>HEADER</Text>}
-        renderFooter={() => <Text>FOOTER</Text>}
-      >
+      <Card renderHeader={() => <Text>HEADER</Text>} renderFooter={() => <Text>FOOTER</Text>}>
         <Text>BODY</Text>
       </Card>,
     );
@@ -54,7 +49,7 @@ describe('Card', () => {
     expect(screen.getByText('FOOTER')).toBeInTheDocument();
   });
 
-  it('should_render_every_card_size_without_crashing', () => {
+  it('should render every card size without crashing', () => {
     // GIVEN the full list of Card sizes
     const sizes = ['compact', 'regular', 'spacious'] as const;
 
@@ -75,7 +70,7 @@ describe('Card', () => {
     expect(renderAll).not.toThrow();
   });
 
-  it('should_render_every_card_elevation_without_crashing', () => {
+  it('should render every card elevation without crashing', () => {
     // GIVEN the full list of Card elevations
     const elevations = ['xs', 'sm', 'md', 'lg'] as const;
 
@@ -96,7 +91,7 @@ describe('Card', () => {
     expect(renderAll).not.toThrow();
   });
 
-  it('should_become_pressable_and_invoke_onPress_when_onPress_is_provided', () => {
+  it('should become pressable and invoke onPress when onPress is provided', () => {
     // GIVEN a Card with a mocked onPress callback
     const onPress = jest.fn();
     renderWithTheme(
@@ -112,7 +107,7 @@ describe('Card', () => {
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  it('should_render_without_padding_when_padded_is_false', () => {
+  it('should render without padding when padded is false', () => {
     // GIVEN a Card configured with padded={false}
 
     // WHEN the component is rendered inside a theme provider

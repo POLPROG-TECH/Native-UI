@@ -54,6 +54,7 @@ export function configureHaptics(impl: HapticsInterface): void {
     (): void => {
       const now = Date.now();
       if (now - lastInvoked[key] < THROTTLE_MS) return;
+
       lastInvoked[key] = now;
       impl[key]();
     };

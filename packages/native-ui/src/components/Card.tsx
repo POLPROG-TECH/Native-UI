@@ -99,11 +99,12 @@ export function Card({
   const hint = accessibilityHint ?? longPressHint;
 
   const paddingValue =
-    size === 'compact' ? theme.spacing.md
-    : size === 'spacious' ? theme.spacing.xl
-    : theme.spacing.lg;
-  const radiusValue =
-    size === 'compact' ? theme.borderRadius.md : theme.borderRadius.lg;
+    size === 'compact'
+      ? theme.spacing.md
+      : size === 'spacious'
+      ? theme.spacing.xl
+      : theme.spacing.lg;
+  const radiusValue = size === 'compact' ? theme.borderRadius.md : theme.borderRadius.lg;
 
   const elevationStyle = theme.elevation[elevation] as ViewStyle;
 

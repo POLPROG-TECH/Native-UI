@@ -123,12 +123,14 @@ export function Button({
 
   const handlePress = useCallback(() => {
     if (pressedRef.current) return;
+
     pressedRef.current = true;
     try {
       getHaptics().medium();
       onPress();
     } finally {
       if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+
       resetTimerRef.current = setTimeout(() => {
         pressedRef.current = false;
         resetTimerRef.current = null;
@@ -247,7 +249,9 @@ function resolveGlowColor(
   theme: ReturnType<typeof useTheme>,
 ): string {
   if (typeof glow === 'string') return glow;
+
   if (variant === 'danger' || variant === 'destructive') return theme.colors.error;
+
   return theme.colors.primary;
 }
 

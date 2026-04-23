@@ -4,13 +4,11 @@ import { ListHeader } from '../../src/components/ListHeader';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('ListHeader', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the ListHeader export from the components module
 
     // WHEN its runtime type is inspected
@@ -20,7 +18,7 @@ describe('ListHeader', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_the_title_as_a_heading_when_rendered', () => {
+  it('should render the title as a heading when rendered', () => {
     // GIVEN a ListHeader with a "Settings" title
 
     // WHEN the component is rendered inside a theme provider
@@ -30,7 +28,7 @@ describe('ListHeader', () => {
     expect(screen.getByRole('header')).toHaveTextContent('Settings');
   });
 
-  it('should_render_the_subtitle_when_provided', () => {
+  it('should render the subtitle when provided', () => {
     // GIVEN a ListHeader with a subtitle
 
     // WHEN the component is rendered inside a theme provider
@@ -40,7 +38,7 @@ describe('ListHeader', () => {
     expect(screen.getByText('Welcome back')).toBeInTheDocument();
   });
 
-  it('should_pass_the_title_verbatim_when_a_text_transform_string_is_provided', () => {
+  it('should pass the title verbatim when a text transform string is provided', () => {
     // GIVEN a ListHeader configured with an uppercase transform
 
     // WHEN the component is rendered inside a theme provider
@@ -50,19 +48,17 @@ describe('ListHeader', () => {
     expect(screen.getByText('hello')).toBeInTheDocument();
   });
 
-  it('should_apply_a_function_transform_to_the_title_when_one_is_provided', () => {
+  it('should apply a function transform to the title when one is provided', () => {
     // GIVEN a ListHeader whose transform function reverses the title
 
     // WHEN the component is rendered inside a theme provider
-    renderWithTheme(
-      <ListHeader title="abc" transform={(s) => s.split('').reverse().join('')} />,
-    );
+    renderWithTheme(<ListHeader title="abc" transform={(s) => s.split('').reverse().join('')} />);
 
     // THEN the displayed title is the transformed value
     expect(screen.getByText('cba')).toBeInTheDocument();
   });
 
-  it('should_render_the_title_unchanged_when_transform_is_set_to_none', () => {
+  it('should render the title unchanged when transform is set to none', () => {
     // GIVEN a ListHeader with transform="none"
 
     // WHEN the component is rendered inside a theme provider
@@ -72,7 +68,7 @@ describe('ListHeader', () => {
     expect(screen.getByText('Plain')).toBeInTheDocument();
   });
 
-  it('should_render_every_string_transform_without_crashing', () => {
+  it('should render every string transform without crashing', () => {
     // GIVEN the full list of string-based transforms
     const transforms = ['uppercase', 'lowercase', 'capitalize', 'none'] as const;
 

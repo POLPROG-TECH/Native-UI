@@ -71,6 +71,7 @@ export const AllFormats: Story = {
   name: 'All formats',
   render: () => {
     const target = inFuture(2 * 60 * 60 * 1000 + 15 * 60 * 1000 + 4000);
+
     return (
       <VStack gap="md">
         {(['auto', 'hm', 'hms', 'ms'] as const).map((format) => (
@@ -99,6 +100,7 @@ export const DailyChallenge: Story = {
   render: () => {
     const nextMidnight = new Date();
     nextMidnight.setHours(24, 0, 0, 0);
+
     return (
       <Box p="lg" bg="surface" radius="lg" elevation="sm" style={{ maxWidth: 360 }}>
         <VStack gap="sm">

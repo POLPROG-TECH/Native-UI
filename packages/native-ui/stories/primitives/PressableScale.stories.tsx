@@ -55,6 +55,7 @@ export const Playground: Story = {
   },
   render: (args) => {
     const theme = useTheme();
+
     return (
       <PressableScale {...args}>
         <View style={{ backgroundColor: theme.colors.primaryLight, paddingHorizontal: 24, paddingVertical: 14, borderRadius: 12 }}>
@@ -71,6 +72,7 @@ export const ScaleValues: Story = {
   name: 'Different Scale Values',
   render: () => {
     const theme = useTheme();
+
     return (
       <HStack gap="md" wrap>
         {[0.9, 0.93, 0.95, 0.97, 0.99].map((scale) => (
@@ -89,6 +91,7 @@ export const CustomContent: Story = {
   name: 'Custom Pressable Content',
   render: () => {
     const theme = useTheme();
+
     return (
       <VStack gap="md" style={{ maxWidth: 320 }}>
         <PressableScale onPress={() => {}}>
@@ -125,6 +128,7 @@ export const RespectReduceAnimations: Story = {
   },
   render: () => {
     const theme = useTheme();
+
     return (
       <VStack gap="md" style={{ maxWidth: 360 }}>
         <PressableScale onPress={() => {}}>

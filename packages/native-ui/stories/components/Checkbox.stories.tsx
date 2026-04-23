@@ -52,6 +52,7 @@ type Story = StoryObj<CheckboxProps>;
 
 const Interactive = ({ label = 'Accept terms', ...rest }: Partial<CheckboxProps>) => {
   const [checked, setChecked] = useState(false);
+
   return (
     <Checkbox
       checked={checked}

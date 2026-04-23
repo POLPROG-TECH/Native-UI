@@ -4,15 +4,11 @@ import { usePressableScale } from '../../src/primitives/PressableScale';
 import { NativeUIProvider } from '../../src/theme';
 
 function wrapper({ children }: { children: React.ReactNode }) {
-  return (
-    <NativeUIProvider config={{ colorMode: 'light' }}>
-      {children}
-    </NativeUIProvider>
-  );
+  return <NativeUIProvider config={{ colorMode: 'light' }}>{children}</NativeUIProvider>;
 }
 
 describe('usePressableScale', () => {
-  it('should_expose_onPressIn_and_onPressOut_handlers_when_mounted_with_a_custom_scale', () => {
+  it('should expose onPressIn and onPressOut handlers when mounted with a custom scale', () => {
     // GIVEN the hook mounted inside a theme provider with a custom scale factor
 
     // WHEN the hook is rendered with 0.95 as scale factor
@@ -23,7 +19,7 @@ describe('usePressableScale', () => {
     expect(result.current.handlers.onPressOut).toBeInstanceOf(Function);
   });
 
-  it('should_invoke_press_handlers_without_throwing_when_called_directly', () => {
+  it('should invoke press handlers without throwing when called directly', () => {
     // GIVEN a mounted hook using its default scale
     const { result } = renderHook(() => usePressableScale(), { wrapper });
 
@@ -37,7 +33,7 @@ describe('usePressableScale', () => {
     expect(invokeHandlers).not.toThrow();
   });
 
-  it('should_expose_isReanimated_as_a_boolean_reflecting_runtime_detection', () => {
+  it('should expose isReanimated as a boolean reflecting runtime detection', () => {
     // GIVEN a mounted hook
 
     // WHEN isReanimated is inspected

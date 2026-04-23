@@ -4,13 +4,11 @@ import { StatTile } from '../../src/components/StatTile';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('StatTile', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the StatTile export from the components module
 
     // WHEN its runtime type is inspected
@@ -20,7 +18,7 @@ describe('StatTile', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_the_label_and_value_when_rendered', () => {
+  it('should render the label and value when rendered', () => {
     // GIVEN a StatTile with a "TIME" label and a "01:24" value
 
     // WHEN the component is rendered inside a theme provider
@@ -31,7 +29,7 @@ describe('StatTile', () => {
     expect(screen.getByText('01:24')).toBeInTheDocument();
   });
 
-  it('should_render_the_caption_when_provided', () => {
+  it('should render the caption when provided', () => {
     // GIVEN a StatTile with a caption
 
     // WHEN the component is rendered inside a theme provider
@@ -41,7 +39,7 @@ describe('StatTile', () => {
     expect(screen.getByText('new record')).toBeInTheDocument();
   });
 
-  it('should_render_every_tone_without_crashing', () => {
+  it('should render every tone without crashing', () => {
     // GIVEN the full list of StatTile tones
     const tones = ['neutral', 'primary', 'success', 'warning', 'error'] as const;
 
@@ -60,7 +58,7 @@ describe('StatTile', () => {
     expect(renderAll).not.toThrow();
   });
 
-  it('should_render_every_size_in_mono_and_non_mono_modes_without_crashing', () => {
+  it('should render every size in mono and non mono modes without crashing', () => {
     // GIVEN the full list of sizes combined with the mono flag
     const sizes = ['sm', 'md', 'lg'] as const;
 
@@ -82,7 +80,7 @@ describe('StatTile', () => {
     expect(renderAll).not.toThrow();
   });
 
-  it('should_render_a_left_aligned_variant_without_crashing', () => {
+  it('should render a left aligned variant without crashing', () => {
     // GIVEN a StatTile configured with align="left"
 
     // WHEN the component is rendered inside a theme provider

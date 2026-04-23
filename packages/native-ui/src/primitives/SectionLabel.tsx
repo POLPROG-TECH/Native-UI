@@ -40,6 +40,7 @@ export function SectionLabel({
   textStyle,
 }: SectionLabelProps) {
   const theme = useTheme();
+
   return (
     <View
       style={[

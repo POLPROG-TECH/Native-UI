@@ -36,9 +36,12 @@ export interface ErrorBoundaryProps {
   resetKeys?: ReadonlyArray<unknown>;
 }
 
+const DEFAULT_FALLBACK_MESSAGE = 'Something went wrong.';
+const DEFAULT_RETRY_LABEL = 'Try again';
+
 interface State {
-  error: Error | null;
-  info: ErrorInfo | null;
+  readonly error: Error | null;
+  readonly info: ErrorInfo | null;
 }
 
 /**
@@ -78,9 +81,14 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
 
   componentDidUpdate(prevProps: ErrorBoundaryProps) {
     if (!this.state.error) return;
+
     const { resetKeys: prev } = prevProps;
     const { resetKeys: next } = this.props;
-    if (prev && next && (prev.length !== next.length || prev.some((v, i) => v !== next[i]))) {
+    // Treat `undefined` and `[]` as equivalent (no keys) so we only reset
+    // when the *contents* actually differ. Presence transitions (undefined
+    // → [x], [x] → undefined, or length / per-index changes) all count as
+    // a change and trigger a reset.
+    if (resetKeysChanged(prev, next)) {
       this.reset();
     }
   }
@@ -94,18 +102,35 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
     if (!error) return this.props.children;
 
     if (this.props.fallback !== undefined) return this.props.fallback;
+
     if (this.props.renderFallback) {
       return this.props.renderFallback(error, this.reset, info ?? undefined);
     }
 
     return (
       <DefaultFallback
-        message={this.props.fallbackMessage ?? 'Something went wrong.'}
-        retryLabel={this.props.retryLabel ?? 'Try again'}
+        message={this.props.fallbackMessage ?? DEFAULT_FALLBACK_MESSAGE}
+        retryLabel={this.props.retryLabel ?? DEFAULT_RETRY_LABEL}
         onReset={this.reset}
       />
     );
   }
+}
+
+function resetKeysChanged(
+  prev: ReadonlyArray<unknown> | undefined,
+  next: ReadonlyArray<unknown> | undefined,
+): boolean {
+  const a = prev ?? [];
+  const b = next ?? [];
+
+  if (a.length !== b.length) return true;
+
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return true;
+  }
+
+  return false;
 }
 
 function DefaultFallback({
@@ -118,6 +143,7 @@ function DefaultFallback({
   onReset: () => void;
 }) {
   const theme = useTheme();
+
   return (
     <View
       style={[
@@ -185,5 +211,6 @@ export function withErrorBoundary<P extends object>(
   );
   const name = Wrapped.displayName ?? Wrapped.name ?? 'Component';
   Wrapper.displayName = `withErrorBoundary(${name})`;
+
   return Wrapper;
 }

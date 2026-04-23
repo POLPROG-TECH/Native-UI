@@ -106,6 +106,7 @@ const Interactive = () => {
   const theme = useTheme();
   const [current, setCurrent] = useState(0);
   const count = 5;
+
   return (
     <VStack gap="md" style={{ alignItems: 'center' }}>
       <PaginationDots count={count} current={current} />

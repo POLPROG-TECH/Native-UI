@@ -73,18 +73,29 @@ function useStackStyle({
 
   const resolvedGap = gap ?? spacing;
   if (resolvedGap) s.gap = theme.spacing[resolvedGap];
+
   if (align) s.alignItems = align;
+
   if (justify) s.justifyContent = justify;
+
   if (flex !== undefined) s.flex = flex;
+
   if (wrap) s.flexWrap = 'wrap';
 
   if (p !== undefined) s.padding = theme.spacing[p];
+
   if (px !== undefined) s.paddingHorizontal = theme.spacing[px];
+
   if (py !== undefined) s.paddingVertical = theme.spacing[py];
+
   if (m !== undefined) s.margin = theme.spacing[m];
+
   if (mx !== undefined) s.marginHorizontal = theme.spacing[mx];
+
   if (my !== undefined) s.marginVertical = theme.spacing[my];
+
   if (bg !== undefined) s.backgroundColor = theme.colors[bg];
+
   if (radius !== undefined) s.borderRadius = theme.borderRadius[radius];
 
   if (elev) Object.assign(s, theme.elevation[elev]);

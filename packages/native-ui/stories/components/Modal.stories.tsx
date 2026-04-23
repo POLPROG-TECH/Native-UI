@@ -60,6 +60,7 @@ type Story = StoryObj<ModalProps>;
 
 const ModalDemo = ({ title, children, footer, dismissable }: Partial<ModalProps> & { children: React.ReactNode }) => {
   const [visible, setVisible] = useState(false);
+
   return (
     <>
       <Button title="Open Modal" onPress={() => setVisible(true)} />
@@ -89,6 +90,7 @@ export const ConfirmationDialog: Story = {
   render: () => {
     const ConfirmDemo = () => {
       const [visible, setVisible] = useState(false);
+
       return (
         <>
           <Button title="Delete Item" variant="danger" onPress={() => setVisible(true)} />
@@ -110,6 +112,7 @@ export const ConfirmationDialog: Story = {
         </>
       );
     };
+
     return <ConfirmDemo />;
   },
 };
@@ -119,6 +122,7 @@ export const FormDialog: Story = {
   render: () => {
     const FormDemo = () => {
       const [visible, setVisible] = useState(false);
+
       return (
         <>
           <Button title="Rename Project" variant="outline" onPress={() => setVisible(true)} />
@@ -140,6 +144,7 @@ export const FormDialog: Story = {
         </>
       );
     };
+
     return <FormDemo />;
   },
 };

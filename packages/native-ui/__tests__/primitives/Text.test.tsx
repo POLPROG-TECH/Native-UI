@@ -11,15 +11,11 @@ import { spaceGroteskFontFamilies } from '../../src/tokens/fonts';
 const typography = compactTypography(spaceGroteskFontFamilies);
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>
-      {ui}
-    </NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('Text', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the Text export from the primitives module
 
     // WHEN its runtime type is inspected
@@ -29,7 +25,7 @@ describe('Text', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_without_crashing_when_rendered_with_content', () => {
+  it('should render without crashing when rendered with content', () => {
     // GIVEN a Text element with the content "Hello"
 
     // WHEN the component is rendered inside a theme provider
@@ -39,7 +35,7 @@ describe('Text', () => {
     expect(screen.getByText('Hello')).toBeInTheDocument();
   });
 
-  it('should_render_text_content_matching_the_children_string', () => {
+  it('should render text content matching the children string', () => {
     // GIVEN a Text element with the content "Hello World"
 
     // WHEN the component is rendered inside a theme provider
@@ -49,7 +45,7 @@ describe('Text', () => {
     expect(screen.getByText('Hello World')).toBeInTheDocument();
   });
 
-  it('should_apply_body_variant_fontSize_when_no_variant_prop_is_provided', () => {
+  it('should apply body variant fontSize when no variant prop is provided', () => {
     // GIVEN a Text element without a variant prop
 
     // WHEN the component is rendered inside a theme provider
@@ -60,7 +56,7 @@ describe('Text', () => {
     expect(el.style.fontSize).toBe(`${typography.body.fontSize}px`);
   });
 
-  it('should_apply_h1_fontSize_and_fontWeight_when_variant_is_h1', () => {
+  it('should apply h1 fontSize and fontWeight when variant is h1', () => {
     // GIVEN a Text element configured with variant="h1"
 
     // WHEN the component is rendered inside a theme provider
@@ -72,7 +68,7 @@ describe('Text', () => {
     expect(el.style.fontWeight).toBe(typography.h1.fontWeight);
   });
 
-  it('should_apply_caption_fontSize_when_variant_is_caption', () => {
+  it('should apply caption fontSize when variant is caption', () => {
     // GIVEN a Text element configured with variant="caption"
 
     // WHEN the component is rendered inside a theme provider
@@ -83,7 +79,7 @@ describe('Text', () => {
     expect(el.style.fontSize).toBe(`${typography.caption.fontSize}px`);
   });
 
-  it('should_apply_a_color_style_when_a_color_token_is_provided', () => {
+  it('should apply a color style when a color token is provided', () => {
     // GIVEN a Text element configured with color="primary"
 
     // WHEN the component is rendered inside a theme provider
@@ -94,7 +90,7 @@ describe('Text', () => {
     expect(el.style.color).toBeTruthy();
   });
 
-  it('should_apply_a_default_color_style_when_no_color_prop_is_provided', () => {
+  it('should apply a default color style when no color prop is provided', () => {
     // GIVEN a Text element without a color prop
 
     // WHEN the component is rendered inside a theme provider
@@ -105,7 +101,7 @@ describe('Text', () => {
     expect(el.style.color).toBeTruthy();
   });
 
-  it('should_apply_text_alignment_when_align_prop_is_provided', () => {
+  it('should apply text alignment when align prop is provided', () => {
     // GIVEN a Text element configured with align="center"
 
     // WHEN the component is rendered inside a theme provider
@@ -116,15 +112,23 @@ describe('Text', () => {
     expect(el.style.textAlign).toBe('center');
   });
 
-  it('should_render_every_supported_typography_variant_without_crashing', () => {
+  it('should render every supported typography variant without crashing', () => {
     // GIVEN the full list of supported typography variant names
     const variants = [
-      'displayLarge', 'displayMedium',
-      'h1', 'h2', 'h3',
-      'bodyLarge', 'body', 'bodySmall',
-      'label', 'labelSmall',
+      'displayLarge',
+      'displayMedium',
+      'h1',
+      'h2',
+      'h3',
+      'bodyLarge',
+      'body',
+      'bodySmall',
+      'label',
+      'labelSmall',
       'caption',
-      'mono', 'monoLarge', 'monoSmall',
+      'mono',
+      'monoLarge',
+      'monoSmall',
     ] as const;
 
     // WHEN each variant is rendered with its name as content

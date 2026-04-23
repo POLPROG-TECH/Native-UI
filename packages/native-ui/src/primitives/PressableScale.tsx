@@ -75,8 +75,10 @@ function usePressableScaleReanimated(
   const scale = rn.useSharedValue(1);
   const animatedStyle = rn.useAnimatedStyle(() => {
     if (effectiveReduce) return {};
+
     return { transform: [{ scale: scale.value }] };
   });
+
   return {
     animatedStyle: animatedStyle as unknown as StyleProp<ViewStyle>,
     handlers: {
@@ -109,10 +111,12 @@ function usePressableScaleFallback(
   // creates the value exactly once per component instance.
   const scaleRef = React.useRef<Animated.Value | null>(null);
   if (scaleRef.current === null) scaleRef.current = new Animated.Value(1);
+
   const scale = scaleRef.current;
   const animatedStyle: StyleProp<ViewStyle> = effectiveReduce
     ? undefined
     : { transform: [{ scale }] };
+
   return {
     animatedStyle,
     handlers: {

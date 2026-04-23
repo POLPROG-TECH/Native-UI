@@ -56,6 +56,7 @@ type Story = StoryObj<BottomSheetProps>;
 
 const SheetDemo = ({ children, dismissable }: { children: React.ReactNode; dismissable?: boolean }) => {
   const [visible, setVisible] = useState(false);
+
   return (
     <>
       <Button title="Open Bottom Sheet" onPress={() => setVisible(true)} />

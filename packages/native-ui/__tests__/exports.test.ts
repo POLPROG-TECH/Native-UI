@@ -5,7 +5,7 @@
 import * as NativeUI from '../src/index';
 
 describe('theme exports', () => {
-  it('should_export_NativeUIProvider_as_a_function_component', () => {
+  it('should export NativeUIProvider as a function component', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the NativeUIProvider export is inspected
@@ -16,7 +16,7 @@ describe('theme exports', () => {
     expect(typeof provider).toBe('function');
   });
 
-  it('should_export_useTheme_as_a_function', () => {
+  it('should export useTheme as a function', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the useTheme export is inspected
@@ -26,7 +26,7 @@ describe('theme exports', () => {
     expect(type).toBe('function');
   });
 
-  it('should_export_useColors_as_a_function', () => {
+  it('should export useColors as a function', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the useColors export is inspected
@@ -36,7 +36,7 @@ describe('theme exports', () => {
     expect(type).toBe('function');
   });
 
-  it('should_export_useThemeColors_alias_as_a_function', () => {
+  it('should export useThemeColors alias as a function', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the useThemeColors alias export is inspected
@@ -46,7 +46,7 @@ describe('theme exports', () => {
     expect(type).toBe('function');
   });
 
-  it('should_export_useSemantic_as_a_function', () => {
+  it('should export useSemantic as a function', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the useSemantic export is inspected
@@ -58,7 +58,7 @@ describe('theme exports', () => {
 });
 
 describe('token exports', () => {
-  it('should_export_colors_with_light_and_dark_schemes', () => {
+  it('should export colors with light and dark schemes', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the colors export is inspected
@@ -70,7 +70,7 @@ describe('token exports', () => {
     expect(colors.dark).toBeDefined();
   });
 
-  it('should_export_resolveColorScheme_as_a_function', () => {
+  it('should export resolveColorScheme as a function', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the resolveColorScheme export is inspected
@@ -80,7 +80,7 @@ describe('token exports', () => {
     expect(type).toBe('function');
   });
 
-  it('should_export_getContrastText_as_a_function', () => {
+  it('should export getContrastText as a function', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the getContrastText export is inspected
@@ -90,7 +90,7 @@ describe('token exports', () => {
     expect(type).toBe('function');
   });
 
-  it('should_export_THEME_PRESETS_as_an_array', () => {
+  it('should export THEME PRESETS as an array', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the THEME_PRESETS export is inspected
@@ -100,7 +100,7 @@ describe('token exports', () => {
     expect(isArray).toBe(true);
   });
 
-  it('should_export_typography_with_body_variant_defined', () => {
+  it('should export typography with body variant defined', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the typography export is inspected
@@ -111,7 +111,7 @@ describe('token exports', () => {
     expect(typography.body).toBeDefined();
   });
 
-  it('should_export_FONT_SCALE_as_a_defined_object', () => {
+  it('should export FONT SCALE as a defined object', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the FONT_SCALE export is inspected
@@ -121,7 +121,7 @@ describe('token exports', () => {
     expect(value).toBeDefined();
   });
 
-  it('should_export_spacing_with_numeric_md_entry', () => {
+  it('should export spacing with numeric md entry', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the spacing export is inspected
@@ -132,7 +132,7 @@ describe('token exports', () => {
     expect(typeof spacing.md).toBe('number');
   });
 
-  it('should_export_borderRadius_as_a_defined_object', () => {
+  it('should export borderRadius as a defined object', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the borderRadius export is inspected
@@ -142,7 +142,7 @@ describe('token exports', () => {
     expect(value).toBeDefined();
   });
 
-  it('should_export_iconSize_as_a_defined_object', () => {
+  it('should export iconSize as a defined object', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the iconSize export is inspected
@@ -152,7 +152,7 @@ describe('token exports', () => {
     expect(value).toBeDefined();
   });
 
-  it('should_export_hitSlop_as_a_defined_object', () => {
+  it('should export hitSlop as a defined object', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the hitSlop export is inspected
@@ -162,7 +162,7 @@ describe('token exports', () => {
     expect(value).toBeDefined();
   });
 
-  it('should_export_elevation_as_a_defined_object', () => {
+  it('should export elevation as a defined object', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the elevation export is inspected
@@ -172,7 +172,7 @@ describe('token exports', () => {
     expect(value).toBeDefined();
   });
 
-  it('should_export_duration_as_a_defined_object', () => {
+  it('should export duration as a defined object', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the duration export is inspected
@@ -182,7 +182,7 @@ describe('token exports', () => {
     expect(value).toBeDefined();
   });
 
-  it('should_export_zIndex_as_a_defined_object', () => {
+  it('should export zIndex as a defined object', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the zIndex export is inspected
@@ -192,7 +192,7 @@ describe('token exports', () => {
     expect(value).toBeDefined();
   });
 
-  it('should_export_opacity_as_a_defined_object', () => {
+  it('should export opacity as a defined object', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the opacity export is inspected
@@ -202,7 +202,7 @@ describe('token exports', () => {
     expect(value).toBeDefined();
   });
 
-  it('should_export_borderWidth_as_a_defined_object', () => {
+  it('should export borderWidth as a defined object', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the borderWidth export is inspected
@@ -212,7 +212,7 @@ describe('token exports', () => {
     expect(value).toBeDefined();
   });
 
-  it('should_export_easing_as_a_defined_object', () => {
+  it('should export easing as a defined object', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the easing export is inspected
@@ -222,7 +222,7 @@ describe('token exports', () => {
     expect(value).toBeDefined();
   });
 
-  it('should_export_glowShadow_as_a_function', () => {
+  it('should export glowShadow as a function', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the glowShadow export is inspected
@@ -232,7 +232,7 @@ describe('token exports', () => {
     expect(type).toBe('function');
   });
 
-  it('should_export_every_default_semantic_token_object', () => {
+  it('should export every default semantic token object', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the default semantic token exports are inspected
@@ -252,7 +252,7 @@ describe('token exports', () => {
 });
 
 describe('utility exports', () => {
-  it('should_export_configureHaptics_as_a_function', () => {
+  it('should export configureHaptics as a function', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the configureHaptics export is inspected
@@ -262,7 +262,7 @@ describe('utility exports', () => {
     expect(type).toBe('function');
   });
 
-  it('should_export_getHaptics_as_a_function', () => {
+  it('should export getHaptics as a function', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the getHaptics export is inspected
@@ -274,7 +274,7 @@ describe('utility exports', () => {
 });
 
 describe('primitive exports', () => {
-  it('should_export_Box_as_a_function_component', () => {
+  it('should export Box as a function component', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the Box export is inspected
@@ -284,7 +284,7 @@ describe('primitive exports', () => {
     expect(type).toBe('function');
   });
 
-  it('should_export_VStack_as_a_function_component', () => {
+  it('should export VStack as a function component', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the VStack export is inspected
@@ -294,7 +294,7 @@ describe('primitive exports', () => {
     expect(type).toBe('function');
   });
 
-  it('should_export_HStack_as_a_function_component', () => {
+  it('should export HStack as a function component', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the HStack export is inspected
@@ -304,7 +304,7 @@ describe('primitive exports', () => {
     expect(type).toBe('function');
   });
 
-  it('should_export_Text_as_a_function_component', () => {
+  it('should export Text as a function component', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the Text export is inspected
@@ -314,7 +314,7 @@ describe('primitive exports', () => {
     expect(type).toBe('function');
   });
 
-  it('should_export_Heading_as_a_function_component', () => {
+  it('should export Heading as a function component', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the Heading export is inspected
@@ -324,7 +324,7 @@ describe('primitive exports', () => {
     expect(type).toBe('function');
   });
 
-  it('should_export_Divider_as_a_function_component', () => {
+  it('should export Divider as a function component', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the Divider export is inspected
@@ -334,7 +334,7 @@ describe('primitive exports', () => {
     expect(type).toBe('function');
   });
 
-  it('should_export_PressableScale_as_a_function_component', () => {
+  it('should export PressableScale as a function component', () => {
     // GIVEN the NativeUI library entry point
 
     // WHEN the PressableScale export is inspected
@@ -353,19 +353,41 @@ describe('primitive exports', () => {
 
 describe('component exports', () => {
   const componentNames = [
-    'Button', 'IconButton', 'Card', 'Input', 'TextArea', 'Select',
-    'Checkbox', 'Switch', 'Radio', 'Chip', 'ChipGroup',
-    'Badge', 'Avatar', 'Modal', 'BottomSheet',
-    'Toast', 'useToast',
-    'ProgressBar', 'Skeleton', 'SearchBar', 'EmptyState', 'Spinner',
-    'ListItem', 'ListSection', 'ListSwitchItem', 'ListHeader',
-    'Section', 'ScreenContainer',
-    'SettingsRow', 'SettingsSwitchRow',
+    'Button',
+    'IconButton',
+    'Card',
+    'Input',
+    'TextArea',
+    'Select',
+    'Checkbox',
+    'Switch',
+    'Radio',
+    'Chip',
+    'ChipGroup',
+    'Badge',
+    'Avatar',
+    'Modal',
+    'BottomSheet',
+    'Toast',
+    'useToast',
+    'ProgressBar',
+    'Skeleton',
+    'SearchBar',
+    'EmptyState',
+    'Spinner',
+    'ListItem',
+    'ListSection',
+    'ListSwitchItem',
+    'ListHeader',
+    'Section',
+    'ScreenContainer',
+    'SettingsRow',
+    'SettingsSwitchRow',
     'InputPrompt',
   ] as const;
 
   componentNames.forEach((name) => {
-    it(`should_export_${name}_from_the_entry_point`, () => {
+    it(`should export ${name} from the entry point`, () => {
       // GIVEN the NativeUI library entry point
 
       // WHEN the named export is read from the module

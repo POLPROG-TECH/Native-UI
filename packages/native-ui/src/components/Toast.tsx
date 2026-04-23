@@ -1,11 +1,10 @@
-import React, { useRef, useEffect, useCallback } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import React, { useCallback, useEffect, useRef, useSyncExternalStore } from 'react';
+import { Pressable, StyleSheet, Text, View, type TextStyle } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, FadeOutDown, FadeOutUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme';
 
-// ─── Toast State (simple module-level store) ───────────────────
-type Listener = () => void;
+// ─── Public types ──────────────────────────────────────────────
 
 export type ToastVariant = 'default' | 'success' | 'warning' | 'error' | 'info';
 export type ToastPosition = 'top' | 'bottom';
@@ -18,7 +17,9 @@ export interface ToastConfig {
   /** Callback fired when the action button is pressed. */
   onAction?: () => void;
   /**
-   * Auto-dismiss duration in milliseconds.
+   * Auto-dismiss duration in milliseconds. Pass `0` (or any non-positive
+   * value) to keep the toast sticky until `hide()` is called, the action
+   * button is pressed, or another toast replaces it.
    * @default 3000
    */
   duration?: number;
@@ -45,52 +46,6 @@ export interface ToastConfig {
   position?: ToastPosition;
 }
 
-let _config: (ToastConfig & { _id: number }) | null = null;
-let _nextId = 0;
-const _listeners = new Set<Listener>();
-let _rootCount = 0;
-
-function notify() {
-  _listeners.forEach((l) => l());
-}
-
-function useToastState() {
-  const [, forceUpdate] = React.useState(0);
-  useEffect(() => {
-    const listener = () => forceUpdate((n) => n + 1);
-    _listeners.add(listener);
-    return () => {
-      _listeners.delete(listener);
-    };
-  }, []);
-  return _config;
-}
-
-/**
- * Imperative hook for showing and hiding toasts from any component.
- *
- * @example
- * ```tsx
- * const { show, hide } = useToast();
- * show({ message: 'Item saved', duration: 2000 });
- * ```
- */
-export function useToast() {
-  const show = useCallback((config: ToastConfig) => {
-    _config = { ...config, _id: ++_nextId };
-    notify();
-  }, []);
-
-  const hide = useCallback(() => {
-    _config = null;
-    notify();
-  }, []);
-
-  return { show, hide };
-}
-
-// ─── Toast Component ───────────────────────────────────────────
-
 export interface ToastProps {
   /**
    * Offset from the edge of the screen (top or bottom, depending on position).
@@ -103,6 +58,160 @@ export interface ToastProps {
    */
   defaultPosition?: ToastPosition;
 }
+
+// ─── Constants ─────────────────────────────────────────────────
+
+const DEFAULT_DURATION_MS = 3000;
+const DEFAULT_OFFSET = 80;
+const MIN_EDGE_INSET = 16;
+const ENTER_DURATION_MS = 250;
+const EXIT_DURATION_MS = 200;
+const BORDER_LEFT_WIDTH = 3;
+const ACTION_HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 } as const;
+
+const VARIANT_GLYPH: Record<Exclude<ToastVariant, 'default'>, string> = {
+  success: '✓',
+  warning: '!',
+  error: '✕',
+  info: 'i',
+};
+
+// ─── Store (module-level singleton) ────────────────────────────
+
+interface ActiveToast extends ToastConfig {
+  readonly id: number;
+}
+
+type Listener = () => void;
+
+interface ToastStore {
+  show: (config: ToastConfig) => void;
+  hide: () => void;
+  subscribe: (listener: Listener) => () => void;
+  getSnapshot: () => ActiveToast | null;
+  /** @internal Increments the mounted-root counter and returns a cleanup. */
+  registerRoot: () => () => void;
+  /** @internal Used only by tests / Fast Refresh. */
+  _resetForTest: () => void;
+}
+
+function createToastStore(): ToastStore {
+  let active: ActiveToast | null = null;
+  let nextId = 0;
+  let rootCount = 0;
+  const listeners = new Set<Listener>();
+
+  const notify = (): void => {
+    listeners.forEach((listener) => listener());
+  };
+
+  return {
+    show(config) {
+      active = { ...config, id: ++nextId };
+      notify();
+    },
+    hide() {
+      if (active === null) return;
+
+      active = null;
+      notify();
+    },
+    subscribe(listener) {
+      listeners.add(listener);
+
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    getSnapshot() {
+      return active;
+    },
+    registerRoot() {
+      rootCount += 1;
+      if (__DEV__ && rootCount > 1) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          '[native-ui] Multiple <Toast /> roots detected. Mount exactly one at the app root.',
+        );
+      }
+
+      return () => {
+        rootCount = Math.max(0, rootCount - 1);
+        // Only clear the active toast when the *last* root is unmounting.
+        // Guards against StrictMode double-mounts and HMR-induced remounts
+        // killing an in-flight toast.
+        if (rootCount === 0) {
+          active = null;
+          listeners.clear();
+        } else {
+          notify();
+        }
+      };
+    },
+    _resetForTest() {
+      active = null;
+      nextId = 0;
+      rootCount = 0;
+      listeners.clear();
+    },
+  };
+}
+
+const toastStore = createToastStore();
+
+// ─── Hooks ─────────────────────────────────────────────────────
+
+/**
+ * Imperative hook for showing and hiding toasts from any component.
+ *
+ * @example
+ * ```tsx
+ * const { show, hide } = useToast();
+ * show({ message: 'Item saved', duration: 2000 });
+ * ```
+ */
+export function useToast(): { show: (config: ToastConfig) => void; hide: () => void } {
+  const show = useCallback((config: ToastConfig) => toastStore.show(config), []);
+  const hide = useCallback(() => toastStore.hide(), []);
+
+  return { show, hide };
+}
+
+function useActiveToast(): ActiveToast | null {
+  return useSyncExternalStore(toastStore.subscribe, toastStore.getSnapshot, toastStore.getSnapshot);
+}
+
+function useAutoDismiss(active: ActiveToast | null): void {
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    if (active === null) return;
+
+    // `duration <= 0` means "sticky" - the toast stays until explicitly
+    // hidden (via `hide()` / action press / being replaced). Only `undefined`
+    // falls back to the 3 s default.
+    const duration = active.duration ?? DEFAULT_DURATION_MS;
+    if (duration <= 0) return;
+
+    timerRef.current = setTimeout(() => {
+      timerRef.current = null;
+      toastStore.hide();
+    }, duration);
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [active]);
+}
+
+// ─── Component ─────────────────────────────────────────────────
 
 /**
  * Toast notification overlay. Place once near the root of your app.
@@ -117,73 +226,42 @@ export interface ToastProps {
  * show({ message: 'Saved!', variant: 'success', duration: 2000 });
  * ```
  */
-export function Toast({ offset = 80, defaultPosition = 'bottom' }: ToastProps = {}) {
-  const config = useToastState();
+export function Toast({ offset = DEFAULT_OFFSET, defaultPosition = 'bottom' }: ToastProps = {}) {
+  const active = useActiveToast();
   const insets = useSafeAreaInsets();
   const theme = useTheme();
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    _rootCount += 1;
-    if (__DEV__ && _rootCount > 1) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        '[native-ui] Multiple <Toast /> roots detected. Mount exactly one at the app root.',
-      );
-    }
-    return () => {
-      _rootCount = Math.max(0, _rootCount - 1);
-      // Only clear the active toast when the *last* root is unmounting.
-      // Earlier this unconditionally nulled `_config` on every unmount,
-      // which killed in-flight toasts during StrictMode dev-mode double-
-      // mounts, HMR, or any tree-swap that remounted the Toast root.
-      if (_rootCount === 0) {
-        _config = null;
-        _listeners.clear();
-      } else {
-        notify();
-      }
-    };
-  }, []);
+  useAutoDismiss(active);
+  useEffect(() => toastStore.registerRoot(), []);
 
-  useEffect(() => {
-    if (config) {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
-        _config = null;
-        notify();
-      }, config.duration ?? 3000);
-    }
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [config]);
+  const handleActionPress = useCallback(() => {
+    active?.onAction?.();
+    toastStore.hide();
+  }, [active]);
 
-  if (!config) return null;
+  if (active === null) return null;
 
-  // Toast surface: routed through theme so preset/custom themes can override.
-  const bgColor = theme.colors.surfaceElevated;
-  const animDuration = theme.reduceAnimations ? 0 : 250;
+  const variant = active.variant ?? 'default';
+  const accent = resolveAccent(variant, theme, active.accent);
+  const iconNode = active.icon !== undefined ? active.icon : renderDefaultIcon(variant, accent);
 
-  const variant: ToastVariant = config.variant ?? 'default';
-  const accent = resolveAccent(variant, theme, config.accent);
-  const iconNode = config.icon !== undefined ? config.icon : renderDefaultIcon(variant, accent);
-
-  const position: ToastPosition = config.position ?? defaultPosition;
+  const position: ToastPosition = active.position ?? defaultPosition;
   const isTop = position === 'top';
 
   const positionStyle = isTop
-    ? { top: Math.max(insets.top, 16) + offset }
-    : { bottom: Math.max(insets.bottom, 16) + offset };
+    ? { top: Math.max(insets.top, MIN_EDGE_INSET) + offset }
+    : { bottom: Math.max(insets.bottom, MIN_EDGE_INSET) + offset };
 
-  const entering = isTop ? FadeInUp.duration(animDuration) : FadeInDown.duration(animDuration);
-  const exiting = isTop
-    ? FadeOutUp.duration(theme.reduceAnimations ? 0 : 200)
-    : FadeOutDown.duration(theme.reduceAnimations ? 0 : 200);
+  const enterMs = theme.reduceAnimations ? 0 : ENTER_DURATION_MS;
+  const exitMs = theme.reduceAnimations ? 0 : EXIT_DURATION_MS;
+  const entering = isTop ? FadeInUp.duration(enterMs) : FadeInDown.duration(enterMs);
+  const exiting = isTop ? FadeOutUp.duration(exitMs) : FadeOutDown.duration(exitMs);
+
+  const actionTextStyle: TextStyle = { color: accent, fontWeight: '700' };
 
   return (
     <Animated.View
-      key={config._id}
+      key={active.id}
       entering={entering}
       exiting={exiting}
       style={[
@@ -191,45 +269,43 @@ export function Toast({ offset = 80, defaultPosition = 'bottom' }: ToastProps = 
         positionStyle,
         theme.elevation.lg,
         {
-          backgroundColor: bgColor,
+          backgroundColor: theme.colors.surfaceElevated,
           borderRadius: theme.borderRadius.md,
-          borderLeftWidth: 3,
+          borderLeftWidth: BORDER_LEFT_WIDTH,
           borderLeftColor: accent,
         },
       ]}
       accessible
       accessibilityRole="alert"
       accessibilityLiveRegion="polite"
-      accessibilityLabel={config.message}
+      accessibilityLabel={active.message}
     >
       {iconNode != null && <View style={styles.iconContainer}>{iconNode}</View>}
+
       <View style={styles.textContainer}>
         <Text
           style={[theme.typography.labelSmall, { color: theme.colors.textPrimary }]}
           numberOfLines={2}
         >
-          {config.message}
+          {active.message}
         </Text>
       </View>
-      {config.actionLabel && (
+
+      {active.actionLabel && (
         <Pressable
-          onPress={() => {
-            config.onAction?.();
-            _config = null;
-            notify();
-          }}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          onPress={handleActionPress}
+          hitSlop={ACTION_HIT_SLOP}
           accessibilityRole="button"
-          accessibilityLabel={config.actionLabel}
+          accessibilityLabel={active.actionLabel}
         >
-          <Text style={[theme.typography.labelSmall, { color: accent, fontWeight: '700' }]}>
-            {config.actionLabel}
-          </Text>
+          <Text style={[theme.typography.labelSmall, actionTextStyle]}>{active.actionLabel}</Text>
         </Pressable>
       )}
     </Animated.View>
   );
 }
+
+// ─── Helpers ───────────────────────────────────────────────────
 
 function resolveAccent(
   variant: ToastVariant,
@@ -237,6 +313,7 @@ function resolveAccent(
   override?: string,
 ): string {
   if (override) return override;
+
   switch (variant) {
     case 'success':
       return theme.colors.success;
@@ -253,25 +330,24 @@ function resolveAccent(
 
 function renderDefaultIcon(variant: ToastVariant, color: string): React.ReactNode {
   if (variant === 'default') return null;
-  const glyph =
-    variant === 'success' ? '✓' : variant === 'warning' ? '!' : variant === 'error' ? '✕' : 'i';
+
+  return <VariantGlyph variant={variant} color={color} />;
+}
+
+interface VariantGlyphProps {
+  readonly variant: Exclude<ToastVariant, 'default'>;
+  readonly color: string;
+}
+
+const VariantGlyph = React.memo(function VariantGlyph({ variant, color }: VariantGlyphProps) {
   return (
-    <Text
-      accessibilityElementsHidden
-      style={{
-        width: 20,
-        textAlign: 'center',
-        // 15pt semibold glyph - small but readable, aligns with labelSmall baseline.
-        fontSize: 15,
-        lineHeight: 18,
-        fontWeight: '700',
-        color,
-      }}
-    >
-      {glyph}
+    <Text accessibilityElementsHidden style={[styles.glyph, { color }]}>
+      {VARIANT_GLYPH[variant]}
     </Text>
   );
-}
+});
+
+// ─── Styles ────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
   container: {
@@ -293,7 +369,17 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
   },
+  glyph: {
+    width: 20,
+    textAlign: 'center',
+    // 15pt semibold glyph - small but readable, aligns with labelSmall baseline.
+    fontSize: 15,
+    lineHeight: 18,
+    fontWeight: '700',
+  },
 });
+
+// ─── Imperative facade ─────────────────────────────────────────
 
 /**
  * Imperative singleton facade usable outside React components (e.g. inside
@@ -306,11 +392,9 @@ const styles = StyleSheet.create({
  */
 export const toast = {
   show(config: ToastConfig) {
-    _config = { ...config, _id: ++_nextId };
-    notify();
+    toastStore.show(config);
   },
   hide() {
-    _config = null;
-    notify();
+    toastStore.hide();
   },
 };

@@ -8,7 +8,7 @@ import { typography } from '../../src/tokens/typography';
 import { spacing } from '../../src/tokens/spacing';
 
 describe('defaultSemanticColors', () => {
-  it('should_map_action_tokens_to_expected_ColorScheme_keys', () => {
+  it('should map action tokens to expected ColorScheme keys', () => {
     // GIVEN the defaultSemanticColors mapping
 
     // WHEN the action-related entries are read
@@ -21,7 +21,7 @@ describe('defaultSemanticColors', () => {
     expect(actionDisabled).toBe('textTertiary');
   });
 
-  it('should_map_feedback_tokens_to_expected_ColorScheme_keys', () => {
+  it('should map feedback tokens to expected ColorScheme keys', () => {
     // GIVEN the defaultSemanticColors mapping
 
     // WHEN the feedback-related entries are read
@@ -34,7 +34,7 @@ describe('defaultSemanticColors', () => {
     expect(feedbackInfo).toBe('info');
   });
 
-  it('should_map_surface_tokens_to_expected_ColorScheme_keys', () => {
+  it('should map surface tokens to expected ColorScheme keys', () => {
     // GIVEN the defaultSemanticColors mapping
 
     // WHEN the surface-related entries are read
@@ -47,7 +47,7 @@ describe('defaultSemanticColors', () => {
     expect(surfaceInput).toBe('surfaceSecondary');
   });
 
-  it('should_map_text_tokens_to_expected_ColorScheme_keys', () => {
+  it('should map text tokens to expected ColorScheme keys', () => {
     // GIVEN the defaultSemanticColors mapping
 
     // WHEN the text-related entries are read
@@ -63,7 +63,7 @@ describe('defaultSemanticColors', () => {
 });
 
 describe('defaultSemanticSpacing', () => {
-  it('should_reference_only_valid_spacing_token_keys', () => {
+  it('should reference only valid spacing token keys', () => {
     // GIVEN the set of valid spacing token keys
     const validKeys = Object.keys(spacing);
 
@@ -76,7 +76,7 @@ describe('defaultSemanticSpacing', () => {
     });
   });
 
-  it('should_expose_expected_defaults_for_pageHorizontal_cardPadding_and_stackGap', () => {
+  it('should expose expected defaults for pageHorizontal cardPadding and stackGap', () => {
     // GIVEN the defaultSemanticSpacing mapping
 
     // WHEN its core entries are read
@@ -90,7 +90,7 @@ describe('defaultSemanticSpacing', () => {
 });
 
 describe('defaultSemanticTypography', () => {
-  it('should_reference_only_valid_typography_variant_keys', () => {
+  it('should reference only valid typography variant keys', () => {
     // GIVEN the set of valid typography variant keys
     const validKeys = Object.keys(typography);
 
@@ -103,7 +103,7 @@ describe('defaultSemanticTypography', () => {
     });
   });
 
-  it('should_expose_expected_defaults_for_pageTitle_sectionTitle_bodyDefault_and_captionDefault', () => {
+  it('should expose expected defaults for pageTitle sectionTitle bodyDefault and captionDefault', () => {
     // GIVEN the defaultSemanticTypography mapping
 
     // WHEN its core entries are read
@@ -118,7 +118,7 @@ describe('defaultSemanticTypography', () => {
 });
 
 describe('defaultSemanticTokens (combined)', () => {
-  it('should_combine_colors_spacing_and_typography_groups_by_reference', () => {
+  it('should combine colors spacing and typography groups by reference', () => {
     // GIVEN the combined defaultSemanticTokens object
 
     // WHEN its grouped entries are read

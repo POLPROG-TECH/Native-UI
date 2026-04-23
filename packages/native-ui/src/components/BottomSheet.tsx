@@ -61,21 +61,22 @@ function BottomSheetComponent({
   style,
 }: BottomSheetProps) {
   const theme = useTheme();
-  const animDuration = theme.reduceAnimations ? 0 : 300;
+  const enterDuration = theme.reduceAnimations ? 0 : 300;
+  const exitDuration = theme.reduceAnimations ? 0 : 200;
 
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
       <View style={styles.wrapper}>
         <Animated.View
-          entering={FadeIn.duration(animDuration)}
+          entering={FadeIn.duration(enterDuration)}
           style={[styles.backdrop, { backgroundColor: theme.colors.overlay }]}
         >
           <Pressable style={StyleSheet.absoluteFill} onPress={dismissable ? onClose : undefined} />
         </Animated.View>
 
         <Animated.View
-          entering={SlideInDown.duration(animDuration)}
-          exiting={SlideOutDown.duration(200)}
+          entering={SlideInDown.duration(enterDuration)}
+          exiting={SlideOutDown.duration(exitDuration)}
           style={[
             styles.sheet,
             {

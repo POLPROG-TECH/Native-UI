@@ -37,6 +37,7 @@ type Story = StoryObj;
 
 const DeleteConfirmation = () => {
   const [visible, setVisible] = useState(false);
+
   return (
     <View>
       <Button title="Delete Entry" variant="destructive" onPress={() => setVisible(true)} />
@@ -73,6 +74,7 @@ const categoryOptions: SelectOption<string>[] = [
 const QuickAddEntry = () => {
   const [visible, setVisible] = useState(false);
   const [category, setCategory] = useState<string | null>(null);
+
   return (
     <View>
       <Button title="Quick Add" onPress={() => setVisible(true)} />
@@ -104,6 +106,7 @@ export const QuickAddForm: Story = {
 
 const InfoAlert = () => {
   const [visible, setVisible] = useState(false);
+
   return (
     <View>
       <Button title="Show Info" variant="outline" onPress={() => setVisible(true)} />

@@ -5,13 +5,11 @@ import { ListItem } from '../../src/components/ListItem';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('ListSection', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the ListSection export from the components module
 
     // WHEN its runtime type is inspected
@@ -21,7 +19,7 @@ describe('ListSection', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_the_title_when_provided', () => {
+  it('should render the title when provided', () => {
     // GIVEN a ListSection with a title
 
     // WHEN the component is rendered inside a theme provider
@@ -35,7 +33,7 @@ describe('ListSection', () => {
     expect(screen.getByText('Account')).toBeInTheDocument();
   });
 
-  it('should_render_the_footer_when_provided', () => {
+  it('should render the footer when provided', () => {
     // GIVEN a ListSection with a footer
 
     // WHEN the component is rendered inside a theme provider
@@ -49,7 +47,7 @@ describe('ListSection', () => {
     expect(screen.getByText('Need help? Contact support.')).toBeInTheDocument();
   });
 
-  it('should_render_all_children_in_default_non_grouped_mode', () => {
+  it('should render all children in default non grouped mode', () => {
     // GIVEN a non-grouped ListSection wrapping two list items
 
     // WHEN the section is rendered inside a theme provider
@@ -65,7 +63,7 @@ describe('ListSection', () => {
     expect(screen.getByText('Beta')).toBeInTheDocument();
   });
 
-  it('should_render_all_children_in_grouped_mode', () => {
+  it('should render all children in grouped mode', () => {
     // GIVEN a grouped ListSection wrapping three list items
 
     // WHEN the section is rendered inside a theme provider

@@ -1,7 +1,7 @@
 import { toast } from '../../src/components/Toast';
 
 describe('toast singleton facade', () => {
-  it('should_expose_show_and_hide_as_callable_functions', () => {
+  it('should expose show and hide as callable functions', () => {
     // GIVEN the module-level toast facade
 
     // WHEN its shape is inspected
@@ -13,7 +13,7 @@ describe('toast singleton facade', () => {
     expect(hideType).toBe('function');
   });
 
-  it('should_not_throw_when_show_or_hide_is_called_without_a_mounted_Toast_root', () => {
+  it('should not throw when show or hide is called without a mounted Toast root', () => {
     // GIVEN no <Toast /> root is mounted in this test
 
     // WHEN show and hide are invoked with a valid config and no args
@@ -26,7 +26,7 @@ describe('toast singleton facade', () => {
     expect(callShowAndHide).not.toThrow();
   });
 
-  it('should_accept_optional_action_props_when_show_is_called_with_full_config', () => {
+  it('should accept optional action props when show is called with full config', () => {
     // GIVEN a config with an action label and callback
     const onAction = jest.fn();
     const config = {

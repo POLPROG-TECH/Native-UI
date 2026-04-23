@@ -5,13 +5,11 @@ import { Chip, ChipGroup } from '../../src/components/Chip';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('Chip', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the Chip export from the components module
 
     // WHEN its runtime type is inspected
@@ -21,7 +19,7 @@ describe('Chip', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_the_label_when_the_label_prop_is_provided', () => {
+  it('should render the label when the label prop is provided', () => {
     // GIVEN a Chip configured with a "Filter" label
 
     // WHEN the component is rendered inside a theme provider
@@ -31,7 +29,7 @@ describe('Chip', () => {
     expect(screen.getByText('Filter')).toBeInTheDocument();
   });
 
-  it('should_invoke_onPress_when_the_chip_is_pressed', () => {
+  it('should invoke onPress when the chip is pressed', () => {
     // GIVEN a Chip with a mocked onPress callback
     const onPress = jest.fn();
     renderWithTheme(<Chip label="Click" onPress={onPress} />);
@@ -43,7 +41,7 @@ describe('Chip', () => {
     expect(onPress).toHaveBeenCalledTimes(1);
   });
 
-  it('should_render_the_string_icon_when_icon_prop_is_provided', () => {
+  it('should render the string icon when icon prop is provided', () => {
     // GIVEN a Chip with a "🔥" icon and a "Hot" label
     renderWithTheme(<Chip label="Hot" icon="🔥" />);
 
@@ -52,7 +50,7 @@ describe('Chip', () => {
     expect(screen.getByText('Hot')).toBeInTheDocument();
   });
 
-  it('should_prefer_renderIcon_over_icon_when_both_are_provided', () => {
+  it('should prefer renderIcon over icon when both are provided', () => {
     // GIVEN a Chip supplying both a string icon and a renderIcon render prop
     renderWithTheme(
       <Chip
@@ -67,7 +65,7 @@ describe('Chip', () => {
     expect(screen.queryByText('★')).not.toBeInTheDocument();
   });
 
-  it('should_render_every_chip_shape_without_crashing', () => {
+  it('should render every chip shape without crashing', () => {
     // GIVEN the full list of Chip shapes
     const shapes = ['pill', 'rounded', 'square'] as const;
 
@@ -84,7 +82,7 @@ describe('Chip', () => {
     expect(renderAll).not.toThrow();
   });
 
-  it('should_render_every_variant_selected_and_unselected_without_crashing', () => {
+  it('should render every variant selected and unselected without crashing', () => {
     // GIVEN the full list of Chip variants in both selection states
     const variants = ['solid', 'soft', 'outline'] as const;
 
@@ -106,7 +104,7 @@ describe('Chip', () => {
     expect(renderAll).not.toThrow();
   });
 
-  it('should_render_every_size_without_crashing', () => {
+  it('should render every size without crashing', () => {
     // GIVEN both supported sizes
     const sizes = ['sm', 'md'] as const;
 
@@ -123,7 +121,7 @@ describe('Chip', () => {
     expect(renderAll).not.toThrow();
   });
 
-  it('should_not_invoke_onPress_when_the_chip_is_disabled', () => {
+  it('should not invoke onPress when the chip is disabled', () => {
     // GIVEN a disabled Chip with a mocked onPress
     const onPress = jest.fn();
     renderWithTheme(<Chip label="Nope" onPress={onPress} disabled />);
@@ -137,7 +135,7 @@ describe('Chip', () => {
 });
 
 describe('ChipGroup', () => {
-  it('should_render_all_child_chips_when_composed_inside_a_group', () => {
+  it('should render all child chips when composed inside a group', () => {
     // GIVEN a ChipGroup wrapping two Chips
 
     // WHEN the composition is rendered inside a theme provider
@@ -153,7 +151,7 @@ describe('ChipGroup', () => {
     expect(screen.getByText('Two')).toBeInTheDocument();
   });
 
-  it('should_render_arbitrary_children_without_crashing', () => {
+  it('should render arbitrary children without crashing', () => {
     // GIVEN a ChipGroup wrapping a plain Text child
 
     // WHEN the composition is rendered inside a theme provider

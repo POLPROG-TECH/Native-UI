@@ -67,6 +67,7 @@ function applyTransform(
   if (transform === 'uppercase' || transform === 'lowercase' || transform === 'capitalize') {
     return { displayTitle: title, textTransform: transform };
   }
+
   return { displayTitle: title };
 }
 

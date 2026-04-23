@@ -1,7 +1,14 @@
-import React from 'react';
-import { View, Pressable, Platform, StyleSheet, type ViewStyle, type StyleProp } from 'react-native';
-import { useTheme } from '../theme';
+import React, { useCallback, useMemo } from 'react';
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import { Text } from '../primitives';
+import { useTheme } from '../theme';
 
 export interface BottomTabBarItem {
   /** Stable key identifying the tab. */
@@ -30,6 +37,13 @@ export interface BottomTabBarProps {
   readonly testID?: string;
 }
 
+const ICON_SIZE = 22;
+const MAX_NUMERIC_BADGE = 99;
+const HIT_SLOP = 8;
+const IOS_BOTTOM_PAD = 4;
+const ANDROID_BOTTOM_PAD = 8;
+const PRESSED_OPACITY = 0.7;
+
 /**
  * Opinionated bottom navigation bar modelled 1:1 on DailyForma's tab rail.
  *
@@ -50,79 +64,121 @@ export function BottomTabBar({
   testID,
 }: BottomTabBarProps) {
   const theme = useTheme();
-  const mediumFamily = theme.fontFamilies?.medium;
-  const bottomPad = (Platform.OS === 'ios' ? 4 : 8) + safeBottomInset;
+  const basePad = Platform.OS === 'ios' ? IOS_BOTTOM_PAD : ANDROID_BOTTOM_PAD;
+  const containerStyle = [
+    styles.bar,
+    {
+      backgroundColor: theme.colors.surface,
+      borderTopColor: theme.colors.border,
+      paddingBottom: basePad + safeBottomInset,
+    },
+    style,
+  ];
+
   return (
-    <View
-      testID={testID}
-      style={[
-        styles.bar,
-        {
-          backgroundColor: theme.colors.surface,
-          borderTopColor: theme.colors.border,
-          paddingBottom: bottomPad,
-        },
-        style,
-      ]}
-      accessibilityRole="tablist"
-    >
-      {items.map(item => {
-        const focused = item.key === activeKey;
-        const tint = focused ? theme.colors.primary : theme.colors.textTertiary;
-        return (
-          <Pressable
-            key={item.key}
-            onPress={() => onSelect(item.key)}
-            accessibilityRole="tab"
-            accessibilityLabel={item.accessibilityLabel ?? item.label}
-            accessibilityState={{ selected: focused }}
-            style={({ pressed }) => [
-              styles.item,
-              pressed && { opacity: 0.7 },
-            ]}
-            hitSlop={8}
-          >
-            <View style={styles.iconWrap}>
-              {item.icon({ color: tint, size: 22, focused })}
-              {item.badge != null ? (
-                <View
-                  style={[
-                    styles.badge,
-                    { backgroundColor: theme.colors.primary },
-                  ]}
-                >
-                  <Text
-                    style={{
-                      color: theme.colors.background,
-                      fontSize: 10,
-                      fontWeight: '700',
-                      lineHeight: 12,
-                    }}
-                  >
-                    {typeof item.badge === 'number' && item.badge > 99 ? '99+' : String(item.badge)}
-                  </Text>
-                </View>
-              ) : null}
-            </View>
-            <Text
-              numberOfLines={1}
-              style={{
-                color: tint,
-                fontSize: 10,
-                fontFamily: mediumFamily,
-                fontWeight: '500',
-                marginTop: 1,
-                letterSpacing: 0.1,
-              }}
-            >
-              {item.label}
-            </Text>
-          </Pressable>
-        );
-      })}
+    <View testID={testID} style={containerStyle} accessibilityRole="tablist">
+      {items.map((item) => (
+        <TabItem key={item.key} item={item} focused={item.key === activeKey} onSelect={onSelect} />
+      ))}
     </View>
   );
 }
+
+// --- TabItem ---
+
+interface TabItemProps {
+  readonly item: BottomTabBarItem;
+  readonly focused: boolean;
+  readonly onSelect: (key: string) => void;
+}
+
+const TabItem = React.memo(function TabItem({ item, focused, onSelect }: TabItemProps) {
+  const theme = useTheme();
+  const tint = focused ? theme.colors.primary : theme.colors.textTertiary;
+
+  const handlePress = useCallback(() => onSelect(item.key), [item.key, onSelect]);
+  const pressableStyle = useCallback(
+    ({ pressed }: { pressed: boolean }) => [styles.item, pressed && pressedOverlay],
+    [],
+  );
+
+  const labelStyle = useMemo(
+    () => [
+      styles.label,
+      {
+        color: tint,
+        fontFamily: theme.fontFamilies?.medium,
+      },
+    ],
+    [tint, theme.fontFamilies?.medium],
+  );
+
+  return (
+    <Pressable
+      onPress={handlePress}
+      accessibilityRole="tab"
+      accessibilityLabel={item.accessibilityLabel ?? item.label}
+      accessibilityState={{ selected: focused }}
+      style={pressableStyle}
+      hitSlop={HIT_SLOP}
+    >
+      <View style={styles.iconWrap}>
+        {item.icon({ color: tint, size: ICON_SIZE, focused })}
+        {shouldRenderBadge(item.badge) && (
+          <TabBadge
+            badge={item.badge!}
+            color={theme.colors.primary}
+            textColor={theme.colors.background}
+          />
+        )}
+      </View>
+      <Text numberOfLines={1} style={labelStyle}>
+        {item.label}
+      </Text>
+    </Pressable>
+  );
+});
+
+// --- TabBadge ---
+
+interface TabBadgeProps {
+  readonly badge: number | string;
+  readonly color: string;
+  readonly textColor: string;
+}
+
+const TabBadge = React.memo(function TabBadge({ badge, color, textColor }: TabBadgeProps) {
+  return (
+    <View style={[styles.badge, { backgroundColor: color }]}>
+      <Text style={[styles.badgeText, { color: textColor }]}>{formatBadge(badge)}</Text>
+    </View>
+  );
+});
+
+// --- Helpers ---
+
+/**
+ * Whether a tab badge should render. Hides `null` / `undefined` (no badge),
+ * numeric `0` and negatives (common "no unread" state — mirrors `Badge.hideZero`),
+ * and empty strings.
+ */
+function shouldRenderBadge(badge: BottomTabBarItem['badge']): boolean {
+  if (badge == null) return false;
+
+  if (typeof badge === 'number') return badge > 0;
+
+  return badge.length > 0;
+}
+
+function formatBadge(badge: number | string): string {
+  if (typeof badge === 'number' && badge > MAX_NUMERIC_BADGE) return `${MAX_NUMERIC_BADGE}+`;
+
+  return String(badge);
+}
+
+// --- Styles ---
+
+const pressedOverlay = { opacity: PRESSED_OPACITY } as const;
 
 const styles = StyleSheet.create({
   bar: {
@@ -155,5 +211,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  badgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    lineHeight: 12,
+  },
+  label: {
+    fontSize: 10,
+    fontWeight: '500',
+    marginTop: 1,
+    letterSpacing: 0.1,
   },
 });

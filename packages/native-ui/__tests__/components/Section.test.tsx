@@ -5,13 +5,11 @@ import { Section } from '../../src/components/Section';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('Section', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the Section export from the components module
 
     // WHEN its runtime type is inspected
@@ -21,7 +19,7 @@ describe('Section', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_the_title_and_children_when_provided', () => {
+  it('should render the title and children when provided', () => {
     // GIVEN a Section with a title and a child
 
     // WHEN the component is rendered inside a theme provider
@@ -36,7 +34,7 @@ describe('Section', () => {
     expect(screen.getByText('Body')).toBeInTheDocument();
   });
 
-  it('should_render_the_action_element_when_provided', () => {
+  it('should render the action element when provided', () => {
     // GIVEN a Section with a custom action element
 
     // WHEN the component is rendered inside a theme provider

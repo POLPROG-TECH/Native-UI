@@ -13,7 +13,9 @@ const BREAKPOINTS = {
 function getBreakpoint(): Breakpoint {
   const { width } = Dimensions.get('window');
   if (width >= BREAKPOINTS.expanded) return 'expanded';
+
   if (width >= BREAKPOINTS.regular) return 'regular';
+
   return 'compact';
 }
 
@@ -48,6 +50,7 @@ const RESPONSIVE_MAP: Record<Breakpoint, Record<keyof ResponsiveSpacing, Spacing
 export function getResponsiveSpacing(): ResponsiveSpacing {
   const bp = getBreakpoint();
   const map = RESPONSIVE_MAP[bp];
+
   return {
     pageHorizontal: spacing[map.pageHorizontal],
     pageVertical: spacing[map.pageVertical],

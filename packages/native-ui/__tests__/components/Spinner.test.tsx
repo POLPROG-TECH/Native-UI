@@ -4,13 +4,11 @@ import { Spinner } from '../../src/components/Spinner';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('Spinner', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the Spinner export from the components module
 
     // WHEN its runtime type is inspected
@@ -20,7 +18,7 @@ describe('Spinner', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_expose_the_default_Loading_accessibility_label_when_no_label_is_provided', () => {
+  it('should expose the default Loading accessibility label when no label is provided', () => {
     // GIVEN a Spinner with no explicit label
 
     // WHEN the component is rendered inside a theme provider
@@ -30,7 +28,7 @@ describe('Spinner', () => {
     expect(screen.getByLabelText('Loading')).toBeInTheDocument();
   });
 
-  it('should_render_the_supplied_label_when_provided', () => {
+  it('should render the supplied label when provided', () => {
     // GIVEN a Spinner with a custom label
 
     // WHEN the component is rendered inside a theme provider
@@ -41,16 +39,14 @@ describe('Spinner', () => {
     expect(screen.getByLabelText('Fetching...')).toBeInTheDocument();
   });
 
-  it('should_render_both_supported_sizes_without_crashing', () => {
+  it('should render both supported sizes without crashing', () => {
     // GIVEN both supported spinner sizes
     const sizes = ['small', 'large'] as const;
 
     // WHEN each size is rendered with a matching label
     const renderAll = () => {
       sizes.forEach((size) => {
-        const { unmount } = renderWithTheme(
-          <Spinner label={`size-${size}`} size={size} />,
-        );
+        const { unmount } = renderWithTheme(<Spinner label={`size-${size}`} size={size} />);
         expect(screen.getByLabelText(`size-${size}`)).toBeInTheDocument();
         unmount();
       });

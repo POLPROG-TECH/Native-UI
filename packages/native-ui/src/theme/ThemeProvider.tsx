@@ -59,8 +59,11 @@ function typographyResolverFor(
     return DEFAULT_TYPOGRAPHY_DENSITY === 'compact' ? compactTypography : buildTypography;
   }
   if (typeof override === 'function') return override;
+
   if (override === 'compact') return compactTypography;
+
   if (override === 'regular') return buildTypography;
+
   // Fully-formed Typography object - consumer pre-built it with their own families.
   return override;
 }
@@ -108,6 +111,7 @@ export function NativeUIProvider({ config = {}, children }: NativeUIProviderProp
 
   const isDark = useMemo(() => {
     if (colorMode === 'system') return systemScheme === 'dark';
+
     return colorMode === 'dark';
   }, [colorMode, systemScheme]);
 
@@ -137,6 +141,7 @@ export function NativeUIProvider({ config = {}, children }: NativeUIProviderProp
     const resolver = typographyResolverFor(typographyOverride);
     const base = typeof resolver === 'function' ? resolver(resolvedFontFamilies) : resolver;
     if (!fontScale) return base;
+
     // Apply the fontSize toolbar uniformly across every typography variant
     // so any component reading `theme.typography.<variant>` (Button, Input,
     // HeaderBar, etc.) scales - not only the <Text> primitive.
@@ -149,6 +154,7 @@ export function NativeUIProvider({ config = {}, children }: NativeUIProviderProp
         lineHeight: variant.lineHeight + fontScale,
       };
     }
+
     return scaled;
   }, [resolvedFontFamilies, typographyOverride, fontScale]);
 
@@ -199,6 +205,7 @@ export function useTheme(): Theme {
         'Wrap your app root with <NativeUIProvider>.',
     );
   }
+
   return theme;
 }
 

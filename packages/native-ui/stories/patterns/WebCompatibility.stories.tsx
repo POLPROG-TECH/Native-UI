@@ -67,6 +67,7 @@ export const AllPrimitives: Story = {
   name: 'Primitives',
   render: () => {
     const theme = useTheme();
+
     return (
     <VStack spacing="md">
       <Heading level={2}>Primitives</Heading>

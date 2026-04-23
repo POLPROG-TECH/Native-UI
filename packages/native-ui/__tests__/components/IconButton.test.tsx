@@ -4,13 +4,11 @@ import { IconButton } from '../../src/components/IconButton';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('IconButton', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the IconButton export from the components module
 
     // WHEN its runtime type is inspected
@@ -20,7 +18,7 @@ describe('IconButton', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_its_icon_child_when_mounted', () => {
+  it('should render its icon child when mounted', () => {
     // GIVEN an IconButton with a span icon child
     renderWithTheme(
       <IconButton
@@ -34,7 +32,7 @@ describe('IconButton', () => {
     expect(screen.getByTestId('icon-child')).toBeInTheDocument();
   });
 
-  it('should_set_the_button_accessibility_label_from_the_prop', () => {
+  it('should set the button accessibility label from the prop', () => {
     // GIVEN an IconButton with a custom accessibility label
     renderWithTheme(
       <IconButton icon={<span>★</span>} accessibilityLabel="Favourite" onPress={() => {}} />,
@@ -44,7 +42,7 @@ describe('IconButton', () => {
     expect(screen.getByLabelText('Favourite')).toBeInTheDocument();
   });
 
-  it('should_invoke_onPress_exactly_once_per_click_despite_the_internal_debounce', () => {
+  it('should invoke onPress exactly once per click despite the internal debounce', () => {
     // GIVEN an IconButton with a mocked onPress
     jest.useFakeTimers();
     const onPress = jest.fn();
@@ -70,16 +68,11 @@ describe('IconButton', () => {
     jest.useRealTimers();
   });
 
-  it('should_not_invoke_onPress_when_disabled', () => {
+  it('should not invoke onPress when disabled', () => {
     // GIVEN a disabled IconButton with a mocked onPress
     const onPress = jest.fn();
     renderWithTheme(
-      <IconButton
-        icon={<span>★</span>}
-        accessibilityLabel="Nope"
-        onPress={onPress}
-        disabled
-      />,
+      <IconButton icon={<span>★</span>} accessibilityLabel="Nope" onPress={onPress} disabled />,
     );
 
     // WHEN the button is clicked
@@ -89,22 +82,17 @@ describe('IconButton', () => {
     expect(onPress).not.toHaveBeenCalled();
   });
 
-  it('should_expose_aria_disabled_true_when_disabled', () => {
+  it('should expose aria disabled true when disabled', () => {
     // GIVEN a disabled IconButton
     renderWithTheme(
-      <IconButton
-        icon={<span>★</span>}
-        accessibilityLabel="Nope"
-        onPress={() => {}}
-        disabled
-      />,
+      <IconButton icon={<span>★</span>} accessibilityLabel="Nope" onPress={() => {}} disabled />,
     );
 
     // WHEN the button element is inspected THEN aria-disabled is "true"
     expect(screen.getByLabelText('Nope')).toHaveAttribute('aria-disabled', 'true');
   });
 
-  it('should_render_every_variant_without_crashing', () => {
+  it('should render every variant without crashing', () => {
     // GIVEN the full list of IconButton variants
     const variants = ['default', 'primary', 'ghost', 'danger'] as const;
 
@@ -128,7 +116,7 @@ describe('IconButton', () => {
     expect(renderAll).not.toThrow();
   });
 
-  it('should_render_every_size_without_crashing', () => {
+  it('should render every size without crashing', () => {
     // GIVEN the full list of IconButton sizes
     const sizes = ['sm', 'md', 'lg'] as const;
 

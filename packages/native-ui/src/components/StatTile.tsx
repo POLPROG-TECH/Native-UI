@@ -60,29 +60,43 @@ export function StatTile({
   const theme = useTheme();
 
   const valueColor =
-    tone === 'primary' ? theme.colors.primary
-    : tone === 'success' ? theme.colors.success
-    : tone === 'warning' ? theme.colors.warning
-    : tone === 'error' ? theme.colors.error
-    : theme.colors.textPrimary;
+    tone === 'primary'
+      ? theme.colors.primary
+      : tone === 'success'
+      ? theme.colors.success
+      : tone === 'warning'
+      ? theme.colors.warning
+      : tone === 'error'
+      ? theme.colors.error
+      : theme.colors.textPrimary;
 
-  const valueVariant: 'monoLarge' | 'mono' | 'monoSmall' | 'h2' | 'h3' | 'title' =
-    mono
-      ? size === 'lg' ? 'monoLarge' : size === 'sm' ? 'monoSmall' : 'mono'
-      : size === 'lg' ? 'h2' : size === 'sm' ? 'title' : 'h3';
+  const valueVariant: 'monoLarge' | 'mono' | 'monoSmall' | 'h2' | 'h3' | 'title' = mono
+    ? size === 'lg'
+      ? 'monoLarge'
+      : size === 'sm'
+      ? 'monoSmall'
+      : 'mono'
+    : size === 'lg'
+    ? 'h2'
+    : size === 'sm'
+    ? 'title'
+    : 'h3';
 
   return (
     <View
-      style={[styles.container, { alignItems: align === 'center' ? 'center' : 'flex-start' }, style]}
+      style={[
+        styles.container,
+        { alignItems: align === 'center' ? 'center' : 'flex-start' },
+        style,
+      ]}
       testID={testID}
       accessibilityRole="text"
       accessibilityLabel={`${label}: ${typeof value === 'string' ? value : ''}`}
     >
-      <Text variant="overline" color="textTertiary">{label}</Text>
-      <Text
-        variant={valueVariant}
-        style={{ color: valueColor, marginTop: theme.spacing['2xs'] }}
-      >
+      <Text variant="overline" color="textTertiary">
+        {label}
+      </Text>
+      <Text variant={valueVariant} style={{ color: valueColor, marginTop: theme.spacing['2xs'] }}>
         {value}
       </Text>
       {caption ? (

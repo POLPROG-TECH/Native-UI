@@ -107,10 +107,13 @@ const MultiSelectExample = () => {
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(cat)) next.delete(cat); else next.add(cat);
+
       fn()(Array.from(next));
+
       return next;
     });
   };
+
   return (
     <VStack gap="sm" style={{ maxWidth: 400 }}>
       <Text variant="label">Categories</Text>

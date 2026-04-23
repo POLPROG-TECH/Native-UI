@@ -69,6 +69,7 @@ export type Typography = {
 export function buildTypography(families: FontFamilies): Typography {
   const ff = (w: '400' | '500' | '600' | '700') => familyForWeight(families, w);
   const tab: TextStyle['fontVariant'] = ['tabular-nums'];
+
   return {
     // Hero / large titles - used on empty states and landing screens.
     displayLarge: {
@@ -265,6 +266,7 @@ export const typography: Typography = buildTypography(systemFontFamilies);
 export function compactTypography(families: FontFamilies): Typography {
   const ff = (w: '400' | '500' | '600' | '700') => familyForWeight(families, w);
   const tab: TextStyle['fontVariant'] = ['tabular-nums'];
+
   return {
     displayLarge: {
       fontFamily: ff('700'),

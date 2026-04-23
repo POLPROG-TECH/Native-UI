@@ -93,6 +93,7 @@ const TypographyRow = ({ semantic, primitive }: { semantic: string; primitive: s
 // ─── Section Helper ────────────────────────────────────────────
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => {
   const theme = useTheme();
+
   return (
     <View style={{ marginBottom: 40 }}>
       <RNText style={{ fontSize: 20, fontWeight: '700', color: theme.colors.textPrimary, marginBottom: 16 }}>
@@ -109,6 +110,7 @@ const entries = (obj: Record<string, string>) =>
 // ─── Story Component ───────────────────────────────────────────
 const SemanticTokensStory = () => {
   const theme = useTheme();
+
   return (
     <View style={{ backgroundColor: theme.colors.surfaceSecondary, padding: 24 }}>
       <RNText style={{ fontSize: 28, fontWeight: '700', color: theme.colors.textPrimary, marginBottom: 8 }}>

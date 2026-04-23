@@ -46,6 +46,7 @@ type Story = StoryObj<SwitchProps>;
 
 const Interactive = (props: Partial<SwitchProps> & { label?: string }) => {
   const [val, setVal] = useState(false);
+
   return <Switch value={val} onValueChange={(v) => { setVal(v); fn()(v); }} {...props} />;
 };
 

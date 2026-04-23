@@ -1,4 +1,33 @@
+const React = require('react');
+
 const createAnimatedComponent = (component) => component;
+
+// Lightweight passthrough used for `Animated.View` / `Animated.Text`. Renders
+// a plain DOM element so children and props flow through to jsdom assertions.
+// Also translates common RN accessibility props to their ARIA equivalents so
+// tests can query with `getByRole` / `getByLabelText` consistently with the
+// rest of the react-native mock.
+const makePassthrough = (elementType) =>
+  function AnimatedPassthrough({
+    children,
+    accessibilityLabel,
+    accessibilityRole,
+    accessibilityElementsHidden: _aeh,
+    ...rest
+  }) {
+    return React.createElement(
+      elementType,
+      {
+        ...rest,
+        role: accessibilityRole,
+        'aria-label': accessibilityLabel,
+      },
+      children,
+    );
+  };
+
+const AnimatedView = makePassthrough('div');
+const AnimatedText = makePassthrough('span');
 
 const makeAnimationBuilder = () => {
   const builder = {};
@@ -37,6 +66,12 @@ module.exports = {
   SlideOutDown: makeAnimationBuilder(),
   SlideInUp: makeAnimationBuilder(),
   SlideOutUp: makeAnimationBuilder(),
-  default: { createAnimatedComponent },
+  View: AnimatedView,
+  Text: AnimatedText,
+  default: {
+    createAnimatedComponent,
+    View: AnimatedView,
+    Text: AnimatedText,
+  },
   createAnimatedComponent,
 };

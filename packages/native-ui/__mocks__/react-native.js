@@ -57,7 +57,7 @@ function flattenAndTranslate(style) {
 }
 
 // Map RN components to HTML elements for jsdom rendering
-const View = React.forwardRef(function View({ style, children, accessibilityRole, accessibilityState, accessibilityLabel, accessibilityLiveRegion, ...props }, ref) {
+const View = React.forwardRef(function View({ style, children, accessibilityRole, accessibilityState, accessibilityLabel, accessibilityLiveRegion, accessibilityElementsHidden: _aeh, importantForAccessibility: _ifa, accessible: _acc, pointerEvents: _pe, onStartShouldSetResponder: _ossr, onLayout: _onL, ...props }, ref) {
   return React.createElement('div', {
     ref,
     style: flattenAndTranslate(style),
@@ -71,7 +71,7 @@ const View = React.forwardRef(function View({ style, children, accessibilityRole
   }, children);
 });
 
-const Text = React.forwardRef(function Text({ style, children, accessibilityRole, accessibilityLabel, ...props }, ref) {
+const Text = React.forwardRef(function Text({ style, children, accessibilityRole, accessibilityLabel, numberOfLines: _numberOfLines, ellipsizeMode: _ellipsizeMode, accessibilityElementsHidden: _aeh, importantForAccessibility: _ifa, ...props }, ref) {
   return React.createElement('span', {
     ref,
     style: flattenAndTranslate(style),
@@ -149,6 +149,83 @@ const Animated = {
   spring: jest.fn(),
 };
 
+const Image = React.forwardRef(function Image({ source, style, accessibilityLabel, ...props }, ref) {
+  const src = typeof source === 'object' && source !== null ? source.uri : undefined;
+  return React.createElement('img', {
+    ref,
+    src,
+    alt: accessibilityLabel,
+    'aria-label': accessibilityLabel,
+    style: flattenAndTranslate(style),
+    ...props,
+  });
+});
+
+const Modal = function Modal({ visible, children, onRequestClose, transparent: _t, animationType: _a, ...props }) {
+  if (!visible) return null;
+  return React.createElement('div', {
+    role: 'dialog',
+    'data-onrequestclose': onRequestClose ? 'true' : undefined,
+    ...props,
+  }, children);
+};
+
+const KeyboardAvoidingView = React.forwardRef(function KeyboardAvoidingView({ children, style, behavior: _b, ...props }, ref) {
+  return React.createElement('div', {
+    ref,
+    style: flattenAndTranslate(style),
+    ...props,
+  }, children);
+});
+
+const Alert = {
+  alert: jest.fn(),
+  prompt: jest.fn(),
+};
+
+const FlatList = React.forwardRef(function FlatList(
+  { data, renderItem, keyExtractor, ListHeaderComponent, ListFooterComponent, accessibilityRole, style, ...props },
+  ref,
+) {
+  const items = Array.isArray(data) ? data : [];
+  return React.createElement(
+    'div',
+    {
+      ref,
+      role: accessibilityRole,
+      style: flattenAndTranslate(style),
+      ...props,
+    },
+    ListHeaderComponent && React.createElement(
+      typeof ListHeaderComponent === 'function' ? ListHeaderComponent : 'div',
+      null,
+    ),
+    items.map((item, index) => {
+      const key = keyExtractor ? keyExtractor(item, index) : String(index);
+      return React.createElement(React.Fragment, { key }, renderItem({ item, index }));
+    }),
+    ListFooterComponent && React.createElement(
+      typeof ListFooterComponent === 'function' ? ListFooterComponent : 'div',
+      null,
+    ),
+  );
+});
+
+const ScrollView = React.forwardRef(function ScrollView({ children, style, ...props }, ref) {
+  return React.createElement('div', {
+    ref,
+    style: flattenAndTranslate(style),
+    ...props,
+  }, children);
+});
+
+const useWindowDimensions = () => ({ width: 375, height: 812, scale: 2, fontScale: 1 });
+
+const Dimensions = {
+  get: (_which) => ({ width: 375, height: 812, scale: 2, fontScale: 1 }),
+  addEventListener: () => ({ remove: () => {} }),
+};
+
 const useColorScheme = () => 'light';
 
 module.exports = {
@@ -162,5 +239,13 @@ module.exports = {
   ActivityIndicator,
   Animated,
   Switch: SwitchComponent,
+  Image,
+  Modal,
+  KeyboardAvoidingView,
+  Alert,
+  FlatList,
+  ScrollView,
+  Dimensions,
+  useWindowDimensions,
   useColorScheme,
 };

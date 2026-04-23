@@ -116,6 +116,7 @@ export const AllStates: Story = {
   name: 'All States',
   render: () => {
     const [active, setActive] = useState('home');
+
     return (
       <VStack gap="lg">
         <VStack gap="sm">

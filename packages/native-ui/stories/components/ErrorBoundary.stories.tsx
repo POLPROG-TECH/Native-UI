@@ -52,6 +52,7 @@ function Crasher({ label = 'Crash the subtree' }: { label?: string }) {
   if (boom) {
     throw new Error('Boom - this subtree crashed on purpose.');
   }
+
   return <Button title={label} variant="danger" onPress={() => setBoom(true)} />;
 }
 
@@ -110,6 +111,7 @@ export const ResetKeys: Story = {
   render: () => {
     const ResetKeysDemo = () => {
       const [userId, setUserId] = useState(1);
+
       return (
         <VStack gap="md">
           <Text variant="caption" color="textTertiary">
@@ -125,6 +127,7 @@ export const ResetKeys: Story = {
         </VStack>
       );
     };
+
     return <ResetKeysDemo />;
   },
 };

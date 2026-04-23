@@ -4,13 +4,11 @@ import { Input } from '../../src/components/Input';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('Input', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the Input export from the components module
 
     // WHEN its runtime type is inspected
@@ -20,7 +18,7 @@ describe('Input', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_the_label_when_a_label_prop_is_provided', () => {
+  it('should render the label when a label prop is provided', () => {
     // GIVEN an Input with a "Email" label
 
     // WHEN the component is rendered inside a theme provider
@@ -30,7 +28,7 @@ describe('Input', () => {
     expect(screen.getByText('Email')).toBeInTheDocument();
   });
 
-  it('should_render_a_required_asterisk_next_to_the_label_when_required', () => {
+  it('should render a required asterisk next to the label when required', () => {
     // GIVEN an Input with a label and required={true}
 
     // WHEN the component is rendered inside a theme provider
@@ -40,7 +38,7 @@ describe('Input', () => {
     expect(screen.getByText('*')).toBeInTheDocument();
   });
 
-  it('should_render_the_error_message_with_alert_role_when_an_error_prop_is_provided', () => {
+  it('should render the error message with alert role when an error prop is provided', () => {
     // GIVEN an Input whose error prop is "Invalid email"
 
     // WHEN the component is rendered inside a theme provider
@@ -51,7 +49,7 @@ describe('Input', () => {
     expect(alert).toHaveTextContent('Invalid email');
   });
 
-  it('should_forward_onChangeText_updates_from_the_underlying_input', () => {
+  it('should forward onChangeText updates from the underlying input', () => {
     // GIVEN an Input with a mocked onChangeText
     const onChangeText = jest.fn();
     renderWithTheme(<Input label="Name" onChangeText={onChangeText} />);
@@ -63,7 +61,7 @@ describe('Input', () => {
     expect(onChangeText).toHaveBeenCalledWith('abc');
   });
 
-  it('should_invoke_onFocus_and_onBlur_handlers_when_the_field_is_focused_and_blurred', () => {
+  it('should invoke onFocus and onBlur handlers when the field is focused and blurred', () => {
     // GIVEN an Input with mocked focus and blur handlers
     const onFocus = jest.fn();
     const onBlur = jest.fn();
@@ -79,7 +77,7 @@ describe('Input', () => {
     expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
-  it('should_set_aria_disabled_when_editable_is_false', () => {
+  it('should set aria disabled when editable is false', () => {
     // GIVEN a non-editable Input
 
     // WHEN the component is rendered inside a theme provider

@@ -2,18 +2,31 @@ import { typography, FONT_SCALE } from '../../src/tokens/typography';
 import type { TypographyVariant } from '../../src/tokens/typography';
 
 const allVariants: TypographyVariant[] = [
-  'displayLarge', 'displayMedium',
-  'h1', 'h2', 'h3',
-  'heading', 'title',
-  'bodyLarge', 'body', 'bodyMedium', 'bodySmall',
-  'label', 'labelSmall',
-  'caption', 'overline',
-  'mono', 'monoLarge', 'monoSmall',
-  'amount', 'amountLarge', 'amountSmall',
+  'displayLarge',
+  'displayMedium',
+  'h1',
+  'h2',
+  'h3',
+  'heading',
+  'title',
+  'bodyLarge',
+  'body',
+  'bodyMedium',
+  'bodySmall',
+  'label',
+  'labelSmall',
+  'caption',
+  'overline',
+  'mono',
+  'monoLarge',
+  'monoSmall',
+  'amount',
+  'amountLarge',
+  'amountSmall',
 ];
 
 describe('typography tokens', () => {
-  it('should_define_every_expected_variant_on_the_typography_object', () => {
+  it('should define every expected variant on the typography object', () => {
     // GIVEN the full list of expected typography variant names
 
     // WHEN each variant is looked up on the typography object
@@ -25,7 +38,7 @@ describe('typography tokens', () => {
     });
   });
 
-  it('should_define_required_style_properties_on_every_variant', () => {
+  it('should define required style properties on every variant', () => {
     // GIVEN the full list of typography variants
 
     // WHEN each variant's style is inspected
@@ -40,7 +53,7 @@ describe('typography tokens', () => {
     });
   });
 
-  it('should_use_semibold_weight_600_for_heading_variants', () => {
+  it('should use semibold weight 600 for heading variants', () => {
     // GIVEN the three heading variants h1, h2 and h3
 
     // WHEN their font weights are read
@@ -52,7 +65,7 @@ describe('typography tokens', () => {
     });
   });
 
-  it('should_use_regular_or_medium_weights_for_body_variants', () => {
+  it('should use regular or medium weights for body variants', () => {
     // GIVEN the body, bodyLarge and bodySmall variants
 
     // WHEN their font weights are read
@@ -66,7 +79,7 @@ describe('typography tokens', () => {
     expect(bodySmallWeight).toBe('400');
   });
 
-  it('should_make_display_variants_the_largest_font_sizes', () => {
+  it('should make display variants the largest font sizes', () => {
     // GIVEN the display and h1 variants
 
     // WHEN the display font sizes are compared to h1
@@ -79,7 +92,7 @@ describe('typography tokens', () => {
     expect(displayMedium).toBeGreaterThanOrEqual(h1);
   });
 
-  it('should_decrease_font_sizes_from_displayLarge_down_to_caption', () => {
+  it('should decrease font sizes from displayLarge down to caption', () => {
     // GIVEN the typography hierarchy from displayLarge to caption
 
     // WHEN consecutive font sizes are compared
@@ -101,7 +114,7 @@ describe('typography tokens', () => {
     expect(bodySmall).toBeGreaterThan(caption);
   });
 
-  it('should_have_lineHeight_greater_than_or_equal_to_fontSize_for_every_variant', () => {
+  it('should have lineHeight greater than or equal to fontSize for every variant', () => {
     // GIVEN the full list of typography variants
 
     // WHEN each variant's style is inspected
@@ -113,7 +126,7 @@ describe('typography tokens', () => {
     });
   });
 
-  it('should_match_Apple_native_iOS_text_style_values_for_key_variants', () => {
+  it('should match Apple native iOS text style values for key variants', () => {
     // GIVEN the documented Apple HIG font size and line height values
 
     // WHEN the corresponding variant styles are read
@@ -140,7 +153,7 @@ describe('typography tokens', () => {
     expect(bodySmall.fontSize).toBe(15);
   });
 
-  it('should_use_tabular_nums_fontVariant_on_every_mono_variant', () => {
+  it('should use tabular nums fontVariant on every mono variant', () => {
     // GIVEN the three mono variants
 
     // WHEN their fontVariant arrays are read
@@ -156,7 +169,7 @@ describe('typography tokens', () => {
     });
   });
 
-  it('should_alias_deprecated_amount_variants_to_mono_font_sizes', () => {
+  it('should alias deprecated amount variants to mono font sizes', () => {
     // GIVEN the three amount aliases and their mono counterparts
 
     // WHEN their font sizes are compared
@@ -172,7 +185,7 @@ describe('typography tokens', () => {
 });
 
 describe('FONT_SCALE', () => {
-  it('should_expose_default_medium_and_large_tier_properties', () => {
+  it('should expose default medium and large tier properties', () => {
     // GIVEN the exported FONT_SCALE object
 
     // WHEN its tier keys are inspected
@@ -184,7 +197,7 @@ describe('FONT_SCALE', () => {
     expect(scale).toHaveProperty('large');
   });
 
-  it('should_set_default_tier_scaling_to_zero', () => {
+  it('should set default tier scaling to zero', () => {
     // GIVEN the exported FONT_SCALE object
 
     // WHEN the default tier value is read
@@ -194,7 +207,7 @@ describe('FONT_SCALE', () => {
     expect(defaultTier).toBe(0);
   });
 
-  it('should_assign_higher_scaling_to_larger_tiers', () => {
+  it('should assign higher scaling to larger tiers', () => {
     // GIVEN the default, medium and large tier values
 
     // WHEN the tiers are compared pairwise

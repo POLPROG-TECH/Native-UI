@@ -8,6 +8,7 @@ import { useTheme } from '../../src/theme/ThemeProvider';
 const Placeholder = ({ label, color }: { label: string; color?: string }) => {
   const theme = useTheme();
   const bg = color ?? theme.colors.primaryLight;
+
   return (
     <View style={{ backgroundColor: bg, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 8 }}>
       <RNText style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>{label}</RNText>
@@ -73,6 +74,7 @@ export const VStackBasic: StoryObj = {
   name: 'VStack - Basic',
   render: () => {
     const theme = useTheme();
+
     return (
       <VStack gap="md" style={{ maxWidth: 300 }}>
         <Placeholder label="Item 1" />
@@ -87,6 +89,7 @@ export const VStackGaps: StoryObj = {
   name: 'VStack - Gap Sizes',
   render: () => {
     const theme = useTheme();
+
     return (
     <HStack gap="3xl" align="flex-start" wrap>
       {(['xs', 'sm', 'md', 'lg', 'xl', '2xl'] as const).map((gap) => (
@@ -106,6 +109,7 @@ export const HStackBasic: StoryObj = {
   name: 'HStack - Basic',
   render: () => {
     const theme = useTheme();
+
     return (
       <HStack gap="md">
         <Placeholder label="Left" />
@@ -120,6 +124,7 @@ export const HStackJustify: StoryObj = {
   name: 'HStack - Justify',
   render: () => {
     const theme = useTheme();
+
     return (
     <VStack gap="lg" style={{ maxWidth: 500 }}>
       {(['flex-start', 'center', 'flex-end', 'space-between', 'space-around'] as const).map((justify) => (
@@ -141,6 +146,7 @@ export const HStackAlign: StoryObj = {
   name: 'HStack - Align',
   render: () => {
     const theme = useTheme();
+
     return (
     <HStack gap="xl" align="flex-start" wrap>
       {(['flex-start', 'center', 'flex-end', 'stretch'] as const).map((align) => (
@@ -168,6 +174,7 @@ export const NestedStacks: StoryObj = {
   name: 'Nested Stacks',
   render: () => {
     const theme = useTheme();
+
     return (
     <Box p="lg" bg="surface" radius="lg" elevation="sm" style={{ maxWidth: 400 }}>
       <VStack gap="md">

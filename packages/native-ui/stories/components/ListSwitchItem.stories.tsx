@@ -10,6 +10,7 @@ import type { ListSwitchItemProps } from '../../src/components/ListSwitchItem';
 
 const EmojiIcon = ({ children }: { children: string }) => {
   const theme = useTheme();
+
   return (
     <RNText style={{ fontSize: 20, width: 36, height: 36, lineHeight: 36, textAlign: 'center', backgroundColor: theme.colors.surfaceSecondary, borderRadius: 10, overflow: 'hidden' }}>{children}</RNText>
   );
@@ -50,6 +51,7 @@ type Story = StoryObj<ListSwitchItemProps>;
 
 const Interactive = (props: Partial<ListSwitchItemProps> & { label: string }) => {
   const [val, setVal] = useState(false);
+
   return <ListSwitchItem value={val} onValueChange={(v) => { setVal(v); fn()(v); }} {...props} />;
 };
 

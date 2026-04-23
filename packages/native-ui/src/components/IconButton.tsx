@@ -52,12 +52,14 @@ export function IconButton({
 
   const handlePress = useCallback(() => {
     if (pressedRef.current) return;
+
     pressedRef.current = true;
     try {
       getHaptics().light();
       onPress();
     } finally {
       if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+
       resetTimerRef.current = setTimeout(() => {
         pressedRef.current = false;
         resetTimerRef.current = null;

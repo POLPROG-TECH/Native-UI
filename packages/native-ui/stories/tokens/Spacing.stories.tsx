@@ -8,6 +8,7 @@ import { VStack } from '../../src/primitives/Stack';
 
 const SpacingBar = ({ name, value }: { name: string; value: number }) => {
   const theme = useTheme();
+
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
       <RNText style={{ width: 50, fontSize: 13, fontWeight: '500', color: theme.colors.textPrimary, fontFamily: 'monospace' }}>
@@ -32,6 +33,7 @@ const SpacingBar = ({ name, value }: { name: string; value: number }) => {
 
 const RadiusPreview = ({ name, value }: { name: string; value: number }) => {
   const theme = useTheme();
+
   return (
     <View style={{ alignItems: 'center', marginRight: 20, marginBottom: 16 }}>
       <View
@@ -53,6 +55,7 @@ const RadiusPreview = ({ name, value }: { name: string; value: number }) => {
 
 const TokenTable = ({ title, data }: { title: string; data: Record<string, number | string> }) => {
   const theme = useTheme();
+
   return (
     <View style={{ marginBottom: 32 }}>
       <RNText style={{ fontSize: 18, fontWeight: '700', marginBottom: 12, color: theme.colors.textPrimary }}>{title}</RNText>
@@ -114,6 +117,7 @@ export const SpacingScale: StoryObj = {
   name: 'Spacing Scale',
   render: () => {
     const theme = useTheme();
+
     return (
       <View>
         <RNText style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 20 }}>
@@ -131,6 +135,7 @@ export const BorderRadiusScale: StoryObj = {
   name: 'Border Radius',
   render: () => {
     const theme = useTheme();
+
     return (
       <View>
         <RNText style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 20 }}>
@@ -150,6 +155,7 @@ export const IconSizes: StoryObj = {
   name: 'Icon Sizes',
   render: () => {
     const theme = useTheme();
+
     return (
       <View>
         <RNText style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 20 }}>

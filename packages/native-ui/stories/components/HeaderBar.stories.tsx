@@ -9,6 +9,7 @@ import type { HeaderBarProps } from '../../src/components/HeaderBar';
 
 const PhoneFrame = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
+
   return (
     <View
       style={{
@@ -69,6 +70,7 @@ export const Playground: Story = {
  */
 const ThemedButtonText = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
+
   return (
     <Text style={{ color: theme.colors.primary, fontSize: 17 }}>
       {children}
@@ -78,6 +80,7 @@ const ThemedButtonText = ({ children }: { children: React.ReactNode }) => {
 
 const BrandWordmark = () => {
   const theme = useTheme();
+
   return (
     <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
       <Text style={{ fontSize: 22, fontWeight: '700', color: theme.colors.textPrimary }}>Daily</Text>
@@ -88,6 +91,7 @@ const BrandWordmark = () => {
 
 const StackedTitle = () => {
   const theme = useTheme();
+
   return (
     <View style={{ alignItems: 'center' }}>
       <Text style={{ fontSize: 17, fontWeight: '600', color: theme.colors.textPrimary }}>Workout</Text>

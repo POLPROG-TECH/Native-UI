@@ -13,7 +13,7 @@ import {
 } from '../../src/tokens/spacing';
 
 describe('spacing tokens', () => {
-  it('should_define_every_entry_of_the_spacing_scale_from_2xs_to_3xl', () => {
+  it('should define every entry of the spacing scale from 2xs to 3xl', () => {
     // GIVEN the exported spacing object
 
     // WHEN it is compared to the expected scale
@@ -32,7 +32,7 @@ describe('spacing tokens', () => {
     });
   });
 
-  it('should_follow_the_base_scale_pattern', () => {
+  it('should follow the base scale pattern', () => {
     // GIVEN the base spacing entries xs, sm, md and lg
 
     // WHEN their values are read
@@ -45,7 +45,7 @@ describe('spacing tokens', () => {
     expect(lg).toBe(24);
   });
 
-  it('should_have_strictly_increasing_values_across_the_spacing_scale', () => {
+  it('should have strictly increasing values across the spacing scale', () => {
     // GIVEN the spacing values in declaration order
     const values = Object.values(spacing);
 
@@ -60,7 +60,7 @@ describe('spacing tokens', () => {
 });
 
 describe('borderRadius tokens', () => {
-  it('should_define_every_radius_entry_with_its_documented_pixel_value', () => {
+  it('should define every radius entry with its documented pixel value', () => {
     // GIVEN the exported borderRadius object
 
     // WHEN each entry is read
@@ -77,7 +77,7 @@ describe('borderRadius tokens', () => {
     expect(full).toBe(9999);
   });
 
-  it('should_use_full_as_the_largest_borderRadius_value', () => {
+  it('should use full as the largest borderRadius value', () => {
     // GIVEN all borderRadius entries except full
     const entries = Object.entries(borderRadius).filter(([k]) => k !== 'full');
 
@@ -92,7 +92,7 @@ describe('borderRadius tokens', () => {
 });
 
 describe('iconSize tokens', () => {
-  it('should_define_four_icon_sizes_with_expected_pixel_values', () => {
+  it('should define four icon sizes with expected pixel values', () => {
     // GIVEN the exported iconSize object
 
     // WHEN its keys and values are inspected
@@ -109,7 +109,7 @@ describe('iconSize tokens', () => {
 });
 
 describe('hitSlop tokens', () => {
-  it('should_define_uniform_iOS_and_Android_hit_slop_presets', () => {
+  it('should define uniform iOS and Android hit slop presets', () => {
     // GIVEN the exported hitSlop object
 
     // WHEN its platform presets are read
@@ -123,7 +123,7 @@ describe('hitSlop tokens', () => {
 });
 
 describe('elevation tokens', () => {
-  it('should_define_every_elevation_level_from_none_to_xl', () => {
+  it('should define every elevation level from none to xl', () => {
     // GIVEN the exported elevation object
 
     // WHEN its levels are read
@@ -137,7 +137,7 @@ describe('elevation tokens', () => {
     expect(xl).toBeDefined();
   });
 
-  it('should_produce_zero_shadow_for_none_elevation_level', () => {
+  it('should produce zero shadow for none elevation level', () => {
     // GIVEN the exported elevation object
 
     // WHEN the none level is inspected
@@ -150,7 +150,7 @@ describe('elevation tokens', () => {
 });
 
 describe('duration tokens', () => {
-  it('should_define_timing_values_in_ascending_order', () => {
+  it('should define timing values in ascending order', () => {
     // GIVEN the exported duration object
 
     // WHEN the timing values are read
@@ -165,7 +165,7 @@ describe('duration tokens', () => {
 });
 
 describe('zIndex tokens', () => {
-  it('should_layer_zIndex_values_from_base_up_to_toast', () => {
+  it('should layer zIndex values from base up to toast', () => {
     // GIVEN the exported zIndex object
 
     // WHEN each successive layer is compared to the next
@@ -181,7 +181,7 @@ describe('zIndex tokens', () => {
 });
 
 describe('opacity tokens', () => {
-  it('should_keep_every_opacity_value_between_0_exclusive_and_1_inclusive', () => {
+  it('should keep every opacity value between 0 exclusive and 1 inclusive', () => {
     // GIVEN the exported opacity object
     const values = Object.values(opacity);
 
@@ -195,7 +195,7 @@ describe('opacity tokens', () => {
     });
   });
 
-  it('should_set_disabled_opacity_to_exactly_zero_point_five', () => {
+  it('should set disabled opacity to exactly zero point five', () => {
     // GIVEN the exported opacity object
 
     // WHEN the disabled value is read
@@ -207,7 +207,7 @@ describe('opacity tokens', () => {
 });
 
 describe('borderWidth tokens', () => {
-  it('should_set_borderWidth_none_to_zero', () => {
+  it('should set borderWidth none to zero', () => {
     // GIVEN the exported borderWidth object
 
     // WHEN the none value is read
@@ -217,7 +217,7 @@ describe('borderWidth tokens', () => {
     expect(none).toBe(0);
   });
 
-  it('should_have_ascending_widths_from_none_through_thick', () => {
+  it('should have ascending widths from none through thick', () => {
     // GIVEN the exported borderWidth object
 
     // WHEN successive widths are compared
@@ -231,7 +231,7 @@ describe('borderWidth tokens', () => {
 });
 
 describe('easing tokens', () => {
-  it('should_define_standard_decelerate_and_accelerate_cubic_bezier_arrays_with_four_control_points', () => {
+  it('should define standard decelerate and accelerate cubic bezier arrays with four control points', () => {
     // GIVEN the exported easing object
 
     // WHEN each easing array is inspected
@@ -245,7 +245,7 @@ describe('easing tokens', () => {
 });
 
 describe('glowShadow', () => {
-  it('should_return_a_shadow_style_object_using_given_color_when_called', () => {
+  it('should return a shadow style object using given color when called', () => {
     // GIVEN a red hex color
 
     // WHEN glowShadow is called with that color

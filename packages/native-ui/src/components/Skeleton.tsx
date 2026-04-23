@@ -30,6 +30,7 @@ function SkeletonBase({ width, height, borderRadius: radius, style }: SkeletonPr
   useEffect(() => {
     if (theme.reduceAnimations) {
       shimmerOpacity.value = 0.5;
+
       return;
     }
     shimmerOpacity.value = withRepeat(

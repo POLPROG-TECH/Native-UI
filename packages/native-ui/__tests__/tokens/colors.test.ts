@@ -15,7 +15,7 @@ const defaultOptions: ResolveColorOptions = {
 };
 
 describe('resolveColorScheme', () => {
-  it('should_return_light_scheme_with_core_tokens_when_resolved_with_default_options', () => {
+  it('should return light scheme with core tokens when resolved with default options', () => {
     // GIVEN the default light color options
     const options = defaultOptions;
 
@@ -29,7 +29,7 @@ describe('resolveColorScheme', () => {
     expect(scheme.chart).toHaveLength(10);
   });
 
-  it('should_return_dark_scheme_with_core_tokens_when_isDark_is_true', () => {
+  it('should return dark scheme with core tokens when isDark is true', () => {
     // GIVEN default options switched to dark mode
     const options = { ...defaultOptions, isDark: true };
 
@@ -43,7 +43,7 @@ describe('resolveColorScheme', () => {
     expect(scheme.chart).toHaveLength(10);
   });
 
-  it('should_produce_different_backgrounds_when_resolving_light_vs_dark_schemes', () => {
+  it('should produce different backgrounds when resolving light vs dark schemes', () => {
     // GIVEN matching option sets for light and dark modes
     const lightOptions = defaultOptions;
     const darkOptions = { ...defaultOptions, isDark: true };
@@ -56,15 +56,32 @@ describe('resolveColorScheme', () => {
     expect(light.background).not.toBe(dark.background);
   });
 
-  it('should_include_every_required_ColorScheme_key_when_resolved', () => {
+  it('should include every required ColorScheme key when resolved', () => {
     // GIVEN the full list of required ColorScheme keys
     const requiredKeys: (keyof ColorScheme)[] = [
-      'background', 'surface', 'surfaceElevated', 'surfaceSecondary',
-      'textPrimary', 'textSecondary', 'textTertiary', 'textInverse',
-      'primary', 'primaryLight', 'primaryDark',
-      'success', 'successLight', 'warning', 'warningLight',
-      'error', 'errorLight', 'info',
-      'border', 'borderLight', 'divider', 'shadow', 'overlay',
+      'background',
+      'surface',
+      'surfaceElevated',
+      'surfaceSecondary',
+      'textPrimary',
+      'textSecondary',
+      'textTertiary',
+      'textInverse',
+      'primary',
+      'primaryLight',
+      'primaryDark',
+      'success',
+      'successLight',
+      'warning',
+      'warningLight',
+      'error',
+      'errorLight',
+      'info',
+      'border',
+      'borderLight',
+      'divider',
+      'shadow',
+      'overlay',
       'chart',
     ];
 
@@ -77,7 +94,7 @@ describe('resolveColorScheme', () => {
     });
   });
 
-  it('should_apply_custom_accent_as_primary_color_when_customAccent_is_provided', () => {
+  it('should apply custom accent as primary color when customAccent is provided', () => {
     // GIVEN options containing a custom accent hex color
     const options = { ...defaultOptions, customAccent: '#FF5733' };
 
@@ -88,9 +105,17 @@ describe('resolveColorScheme', () => {
     expect(scheme.primary).toBe('#FF5733');
   });
 
-  it('should_resolve_every_theme_preset_without_throwing_for_both_modes', () => {
+  it('should resolve every theme preset without throwing for both modes', () => {
     // GIVEN the full list of theme preset identifiers
-    const presetIds: ThemePreset[] = ['default', 'midnight', 'ocean', 'forest', 'sunset', 'rose', 'amoled'];
+    const presetIds: ThemePreset[] = [
+      'default',
+      'midnight',
+      'ocean',
+      'forest',
+      'sunset',
+      'rose',
+      'amoled',
+    ];
 
     // WHEN each preset is resolved in both light and dark modes
     const resolveAll = () => {
@@ -104,7 +129,7 @@ describe('resolveColorScheme', () => {
     expect(resolveAll).not.toThrow();
   });
 
-  it('should_produce_different_textPrimary_when_highContrast_mode_is_enabled', () => {
+  it('should produce different textPrimary when highContrast mode is enabled', () => {
     // GIVEN a normal scheme and a high-contrast scheme built from the same options
     const normal = resolveColorScheme(defaultOptions);
 
@@ -115,7 +140,7 @@ describe('resolveColorScheme', () => {
     expect(highContrast.textPrimary).not.toBe(normal.textPrimary);
   });
 
-  it('should_apply_font_color_variants_when_warm_or_cool_is_selected', () => {
+  it('should apply font color variants when warm or cool is selected', () => {
     // GIVEN the default font color scheme used as baseline
     const defaultColors = resolveColorScheme(defaultOptions);
 
@@ -130,7 +155,7 @@ describe('resolveColorScheme', () => {
 });
 
 describe('getContrastText', () => {
-  it('should_return_dark_text_when_background_is_light', () => {
+  it('should return dark text when background is light', () => {
     // GIVEN two light background hex values
 
     // WHEN getContrastText is called for each
@@ -142,7 +167,7 @@ describe('getContrastText', () => {
     expect(nearWhiteResult).toBe('#0C0C0F');
   });
 
-  it('should_return_light_text_when_background_is_dark', () => {
+  it('should return light text when background is dark', () => {
     // GIVEN two dark background hex values
 
     // WHEN getContrastText is called for each
@@ -154,7 +179,7 @@ describe('getContrastText', () => {
     expect(nearBlackResult).toBe('#F5F5F7');
   });
 
-  it('should_return_light_text_fallback_when_hex_value_is_invalid', () => {
+  it('should return light text fallback when hex value is invalid', () => {
     // GIVEN invalid hex strings
 
     // WHEN getContrastText is called for each
@@ -168,7 +193,7 @@ describe('getContrastText', () => {
 });
 
 describe('colors (static fallback)', () => {
-  it('should_expose_preresolved_light_and_dark_schemes_with_backgrounds', () => {
+  it('should expose preresolved light and dark schemes with backgrounds', () => {
     // GIVEN the static colors export
 
     // WHEN its light and dark entries are inspected
@@ -181,7 +206,7 @@ describe('colors (static fallback)', () => {
     expect(dark.background).toBeDefined();
   });
 
-  it('should_use_different_backgrounds_for_static_light_and_dark_schemes', () => {
+  it('should use different backgrounds for static light and dark schemes', () => {
     // GIVEN the static colors export
 
     // WHEN comparing light and dark backgrounds
@@ -194,7 +219,7 @@ describe('colors (static fallback)', () => {
 });
 
 describe('THEME_PRESETS', () => {
-  it('should_contain_exactly_seven_theme_presets', () => {
+  it('should contain exactly seven theme presets', () => {
     // GIVEN the exported THEME_PRESETS array
 
     // WHEN its length is measured
@@ -204,7 +229,7 @@ describe('THEME_PRESETS', () => {
     expect(count).toBe(7);
   });
 
-  it('should_define_id_accent_dark_and_light_structure_on_every_preset', () => {
+  it('should define id accent dark and light structure on every preset', () => {
     // GIVEN the exported THEME_PRESETS array
 
     // WHEN each preset is inspected
@@ -223,7 +248,7 @@ describe('THEME_PRESETS', () => {
     THEME_PRESETS.forEach(checkPreset);
   });
 
-  it('should_list_default_preset_as_the_first_entry', () => {
+  it('should list default preset as the first entry', () => {
     // GIVEN the exported THEME_PRESETS array
 
     // WHEN the first preset is read

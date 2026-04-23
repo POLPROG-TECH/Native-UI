@@ -4,13 +4,11 @@ import { ListSwitchItem } from '../../src/components/ListSwitchItem';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('ListSwitchItem', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the ListSwitchItem export from the components module
 
     // WHEN its runtime type is inspected
@@ -20,7 +18,7 @@ describe('ListSwitchItem', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_render_the_label_and_subtitle_when_both_are_provided', () => {
+  it('should render the label and subtitle when both are provided', () => {
     // GIVEN a ListSwitchItem with a label and a subtitle
 
     // WHEN the component is rendered inside a theme provider
@@ -38,7 +36,7 @@ describe('ListSwitchItem', () => {
     expect(screen.getByText('Use the dark theme')).toBeInTheDocument();
   });
 
-  it('should_invoke_onValueChange_with_the_opposite_value_when_the_switch_is_toggled', () => {
+  it('should invoke onValueChange with the opposite value when the switch is toggled', () => {
     // GIVEN a ListSwitchItem with value={false} and a mocked onValueChange
     const onValueChange = jest.fn();
     renderWithTheme(
@@ -53,13 +51,11 @@ describe('ListSwitchItem', () => {
     expect(onValueChange).toHaveBeenCalledWith(true);
   });
 
-  it('should_reflect_the_value_prop_on_the_underlying_switch', () => {
+  it('should reflect the value prop on the underlying switch', () => {
     // GIVEN a ListSwitchItem rendered with value={true}
 
     // WHEN the switch element is inspected
-    renderWithTheme(
-      <ListSwitchItem label="On" value onValueChange={() => {}} />,
-    );
+    renderWithTheme(<ListSwitchItem label="On" value onValueChange={() => {}} />);
 
     // THEN the switch is checked
     expect(screen.getByRole('switch')).toBeChecked();

@@ -9,6 +9,7 @@ export function useResponsiveSpacing(): ResponsiveSpacing {
     const sub = Dimensions.addEventListener('change', () => {
       setRs(getResponsiveSpacing());
     });
+
     return () => sub.remove();
   }, []);
 

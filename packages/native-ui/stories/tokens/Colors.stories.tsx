@@ -7,6 +7,7 @@ import { useTheme } from '../../src/theme/ThemeProvider';
 
 const ColorSwatch = ({ name, value }: { name: string; value: string }) => {
   const theme = useTheme();
+
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
       <View
@@ -36,6 +37,7 @@ const ColorSwatch = ({ name, value }: { name: string; value: string }) => {
 
 const ColorSection = ({ title, colors }: { title: string; colors: [string, string][] }) => {
   const theme = useTheme();
+
   return (
     <View style={{ marginBottom: 32 }}>
       <RNText
@@ -253,6 +255,7 @@ export const AllPresets: StoryObj = {
   name: 'All Theme Presets',
   render: () => {
     const theme = useTheme();
+
     return (
       <View>
         <RNText style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 24 }}>
@@ -287,6 +290,7 @@ export const ChartColors: StoryObj = {
       highContrast: false,
       customAccent: null,
     });
+
     return (
       <View>
         <RNText style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 16 }}>
@@ -335,6 +339,7 @@ export const ContrastTextDemo: StoryObj = {
       '#6B7280',
       '#1F2937',
     ];
+
     return (
       <View>
         <RNText style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 16 }}>

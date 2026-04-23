@@ -4,9 +4,7 @@ import { Countdown } from '../../src/components/Countdown';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('Countdown', () => {
@@ -19,7 +17,7 @@ describe('Countdown', () => {
     jest.useRealTimers();
   });
 
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the Countdown export from the components module
 
     // WHEN its runtime type is inspected
@@ -29,7 +27,7 @@ describe('Countdown', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_format_remaining_time_as_minutes_and_seconds_below_one_hour_by_default', () => {
+  it('should format remaining time as minutes and seconds below one hour by default', () => {
     // GIVEN a deadline 90 seconds in the future
     const target = Date.now() + 90_000;
 
@@ -40,7 +38,7 @@ describe('Countdown', () => {
     expect(screen.getByText('1m 30s')).toBeInTheDocument();
   });
 
-  it('should_format_remaining_time_as_hours_and_minutes_at_or_above_one_hour_by_default', () => {
+  it('should format remaining time as hours and minutes at or above one hour by default', () => {
     // GIVEN a deadline 2 hours and 5 minutes in the future
     const target = Date.now() + (2 * 3600 + 5 * 60) * 1000;
 
@@ -51,7 +49,7 @@ describe('Countdown', () => {
     expect(screen.getByText('2h 05m')).toBeInTheDocument();
   });
 
-  it('should_honour_the_hms_format_when_explicitly_requested', () => {
+  it('should honour the hms format when explicitly requested', () => {
     // GIVEN a 1-hour-2-minute-3-second deadline and the hms format
     const target = Date.now() + (3600 + 2 * 60 + 3) * 1000;
 
@@ -62,7 +60,7 @@ describe('Countdown', () => {
     expect(screen.getByText('1h 02m 03s')).toBeInTheDocument();
   });
 
-  it('should_honour_the_hm_format_when_explicitly_requested', () => {
+  it('should honour the hm format when explicitly requested', () => {
     // GIVEN a 2-hour-30-minute deadline and the hm format
     const target = Date.now() + (2 * 3600 + 30 * 60) * 1000;
 
@@ -73,7 +71,7 @@ describe('Countdown', () => {
     expect(screen.getByText('2h 30m')).toBeInTheDocument();
   });
 
-  it('should_honour_the_ms_format_when_explicitly_requested', () => {
+  it('should honour the ms format when explicitly requested', () => {
     // GIVEN a 5-minute-15-second deadline and the ms format
     const target = Date.now() + (5 * 60 + 15) * 1000;
 
@@ -84,7 +82,7 @@ describe('Countdown', () => {
     expect(screen.getByText('5m 15s')).toBeInTheDocument();
   });
 
-  it('should_render_the_expired_label_when_the_deadline_has_already_passed', () => {
+  it('should render the expired label when the deadline has already passed', () => {
     // GIVEN a deadline 1 second in the past
     const target = Date.now() - 1000;
 
@@ -95,7 +93,7 @@ describe('Countdown', () => {
     expect(screen.getByText('Done')).toBeInTheDocument();
   });
 
-  it('should_invoke_onExpire_once_when_the_deadline_is_reached', () => {
+  it('should invoke onExpire once when the deadline is reached', () => {
     // GIVEN a 2-second deadline and a mocked onExpire callback
     const target = Date.now() + 2000;
     const onExpire = jest.fn();
@@ -110,20 +108,18 @@ describe('Countdown', () => {
     expect(onExpire).toHaveBeenCalledTimes(1);
   });
 
-  it('should_apply_renderLabel_transform_to_the_formatted_output', () => {
+  it('should apply renderLabel transform to the formatted output', () => {
     // GIVEN a 1-minute deadline and a renderLabel that prefixes "Ends in "
     const target = Date.now() + 60_000;
 
     // WHEN the component is rendered
-    renderWithTheme(
-      <Countdown to={target} renderLabel={(s) => `Ends in ${s}`} />,
-    );
+    renderWithTheme(<Countdown to={target} renderLabel={(s) => `Ends in ${s}`} />);
 
     // THEN the output is wrapped with the transform
     expect(screen.getByText('Ends in 1m 00s')).toBeInTheDocument();
   });
 
-  it('should_accept_an_ISO_string_target', () => {
+  it('should accept an ISO string target', () => {
     // GIVEN a deadline expressed as an ISO string 30 seconds in the future
     const target = new Date(Date.now() + 30_000).toISOString();
 
@@ -134,7 +130,7 @@ describe('Countdown', () => {
     expect(screen.getByText('0m 30s')).toBeInTheDocument();
   });
 
-  it('should_accept_a_Date_instance_target', () => {
+  it('should accept a Date instance target', () => {
     // GIVEN a deadline expressed as a Date instance 45 seconds in the future
     const target = new Date(Date.now() + 45_000);
 
@@ -143,5 +139,27 @@ describe('Countdown', () => {
 
     // THEN the formatted output matches the date input
     expect(screen.getByText('0m 45s')).toBeInTheDocument();
+  });
+
+  it('should stop ticking after the deadline passes to avoid wasted renders', () => {
+    // GIVEN a 2-second deadline and a spy-able setInterval / clearInterval
+    const target = Date.now() + 2000;
+    const clearIntervalSpy = jest.spyOn(global, 'clearInterval');
+    renderWithTheme(<Countdown to={target} tickMs={1000} />);
+
+    // WHEN the deadline is crossed
+    act(() => {
+      jest.advanceTimersByTime(2500);
+    });
+    const clearedByTick = clearIntervalSpy.mock.calls.length;
+
+    // AND more time passes
+    act(() => {
+      jest.advanceTimersByTime(5000);
+    });
+
+    // THEN no new pending 1s tick timers remain (interval self-cleared on expiry)
+    expect(clearedByTick).toBeGreaterThanOrEqual(1);
+    clearIntervalSpy.mockRestore();
   });
 });

@@ -9,14 +9,14 @@ import { Skeleton, SkeletonCard } from '../../src/components/Skeleton';
 import { Toast } from '../../src/components/Toast';
 
 describe('exports - components with native-only dependencies', () => {
-  it('should_export_Avatar_as_a_function_component', () => {
+  it('should export Avatar as a function component', () => {
     // GIVEN the Avatar export
 
     // WHEN its runtime type is inspected THEN it is a function component
     expect(typeof Avatar).toBe('function');
   });
 
-  it('should_export_BottomSheet_with_compound_Header_Body_Footer_subcomponents', () => {
+  it('should export BottomSheet with compound Header Body Footer subcomponents', () => {
     // GIVEN the BottomSheet compound component
 
     // WHEN its shape is inspected THEN each sub-component is a function
@@ -26,21 +26,21 @@ describe('exports - components with native-only dependencies', () => {
     expect(typeof BottomSheet.Footer).toBe('function');
   });
 
-  it('should_export_ConfettiOverlay_as_a_function_component', () => {
+  it('should export ConfettiOverlay as a function component', () => {
     // GIVEN the ConfettiOverlay export
 
     // WHEN its runtime type is inspected THEN it is a function component
     expect(typeof ConfettiOverlay).toBe('function');
   });
 
-  it('should_export_InputPrompt_as_a_function_component', () => {
+  it('should export InputPrompt as a function component', () => {
     // GIVEN the InputPrompt export
 
     // WHEN its runtime type is inspected THEN it is a function component
     expect(typeof InputPrompt).toBe('function');
   });
 
-  it('should_export_Modal_with_compound_Header_Body_Footer_subcomponents', () => {
+  it('should export Modal with compound Header Body Footer subcomponents', () => {
     // GIVEN the Modal compound component
 
     // WHEN its shape is inspected THEN each sub-component is a function
@@ -50,14 +50,14 @@ describe('exports - components with native-only dependencies', () => {
     expect(typeof Modal.Footer).toBe('function');
   });
 
-  it('should_export_ScreenContainer_as_a_function_component', () => {
+  it('should export ScreenContainer as a function component', () => {
     // GIVEN the ScreenContainer export
 
     // WHEN its runtime type is inspected THEN it is a function component
     expect(typeof ScreenContainer).toBe('function');
   });
 
-  it('should_export_Select_with_compound_Trigger_and_Option_subcomponents', () => {
+  it('should export Select with compound Trigger and Option subcomponents', () => {
     // GIVEN the Select compound component
 
     // WHEN its shape is inspected THEN each sub-component is a function
@@ -66,7 +66,7 @@ describe('exports - components with native-only dependencies', () => {
     expect(typeof Select.Option).toBe('function');
   });
 
-  it('should_export_Skeleton_with_a_Card_preset', () => {
+  it('should export Skeleton with a Card preset', () => {
     // GIVEN the Skeleton compound component
 
     // WHEN its shape is inspected THEN both the base and the preset are functions
@@ -75,7 +75,7 @@ describe('exports - components with native-only dependencies', () => {
     expect(typeof SkeletonCard).toBe('function');
   });
 
-  it('should_export_Toast_as_a_function_component', () => {
+  it('should export Toast as a function component', () => {
     // GIVEN the Toast export
 
     // WHEN its runtime type is inspected THEN it is a function component

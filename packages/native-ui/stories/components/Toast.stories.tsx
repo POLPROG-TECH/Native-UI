@@ -87,6 +87,7 @@ export const Playground: Story = {
   render: () => {
     const PlaygroundToast = () => {
       const { show } = useToast();
+
       return (
         <Button
           title="Show Toast"
@@ -94,6 +95,7 @@ export const Playground: Story = {
         />
       );
     };
+
     return <PlaygroundToast />;
   },
 };
@@ -107,6 +109,7 @@ type ToastArgs = {
 
 const ToastTrigger = ({ message, actionLabel, onAction, duration }: ToastArgs) => {
   const { show } = useToast();
+
   return (
     <Button
       title={`Show: "${message}"`}
@@ -162,6 +165,7 @@ type VariantTriggerProps = {
 
 const VariantTrigger = ({ label, variant, message, icon, position }: VariantTriggerProps) => {
   const { show } = useToast();
+
   return (
     <Button
       title={label}

@@ -13,6 +13,7 @@ const compactScale = compactTypography(spaceGroteskFontFamilies);
 
 const TypographySample = ({ variant, style }: { variant: string; style: any }) => {
   const { colors } = useTheme();
+
   return (
     <View style={{ marginBottom: 20, paddingBottom: 20, borderBottomWidth: 1, borderBottomColor: colors.divider }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
@@ -82,6 +83,7 @@ export const FullScale: StoryObj = {
   name: 'Full Typography Scale',
   render: () => {
     const { colors } = useTheme();
+
     return (
     <View>
       <RNText style={{ fontSize: 20, fontWeight: '700', color: colors.textPrimary, marginBottom: 20 }}>Display</RNText>
@@ -113,6 +115,7 @@ export const FontScaling: StoryObj = {
   name: 'Font Scale Accessibility',
   render: () => {
     const { colors } = useTheme();
+
     return (
     <View>
       <RNText style={{ fontSize: 14, color: colors.textSecondary, marginBottom: 24 }}>
@@ -140,6 +143,7 @@ export const TypeComparison: StoryObj = {
   name: 'Side-by-Side Comparison',
   render: () => {
     const { colors } = useTheme();
+
     return (
     <View>
       <RNText style={{ fontSize: 14, color: colors.textSecondary, marginBottom: 16 }}>
@@ -157,6 +161,7 @@ export const TypeComparison: StoryObj = {
           .filter((k) => !['amount', 'amountLarge', 'amountSmall'].includes(k))
           .map((variant, i) => {
             const t = typography[variant];
+
             return (
               <View
                 key={variant}
@@ -197,6 +202,7 @@ const CompactVsRegularRow = ({ variant }: { variant: TypographyVariant }) => {
   const com = compactScale[variant];
   const delta = com.fontSize - reg.fontSize;
   const deltaLabel = delta === 0 ? '=' : delta > 0 ? `+${delta}` : `${delta}`;
+
   return (
     <View
       style={{
@@ -238,6 +244,7 @@ export const CompactVsRegular: StoryObj = {
   },
   render: () => {
     const { colors } = useTheme();
+
     return (
     <View>
       <RNText style={{ fontSize: 14, color: colors.textSecondary, marginBottom: 16 }}>
@@ -265,6 +272,7 @@ export const DefaultFontFamilies: StoryObj = {
   },
   render: () => {
     const { colors } = useTheme();
+
     return (
     <View style={{ gap: 12 }}>
       <View style={{ padding: 12, borderWidth: 1, borderColor: colors.border, borderRadius: 10 }}>

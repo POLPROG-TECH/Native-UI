@@ -68,6 +68,7 @@ export const Playground: Story = {
 
 const PromptDemo = (props: Omit<InputPromptProps, 'visible' | 'onSubmit' | 'onCancel'>) => {
   const [visible, setVisible] = useState(false);
+
   return (
     <>
       <Button title="Open Prompt" onPress={() => setVisible(true)} />

@@ -61,6 +61,7 @@ export const Default: Story = {
   render: () => {
     const DefaultFrame = () => {
       const theme = useTheme();
+
       return (
         <View
           style={{
@@ -87,6 +88,7 @@ export const Default: Story = {
         </View>
       );
     };
+
     return <DefaultFrame />;
   },
 };
@@ -96,6 +98,7 @@ export const NoPadding: Story = {
   render: () => {
     const NoPaddingFrame = () => {
       const theme = useTheme();
+
       return (
         <View
           style={{
@@ -119,6 +122,7 @@ export const NoPadding: Story = {
         </View>
       );
     };
+
     return <NoPaddingFrame />;
   },
 };

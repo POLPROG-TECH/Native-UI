@@ -1,7 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Text, type TextProps } from '../primitives/Text';
 
 export type CountdownFormat = 'auto' | 'hm' | 'hms' | 'ms';
+
+const DEFAULT_TICK_MS = 1000;
+const DEFAULT_EXPIRED_LABEL = '0m 00s';
+const SECONDS_PER_HOUR = 3600;
+const SECONDS_PER_MINUTE = 60;
 
 export interface CountdownProps extends Omit<TextProps, 'children'> {
   /** Target date / timestamp. Accepts Date, ms epoch, or ISO string. */
@@ -29,7 +34,9 @@ export interface CountdownProps extends Omit<TextProps, 'children'> {
 
 function toMs(v: Date | number | string): number {
   if (v instanceof Date) return v.getTime();
+
   if (typeof v === 'number') return v;
+
   return new Date(v).getTime();
 }
 
@@ -39,13 +46,21 @@ function pad(n: number): string {
 
 function format(msRemaining: number, fmt: CountdownFormat): string {
   const total = Math.max(0, Math.floor(msRemaining / 1000));
-  const h = Math.floor(total / 3600);
-  const m = Math.floor((total % 3600) / 60);
-  const s = total % 60;
-  if (fmt === 'hms') return `${h}h ${pad(m)}m ${pad(s)}s`;
-  if (fmt === 'hm') return `${h}h ${pad(m)}m`;
-  if (fmt === 'ms') return `${m}m ${pad(s)}s`;
-  return h > 0 ? `${h}h ${pad(m)}m` : `${m}m ${pad(s)}s`;
+  const h = Math.floor(total / SECONDS_PER_HOUR);
+  const m = Math.floor((total % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE);
+  const s = total % SECONDS_PER_MINUTE;
+
+  switch (fmt) {
+    case 'hms':
+      return `${h}h ${pad(m)}m ${pad(s)}s`;
+    case 'hm':
+      return `${h}h ${pad(m)}m`;
+    case 'ms':
+      return `${m}m ${pad(s)}s`;
+    case 'auto':
+    default:
+      return h > 0 ? `${h}h ${pad(m)}m` : `${m}m ${pad(s)}s`;
+  }
 }
 
 /**
@@ -61,19 +76,30 @@ function format(msRemaining: number, fmt: CountdownFormat): string {
 export function Countdown({
   to,
   format: fmt = 'auto',
-  tickMs = 1000,
-  expiredLabel = '0m 00s',
+  tickMs = DEFAULT_TICK_MS,
+  expiredLabel = DEFAULT_EXPIRED_LABEL,
   onExpire,
   renderLabel,
   ...textProps
 }: CountdownProps) {
-  const target = toMs(to);
+  const target = useMemo(() => toMs(to), [to]);
   const [, setTick] = useState(0);
   const firedExpiry = useRef(false);
 
   useEffect(() => {
     firedExpiry.current = false;
-    const id = setInterval(() => setTick(t => t + 1), tickMs);
+    // Stop ticking once the deadline has passed — keeping a 1 s `setInterval`
+    // running forever post-expiry is a battery/CPU leak on long-lived screens.
+    if (target - Date.now() <= 0) return;
+
+    const id = setInterval(() => {
+      setTick((t) => t + 1);
+
+      if (target - Date.now() <= 0) {
+        clearInterval(id);
+      }
+    }, tickMs);
+
     return () => clearInterval(id);
   }, [target, tickMs]);
 
@@ -81,10 +107,10 @@ export function Countdown({
   const expired = remaining <= 0;
 
   useEffect(() => {
-    if (expired && !firedExpiry.current) {
-      firedExpiry.current = true;
-      onExpire?.();
-    }
+    if (!expired || firedExpiry.current) return;
+
+    firedExpiry.current = true;
+    onExpire?.();
   }, [expired, onExpire]);
 
   const display = expired ? expiredLabel : format(remaining, fmt);

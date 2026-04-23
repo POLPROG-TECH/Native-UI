@@ -4,13 +4,11 @@ import { ProgressBar } from '../../src/components/ProgressBar';
 import { NativeUIProvider } from '../../src/theme';
 
 function renderWithTheme(ui: React.ReactElement) {
-  return render(
-    <NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>,
-  );
+  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
 
 describe('ProgressBar', () => {
-  it('should_be_exported_as_a_function_component', () => {
+  it('should be exported as a function component', () => {
     // GIVEN the ProgressBar export from the components module
 
     // WHEN its runtime type is inspected
@@ -20,7 +18,7 @@ describe('ProgressBar', () => {
     expect(actualType).toBe('function');
   });
 
-  it('should_expose_the_progressbar_role_when_rendered', () => {
+  it('should expose the progressbar role when rendered', () => {
     // GIVEN a ProgressBar with a 50 % value
 
     // WHEN the component is rendered inside a theme provider
@@ -30,19 +28,17 @@ describe('ProgressBar', () => {
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
-  it('should_prefer_the_value_prop_over_the_progress_alias_when_both_are_provided', () => {
+  it('should prefer the value prop over the progress alias when both are provided', () => {
     // GIVEN a ProgressBar with both value and progress set
 
     // WHEN the component is rendered inside a theme provider
-    renderWithTheme(
-      <ProgressBar value={0.75} progress={0.25} accessibilityLabel="Wins" />,
-    );
+    renderWithTheme(<ProgressBar value={0.75} progress={0.25} accessibilityLabel="Wins" />);
 
     // THEN the element is present and accessible
     expect(screen.getByLabelText('Wins')).toBeInTheDocument();
   });
 
-  it('should_fall_back_to_the_progress_alias_when_value_is_not_provided', () => {
+  it('should fall back to the progress alias when value is not provided', () => {
     // GIVEN a ProgressBar supplying only the progress alias
 
     // WHEN the component is rendered inside a theme provider
@@ -52,7 +48,7 @@ describe('ProgressBar', () => {
     expect(screen.getByLabelText('P')).toBeInTheDocument();
   });
 
-  it('should_default_to_zero_progress_when_neither_value_nor_progress_is_provided', () => {
+  it('should default to zero progress when neither value nor progress is provided', () => {
     // GIVEN a ProgressBar with no value or progress prop
 
     // WHEN the component is rendered inside a theme provider
@@ -62,7 +58,7 @@ describe('ProgressBar', () => {
     expect(screen.getByLabelText('Zero')).toBeInTheDocument();
   });
 
-  it('should_clamp_values_above_one_without_crashing', () => {
+  it('should clamp values above one without crashing', () => {
     // GIVEN a ProgressBar with a value greater than 1
 
     // WHEN the component is rendered inside a theme provider
@@ -72,7 +68,7 @@ describe('ProgressBar', () => {
     expect(screen.getByLabelText('Over')).toBeInTheDocument();
   });
 
-  it('should_clamp_values_below_zero_without_crashing', () => {
+  it('should clamp values below zero without crashing', () => {
     // GIVEN a ProgressBar with a negative value
 
     // WHEN the component is rendered inside a theme provider
@@ -82,7 +78,7 @@ describe('ProgressBar', () => {
     expect(screen.getByLabelText('Under')).toBeInTheDocument();
   });
 
-  it('should_render_every_semantic_color_without_crashing', () => {
+  it('should render every semantic color without crashing', () => {
     // GIVEN the full list of semantic color keys
     const colors = ['primary', 'success', 'warning', 'error'] as const;
 
@@ -101,13 +97,11 @@ describe('ProgressBar', () => {
     expect(renderAll).not.toThrow();
   });
 
-  it('should_render_a_custom_hex_color_without_crashing', () => {
+  it('should render a custom hex color without crashing', () => {
     // GIVEN a ProgressBar with a raw hex color
 
     // WHEN the component is rendered inside a theme provider
-    renderWithTheme(
-      <ProgressBar value={0.5} color="#123456" accessibilityLabel="hex" />,
-    );
+    renderWithTheme(<ProgressBar value={0.5} color="#123456" accessibilityLabel="hex" />);
 
     // THEN the element is present
     expect(screen.getByLabelText('hex')).toBeInTheDocument();

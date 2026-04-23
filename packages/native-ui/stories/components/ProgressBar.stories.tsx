@@ -111,11 +111,13 @@ export const BudgetExample: Story = {
       { category: '🛍️ Shopping', spent: 520, budget: 400 },
       { category: '🎬 Entertainment', spent: 80, budget: 200 },
     ];
+
     return (
       <VStack gap="lg" style={{ maxWidth: 400 }}>
         {budgets.map((b) => {
           const ratio = b.spent / b.budget;
           const color = ratio > 1 ? 'error' : ratio > 0.8 ? 'warning' : 'success';
+
           return (
             <VStack key={b.category} gap="xs">
               <HStack justify="space-between">

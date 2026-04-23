@@ -63,6 +63,7 @@ export function ListSection({ title, footer, grouped = false, children, style }:
           ? (prevChild.props as { hideDivider?: boolean })
           : undefined;
         const showDivider = idx > 0 && !prevProps?.hideDivider;
+
         return (
           <React.Fragment key={idx}>
             {showDivider && (
