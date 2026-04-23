@@ -1,6 +1,6 @@
 {
   "name": "@polprog/native-ui",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Production-grade React Native design system and component library - native-feeling components on iOS and Android",
   "source": "src/index.ts",
   "main": "./dist/index.js",
