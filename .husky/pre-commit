@@ -12,7 +12,7 @@ STAGED=$(git diff --cached --name-only --diff-filter=ACMR | grep -E '^packages/n
 if [ -n "$STAGED" ]; then
   ( cd packages/native-ui && npx jest --bail --findRelatedTests --passWithNoTests $STAGED ) || exit 1
 else
-  echo "  (no TS/TSX staged in native-ui — skipping)"
+  echo "  (no TS/TSX staged in native-ui - skipping)"
 fi
 
 echo "✓ pre-commit OK"

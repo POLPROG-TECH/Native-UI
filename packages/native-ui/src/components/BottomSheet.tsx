@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Modal, Pressable, type ViewStyle, type StyleProp } from 'react-native';
 import Animated, { FadeIn, SlideInDown, SlideOutDown } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme';
 
 // ─── Compound sub-component props ──────────────────────────────
@@ -61,6 +62,7 @@ function BottomSheetComponent({
   style,
 }: BottomSheetProps) {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const enterDuration = theme.reduceAnimations ? 0 : 300;
   const exitDuration = theme.reduceAnimations ? 0 : 200;
 
@@ -83,6 +85,7 @@ function BottomSheetComponent({
               backgroundColor: theme.colors.surface,
               borderTopLeftRadius: theme.borderRadius.xl,
               borderTopRightRadius: theme.borderRadius.xl,
+              paddingBottom: Math.max(insets.bottom, 16),
             },
             theme.elevation.xl as ViewStyle,
             style,
@@ -137,7 +140,6 @@ const styles = StyleSheet.create({
     ...(StyleSheet.absoluteFill as object),
   },
   sheet: {
-    paddingBottom: 34,
     maxHeight: '80%',
   },
   handle: {

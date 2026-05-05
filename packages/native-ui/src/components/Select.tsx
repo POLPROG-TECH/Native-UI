@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import {
+  Dimensions,
   StyleSheet,
   View,
   Text,
@@ -10,7 +11,10 @@ import {
   type TextStyle,
   type StyleProp,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme';
+import { FieldLabel } from './FieldLabel';
+import { FieldError } from './FieldError';
 
 export interface SelectOption<T extends string = string> {
   /** Human-readable label shown in the dropdown list. */
@@ -98,7 +102,8 @@ interface SelectRowRenderProps {
   label: string;
   icon?: string;
   isSelected: boolean;
-  onPress: () => void;
+  value: string;
+  onSelect: (value: string) => void;
   primaryColor: string;
   primaryLightColor: string;
   textPrimaryColor: string;
@@ -109,15 +114,18 @@ const SelectRow = React.memo(function SelectRow({
   label,
   icon,
   isSelected,
-  onPress,
+  value,
+  onSelect,
   primaryColor,
   primaryLightColor,
   textPrimaryColor,
   bodyStyle,
 }: SelectRowRenderProps) {
+  const handlePress = useCallback(() => onSelect(value), [onSelect, value]);
+
   return (
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
       style={[styles.option, isSelected && { backgroundColor: primaryLightColor }]}
       accessibilityRole="radio"
       accessibilityState={{ selected: isSelected }}
@@ -153,6 +161,7 @@ function SelectComponent<T extends string = string>({
   containerStyle,
 }: SelectProps<T>) {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const [isOpen, setIsOpen] = useState(false);
 
   const resolvedValue = value !== undefined ? value : selectedValue ?? null;
@@ -173,7 +182,8 @@ function SelectComponent<T extends string = string>({
         label={item.label}
         icon={item.icon}
         isSelected={item.value === resolvedValue}
-        onPress={() => handleSelect(item.value)}
+        value={item.value}
+        onSelect={handleSelect as (value: string) => void}
         primaryColor={theme.colors.primary}
         primaryLightColor={theme.colors.primaryLight}
         textPrimaryColor={theme.colors.textPrimary}
@@ -192,22 +202,7 @@ function SelectComponent<T extends string = string>({
 
   return (
     <View style={[styles.container, containerStyle]}>
-      {label && (
-        <Text
-          style={[
-            theme.typography.labelSmall,
-            {
-              color: theme.colors.textSecondary,
-              marginBottom: 6,
-              textTransform: 'uppercase',
-              letterSpacing: 0.6,
-            },
-          ]}
-        >
-          {label}
-          {required && <Text style={{ color: theme.colors.error }}> *</Text>}
-        </Text>
-      )}
+      {label && <FieldLabel label={label} required={required} />}
 
       <Pressable
         onPress={() => !disabled && setIsOpen(true)}
@@ -239,14 +234,7 @@ function SelectComponent<T extends string = string>({
         <Text style={{ color: theme.colors.textTertiary, fontSize: 12 }}>▼</Text>
       </Pressable>
 
-      {error && (
-        <Text
-          style={[theme.typography.caption, { color: theme.colors.error, marginTop: 4 }]}
-          accessibilityRole="alert"
-        >
-          {error}
-        </Text>
-      )}
+      {error && <FieldError error={error} />}
 
       <Modal
         visible={isOpen}
@@ -276,6 +264,7 @@ function SelectComponent<T extends string = string>({
                 backgroundColor: theme.colors.surface,
                 borderTopLeftRadius: theme.borderRadius.xl,
                 borderTopRightRadius: theme.borderRadius.xl,
+                paddingBottom: Math.max(insets.bottom, 16),
               },
             ]}
           >
@@ -297,7 +286,7 @@ function SelectComponent<T extends string = string>({
             <FlatList
               data={options}
               keyExtractor={(item) => item.value}
-              style={{ maxHeight: 320 }}
+              style={{ maxHeight: Dimensions.get('window').height * 0.4 }}
               accessibilityRole="radiogroup"
               renderItem={renderOption}
             />
@@ -376,9 +365,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
   },
-  sheet: {
-    paddingBottom: 34,
-  },
+  sheet: {},
   option: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -44,7 +44,7 @@ if (manifest.size > MAX_PACKED_BYTES) {
 }
 
 console.log(
-  `✅ Tarball OK — ${manifest.files.length} files, ${(manifest.size / 1024).toFixed(
+  `✅ Tarball OK - ${manifest.files.length} files, ${(manifest.size / 1024).toFixed(
     1,
   )} KB packed / ${(manifest.unpackedSize / 1024).toFixed(1)} KB unpacked`,
 );

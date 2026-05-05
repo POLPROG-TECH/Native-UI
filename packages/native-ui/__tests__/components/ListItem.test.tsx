@@ -9,14 +9,16 @@ function renderWithTheme(ui: React.ReactElement) {
 }
 
 describe('ListItem', () => {
-  it('should be exported as a function component', () => {
+  it('should be exported as a valid React component', () => {
     // GIVEN the ListItem export from the components module
 
     // WHEN its runtime type is inspected
+    // React.memo wraps a function component into an object with $$typeof
     const actualType = typeof ListItem;
 
-    // THEN it is a function component
-    expect(actualType).toBe('function');
+    // THEN it is a memoized component (object) or function component
+    expect(['function', 'object']).toContain(actualType);
+    expect(ListItem).toBeDefined();
   });
 
   it('should render the title when a title is provided', () => {

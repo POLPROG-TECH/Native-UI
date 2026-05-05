@@ -3,11 +3,12 @@ import {
   StyleSheet,
   TextInput,
   View,
-  Text,
   type TextInputProps,
   type ViewStyle,
 } from 'react-native';
 import { useTheme } from '../theme';
+import { FieldLabel } from './FieldLabel';
+import { FieldError } from './FieldError';
 
 export interface TextAreaProps extends Omit<TextInputProps, 'multiline'> {
   label?: string;
@@ -62,22 +63,7 @@ export function TextArea({
 
   return (
     <View style={[styles.container, containerStyle]}>
-      {label && (
-        <Text
-          style={[
-            theme.typography.labelSmall,
-            {
-              color: theme.colors.textSecondary,
-              marginBottom: 6,
-              textTransform: 'uppercase',
-              letterSpacing: 0.6,
-            },
-          ]}
-        >
-          {label}
-          {required && <Text style={{ color: theme.colors.error }}> *</Text>}
-        </Text>
-      )}
+      {label && <FieldLabel label={label} required={required} />}
       <TextInput
         multiline
         textAlignVertical="top"
@@ -99,15 +85,7 @@ export function TextArea({
         onBlur={handleBlur}
         {...props}
       />
-      {error && (
-        <Text
-          style={[theme.typography.caption, { color: theme.colors.error, marginTop: 4 }]}
-          accessibilityRole="alert"
-          accessibilityLiveRegion="polite"
-        >
-          {error}
-        </Text>
-      )}
+      {error && <FieldError error={error} />}
     </View>
   );
 }

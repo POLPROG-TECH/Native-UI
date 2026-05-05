@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { useListSectionContext } from './ListSection';
@@ -87,7 +87,7 @@ export interface ListItemProps {
  * <ListItem title="Profile" renderIcon={() => <Avatar size="sm" />} />
  * ```
  */
-export function ListItem({
+export const ListItem = React.memo(function ListItem({
   title,
   subtitle,
   value,
@@ -112,79 +112,73 @@ export function ListItem({
 
   const shouldShowChevron = showChevron ?? (onPress !== undefined && !resolvedTrailing);
 
+  const rowStyle = useMemo(
+    () =>
+      grouped
+        ? { paddingVertical: theme.spacing.sm, gap: theme.spacing.md }
+        : {
+            backgroundColor: theme.colors.surface,
+            borderRadius: theme.borderRadius.lg,
+            paddingVertical: theme.spacing.md,
+            paddingHorizontal: theme.spacing.md,
+            marginBottom: omitSpacing ? 0 : theme.spacing.sm,
+            gap: theme.spacing.md,
+          },
+    [grouped, theme, omitSpacing],
+  );
+
+  const titleStyle = useMemo(
+    () => ({
+      color: destructive ? theme.colors.error : theme.colors.textPrimary,
+    }),
+    [destructive, theme.colors.error, theme.colors.textPrimary],
+  );
+
+  const subtitleStyle = useMemo(
+    () => ({ color: theme.colors.textTertiary, marginTop: 2 as const }),
+    [theme.colors.textTertiary],
+  );
+
+  const valueStyle = useMemo(
+    () => ({
+      color: theme.colors.textTertiary,
+      marginRight: shouldShowChevron ? 4 : 0,
+    }),
+    [theme.colors.textTertiary, shouldShowChevron],
+  );
+
+  const chevronStyle = useMemo(
+    () => ({
+      color: theme.colors.textTertiary,
+      fontSize: 20 as const,
+      fontWeight: '300' as const,
+      lineHeight: 22,
+    }),
+    [theme.colors.textTertiary],
+  );
+
   const content = (
-    <View
-      style={[
-        styles.row,
-        grouped
-          ? {
-              paddingVertical: theme.spacing.sm,
-              gap: theme.spacing.md,
-            }
-          : {
-              backgroundColor: theme.colors.surface,
-              borderRadius: theme.borderRadius.lg,
-              paddingVertical: theme.spacing.md,
-              paddingHorizontal: theme.spacing.md,
-              marginBottom: omitSpacing ? 0 : theme.spacing.sm,
-              gap: theme.spacing.md,
-            },
-        style,
-      ]}
-    >
+    <View style={[styles.row, rowStyle, style]}>
       {resolvedIcon && <View style={styles.iconContainer}>{resolvedIcon}</View>}
       <View style={styles.labelContainer}>
-        <Text
-          style={[
-            theme.typography.body,
-            {
-              color: destructive ? theme.colors.error : theme.colors.textPrimary,
-            },
-          ]}
-          numberOfLines={1}
-        >
+        <Text style={[theme.typography.body, titleStyle]} numberOfLines={1}>
           {title}
         </Text>
         {subtitle && (
-          <Text
-            style={[theme.typography.bodySmall, { color: theme.colors.textTertiary, marginTop: 2 }]}
-            numberOfLines={2}
-          >
+          <Text style={[theme.typography.bodySmall, subtitleStyle]} numberOfLines={2}>
             {subtitle}
           </Text>
         )}
       </View>
       <View style={styles.right}>
         {value && (
-          <Text
-            style={[
-              theme.typography.bodySmall,
-              {
-                color: theme.colors.textTertiary,
-                marginRight: shouldShowChevron ? 4 : 0,
-              },
-            ]}
-            numberOfLines={1}
-          >
+          <Text style={[theme.typography.bodySmall, valueStyle]} numberOfLines={1}>
             {value}
           </Text>
         )}
         {resolvedTrailing}
         {shouldShowChevron &&
-          (renderChevron ? (
-            renderChevron()
-          ) : (
-            <Text
-              style={{
-                color: theme.colors.textTertiary,
-                fontSize: 20,
-                fontWeight: '300',
-                lineHeight: 22,
-              }}
-            >
-              ›
-            </Text>
-          ))}
+          (renderChevron ? renderChevron() : <Text style={chevronStyle}>›</Text>)}
       </View>
     </View>
   );
@@ -204,7 +198,7 @@ export function ListItem({
   }
 
   return <View style={disabled ? { opacity: theme.opacity.disabled } : undefined}>{content}</View>;
-}
+});
 
 const styles = StyleSheet.create({
   row: {

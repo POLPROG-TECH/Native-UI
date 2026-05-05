@@ -104,7 +104,7 @@ function ModalComponent({
             theme.elevation.xl as ViewStyle,
             style,
           ]}
-          accessibilityRole="alert"
+          accessibilityViewIsModal={true}
         >
           {title && (
             <Text

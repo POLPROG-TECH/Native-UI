@@ -159,7 +159,7 @@ const TabBadge = React.memo(function TabBadge({ badge, color, textColor }: TabBa
 
 /**
  * Whether a tab badge should render. Hides `null` / `undefined` (no badge),
- * numeric `0` and negatives (common "no unread" state — mirrors `Badge.hideZero`),
+ * numeric `0` and negatives (common "no unread" state - mirrors `Badge.hideZero`),
  * and empty strings.
  */
 function shouldRenderBadge(badge: BottomTabBarItem['badge']): boolean {

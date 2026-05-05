@@ -13,6 +13,12 @@ export type { BottomTabBarProps, BottomTabBarItem } from './BottomTabBar';
 export { Card } from './Card';
 export type { CardProps, CardSize, CardElevation } from './Card';
 
+export { FieldLabel } from './FieldLabel';
+export type { FieldLabelProps } from './FieldLabel';
+
+export { FieldError } from './FieldError';
+export type { FieldErrorProps } from './FieldError';
+
 export { Input } from './Input';
 export type { InputProps } from './Input';
 
@@ -84,7 +90,7 @@ export { ListSwitchItem } from './ListSwitchItem';
 export type { ListSwitchItemProps } from './ListSwitchItem';
 
 export { ListHeader } from './ListHeader';
-export type { ListHeaderProps, ListHeaderTransform } from './ListHeader';
+export type { ListHeaderProps, ListHeaderTransform, ListHeaderSize } from './ListHeader';
 
 export { Section } from './Section';
 export type { SectionProps } from './Section';

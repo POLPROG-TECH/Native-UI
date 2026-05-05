@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // scripts/generate-stories.mjs
 // Usage: node scripts/generate-stories.mjs [--check] [--fix]
-//   --check: Only report missing stories (exit 1 if any found) — for CI
+//   --check: Only report missing stories (exit 1 if any found) - for CI
 //   --fix:   Generate stub stories for missing components (default)
 
 import fs from 'fs';
@@ -219,7 +219,7 @@ function main() {
     const parsed = parseSourceFile(m.srcPath);
 
     if (!parsed.componentName) {
-      console.log(`⚠️  Skipping ${m.component} — could not detect exported component name.`);
+      console.log(`⚠️  Skipping ${m.component} - could not detect exported component name.`);
       continue;
     }
 

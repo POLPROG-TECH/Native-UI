@@ -1,5 +1,5 @@
-<!-- native-ui logotype — dark-mode variant (brighter text + lighter subtitle) -->
-<svg xmlns="http://www.w3.org/2000/svg" width="520" height="180" viewBox="0 0 520 180" fill="none" role="img" aria-label="native-ui — React Native design system">
+<!-- native-ui logotype - dark-mode variant (brighter text + lighter subtitle) -->
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="180" viewBox="0 0 520 180" fill="none" role="img" aria-label="native-ui - React Native design system">
   <defs>
     <linearGradient id="nud-bg" x1="20" y1="20" x2="160" y2="160" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#0A84FF"/>

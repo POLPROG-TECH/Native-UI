@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { getContrastText } from '../tokens/colors';
@@ -61,10 +61,10 @@ export function Chip({
 }: ChipProps) {
   const theme = useTheme();
 
-  const handlePress = () => {
+  const handlePress = useCallback(() => {
     getHaptics().light();
     onPress?.();
-  };
+  }, [onPress]);
 
   const isSmall = size === 'sm';
   const paddingV = isSmall ? theme.spacing['2xs'] : theme.spacing.sm + 2; // 4 / 10

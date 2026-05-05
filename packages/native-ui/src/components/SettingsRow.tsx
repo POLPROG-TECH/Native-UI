@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { ViewStyle } from 'react-native';
 import { Box } from '../primitives/Box';
 import { Text } from '../primitives/Text';
@@ -150,9 +150,10 @@ export function SettingsRow({
   renderIcon,
   renderChevron,
 }: SettingsRowProps) {
-  const mergedColorMap = iconColorMap
-    ? { ...DEFAULT_ICON_COLORS, ...iconColorMap }
-    : DEFAULT_ICON_COLORS;
+  const mergedColorMap = useMemo(
+    () => (iconColorMap ? { ...DEFAULT_ICON_COLORS, ...iconColorMap } : DEFAULT_ICON_COLORS),
+    [iconColorMap],
+  );
 
   return (
     <ListItem
@@ -225,9 +226,10 @@ export function SettingsSwitchRow({
   iconColorMap,
   renderIcon,
 }: SettingsSwitchRowProps) {
-  const mergedColorMap = iconColorMap
-    ? { ...DEFAULT_ICON_COLORS, ...iconColorMap }
-    : DEFAULT_ICON_COLORS;
+  const mergedColorMap = useMemo(
+    () => (iconColorMap ? { ...DEFAULT_ICON_COLORS, ...iconColorMap } : DEFAULT_ICON_COLORS),
+    [iconColorMap],
+  );
 
   return (
     <ListSwitchItem

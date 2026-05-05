@@ -85,10 +85,12 @@ export function Countdown({
   const target = useMemo(() => toMs(to), [to]);
   const [, setTick] = useState(0);
   const firedExpiry = useRef(false);
+  const onExpireRef = useRef(onExpire);
+  onExpireRef.current = onExpire;
 
   useEffect(() => {
     firedExpiry.current = false;
-    // Stop ticking once the deadline has passed — keeping a 1 s `setInterval`
+    // Stop ticking once the deadline has passed - keeping a 1 s `setInterval`
     // running forever post-expiry is a battery/CPU leak on long-lived screens.
     if (target - Date.now() <= 0) return;
 
@@ -110,8 +112,8 @@ export function Countdown({
     if (!expired || firedExpiry.current) return;
 
     firedExpiry.current = true;
-    onExpire?.();
-  }, [expired, onExpire]);
+    onExpireRef.current?.();
+  }, [expired]);
 
   const display = expired ? expiredLabel : format(remaining, fmt);
   const out = renderLabel ? renderLabel(display) : display;
