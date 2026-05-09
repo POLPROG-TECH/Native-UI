@@ -99,8 +99,15 @@ export const AllVariants: Story = {
     <HStack gap="lg">
       {(['default', 'primary', 'ghost', 'danger'] as const).map((variant) => (
         <VStack key={variant} gap="xs" align="center">
-          <IconButton icon={<EmojiIcon>⚙️</EmojiIcon>} variant={variant} accessibilityLabel={variant} onPress={fn()} />
-          <Text variant="caption" color="textTertiary">{variant}</Text>
+          <IconButton
+            icon={<EmojiIcon>⚙️</EmojiIcon>}
+            variant={variant}
+            accessibilityLabel={variant}
+            onPress={fn()}
+          />
+          <Text variant="caption" color="textTertiary">
+            {variant}
+          </Text>
         </VStack>
       ))}
     </HStack>
@@ -113,8 +120,15 @@ export const AllSizes: Story = {
     <HStack gap="lg" align="center">
       {(['sm', 'md', 'lg'] as const).map((size) => (
         <VStack key={size} gap="xs" align="center">
-          <IconButton icon={<EmojiIcon>🔔</EmojiIcon>} size={size} accessibilityLabel={`Notifications ${size}`} onPress={fn()} />
-          <Text variant="caption" color="textTertiary">{size}</Text>
+          <IconButton
+            icon={<EmojiIcon>🔔</EmojiIcon>}
+            size={size}
+            accessibilityLabel={`Notifications ${size}`}
+            onPress={fn()}
+          />
+          <Text variant="caption" color="textTertiary">
+            {size}
+          </Text>
         </VStack>
       ))}
     </HStack>
@@ -126,7 +140,14 @@ export const DisabledState: Story = {
   render: () => (
     <HStack gap="lg">
       {(['default', 'primary', 'ghost', 'danger'] as const).map((variant) => (
-        <IconButton key={variant} icon={<EmojiIcon>🔒</EmojiIcon>} variant={variant} disabled accessibilityLabel="Locked" onPress={fn()} />
+        <IconButton
+          key={variant}
+          icon={<EmojiIcon>🔒</EmojiIcon>}
+          variant={variant}
+          disabled
+          accessibilityLabel="Locked"
+          onPress={fn()}
+        />
       ))}
     </HStack>
   ),
@@ -138,12 +159,30 @@ export const ToolbarExample: Story = {
     <Box p="sm" bg="surface" radius="md" elevation="sm" style={{ maxWidth: 360 }}>
       <HStack justify="space-between">
         <HStack gap="xs">
-          <IconButton icon={<EmojiIcon>◀️</EmojiIcon>} variant="ghost" size="sm" accessibilityLabel="Back" onPress={fn()} />
+          <IconButton
+            icon={<EmojiIcon>◀️</EmojiIcon>}
+            variant="ghost"
+            size="sm"
+            accessibilityLabel="Back"
+            onPress={fn()}
+          />
         </HStack>
         <Text variant="label">Document Title</Text>
         <HStack gap="xs">
-          <IconButton icon={<EmojiIcon>🔍</EmojiIcon>} variant="ghost" size="sm" accessibilityLabel="Search" onPress={fn()} />
-          <IconButton icon={<EmojiIcon>⋯</EmojiIcon>} variant="ghost" size="sm" accessibilityLabel="More options" onPress={fn()} />
+          <IconButton
+            icon={<EmojiIcon>🔍</EmojiIcon>}
+            variant="ghost"
+            size="sm"
+            accessibilityLabel="Search"
+            onPress={fn()}
+          />
+          <IconButton
+            icon={<EmojiIcon>⋯</EmojiIcon>}
+            variant="ghost"
+            size="sm"
+            accessibilityLabel="More options"
+            onPress={fn()}
+          />
         </HStack>
       </HStack>
     </Box>

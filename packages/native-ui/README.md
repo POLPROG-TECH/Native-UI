@@ -77,11 +77,11 @@ import { configureHaptics } from '@polprog/native-ui';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 
 configureHaptics({
-  light:   () => ReactNativeHapticFeedback.trigger('impactLight'),
-  medium:  () => ReactNativeHapticFeedback.trigger('impactMedium'),
+  light: () => ReactNativeHapticFeedback.trigger('impactLight'),
+  medium: () => ReactNativeHapticFeedback.trigger('impactMedium'),
   success: () => ReactNativeHapticFeedback.trigger('notificationSuccess'),
   warning: () => ReactNativeHapticFeedback.trigger('notificationWarning'),
-  error:   () => ReactNativeHapticFeedback.trigger('notificationError'),
+  error: () => ReactNativeHapticFeedback.trigger('notificationError'),
 });
 ```
 
@@ -100,11 +100,12 @@ export default function App() {
     <SafeAreaProvider>
       <NativeUIProvider
         config={{
-          colorMode: 'system',   // 'light' | 'dark' | 'system'
-          preset: 'default',     // 'default' | 'midnight' | 'ocean' | ...
+          colorMode: 'system', // 'light' | 'dark' | 'system'
+          preset: 'default', // 'default' | 'midnight' | 'ocean' | ...
           highContrast: false,
           reduceAnimations: false,
-        }}>
+        }}
+      >
         <YourApp />
       </NativeUIProvider>
     </SafeAreaProvider>
@@ -136,8 +137,8 @@ function ProfileScreen() {
           <Input label="Name" placeholder="Enter your name" />
           <Input label="Email" placeholder="you@company.com" keyboardType="email-address" />
         </Card>
-        <Button title="Save"   onPress={() => {}} variant="primary" />
-        <Button title="Cancel" onPress={() => {}} variant="ghost"   />
+        <Button title="Save" onPress={() => {}} variant="primary" />
+        <Button title="Cancel" onPress={() => {}} variant="ghost" />
       </VStack>
     </ScreenContainer>
   );
@@ -150,15 +151,15 @@ function ProfileScreen() {
 
 The `NativeUIProvider` accepts a `config` prop:
 
-| Property            | Type                                   | Default     | Description                         |
-|---------------------|----------------------------------------|-------------|-------------------------------------|
-| `colorMode`         | `'light' \| 'dark' \| 'system'`        | `'system'`  | Color mode                          |
-| `preset`            | `ThemePreset`                          | `'default'` | Theme preset (7 available)          |
-| `fontColor`         | `'default' \| 'warm' \| 'cool'`        | `'default'` | Font color variant                  |
-| `fontSize`          | `'default' \| 'medium' \| 'large'`     | `'default'` | Font size tier                      |
-| `highContrast`      | `boolean`                              | `false`     | High contrast mode                  |
-| `reduceAnimations`  | `boolean`                              | `false`     | Reduce motion                       |
-| `customAccent`      | `string \| null`                       | `null`      | Custom accent color (hex)           |
+| Property           | Type                               | Default     | Description                |
+| ------------------ | ---------------------------------- | ----------- | -------------------------- |
+| `colorMode`        | `'light' \| 'dark' \| 'system'`    | `'system'`  | Color mode                 |
+| `preset`           | `ThemePreset`                      | `'default'` | Theme preset (7 available) |
+| `fontColor`        | `'default' \| 'warm' \| 'cool'`    | `'default'` | Font color variant         |
+| `fontSize`         | `'default' \| 'medium' \| 'large'` | `'default'` | Font size tier             |
+| `highContrast`     | `boolean`                          | `false`     | High contrast mode         |
+| `reduceAnimations` | `boolean`                          | `false`     | Reduce motion              |
+| `customAccent`     | `string \| null`                   | `null`      | Custom accent color (hex)  |
 
 ### Available Presets
 
@@ -170,8 +171,8 @@ The `NativeUIProvider` accepts a `config` prop:
 import { useTheme, useColors } from '@polprog/native-ui';
 
 function MyComponent() {
-  const theme  = useTheme();    // Full theme object
-  const colors = useColors();   // Just the resolved colors
+  const theme = useTheme(); // Full theme object
+  const colors = useColors(); // Just the resolved colors
 
   return (
     <View style={{ backgroundColor: colors.surface, padding: theme.spacing.lg }}>
@@ -213,7 +214,8 @@ Pass `semanticTokens` inside `config` to merge custom semantic color / spacing
       colors: { brand: { primary: '#FF0080' } },
       spacing: { section: 24 },
     },
-  }}>
+  }}
+>
   <App />
 </NativeUIProvider>
 ```
@@ -241,58 +243,58 @@ peer dependency installed - it is declared optional.
 
 ### Primitives
 
-| Component         | Description |
-|-------------------|-------------|
-| `Box`             | View wrapper with token-based `p`, `m`, `bg`, `radius`, `elevation` props |
-| `VStack`          | Vertical flexbox container with `gap` |
-| `HStack`          | Horizontal flexbox container with `gap` |
-| `Text`            | Typography primitive with `variant` and `color` token props |
-| `Heading`         | Heading with `level` (1/2/3/display) and accessible header role |
-| `Divider`         | Thin horizontal separator |
-| `PressableScale`  | Pressable with spring-scale animation |
+| Component        | Description                                                               |
+| ---------------- | ------------------------------------------------------------------------- |
+| `Box`            | View wrapper with token-based `p`, `m`, `bg`, `radius`, `elevation` props |
+| `VStack`         | Vertical flexbox container with `gap`                                     |
+| `HStack`         | Horizontal flexbox container with `gap`                                   |
+| `Text`           | Typography primitive with `variant` and `color` token props               |
+| `Heading`        | Heading with `level` (1/2/3/display) and accessible header role           |
+| `Divider`        | Thin horizontal separator                                                 |
+| `PressableScale` | Pressable with spring-scale animation                                     |
 
 ### Form Controls
 
-| Component             | Description |
-|-----------------------|-------------|
-| `Button`              | Primary action button - `primary` / `secondary` / `outline` / `ghost` / `danger` |
-| `IconButton`          | Circular icon-only button |
-| `Input`               | Text input with label, error, focus state |
-| `TextArea`            | Multiline text input |
-| `Select`              | Modal-based picker (no native dependencies) |
-| `Checkbox`            | Checkbox with optional label |
-| `Switch`              | Toggle switch with label/subtitle |
-| `Radio`               | Radio button with optional label |
-| `Chip` / `ChipGroup`  | Selectable filter chips |
-| `SearchBar`           | Search input with debounce and clear |
+| Component            | Description                                                                      |
+| -------------------- | -------------------------------------------------------------------------------- |
+| `Button`             | Primary action button - `primary` / `secondary` / `outline` / `ghost` / `danger` |
+| `IconButton`         | Circular icon-only button                                                        |
+| `Input`              | Text input with label, error, focus state                                        |
+| `TextArea`           | Multiline text input                                                             |
+| `Select`             | Modal-based picker (no native dependencies)                                      |
+| `Checkbox`           | Checkbox with optional label                                                     |
+| `Switch`             | Toggle switch with label/subtitle                                                |
+| `Radio`              | Radio button with optional label                                                 |
+| `Chip` / `ChipGroup` | Selectable filter chips                                                          |
+| `SearchBar`          | Search input with debounce and clear                                             |
 
 ### Display
 
-| Component     | Description |
-|---------------|-------------|
+| Component     | Description                                                      |
+| ------------- | ---------------------------------------------------------------- |
 | `Card`        | Surface container with elevation. Pressable when `onPress` given |
-| `Badge`       | Count badge or status dot |
-| `Avatar`      | Circular image or initials avatar |
-| `ProgressBar` | Horizontal progress bar with semantic colors |
-| `Skeleton`    | Animated loading placeholder |
-| `Spinner`     | Full-screen loading indicator |
-| `EmptyState`  | Zero-state placeholder with icon, title, action |
+| `Badge`       | Count badge or status dot                                        |
+| `Avatar`      | Circular image or initials avatar                                |
+| `ProgressBar` | Horizontal progress bar with semantic colors                     |
+| `Skeleton`    | Animated loading placeholder                                     |
+| `Spinner`     | Full-screen loading indicator                                    |
+| `EmptyState`  | Zero-state placeholder with icon, title, action                  |
 
 ### Overlay
 
-| Component            | Description |
-|----------------------|-------------|
+| Component            | Description                                 |
+| -------------------- | ------------------------------------------- |
 | `Modal`              | Centered dialog with title, content, footer |
-| `BottomSheet`        | Slide-up bottom sheet |
-| `Toast` / `useToast` | Snackbar notification |
+| `BottomSheet`        | Slide-up bottom sheet                       |
+| `Toast` / `useToast` | Snackbar notification                       |
 
 ### Layout
 
-| Component          | Description |
-|--------------------|-------------|
-| `ScreenContainer`  | Full-screen layout with safe area, background, tablet constraint |
-| `Section`          | Content section with title header |
-| `ListItem`         | Configurable list row (settings, menus, navigation) |
+| Component         | Description                                                      |
+| ----------------- | ---------------------------------------------------------------- |
+| `ScreenContainer` | Full-screen layout with safe area, background, tablet constraint |
+| `Section`         | Content section with title header                                |
+| `ListItem`        | Configurable list row (settings, menus, navigation)              |
 
 ---
 
@@ -304,10 +306,10 @@ All tokens are exported and available for custom styling:
 import { spacing, borderRadius, typography, elevation } from '@polprog/native-ui';
 
 const myStyle = {
-  padding:      spacing.lg,       // 16
-  borderRadius: borderRadius.md,  // 14
-  ...typography.body,             // { fontSize: 15, lineHeight: 22, ... }
-  ...elevation.md,                // platform-specific shadow
+  padding: spacing.lg, // 16
+  borderRadius: borderRadius.md, // 14
+  ...typography.body, // { fontSize: 15, lineHeight: 22, ... }
+  ...elevation.md, // platform-specific shadow
 };
 ```
 
@@ -464,13 +466,13 @@ packages/native-ui/
 
 ## Deferred Components
 
-| Component                 | Reason |
-|---------------------------|--------|
+| Component                 | Reason                                                            |
+| ------------------------- | ----------------------------------------------------------------- |
 | DatePickerInput           | Requires `@react-native-community/datetimepicker` + locale config |
-| ErrorBoundary             | Requires app-specific error reporting integration |
-| InputPrompt               | Cross-platform prompt - can be added when needed |
-| Tabs / TabBar             | Navigation-coupled, best handled by app's navigation library |
-| BrandIcon / BrandWordmark | App-specific branding assets (belong in the consuming app) |
+| ErrorBoundary             | Requires app-specific error reporting integration                 |
+| InputPrompt               | Cross-platform prompt - can be added when needed                  |
+| Tabs / TabBar             | Navigation-coupled, best handled by app's navigation library      |
+| BrandIcon / BrandWordmark | App-specific branding assets (belong in the consuming app)        |
 
 ---
 

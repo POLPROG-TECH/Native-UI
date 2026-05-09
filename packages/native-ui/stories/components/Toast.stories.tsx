@@ -24,7 +24,8 @@ const ToastStage = ({ children }: { children: React.ReactNode }) => (
       borderWidth: 1,
       borderColor: 'rgba(127,127,127,0.2)',
       overflow: 'hidden',
-    }}>
+    }}
+  >
     {children}
     {/* Small offset so the toast is fully visible inside the bounded stage. */}
     <Toast offset={16} />
@@ -36,7 +37,13 @@ const meta: Meta = {
   // Imperative demo - the default autodocs page would mount several Toast
   // roots on a single page and cross-contaminate state. Opt out explicitly.
   tags: ['!autodocs'],
-  decorators: [(Story) => <ToastStage><Story /></ToastStage>],
+  decorators: [
+    (Story) => (
+      <ToastStage>
+        <Story />
+      </ToastStage>
+    ),
+  ],
   parameters: {
     layout: 'padded',
     docs: {
@@ -89,10 +96,7 @@ export const Playground: Story = {
       const { show } = useToast();
 
       return (
-        <Button
-          title="Show Toast"
-          onPress={() => show({ message: 'Hello from Playground!' })}
-        />
+        <Button title="Show Toast" onPress={() => show({ message: 'Hello from Playground!' })} />
       );
     };
 
@@ -126,9 +130,7 @@ export const BasicToast: StoryObj = {
 
 export const WithAction: StoryObj = {
   name: 'With Action',
-  render: () => (
-    <ToastTrigger message="Entry deleted" actionLabel="Undo" onAction={fn()} />
-  ),
+  render: () => <ToastTrigger message="Entry deleted" actionLabel="Undo" onAction={fn()} />,
 };
 
 export const CustomDuration: StoryObj = {
@@ -146,7 +148,9 @@ export const MultipleExamples: StoryObj = {
   name: 'All Patterns',
   render: () => (
     <VStack gap="sm">
-      <Text variant="label" color="textSecondary">Common toast patterns</Text>
+      <Text variant="label" color="textSecondary">
+        Common toast patterns
+      </Text>
       <ToastTrigger message="Changes saved" />
       <ToastTrigger message="Item deleted" actionLabel="Undo" onAction={fn()} />
       <ToastTrigger message="Network error. Please try again." />
@@ -190,7 +194,11 @@ export const Variants: StoryObj = {
       <VariantTrigger label="Default" message="Entry saved" />
       <VariantTrigger label="Success" variant="success" message="Entry saved successfully" />
       <VariantTrigger label="Warning" variant="warning" message="Offline - changes queued" />
-      <VariantTrigger label="Error" variant="error" message="Couldn't sync. Check your connection." />
+      <VariantTrigger
+        label="Error"
+        variant="error"
+        message="Couldn't sync. Check your connection."
+      />
       <VariantTrigger label="Info" variant="info" message="New version available" />
     </VStack>
   ),
@@ -228,8 +236,18 @@ export const Positions: StoryObj = {
   },
   render: () => (
     <VStack gap="sm">
-      <VariantTrigger label="Top toast" message="Saved to the cloud" variant="success" position="top" />
-      <VariantTrigger label="Bottom toast" message="Saved to the cloud" variant="success" position="bottom" />
+      <VariantTrigger
+        label="Top toast"
+        message="Saved to the cloud"
+        variant="success"
+        position="top"
+      />
+      <VariantTrigger
+        label="Bottom toast"
+        message="Saved to the cloud"
+        variant="success"
+        position="bottom"
+      />
     </VStack>
   ),
 };

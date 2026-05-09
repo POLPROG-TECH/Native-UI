@@ -22,7 +22,20 @@ const EmojiIcon = ({ children, bg }: { children: string; bg?: string }) => {
   const theme = useTheme();
 
   return (
-    <RNText style={{ fontSize: 20, width: 36, height: 36, lineHeight: 36, textAlign: 'center', backgroundColor: bg ?? theme.colors.surfaceSecondary, borderRadius: 10, overflow: 'hidden' }}>{children}</RNText>
+    <RNText
+      style={{
+        fontSize: 20,
+        width: 36,
+        height: 36,
+        lineHeight: 36,
+        textAlign: 'center',
+        backgroundColor: bg ?? theme.colors.surfaceSecondary,
+        borderRadius: 10,
+        overflow: 'hidden',
+      }}
+    >
+      {children}
+    </RNText>
   );
 };
 
@@ -64,22 +77,61 @@ const FullSettingsScreen = () => {
           icon={<Avatar name="John Doe" size="md" />}
           onPress={fn()}
         />
-        <ListItem title="Subscription" value="Premium" icon={<EmojiIcon>⭐</EmojiIcon>} onPress={fn()} hideDivider />
+        <ListItem
+          title="Subscription"
+          value="Premium"
+          icon={<EmojiIcon>⭐</EmojiIcon>}
+          onPress={fn()}
+          hideDivider
+        />
       </ListSection>
 
       <ListSection title="Appearance">
-        <ListSwitchItem label="Dark Mode" icon={<EmojiIcon>🌙</EmojiIcon>} value={darkMode} onValueChange={setDarkMode} />
-        <ListItem title="Color Theme" value="Indigo" icon={<EmojiIcon>🎨</EmojiIcon>} onPress={fn()} />
-        <ListSwitchItem label="Haptic Feedback" icon={<EmojiIcon>📳</EmojiIcon>} value={haptics} onValueChange={setHaptics} hideDivider />
+        <ListSwitchItem
+          label="Dark Mode"
+          icon={<EmojiIcon>🌙</EmojiIcon>}
+          value={darkMode}
+          onValueChange={setDarkMode}
+        />
+        <ListItem
+          title="Color Theme"
+          value="Indigo"
+          icon={<EmojiIcon>🎨</EmojiIcon>}
+          onPress={fn()}
+        />
+        <ListSwitchItem
+          label="Haptic Feedback"
+          icon={<EmojiIcon>📳</EmojiIcon>}
+          value={haptics}
+          onValueChange={setHaptics}
+          hideDivider
+        />
       </ListSection>
 
       <ListSection title="Notifications">
-        <ListSwitchItem label="Push Notifications" icon={<EmojiIcon>🔔</EmojiIcon>} value={notifications} onValueChange={setNotifications} />
-        <ListItem title="Notification Sound" value="Default" icon={<EmojiIcon>🔊</EmojiIcon>} onPress={fn()} hideDivider />
+        <ListSwitchItem
+          label="Push Notifications"
+          icon={<EmojiIcon>🔔</EmojiIcon>}
+          value={notifications}
+          onValueChange={setNotifications}
+        />
+        <ListItem
+          title="Notification Sound"
+          value="Default"
+          icon={<EmojiIcon>🔊</EmojiIcon>}
+          onPress={fn()}
+          hideDivider
+        />
       </ListSection>
 
       <ListSection title="Security">
-        <ListSwitchItem label="Biometric Lock" icon={<EmojiIcon>🔐</EmojiIcon>} value={biometrics} onValueChange={setBiometrics} subtitle="Use Face ID or fingerprint" />
+        <ListSwitchItem
+          label="Biometric Lock"
+          icon={<EmojiIcon>🔐</EmojiIcon>}
+          value={biometrics}
+          onValueChange={setBiometrics}
+          subtitle="Use Face ID or fingerprint"
+        />
         <ListItem title="Change PIN" icon={<EmojiIcon>🔢</EmojiIcon>} onPress={fn()} hideDivider />
       </ListSection>
 
@@ -91,7 +143,12 @@ const FullSettingsScreen = () => {
       <ListSection title="About">
         <ListItem title="Version" value="1.2.0 (42)" />
         <ListItem title="Rate the App" icon={<EmojiIcon>⭐</EmojiIcon>} onPress={fn()} />
-        <ListItem title="Send Feedback" icon={<EmojiIcon>💬</EmojiIcon>} onPress={fn()} hideDivider />
+        <ListItem
+          title="Send Feedback"
+          icon={<EmojiIcon>💬</EmojiIcon>}
+          onPress={fn()}
+          hideDivider
+        />
       </ListSection>
 
       <ListSection>
@@ -127,8 +184,12 @@ const ThemePicker = () => {
           <ListItem
             key={p.id}
             title={p.label}
-            icon={<View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: p.color }} />}
-            trailing={<Radio selected={selectedPreset === p.id} onPress={() => setSelectedPreset(p.id)} />}
+            icon={
+              <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: p.color }} />
+            }
+            trailing={
+              <Radio selected={selectedPreset === p.id} onPress={() => setSelectedPreset(p.id)} />
+            }
             onPress={() => setSelectedPreset(p.id)}
             hideDivider={i === presets.length - 1}
           />

@@ -57,23 +57,33 @@ export const AllLevels: Story = {
     <VStack gap="lg">
       <Box>
         <Heading level="display">Display Heading</Heading>
-        <Text variant="caption" color="textTertiary">level="display" - 32px, bold</Text>
+        <Text variant="caption" color="textTertiary">
+          level="display" - 32px, bold
+        </Text>
       </Box>
       <Box>
         <Heading level="displayMedium">Display Medium</Heading>
-        <Text variant="caption" color="textTertiary">level="displayMedium" - 28px, bold</Text>
+        <Text variant="caption" color="textTertiary">
+          level="displayMedium" - 28px, bold
+        </Text>
       </Box>
       <Box>
         <Heading level={1}>Heading Level 1</Heading>
-        <Text variant="caption" color="textTertiary">level=&#123;1&#125; - 24px, bold (default)</Text>
+        <Text variant="caption" color="textTertiary">
+          level=&#123;1&#125; - 24px, bold (default)
+        </Text>
       </Box>
       <Box>
         <Heading level={2}>Heading Level 2</Heading>
-        <Text variant="caption" color="textTertiary">level=&#123;2&#125; - 20px, semibold</Text>
+        <Text variant="caption" color="textTertiary">
+          level=&#123;2&#125; - 20px, semibold
+        </Text>
       </Box>
       <Box>
         <Heading level={3}>Heading Level 3</Heading>
-        <Text variant="caption" color="textTertiary">level=&#123;3&#125; - 17px, semibold</Text>
+        <Text variant="caption" color="textTertiary">
+          level=&#123;3&#125; - 17px, semibold
+        </Text>
       </Box>
     </VStack>
   ),

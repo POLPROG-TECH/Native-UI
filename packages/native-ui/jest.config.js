@@ -9,10 +9,13 @@ module.exports = {
   testEnvironment: 'jsdom',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: 'tsconfig.json',
-      jsx: 'react-jsx',
-    }],
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.json',
+        jsx: 'react-jsx',
+      },
+    ],
   },
   testMatch: ['**/__tests__/**/*.test.(ts|tsx)'],
   setupFilesAfterEnv: ['./jest.setup.js'],
@@ -29,11 +32,7 @@ module.exports = {
     '^react-native-reanimated$': '<rootDir>/__mocks__/react-native-reanimated.js',
     '^react-native-safe-area-context$': '<rootDir>/__mocks__/react-native-safe-area-context.js',
   },
-  collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/index.ts',
-  ],
+  collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/**/index.ts'],
   coverageThreshold: {
     global: {
       branches: 50,

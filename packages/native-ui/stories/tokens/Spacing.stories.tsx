@@ -1,7 +1,14 @@
 import React from 'react';
 import { View, Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
-import { borderRadius, duration, iconSize, opacity, spacing, zIndex } from '../../src/tokens/spacing';
+import {
+  borderRadius,
+  duration,
+  iconSize,
+  opacity,
+  spacing,
+  zIndex,
+} from '../../src/tokens/spacing';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { Box } from '../../src/primitives/Box';
 import { VStack } from '../../src/primitives/Stack';
@@ -11,10 +18,26 @@ const SpacingBar = ({ name, value }: { name: string; value: number }) => {
 
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-      <RNText style={{ width: 50, fontSize: 13, fontWeight: '500', color: theme.colors.textPrimary, fontFamily: 'monospace' }}>
+      <RNText
+        style={{
+          width: 50,
+          fontSize: 13,
+          fontWeight: '500',
+          color: theme.colors.textPrimary,
+          fontFamily: 'monospace',
+        }}
+      >
         {name}
       </RNText>
-      <RNText style={{ width: 50, fontSize: 12, color: theme.colors.textSecondary, textAlign: 'right', marginRight: 12 }}>
+      <RNText
+        style={{
+          width: 50,
+          fontSize: 12,
+          color: theme.colors.textSecondary,
+          textAlign: 'right',
+          marginRight: 12,
+        }}
+      >
         {value}px
       </RNText>
       <View
@@ -47,8 +70,19 @@ const RadiusPreview = ({ name, value }: { name: string; value: number }) => {
           marginBottom: 8,
         }}
       />
-      <RNText style={{ fontSize: 13, fontWeight: '600', color: theme.colors.textPrimary, fontFamily: 'monospace' }}>{name}</RNText>
-      <RNText style={{ fontSize: 11, color: theme.colors.textSecondary }}>{value === 9999 ? '9999 (full)' : `${value}px`}</RNText>
+      <RNText
+        style={{
+          fontSize: 13,
+          fontWeight: '600',
+          color: theme.colors.textPrimary,
+          fontFamily: 'monospace',
+        }}
+      >
+        {name}
+      </RNText>
+      <RNText style={{ fontSize: 11, color: theme.colors.textSecondary }}>
+        {value === 9999 ? '9999 (full)' : `${value}px`}
+      </RNText>
     </View>
   );
 };
@@ -58,8 +92,24 @@ const TokenTable = ({ title, data }: { title: string; data: Record<string, numbe
 
   return (
     <View style={{ marginBottom: 32 }}>
-      <RNText style={{ fontSize: 18, fontWeight: '700', marginBottom: 12, color: theme.colors.textPrimary }}>{title}</RNText>
-      <View style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: 10, overflow: 'hidden' }}>
+      <RNText
+        style={{
+          fontSize: 18,
+          fontWeight: '700',
+          marginBottom: 12,
+          color: theme.colors.textPrimary,
+        }}
+      >
+        {title}
+      </RNText>
+      <View
+        style={{
+          borderWidth: 1,
+          borderColor: theme.colors.border,
+          borderRadius: 10,
+          overflow: 'hidden',
+        }}
+      >
         {Object.entries(data).map(([key, val], i) => (
           <View
             key={key}
@@ -72,10 +122,20 @@ const TokenTable = ({ title, data }: { title: string; data: Record<string, numbe
               borderBottomColor: theme.colors.divider,
             }}
           >
-            <RNText style={{ flex: 1, fontSize: 13, fontWeight: '500', color: theme.colors.textPrimary, fontFamily: 'monospace' }}>
+            <RNText
+              style={{
+                flex: 1,
+                fontSize: 13,
+                fontWeight: '500',
+                color: theme.colors.textPrimary,
+                fontFamily: 'monospace',
+              }}
+            >
               {key}
             </RNText>
-            <RNText style={{ fontSize: 13, color: theme.colors.textSecondary, fontFamily: 'monospace' }}>
+            <RNText
+              style={{ fontSize: 13, color: theme.colors.textSecondary, fontFamily: 'monospace' }}
+            >
               {typeof val === 'number' ? val : String(val)}
             </RNText>
           </View>
@@ -121,7 +181,8 @@ export const SpacingScale: StoryObj = {
     return (
       <View>
         <RNText style={{ fontSize: 14, color: theme.colors.textSecondary, marginBottom: 20 }}>
-          Visual representation of the 11-step spacing scale. Bar width is 4× the token value for visibility.
+          Visual representation of the 11-step spacing scale. Bar width is 4× the token value for
+          visibility.
         </RNText>
         {(Object.entries(spacing) as [string, number][]).map(([name, value]) => (
           <SpacingBar key={name} name={name} value={value} />
@@ -173,7 +234,16 @@ export const IconSizes: StoryObj = {
                   marginBottom: 8,
                 }}
               />
-              <RNText style={{ fontSize: 13, fontWeight: '600', fontFamily: 'monospace', color: theme.colors.textPrimary }}>{name}</RNText>
+              <RNText
+                style={{
+                  fontSize: 13,
+                  fontWeight: '600',
+                  fontFamily: 'monospace',
+                  color: theme.colors.textPrimary,
+                }}
+              >
+                {name}
+              </RNText>
               <RNText style={{ fontSize: 11, color: theme.colors.textSecondary }}>{value}px</RNText>
             </View>
           ))}

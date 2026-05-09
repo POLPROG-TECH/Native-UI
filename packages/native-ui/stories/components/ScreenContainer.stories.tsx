@@ -70,14 +70,17 @@ export const Default: Story = {
             borderColor: theme.colors.border,
             borderRadius: 14,
             overflow: 'hidden',
-          }}>
+          }}
+        >
           <ScreenContainer>
             <VStack gap="lg">
               <Heading level={1}>Dashboard</Heading>
               <Card>
                 <VStack gap="sm">
                   <Text variant="h2">Welcome Back</Text>
-                  <Text variant="body" color="textSecondary">Your screen content goes here.</Text>
+                  <Text variant="body" color="textSecondary">
+                    Your screen content goes here.
+                  </Text>
                 </VStack>
               </Card>
               <Card>
@@ -107,7 +110,8 @@ export const NoPadding: Story = {
             borderColor: theme.colors.border,
             borderRadius: 14,
             overflow: 'hidden',
-          }}>
+          }}
+        >
           <ScreenContainer padded={false}>
             <View
               style={{
@@ -115,8 +119,11 @@ export const NoPadding: Story = {
                 flex: 1,
                 justifyContent: 'center',
                 alignItems: 'center',
-              }}>
-              <Text variant="body" color="primary">Edge-to-edge content (padded=false)</Text>
+              }}
+            >
+              <Text variant="body" color="primary">
+                Edge-to-edge content (padded=false)
+              </Text>
             </View>
           </ScreenContainer>
         </View>

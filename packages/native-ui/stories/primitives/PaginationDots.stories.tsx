@@ -62,7 +62,9 @@ export const ProgressStates: Story = {
       {[0, 1, 2, 3, 4].map((current) => (
         <HStack key={current} gap="md" align="center">
           <View style={{ width: 80 }}>
-            <Text variant="caption" color="textTertiary">current: {current}</Text>
+            <Text variant="caption" color="textTertiary">
+              current: {current}
+            </Text>
           </View>
           <PaginationDots count={5} current={current} />
         </HStack>
@@ -76,15 +78,21 @@ export const CustomSizes: Story = {
   render: () => (
     <VStack gap="lg">
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">Compact (dot 4 / active 12)</Text>
+        <Text variant="caption" color="textTertiary">
+          Compact (dot 4 / active 12)
+        </Text>
         <PaginationDots count={6} current={2} dotWidth={4} activeWidth={12} height={4} gap={4} />
       </VStack>
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">Default</Text>
+        <Text variant="caption" color="textTertiary">
+          Default
+        </Text>
         <PaginationDots count={6} current={2} />
       </VStack>
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">Oversized (dot 8 / active 28)</Text>
+        <Text variant="caption" color="textTertiary">
+          Oversized (dot 8 / active 28)
+        </Text>
         <PaginationDots count={6} current={2} dotWidth={8} activeWidth={28} height={8} gap={10} />
       </VStack>
     </VStack>
@@ -113,13 +121,23 @@ const Interactive = () => {
       <HStack gap="sm">
         <Pressable
           onPress={() => setCurrent((c) => Math.max(0, c - 1))}
-          style={{ paddingVertical: 8, paddingHorizontal: 14, borderRadius: 8, backgroundColor: theme.colors.surfaceSecondary }}
+          style={{
+            paddingVertical: 8,
+            paddingHorizontal: 14,
+            borderRadius: 8,
+            backgroundColor: theme.colors.surfaceSecondary,
+          }}
         >
           <RNText style={{ fontSize: 14 }}>◀ Prev</RNText>
         </Pressable>
         <Pressable
           onPress={() => setCurrent((c) => Math.min(count - 1, c + 1))}
-          style={{ paddingVertical: 8, paddingHorizontal: 14, borderRadius: 8, backgroundColor: theme.colors.surfaceSecondary }}
+          style={{
+            paddingVertical: 8,
+            paddingHorizontal: 14,
+            borderRadius: 8,
+            backgroundColor: theme.colors.surfaceSecondary,
+          }}
         >
           <RNText style={{ fontSize: 14 }}>Next ▶</RNText>
         </Pressable>

@@ -15,9 +15,7 @@ import { mockEndpoints } from '../../.storybook/msw/handlers';
  */
 type LoginResponse = { token: string; user: { email: string } };
 
-const LoginForm: React.FC<{ onSuccess?: (data: LoginResponse) => void }> = ({
-  onSuccess,
-}) => {
+const LoginForm: React.FC<{ onSuccess?: (data: LoginResponse) => void }> = ({ onSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { state, submit } = usePost<{ email: string; password: string }, LoginResponse>(

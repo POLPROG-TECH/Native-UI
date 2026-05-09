@@ -83,7 +83,13 @@ export const WithSubtitle: Story = {
     <Box bg="surface" radius="lg" style={{ maxWidth: 400, overflow: 'hidden' }}>
       <SettingsRow label="Account" subtitle="john@example.com" icon="👤" onPress={fn()} />
       <SettingsRow label="Storage" subtitle="2.3 GB of 5 GB used" icon="💾" onPress={fn()} />
-      <SettingsRow label="Backup" subtitle="Last backup: 2 hours ago" icon="☁️" onPress={fn()} isLast />
+      <SettingsRow
+        label="Backup"
+        subtitle="Last backup: 2 hours ago"
+        icon="☁️"
+        onPress={fn()}
+        isLast
+      />
     </Box>
   ),
 };
@@ -109,9 +115,34 @@ export const WithSwitch: Story = {
 
       return (
         <Box bg="surface" radius="lg" style={{ maxWidth: 400, overflow: 'hidden' }}>
-          <SettingsSwitchRow label="Dark Mode" icon="🌙" value={darkMode} onValueChange={(v) => { setDarkMode(v); fn()(v); }} />
-          <SettingsSwitchRow label="Notifications" icon="🔔" value={notifs} onValueChange={(v) => { setNotifs(v); fn()(v); }} />
-          <SettingsSwitchRow label="Haptic Feedback" icon="📳" value={haptics} onValueChange={(v) => { setHaptics(v); fn()(v); }} isLast />
+          <SettingsSwitchRow
+            label="Dark Mode"
+            icon="🌙"
+            value={darkMode}
+            onValueChange={(v) => {
+              setDarkMode(v);
+              fn()(v);
+            }}
+          />
+          <SettingsSwitchRow
+            label="Notifications"
+            icon="🔔"
+            value={notifs}
+            onValueChange={(v) => {
+              setNotifs(v);
+              fn()(v);
+            }}
+          />
+          <SettingsSwitchRow
+            label="Haptic Feedback"
+            icon="📳"
+            value={haptics}
+            onValueChange={(v) => {
+              setHaptics(v);
+              fn()(v);
+            }}
+            isLast
+          />
         </Box>
       );
     };
@@ -135,7 +166,13 @@ export const Disabled: Story = {
   render: () => (
     <Box bg="surface" radius="lg" style={{ maxWidth: 400, overflow: 'hidden' }}>
       <SettingsRow label="Available Feature" icon="✅" onPress={fn()} />
-      <SettingsRow label="Premium Feature" icon="👑" subtitle="Upgrade to unlock" disabled onPress={fn()} />
+      <SettingsRow
+        label="Premium Feature"
+        icon="👑"
+        subtitle="Upgrade to unlock"
+        disabled
+        onPress={fn()}
+      />
       <SettingsRow label="Coming Soon" icon="🔮" subtitle="Not yet available" disabled isLast />
     </Box>
   ),
@@ -153,7 +190,9 @@ export const CompleteSettingsScreen: Story = {
           <Text variant="h2">Settings</Text>
 
           <VStack gap="xs">
-            <Text variant="label" color="textTertiary" style={{ paddingLeft: 16 }}>ACCOUNT</Text>
+            <Text variant="label" color="textTertiary" style={{ paddingLeft: 16 }}>
+              ACCOUNT
+            </Text>
             <Box bg="surface" radius="lg" style={{ overflow: 'hidden' }}>
               <SettingsRow label="Profile" icon="👤" subtitle="John Doe" onPress={fn()} />
               <SettingsRow label="Subscription" icon="⭐" value="Pro" onPress={fn()} isLast />
@@ -161,17 +200,38 @@ export const CompleteSettingsScreen: Story = {
           </VStack>
 
           <VStack gap="xs">
-            <Text variant="label" color="textTertiary" style={{ paddingLeft: 16 }}>PREFERENCES</Text>
+            <Text variant="label" color="textTertiary" style={{ paddingLeft: 16 }}>
+              PREFERENCES
+            </Text>
             <Box bg="surface" radius="lg" style={{ overflow: 'hidden' }}>
               <SettingsRow label="Language" icon="🌐" value="English" onPress={fn()} />
               <SettingsRow label="Currency" icon="💱" value="EUR (€)" onPress={fn()} />
-              <SettingsSwitchRow label="Dark Mode" icon="🌙" value={darkMode} onValueChange={(v) => { setDarkMode(v); fn()(v); }} />
-              <SettingsSwitchRow label="Notifications" icon="🔔" value={notifs} onValueChange={(v) => { setNotifs(v); fn()(v); }} isLast />
+              <SettingsSwitchRow
+                label="Dark Mode"
+                icon="🌙"
+                value={darkMode}
+                onValueChange={(v) => {
+                  setDarkMode(v);
+                  fn()(v);
+                }}
+              />
+              <SettingsSwitchRow
+                label="Notifications"
+                icon="🔔"
+                value={notifs}
+                onValueChange={(v) => {
+                  setNotifs(v);
+                  fn()(v);
+                }}
+                isLast
+              />
             </Box>
           </VStack>
 
           <VStack gap="xs">
-            <Text variant="label" color="textTertiary" style={{ paddingLeft: 16 }}>SUPPORT</Text>
+            <Text variant="label" color="textTertiary" style={{ paddingLeft: 16 }}>
+              SUPPORT
+            </Text>
             <Box bg="surface" radius="lg" style={{ overflow: 'hidden' }}>
               <SettingsRow label="Help Center" icon="❓" onPress={fn()} />
               <SettingsRow label="Contact Us" icon="✉️" onPress={fn()} />

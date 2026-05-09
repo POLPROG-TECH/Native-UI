@@ -48,10 +48,35 @@ interface SizeConfig {
 }
 
 const SIZE_CONFIG: Record<ListHeaderSize, SizeConfig> = {
-  lg: { typographyKey: 'h1', marginTop: 0, marginBottom: 28, useMutedColor: false, defaultTransform: 'none' },
-  md: { typographyKey: 'h3', marginTop: 0, marginBottom: 20, useMutedColor: false, defaultTransform: 'none' },
-  sm: { typographyKey: 'title', marginTop: 0, marginBottom: 12, useMutedColor: false, defaultTransform: 'none' },
-  xs: { typographyKey: 'overline', marginTop: 24, marginBottom: 8, useMutedColor: true, defaultTransform: 'uppercase', letterSpacing: 0.8 },
+  lg: {
+    typographyKey: 'h1',
+    marginTop: 0,
+    marginBottom: 28,
+    useMutedColor: false,
+    defaultTransform: 'none',
+  },
+  md: {
+    typographyKey: 'h3',
+    marginTop: 0,
+    marginBottom: 20,
+    useMutedColor: false,
+    defaultTransform: 'none',
+  },
+  sm: {
+    typographyKey: 'title',
+    marginTop: 0,
+    marginBottom: 12,
+    useMutedColor: false,
+    defaultTransform: 'none',
+  },
+  xs: {
+    typographyKey: 'overline',
+    marginTop: 24,
+    marginBottom: 8,
+    useMutedColor: true,
+    defaultTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
 };
 
 /**

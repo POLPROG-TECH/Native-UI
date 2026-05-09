@@ -131,6 +131,7 @@ Every component needs a corresponding `.stories.tsx` file. Run `npm run stories:
 ### 6. Unit Tests
 
 Write tests that cover:
+
 - Default rendering
 - All visual variants
 - User interaction (press, input, toggle)
@@ -151,14 +152,15 @@ Components should work on iOS, Android, and (where applicable) Web. If platform-
 
 Tokens live in `src/tokens/` and follow a strict hierarchy:
 
-| File | What Goes Here |
-|---|---|
-| `colors.ts` | Color palettes, light/dark schemes, presets |
-| `typography.ts` | Font sizes, weights, line heights, variant definitions |
-| `spacing.ts` | Spacing scale, border radius, icon sizes, elevation, duration, z-index, opacity, border widths, easing |
-| `semantic.ts` | Intent-based aliases that map to primitive tokens |
+| File            | What Goes Here                                                                                         |
+| --------------- | ------------------------------------------------------------------------------------------------------ |
+| `colors.ts`     | Color palettes, light/dark schemes, presets                                                            |
+| `typography.ts` | Font sizes, weights, line heights, variant definitions                                                 |
+| `spacing.ts`    | Spacing scale, border radius, icon sizes, elevation, duration, z-index, opacity, border widths, easing |
+| `semantic.ts`   | Intent-based aliases that map to primitive tokens                                                      |
 
 **Steps:**
+
 1. Add the primitive value in the appropriate file
 2. If it represents an intent (e.g., `actionDanger`), add a semantic alias in `semantic.ts`
 3. Update the `Theme` type in `src/theme/types.ts` if the token category is new
@@ -227,6 +229,7 @@ npx changeset
 ```
 
 You'll be prompted to:
+
 1. Select the package (`@polprog/native-ui`)
 2. Choose a bump type:
    - **patch** - bug fixes, documentation, internal refactors

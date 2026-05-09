@@ -58,7 +58,9 @@ const config: TestRunnerConfig = {
     if (a11yParams.disable) return;
 
     const userOptions = a11yParams.options ?? {};
-    const userAxeOptions = (userOptions as { axeOptions?: { rules?: Record<string, { enabled: boolean }> } }).axeOptions ?? {};
+    const userAxeOptions =
+      (userOptions as { axeOptions?: { rules?: Record<string, { enabled: boolean }> } })
+        .axeOptions ?? {};
 
     await checkA11y(page, '#storybook-root', {
       detailedReport: true,

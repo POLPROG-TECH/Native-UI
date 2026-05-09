@@ -75,17 +75,21 @@ const PromptDemo = (props: Omit<InputPromptProps, 'visible' | 'onSubmit' | 'onCa
       <InputPrompt
         {...props}
         visible={visible}
-        onSubmit={(value) => { setVisible(false); fn()(value); }}
-        onCancel={() => { setVisible(false); fn()(); }}
+        onSubmit={(value) => {
+          setVisible(false);
+          fn()(value);
+        }}
+        onCancel={() => {
+          setVisible(false);
+          fn()();
+        }}
       />
     </>
   );
 };
 
 export const Default: Story = {
-  render: () => (
-    <PromptDemo title="Rename Item" placeholder="Enter new name" />
-  ),
+  render: () => <PromptDemo title="Rename Item" placeholder="Enter new name" />,
 };
 
 export const WithMessage: Story = {
@@ -132,12 +136,7 @@ export const Hidden: Story = {
       <Text variant="body" color="textSecondary">
         The InputPrompt below has visible=false. Nothing is rendered.
       </Text>
-      <InputPrompt
-        visible={false}
-        title="Hidden Prompt"
-        onSubmit={fn()}
-        onCancel={fn()}
-      />
+      <InputPrompt visible={false} title="Hidden Prompt" onSubmit={fn()} onCancel={fn()} />
     </VStack>
   ),
 };

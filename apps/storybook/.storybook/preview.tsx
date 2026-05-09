@@ -168,9 +168,7 @@ const ThemedStory = ({
   label?: string;
   padding?: number;
 }) => (
-  <NativeUIProvider
-    config={{ colorMode, preset, fontSize, highContrast, reduceAnimations }}
-  >
+  <NativeUIProvider config={{ colorMode, preset, fontSize, highContrast, reduceAnimations }}>
     <ThemeCanvas label={label} padding={padding}>
       <Story />
     </ThemeCanvas>
@@ -328,7 +326,14 @@ const preview: Preview = {
           'Changelog',
           'Theming',
           'Tokens',
-          ['Colors', 'Typography', 'Spacing & Radii', 'Spacing', 'Radius & Elevation', 'SemanticTokens'],
+          [
+            'Colors',
+            'Typography',
+            'Spacing & Radii',
+            'Spacing',
+            'Radius & Elevation',
+            'SemanticTokens',
+          ],
           'Brand',
           'Primitives',
           [

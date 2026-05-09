@@ -74,24 +74,24 @@ NativeUIProvider (config)
 
 The `Theme` object provided by context contains:
 
-| Property | Description |
-|---|---|
-| `colors` | Resolved `ColorScheme` (background, surface, primary, text*, etc.) |
-| `typography` | Font variant definitions (displayLarge → captionSmall) |
-| `spacing` | Named scale: `2xs` (2) → `6xl` (64) |
-| `borderRadius` | Named radii: `xs` (6) → `full` (9999) |
-| `iconSize` | `sm` (16), `md` (20), `lg` (24), `xl` (32) |
-| `elevation` | Platform-specific shadow definitions |
-| `duration` | Animation durations: `instant` → `slow` |
-| `zIndex` | Layer ordering: `base`, `dropdown`, `modal`, `toast` |
-| `opacity` | `disabled`, `pressed`, `inactive`, `overlay` |
-| `borderWidth` | `none`, `hairline`, `thin`, `thick` |
-| `easing` | Reanimated easing functions |
-| `glowShadow` | Glow shadow presets |
-| `semantic` | Intent-based token aliases |
-| `isDark` | Current dark mode state |
-| `reduceAnimations` | Motion preference |
-| `fontScale` | Current font scale multiplier |
+| Property           | Description                                                         |
+| ------------------ | ------------------------------------------------------------------- |
+| `colors`           | Resolved `ColorScheme` (background, surface, primary, text\*, etc.) |
+| `typography`       | Font variant definitions (displayLarge → captionSmall)              |
+| `spacing`          | Named scale: `2xs` (2) → `6xl` (64)                                 |
+| `borderRadius`     | Named radii: `xs` (6) → `full` (9999)                               |
+| `iconSize`         | `sm` (16), `md` (20), `lg` (24), `xl` (32)                          |
+| `elevation`        | Platform-specific shadow definitions                                |
+| `duration`         | Animation durations: `instant` → `slow`                             |
+| `zIndex`           | Layer ordering: `base`, `dropdown`, `modal`, `toast`                |
+| `opacity`          | `disabled`, `pressed`, `inactive`, `overlay`                        |
+| `borderWidth`      | `none`, `hairline`, `thin`, `thick`                                 |
+| `easing`           | Reanimated easing functions                                         |
+| `glowShadow`       | Glow shadow presets                                                 |
+| `semantic`         | Intent-based token aliases                                          |
+| `isDark`           | Current dark mode state                                             |
+| `reduceAnimations` | Motion preference                                                   |
+| `fontScale`        | Current font scale multiplier                                       |
 
 ---
 
@@ -102,9 +102,9 @@ The `Theme` object provided by context contains:
 Concrete, context-free values:
 
 ```ts
-spacing.lg    // 16
-colors.primary // '#3B82F6'
-typography.h1 // { fontSize: 28, fontWeight: '700', lineHeight: 34 }
+spacing.lg; // 16
+colors.primary; // '#3B82F6'
+typography.h1; // { fontSize: 28, fontWeight: '700', lineHeight: 34 }
 ```
 
 ### Semantic Tokens
@@ -220,6 +220,7 @@ src/
 ```
 
 **Naming conventions:**
+
 - Files: PascalCase matching the default export (`Button.tsx`, `ListItem.tsx`)
 - Props interfaces: `ComponentNameProps` (`ButtonProps`, `ListItemProps`)
 - Variants: lowercase string unions (`'primary' | 'secondary' | 'danger'`)

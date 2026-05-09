@@ -94,10 +94,9 @@ export const Playground: StoryObj<{ onChange: (v: string) => void }> = {
     await userEvent.click(trigger);
     // The modal portals into body - query the wider screen.
     const screen = within(document.body);
-    const option = await waitFor(
-      () => screen.getByRole('radio', { name: /food & drink/i }),
-      { timeout: 3000 },
-    );
+    const option = await waitFor(() => screen.getByRole('radio', { name: /food & drink/i }), {
+      timeout: 3000,
+    });
     await userEvent.click(option);
     await waitFor(
       async () => {
@@ -127,10 +126,9 @@ export const CancelInteraction: StoryObj<{ onChange: (v: string) => void }> = {
     const trigger = await canvas.findByRole('button', { name: /category/i });
     await userEvent.click(trigger);
     const screen = within(document.body);
-    const cancel = await waitFor(
-      () => screen.getByRole('button', { name: /cancel/i }),
-      { timeout: 3000 },
-    );
+    const cancel = await waitFor(() => screen.getByRole('button', { name: /cancel/i }), {
+      timeout: 3000,
+    });
     await userEvent.click(cancel);
     await expect(args.onChange).not.toHaveBeenCalled();
   },
@@ -175,7 +173,9 @@ export const Disabled: StoryObj = {
   render: () => (
     <VStack gap="md" style={{ maxWidth: 360 }}>
       <Select label="Category" value="food" options={categoryOptions} onChange={fn()} disabled />
-      <Text variant="caption" color="textTertiary">Disabled selects show the selected value but cannot be changed</Text>
+      <Text variant="caption" color="textTertiary">
+        Disabled selects show the selected value but cannot be changed
+      </Text>
     </VStack>
   ),
 };

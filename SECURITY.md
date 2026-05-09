@@ -7,10 +7,10 @@ major version** of `@polprog/native-ui`. Older majors reach end-of-life when a
 new major ships; consumers are expected to upgrade within 6 months of a new
 major release to keep receiving security fixes.
 
-| Version          | Supported          |
-| ---------------- | ------------------ |
-| 1.x (latest)     | :white_check_mark: |
-| < 1.0            | :x:                |
+| Version      | Supported          |
+| ------------ | ------------------ |
+| 1.x (latest) | :white_check_mark: |
+| < 1.0        | :x:                |
 
 ## Reporting a vulnerability
 

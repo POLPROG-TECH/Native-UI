@@ -1,12 +1,20 @@
 import React from 'react';
 import { View, Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
-import { defaultSemanticColors, defaultSemanticSpacing, defaultSemanticTypography } from '../../src/tokens/semantic';
+import {
+  defaultSemanticColors,
+  defaultSemanticSpacing,
+  defaultSemanticTypography,
+} from '../../src/tokens/semantic';
 import { resolveColorScheme } from '../../src/tokens/colors';
 import { spacing } from '../../src/tokens/spacing';
 import { typography } from '../../src/tokens/typography';
 import { useTheme, useSemantic } from '../../src/theme/ThemeProvider';
-import type { SemanticColorTokens, SemanticSpacingTokens, SemanticTypographyTokens } from '../../src/tokens/semantic';
+import type {
+  SemanticColorTokens,
+  SemanticSpacingTokens,
+  SemanticTypographyTokens,
+} from '../../src/tokens/semantic';
 
 const scheme = resolveColorScheme({
   isDark: false,
@@ -23,7 +31,15 @@ const ColorRow = ({ semantic, primitive }: { semantic: string; primitive: string
   const isColor = typeof value === 'string' && value.startsWith('#');
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: theme.colors.border }}>
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.border,
+      }}
+    >
       {isColor && (
         <View
           style={{
@@ -37,10 +53,23 @@ const ColorRow = ({ semantic, primitive }: { semantic: string; primitive: string
           }}
         />
       )}
-      <RNText style={{ width: 160, fontSize: 13, fontWeight: '600', color: theme.colors.textPrimary }}>{semantic}</RNText>
-      <RNText style={{ fontSize: 13, color: theme.colors.textSecondary, fontFamily: 'monospace' }}>→ {primitive}</RNText>
+      <RNText
+        style={{ width: 160, fontSize: 13, fontWeight: '600', color: theme.colors.textPrimary }}
+      >
+        {semantic}
+      </RNText>
+      <RNText style={{ fontSize: 13, color: theme.colors.textSecondary, fontFamily: 'monospace' }}>
+        → {primitive}
+      </RNText>
       {isColor && (
-        <RNText style={{ fontSize: 11, color: theme.colors.textTertiary, fontFamily: 'monospace', marginLeft: 8 }}>
+        <RNText
+          style={{
+            fontSize: 11,
+            color: theme.colors.textTertiary,
+            fontFamily: 'monospace',
+            marginLeft: 8,
+          }}
+        >
           {value}
         </RNText>
       )}
@@ -54,7 +83,15 @@ const SpacingRow = ({ semantic, primitive }: { semantic: string; primitive: stri
   const px = spacing[primitive as keyof typeof spacing];
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: theme.colors.border }}>
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.border,
+      }}
+    >
       <View
         style={{
           width: px,
@@ -65,9 +102,22 @@ const SpacingRow = ({ semantic, primitive }: { semantic: string; primitive: stri
           minWidth: 4,
         }}
       />
-      <RNText style={{ width: 160, fontSize: 13, fontWeight: '600', color: theme.colors.textPrimary }}>{semantic}</RNText>
-      <RNText style={{ fontSize: 13, color: theme.colors.textSecondary, fontFamily: 'monospace' }}>→ {primitive}</RNText>
-      <RNText style={{ fontSize: 11, color: theme.colors.textTertiary, fontFamily: 'monospace', marginLeft: 8 }}>
+      <RNText
+        style={{ width: 160, fontSize: 13, fontWeight: '600', color: theme.colors.textPrimary }}
+      >
+        {semantic}
+      </RNText>
+      <RNText style={{ fontSize: 13, color: theme.colors.textSecondary, fontFamily: 'monospace' }}>
+        → {primitive}
+      </RNText>
+      <RNText
+        style={{
+          fontSize: 11,
+          color: theme.colors.textTertiary,
+          fontFamily: 'monospace',
+          marginLeft: 8,
+        }}
+      >
         {px}px
       </RNText>
     </View>
@@ -80,10 +130,31 @@ const TypographyRow = ({ semantic, primitive }: { semantic: string; primitive: s
   const style = typography[primitive as keyof typeof typography];
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: theme.colors.border }}>
-      <RNText style={{ width: 160, fontSize: 13, fontWeight: '600', color: theme.colors.textPrimary }}>{semantic}</RNText>
-      <RNText style={{ fontSize: 13, color: theme.colors.textSecondary, fontFamily: 'monospace' }}>→ {primitive}</RNText>
-      <RNText style={{ fontSize: 11, color: theme.colors.textTertiary, fontFamily: 'monospace', marginLeft: 8 }}>
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 8,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.colors.border,
+      }}
+    >
+      <RNText
+        style={{ width: 160, fontSize: 13, fontWeight: '600', color: theme.colors.textPrimary }}
+      >
+        {semantic}
+      </RNText>
+      <RNText style={{ fontSize: 13, color: theme.colors.textSecondary, fontFamily: 'monospace' }}>
+        → {primitive}
+      </RNText>
+      <RNText
+        style={{
+          fontSize: 11,
+          color: theme.colors.textTertiary,
+          fontFamily: 'monospace',
+          marginLeft: 8,
+        }}
+      >
         {style.fontSize}px / {style.fontWeight}
       </RNText>
     </View>
@@ -96,7 +167,14 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
 
   return (
     <View style={{ marginBottom: 40 }}>
-      <RNText style={{ fontSize: 20, fontWeight: '700', color: theme.colors.textPrimary, marginBottom: 16 }}>
+      <RNText
+        style={{
+          fontSize: 20,
+          fontWeight: '700',
+          color: theme.colors.textPrimary,
+          marginBottom: 16,
+        }}
+      >
         {title}
       </RNText>
       {children}
@@ -104,8 +182,7 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
   );
 };
 
-const entries = (obj: Record<string, string>) =>
-  Object.entries(obj) as [string, string][];
+const entries = (obj: Record<string, string>) => Object.entries(obj) as [string, string][];
 
 // ─── Story Component ───────────────────────────────────────────
 const SemanticTokensStory = () => {
@@ -113,30 +190,45 @@ const SemanticTokensStory = () => {
 
   return (
     <View style={{ backgroundColor: theme.colors.surfaceSecondary, padding: 24 }}>
-      <RNText style={{ fontSize: 28, fontWeight: '700', color: theme.colors.textPrimary, marginBottom: 8 }}>
+      <RNText
+        style={{
+          fontSize: 28,
+          fontWeight: '700',
+          color: theme.colors.textPrimary,
+          marginBottom: 8,
+        }}
+      >
         Semantic Tokens
       </RNText>
-      <RNText style={{ fontSize: 15, color: theme.colors.textSecondary, marginBottom: 32, maxWidth: 600 }}>
-        Intent-based aliases that map to primitive tokens. Override these per-app for branding without
-        touching the underlying design primitives.
+      <RNText
+        style={{ fontSize: 15, color: theme.colors.textSecondary, marginBottom: 32, maxWidth: 600 }}
+      >
+        Intent-based aliases that map to primitive tokens. Override these per-app for branding
+        without touching the underlying design primitives.
       </RNText>
 
       <Section title="Colors">
-        {entries(defaultSemanticColors as unknown as Record<string, string>).map(([semantic, primitive]) => (
-          <ColorRow key={semantic} semantic={semantic} primitive={primitive} />
-        ))}
+        {entries(defaultSemanticColors as unknown as Record<string, string>).map(
+          ([semantic, primitive]) => (
+            <ColorRow key={semantic} semantic={semantic} primitive={primitive} />
+          ),
+        )}
       </Section>
 
       <Section title="Spacing">
-        {entries(defaultSemanticSpacing as unknown as Record<string, string>).map(([semantic, primitive]) => (
-          <SpacingRow key={semantic} semantic={semantic} primitive={primitive} />
-        ))}
+        {entries(defaultSemanticSpacing as unknown as Record<string, string>).map(
+          ([semantic, primitive]) => (
+            <SpacingRow key={semantic} semantic={semantic} primitive={primitive} />
+          ),
+        )}
       </Section>
 
       <Section title="Typography">
-        {entries(defaultSemanticTypography as unknown as Record<string, string>).map(([semantic, primitive]) => (
-          <TypographyRow key={semantic} semantic={semantic} primitive={primitive} />
-        ))}
+        {entries(defaultSemanticTypography as unknown as Record<string, string>).map(
+          ([semantic, primitive]) => (
+            <TypographyRow key={semantic} semantic={semantic} primitive={primitive} />
+          ),
+        )}
       </Section>
     </View>
   );

@@ -19,8 +19,7 @@ import { join, relative, basename, extname } from 'node:path';
 // Config
 // ---------------------------------------------------------------------------
 
-const RN_PRIMITIVE_REGEX =
-  /import\s+\{([^}]*)\}\s+from\s+['"]react-native['"]/g;
+const RN_PRIMITIVE_REGEX = /import\s+\{([^}]*)\}\s+from\s+['"]react-native['"]/g;
 const NATIVE_UI_IMPORT_REGEX =
   /import\s+\{([^}]*)\}\s+from\s+['"]@polprog\/native-ui(?:\/[^'"]*)?['"]/g;
 
@@ -130,7 +129,12 @@ function extractImportNames(content, regex) {
   let m;
   const re = new RegExp(regex.source, regex.flags);
   while ((m = re.exec(content)) !== null) {
-    const imports = m[1].split(',').map((s) => s.trim().split(/\s+as\s+/)[0].trim());
+    const imports = m[1].split(',').map((s) =>
+      s
+        .trim()
+        .split(/\s+as\s+/)[0]
+        .trim(),
+    );
     names.push(...imports.filter(Boolean));
   }
   return names;
@@ -166,10 +170,7 @@ async function scanFile(filePath, rootDir) {
   const rnImportNames = extractImportNames(content, RN_PRIMITIVE_REGEX);
   result.rnImports = rnImportNames;
 
-  const nativeUiImportNames = extractImportNames(
-    content,
-    NATIVE_UI_IMPORT_REGEX,
-  );
+  const nativeUiImportNames = extractImportNames(content, NATIVE_UI_IMPORT_REGEX);
   result.nativeUiImports = nativeUiImportNames;
 
   // Count raw RN primitive JSX usage
@@ -196,22 +197,13 @@ async function scanFile(filePath, rootDir) {
       countMatches(content, HARDCODED_COLOR_HEX_REGEX) +
       countMatches(content, HARDCODED_COLOR_RGB_REGEX);
     result.hardcoded.fontSize = countMatches(content, HARDCODED_FONT_SIZE_REGEX);
-    result.hardcoded.fontWeight = countMatches(
-      content,
-      HARDCODED_FONT_WEIGHT_REGEX,
-    );
-    result.hardcoded.borderRadius = countMatches(
-      content,
-      HARDCODED_BORDER_RADIUS_REGEX,
-    );
+    result.hardcoded.fontWeight = countMatches(content, HARDCODED_FONT_WEIGHT_REGEX);
+    result.hardcoded.borderRadius = countMatches(content, HARDCODED_BORDER_RADIUS_REGEX);
   }
 
   // --- Token compliance ---
   // Numeric spacing access: theme.spacing[16] instead of theme.spacing.lg
-  const numericAccess = countMatches(
-    content,
-    /theme\.spacing\[\d+\]/g,
-  );
+  const numericAccess = countMatches(content, /theme\.spacing\[\d+\]/g);
   result.tokenCompliance.numericSpacingAccess = numericAccess;
 
   return result;
@@ -249,10 +241,7 @@ function printReport(results, rootDir) {
     totalNativeUiImports += r.nativeUiImports.length;
     totalRnImports += r.rnImports.length;
 
-    const rawCount = Object.values(r.rawPrimitiveUsage).reduce(
-      (a, b) => a + b,
-      0,
-    );
+    const rawCount = Object.values(r.rawPrimitiveUsage).reduce((a, b) => a + b, 0);
     if (rawCount > 0 || r.stylesheetCreate > 0) {
       rawUsageFiles.push(r);
     }
@@ -278,22 +267,15 @@ function printReport(results, rootDir) {
     }
     totalNumericSpacingAccess += r.tokenCompliance.numericSpacingAccess;
 
-    totalStyleValues +=
-      r.hardcoded.spacing +
-      r.hardcoded.fontSize +
-      r.hardcoded.borderRadius;
+    totalStyleValues += r.hardcoded.spacing + r.hardcoded.fontSize + r.hardcoded.borderRadius;
   }
 
   const totalImports = totalNativeUiImports + totalRnImports;
   const adoptionPct =
-    totalImports > 0
-      ? ((totalNativeUiImports / totalImports) * 100).toFixed(1)
-      : '0.0';
+    totalImports > 0 ? ((totalNativeUiImports / totalImports) * 100).toFixed(1) : '0.0';
   const adoptionGrade = grade(parseFloat(adoptionPct));
 
-  const appName = basename(rootDir) === 'src'
-    ? basename(join(rootDir, '..'))
-    : basename(rootDir);
+  const appName = basename(rootDir) === 'src' ? basename(join(rootDir, '..')) : basename(rootDir);
 
   const totalHardcoded =
     totalHardcodedSpacing +
@@ -306,20 +288,16 @@ function printReport(results, rootDir) {
   // Simple heuristic: count native-ui imports as "compliant" style values
   const complianceBase = totalNativeUiImports + totalHardcoded;
   const compliancePct =
-    complianceBase > 0
-      ? ((totalNativeUiImports / complianceBase) * 100).toFixed(1)
-      : '100.0';
+    complianceBase > 0 ? ((totalNativeUiImports / complianceBase) * 100).toFixed(1) : '100.0';
 
   // --- Print ---
   console.log('');
-  console.log('╔══════════════════════════════════════════╗');
-  console.log('║     native-ui Consumer Audit Report      ║');
-  console.log('╠══════════════════════════════════════════╣');
-  console.log(`║ App: ${appName.padEnd(35)}║`);
-  console.log(
-    `║ Score: ${adoptionGrade} (${adoptionPct}%)`.padEnd(43) + '║',
-  );
-  console.log('╚══════════════════════════════════════════╝');
+  console.log('╔══════════════════════════════════════════════════════════╗');
+  console.log('║     native-ui Consumer Audit Report                      ║');
+  console.log('╠══════════════════════════════════════════════════════════╣');
+  console.log(`║ App: ${appName.padEnd(35)}                               ║`);
+  console.log(`║ Score: ${adoptionGrade} (${adoptionPct}%)`.padEnd(43) + '║');
+  console.log('╚══════════════════════════════════════════════════════════╝');
   console.log('');
 
   // --- Adoption Metrics ---
@@ -335,11 +313,9 @@ function printReport(results, rootDir) {
     console.log('🔍 Raw RN Usage (should migrate):');
     const sorted = rawUsageFiles.sort((a, b) => {
       const aCount =
-        Object.values(a.rawPrimitiveUsage).reduce((x, y) => x + y, 0) +
-        a.stylesheetCreate;
+        Object.values(a.rawPrimitiveUsage).reduce((x, y) => x + y, 0) + a.stylesheetCreate;
       const bCount =
-        Object.values(b.rawPrimitiveUsage).reduce((x, y) => x + y, 0) +
-        b.stylesheetCreate;
+        Object.values(b.rawPrimitiveUsage).reduce((x, y) => x + y, 0) + b.stylesheetCreate;
       return bCount - aCount;
     });
 
@@ -364,9 +340,7 @@ function printReport(results, rootDir) {
   // --- Hardcoded Values ---
   if (hardcodedFiles.length > 0) {
     console.log('⚠️  Hardcoded Values Found:');
-    console.log(
-      `  Spacing (padding/margin/gap): ${totalHardcodedSpacing} occurrences`,
-    );
+    console.log(`  Spacing (padding/margin/gap): ${totalHardcodedSpacing} occurrences`);
     console.log(`  Colors (hex/rgb): ${totalHardcodedColors} occurrences`);
     console.log(`  Font sizes: ${totalHardcodedFontSize} occurrences`);
     console.log(`  Font weights: ${totalHardcodedFontWeight} occurrences`);
@@ -374,16 +348,15 @@ function printReport(results, rootDir) {
     console.log('');
     console.log('  Top offenders:');
 
-    const sortedHardcoded = hardcodedFiles.sort(
-      (a, b) => b.hardcodedTotal - a.hardcodedTotal,
-    );
+    const sortedHardcoded = hardcodedFiles.sort((a, b) => b.hardcodedTotal - a.hardcodedTotal);
     for (const file of sortedHardcoded.slice(0, 15)) {
       const details = [];
       if (file.hardcoded.spacing > 0) details.push(`spacing: ${file.hardcoded.spacing}`);
       if (file.hardcoded.colors > 0) details.push(`colors: ${file.hardcoded.colors}`);
       if (file.hardcoded.fontSize > 0) details.push(`fontSize: ${file.hardcoded.fontSize}`);
       if (file.hardcoded.fontWeight > 0) details.push(`fontWeight: ${file.hardcoded.fontWeight}`);
-      if (file.hardcoded.borderRadius > 0) details.push(`borderRadius: ${file.hardcoded.borderRadius}`);
+      if (file.hardcoded.borderRadius > 0)
+        details.push(`borderRadius: ${file.hardcoded.borderRadius}`);
       console.log(`    ${file.path} (${details.join(', ')})`);
     }
     if (sortedHardcoded.length > 15) {
@@ -401,15 +374,11 @@ function printReport(results, rootDir) {
       `  ⚠ ${totalNumericSpacingAccess} numeric spacing accesses (use theme.spacing.md, not theme.spacing[16])`,
     );
     for (const file of tokenIssueFiles.slice(0, 10)) {
-      console.log(
-        `    ${file.path}: ${file.tokenCompliance.numericSpacingAccess} occurrences`,
-      );
+      console.log(`    ${file.path}: ${file.tokenCompliance.numericSpacingAccess} occurrences`);
     }
   }
   if (totalHardcodedColors > 0) {
-    console.log(
-      `  ⚠ ${totalHardcodedColors} direct color hex/rgb values in style objects`,
-    );
+    console.log(`  ⚠ ${totalHardcodedColors} direct color hex/rgb values in style objects`);
   }
   console.log('');
 
@@ -418,9 +387,7 @@ function printReport(results, rootDir) {
   console.log(`Files scanned: ${results.length}`);
   console.log(
     `Total issues: ${
-      Object.values(rawUsageFiles).length +
-      hardcodedFiles.length +
-      tokenIssueFiles.length
+      Object.values(rawUsageFiles).length + hardcodedFiles.length + tokenIssueFiles.length
     } files with findings`,
   );
   console.log('');
@@ -434,12 +401,8 @@ async function main() {
   const targetDir = process.argv[2];
 
   if (!targetDir) {
-    console.error(
-      'Usage: node scripts/audit-consumer.mjs <path-to-app-src>',
-    );
-    console.error(
-      'Example: node scripts/audit-consumer.mjs /path/to/your-app/src',
-    );
+    console.error('Usage: node scripts/audit-consumer.mjs <path-to-app-src>');
+    console.error('Example: node scripts/audit-consumer.mjs /path/to/your-app/src');
     process.exit(1);
   }
 
@@ -463,9 +426,7 @@ async function main() {
     process.exit(1);
   }
 
-  const results = await Promise.all(
-    uiFiles.map((f) => scanFile(f, targetDir)),
-  );
+  const results = await Promise.all(uiFiles.map((f) => scanFile(f, targetDir)));
 
   printReport(results, targetDir);
 }

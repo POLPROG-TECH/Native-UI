@@ -52,23 +52,33 @@ export const Shapes: Story = {
   render: () => (
     <VStack gap="lg">
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">Text line</Text>
+        <Text variant="caption" color="textTertiary">
+          Text line
+        </Text>
         <Skeleton width={240} height={16} />
       </VStack>
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">Heading</Text>
+        <Text variant="caption" color="textTertiary">
+          Heading
+        </Text>
         <Skeleton width={180} height={24} />
       </VStack>
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">Avatar (circle)</Text>
+        <Text variant="caption" color="textTertiary">
+          Avatar (circle)
+        </Text>
         <Skeleton width={48} height={48} borderRadius={24} />
       </VStack>
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">Card</Text>
+        <Text variant="caption" color="textTertiary">
+          Card
+        </Text>
         <Skeleton width="100%" height={120} borderRadius={14} />
       </VStack>
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">Button</Text>
+        <Text variant="caption" color="textTertiary">
+          Button
+        </Text>
         <Skeleton width={140} height={44} borderRadius={10} />
       </VStack>
     </VStack>
@@ -163,11 +173,17 @@ export const SkeletonCardPreset: Story = {
   },
   render: () => (
     <VStack gap="md" style={{ maxWidth: 400 }}>
-      <Text variant="caption" color="textTertiary">Default (2 lines)</Text>
+      <Text variant="caption" color="textTertiary">
+        Default (2 lines)
+      </Text>
       <Skeleton.Card />
-      <Text variant="caption" color="textTertiary">Dense (4 lines)</Text>
+      <Text variant="caption" color="textTertiary">
+        Dense (4 lines)
+      </Text>
       <Skeleton.Card lines={4} />
-      <Text variant="caption" color="textTertiary">With avatar (list item)</Text>
+      <Text variant="caption" color="textTertiary">
+        With avatar (list item)
+      </Text>
       <Skeleton.Card withAvatar lines={2} />
     </VStack>
   ),

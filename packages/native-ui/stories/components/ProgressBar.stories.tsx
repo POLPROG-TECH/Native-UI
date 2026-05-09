@@ -56,7 +56,9 @@ export const Values: Story = {
     <VStack gap="md" style={{ maxWidth: 400 }}>
       {[0, 0.25, 0.5, 0.75, 1].map((value) => (
         <HStack key={value} gap="sm" align="center">
-          <Text variant="caption" color="textTertiary" style={{ width: 40, textAlign: 'right' }}>{Math.round(value * 100)}%</Text>
+          <Text variant="caption" color="textTertiary" style={{ width: 40, textAlign: 'right' }}>
+            {Math.round(value * 100)}%
+          </Text>
           <VStack flex={1}>
             <ProgressBar value={value} />
           </VStack>
@@ -70,16 +72,18 @@ export const SemanticColors: Story = {
   name: 'Semantic Colors',
   render: () => (
     <VStack gap="md" style={{ maxWidth: 400 }}>
-      {([
+      {[
         { color: 'primary' as const, label: 'Primary', value: 0.6 },
         { color: 'success' as const, label: 'Success', value: 0.3 },
         { color: 'warning' as const, label: 'Warning', value: 0.7 },
         { color: 'error' as const, label: 'Error', value: 0.9 },
-      ]).map(({ color, label, value }) => (
+      ].map(({ color, label, value }) => (
         <VStack key={color} gap="xs">
           <HStack justify="space-between">
             <Text variant="labelSmall">{label}</Text>
-            <Text variant="caption" color="textTertiary">{Math.round(value * 100)}%</Text>
+            <Text variant="caption" color="textTertiary">
+              {Math.round(value * 100)}%
+            </Text>
           </HStack>
           <ProgressBar value={value} color={color} />
         </VStack>
@@ -94,7 +98,9 @@ export const Heights: Story = {
     <VStack gap="lg" style={{ maxWidth: 400 }}>
       {[2, 4, 8, 12, 16].map((height) => (
         <VStack key={height} gap="xs">
-          <Text variant="caption" color="textTertiary">height={height}</Text>
+          <Text variant="caption" color="textTertiary">
+            height={height}
+          </Text>
           <ProgressBar value={0.6} height={height} />
         </VStack>
       ))}

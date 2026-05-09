@@ -12,7 +12,20 @@ const EmojiIcon = ({ children }: { children: string }) => {
   const theme = useTheme();
 
   return (
-    <RNText style={{ fontSize: 20, width: 36, height: 36, lineHeight: 36, textAlign: 'center', backgroundColor: theme.colors.surfaceSecondary, borderRadius: 10, overflow: 'hidden' }}>{children}</RNText>
+    <RNText
+      style={{
+        fontSize: 20,
+        width: 36,
+        height: 36,
+        lineHeight: 36,
+        textAlign: 'center',
+        backgroundColor: theme.colors.surfaceSecondary,
+        borderRadius: 10,
+        overflow: 'hidden',
+      }}
+    >
+      {children}
+    </RNText>
   );
 };
 
@@ -52,7 +65,16 @@ type Story = StoryObj<ListSwitchItemProps>;
 const Interactive = (props: Partial<ListSwitchItemProps> & { label: string }) => {
   const [val, setVal] = useState(false);
 
-  return <ListSwitchItem value={val} onValueChange={(v) => { setVal(v); fn()(v); }} {...props} />;
+  return (
+    <ListSwitchItem
+      value={val}
+      onValueChange={(v) => {
+        setVal(v);
+        fn()(v);
+      }}
+      {...props}
+    />
+  );
 };
 
 export const Playground: Story = {
@@ -74,9 +96,22 @@ export const WithSubtitleAndIcon: Story = {
   name: 'With Subtitle and Icon',
   render: () => (
     <Box bg="surface" radius="lg" style={{ maxWidth: 400, overflow: 'hidden' }}>
-      <Interactive label="Dark Mode" subtitle="Use dark colors for the interface" icon={<EmojiIcon>🌙</EmojiIcon>} />
-      <Interactive label="Notifications" subtitle="Receive push alerts" icon={<EmojiIcon>🔔</EmojiIcon>} />
-      <Interactive label="Biometrics" subtitle="Use Face ID / fingerprint to unlock" icon={<EmojiIcon>🔐</EmojiIcon>} hideDivider />
+      <Interactive
+        label="Dark Mode"
+        subtitle="Use dark colors for the interface"
+        icon={<EmojiIcon>🌙</EmojiIcon>}
+      />
+      <Interactive
+        label="Notifications"
+        subtitle="Receive push alerts"
+        icon={<EmojiIcon>🔔</EmojiIcon>}
+      />
+      <Interactive
+        label="Biometrics"
+        subtitle="Use Face ID / fingerprint to unlock"
+        icon={<EmojiIcon>🔐</EmojiIcon>}
+        hideDivider
+      />
     </Box>
   ),
 };

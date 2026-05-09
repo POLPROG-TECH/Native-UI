@@ -33,12 +33,35 @@ const meta: Meta<TextProps> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['displayLarge', 'displayMedium', 'h1', 'h2', 'h3', 'bodyLarge', 'body', 'bodySmall', 'label', 'labelSmall', 'caption', 'mono', 'monoLarge', 'monoSmall'],
+      options: [
+        'displayLarge',
+        'displayMedium',
+        'h1',
+        'h2',
+        'h3',
+        'bodyLarge',
+        'body',
+        'bodySmall',
+        'label',
+        'labelSmall',
+        'caption',
+        'mono',
+        'monoLarge',
+        'monoSmall',
+      ],
       description: 'Typography variant',
     },
     color: {
       control: 'select',
-      options: ['textPrimary', 'textSecondary', 'textTertiary', 'primary', 'success', 'warning', 'error'],
+      options: [
+        'textPrimary',
+        'textSecondary',
+        'textTertiary',
+        'primary',
+        'success',
+        'warning',
+        'error',
+      ],
       description: 'Semantic color token',
     },
     align: { control: 'select', options: ['auto', 'left', 'right', 'center', 'justify'] },
@@ -114,7 +137,8 @@ const AlignmentRow = ({ align, label }: { align: 'left' | 'center' | 'right'; la
         backgroundColor: theme.colors.surfaceSecondary,
         padding: 12,
         borderRadius: theme.borderRadius.sm,
-      }}>
+      }}
+    >
       <Text align={align}>{label}</Text>
     </View>
   );
@@ -138,8 +162,12 @@ export const TabularNumbers: Story = {
       <Text variant="mono">€1,234.56</Text>
       <Text variant="mono">€987.00</Text>
       <Text variant="mono">€12,345.78</Text>
-      <Text variant="mono" color="success">+€500.00</Text>
-      <Text variant="mono" color="error">-€123.45</Text>
+      <Text variant="mono" color="success">
+        +€500.00
+      </Text>
+      <Text variant="mono" color="error">
+        -€123.45
+      </Text>
     </VStack>
   ),
 };
@@ -149,23 +177,30 @@ export const LongContent: Story = {
   render: () => (
     <VStack gap="md" style={{ maxWidth: 300 }}>
       <View>
-        <Text variant="label" color="textSecondary">Normal wrapping:</Text>
+        <Text variant="label" color="textSecondary">
+          Normal wrapping:
+        </Text>
         <Text variant="body">
-          This is a longer paragraph that demonstrates how text wraps within a constrained container. native-ui text
-          respects container width and wraps naturally.
+          This is a longer paragraph that demonstrates how text wraps within a constrained
+          container. native-ui text respects container width and wraps naturally.
         </Text>
       </View>
       <View>
-        <Text variant="label" color="textSecondary">Truncated (numberOfLines=1):</Text>
+        <Text variant="label" color="textSecondary">
+          Truncated (numberOfLines=1):
+        </Text>
         <Text variant="body" numberOfLines={1}>
-          This is a very long text that will be truncated with an ellipsis because it exceeds the container width.
+          This is a very long text that will be truncated with an ellipsis because it exceeds the
+          container width.
         </Text>
       </View>
       <View>
-        <Text variant="label" color="textSecondary">Two lines max:</Text>
+        <Text variant="label" color="textSecondary">
+          Two lines max:
+        </Text>
         <Text variant="body" numberOfLines={2}>
-          This text is limited to two lines maximum. Any overflow will be indicated by an ellipsis at the end of the
-          second visible line. This is useful for list items and cards.
+          This text is limited to two lines maximum. Any overflow will be indicated by an ellipsis
+          at the end of the second visible line. This is useful for list items and cards.
         </Text>
       </View>
     </VStack>

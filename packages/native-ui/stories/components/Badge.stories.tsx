@@ -60,7 +60,9 @@ export const Variants: Story = {
       {(['error', 'primary', 'warning', 'success'] as const).map((variant) => (
         <VStack key={variant} gap="xs" align="center">
           <Badge count={7} variant={variant} />
-          <Text variant="caption" color="textTertiary">{variant}</Text>
+          <Text variant="caption" color="textTertiary">
+            {variant}
+          </Text>
         </VStack>
       ))}
     </HStack>
@@ -74,7 +76,9 @@ export const Counts: Story = {
       {[undefined, 0, 1, 5, 42, 99, 100, 150].map((count, i) => (
         <VStack key={i} gap="xs" align="center">
           <Badge count={count} />
-          <Text variant="caption" color="textTertiary">{count === undefined ? 'dot' : String(count)}</Text>
+          <Text variant="caption" color="textTertiary">
+            {count === undefined ? 'dot' : String(count)}
+          </Text>
         </VStack>
       ))}
     </HStack>
@@ -88,15 +92,21 @@ export const MaxOverflow: Story = {
       <HStack gap="lg">
         <VStack gap="xs" align="center">
           <Badge count={150} max={99} />
-          <Text variant="caption" color="textTertiary">max=99 → "99+"</Text>
+          <Text variant="caption" color="textTertiary">
+            max=99 → "99+"
+          </Text>
         </VStack>
         <VStack gap="xs" align="center">
           <Badge count={15} max={9} />
-          <Text variant="caption" color="textTertiary">max=9 → "9+"</Text>
+          <Text variant="caption" color="textTertiary">
+            max=9 → "9+"
+          </Text>
         </VStack>
         <VStack gap="xs" align="center">
           <Badge count={999} max={999} />
-          <Text variant="caption" color="textTertiary">max=999</Text>
+          <Text variant="caption" color="textTertiary">
+            max=999
+          </Text>
         </VStack>
       </HStack>
     </VStack>
@@ -108,19 +118,31 @@ export const OnIconButton: Story = {
   render: () => (
     <HStack gap="xl">
       <View style={{ position: 'relative' }}>
-        <IconButton icon={<RNText style={{ fontSize: 20 }}>🔔</RNText>} accessibilityLabel="Notifications" onPress={fn()} />
+        <IconButton
+          icon={<RNText style={{ fontSize: 20 }}>🔔</RNText>}
+          accessibilityLabel="Notifications"
+          onPress={fn()}
+        />
         <View style={{ position: 'absolute', top: -4, right: -4 }}>
           <Badge count={3} />
         </View>
       </View>
       <View style={{ position: 'relative' }}>
-        <IconButton icon={<RNText style={{ fontSize: 20 }}>✉️</RNText>} accessibilityLabel="Messages" onPress={fn()} />
+        <IconButton
+          icon={<RNText style={{ fontSize: 20 }}>✉️</RNText>}
+          accessibilityLabel="Messages"
+          onPress={fn()}
+        />
         <View style={{ position: 'absolute', top: -4, right: -4 }}>
           <Badge count={12} variant="primary" />
         </View>
       </View>
       <View style={{ position: 'relative' }}>
-        <IconButton icon={<RNText style={{ fontSize: 20 }}>⚙️</RNText>} accessibilityLabel="Settings" onPress={fn()} />
+        <IconButton
+          icon={<RNText style={{ fontSize: 20 }}>⚙️</RNText>}
+          accessibilityLabel="Settings"
+          onPress={fn()}
+        />
         <View style={{ position: 'absolute', top: -4, right: -4 }}>
           <Badge />
         </View>

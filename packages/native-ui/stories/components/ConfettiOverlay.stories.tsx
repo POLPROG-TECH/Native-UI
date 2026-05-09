@@ -44,7 +44,12 @@ const meta: Meta<ConfettiOverlayProps> = {
 export default meta;
 type Story = StoryObj<ConfettiOverlayProps>;
 
-const Demo = ({ particleCount, duration, forceAnimation, colors }: Partial<ConfettiOverlayProps>) => {
+const Demo = ({
+  particleCount,
+  duration,
+  forceAnimation,
+  colors,
+}: Partial<ConfettiOverlayProps>) => {
   // The container is intentionally taller so the burst has room to spread
   // and the clipping border doesn't cut off the first few cycles. Kept
   // `overflow: 'hidden'` so the demo visually contains the effect to its card.
@@ -52,7 +57,8 @@ const Demo = ({ particleCount, duration, forceAnimation, colors }: Partial<Confe
     <Box
       p="lg"
       bg="background"
-      style={{ minHeight: 480, position: 'relative', overflow: 'hidden', borderRadius: 14 }}>
+      style={{ minHeight: 480, position: 'relative', overflow: 'hidden', borderRadius: 14 }}
+    >
       <DemoContent
         particleCount={particleCount}
         duration={duration}
@@ -63,14 +69,21 @@ const Demo = ({ particleCount, duration, forceAnimation, colors }: Partial<Confe
   );
 };
 
-const DemoContent = ({ particleCount, duration, forceAnimation, colors }: Partial<ConfettiOverlayProps>) => {
+const DemoContent = ({
+  particleCount,
+  duration,
+  forceAnimation,
+  colors,
+}: Partial<ConfettiOverlayProps>) => {
   const [visible, setVisible] = useState(false);
 
   return (
     <>
       <VStack gap="md" style={{ alignItems: 'center' }}>
         <Text variant="h2">🎉 You did it!</Text>
-        <Text variant="body" color="textSecondary">Press the button to celebrate.</Text>
+        <Text variant="body" color="textSecondary">
+          Press the button to celebrate.
+        </Text>
         <Button title="Trigger confetti" onPress={() => setVisible(true)} />
       </VStack>
       <ConfettiOverlay

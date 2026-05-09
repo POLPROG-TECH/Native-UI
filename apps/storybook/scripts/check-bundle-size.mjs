@@ -98,9 +98,7 @@ async function main() {
   if (violations.length > 0) {
     console.error('\n✗ Bundle size budget exceeded:');
     for (const v of violations) console.error(`   - ${v}`);
-    console.error(
-      '\n   Budgets live in apps/storybook/scripts/check-bundle-size.mjs; bump them',
-    );
+    console.error('\n   Budgets live in apps/storybook/scripts/check-bundle-size.mjs; bump them');
     console.error('   explicitly in a PR if growth is intentional.');
     process.exit(1);
   }

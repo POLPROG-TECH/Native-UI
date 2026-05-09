@@ -104,17 +104,8 @@ export const NavigationRows: Story = {
     <Box bg="surface" radius="lg" style={{ maxWidth: 400, overflow: 'hidden' }}>
       <ListItem title="Profile" icon={<EmojiIcon>👤</EmojiIcon>} onPress={fn()} />
       <ListItem title="Notifications" icon={<EmojiIcon>🔔</EmojiIcon>} onPress={fn()} />
-      <ListItem
-        title="Appearance"
-        icon={<EmojiIcon>🎨</EmojiIcon>}
-        onPress={fn()}
-      />
-      <ListItem
-        title="Privacy"
-        icon={<EmojiIcon>🔒</EmojiIcon>}
-        onPress={fn()}
-        hideDivider
-      />
+      <ListItem title="Appearance" icon={<EmojiIcon>🎨</EmojiIcon>} onPress={fn()} />
+      <ListItem title="Privacy" icon={<EmojiIcon>🔒</EmojiIcon>} onPress={fn()} hideDivider />
     </Box>
   ),
 };
@@ -135,14 +126,8 @@ export const WithTrailing: Story = {
   render: () => (
     <Box bg="surface" radius="lg" style={{ maxWidth: 400, overflow: 'hidden' }}>
       <ListItem title="Notifications" trailing={<Badge count={5} />} onPress={fn()} />
-      <ListItem
-        title="Dark Mode"
-        trailing={<Switch value={true} onValueChange={fn()} />}
-      />
-      <ListItem
-        title="Monthly billing"
-        trailing={<Radio selected={true} onPress={fn()} />}
-      />
+      <ListItem title="Dark Mode" trailing={<Switch value={true} onValueChange={fn()} />} />
+      <ListItem title="Monthly billing" trailing={<Radio selected={true} onPress={fn()} />} />
       <ListItem
         title="Annual billing"
         trailing={<Radio selected={false} onPress={fn()} />}
@@ -201,12 +186,7 @@ export const DisabledRows: Story = {
   render: () => (
     <Box bg="surface" radius="lg" style={{ maxWidth: 400, overflow: 'hidden' }}>
       <ListItem title="Available Feature" onPress={fn()} />
-      <ListItem
-        title="Premium Feature"
-        subtitle="Upgrade to unlock"
-        disabled
-        onPress={fn()}
-      />
+      <ListItem title="Premium Feature" subtitle="Upgrade to unlock" disabled onPress={fn()} />
       <ListItem
         title="Coming Soon"
         subtitle="This feature is not yet available"
@@ -248,9 +228,19 @@ export const Density: Story = {
   render: () => {
     const sample = [
       { title: 'Profile', subtitle: 'Name, email, phone', icon: <EmojiIcon>👤</EmojiIcon> },
-      { title: 'Notifications', subtitle: 'Push, email', value: 'On', icon: <EmojiIcon>🔔</EmojiIcon> },
+      {
+        title: 'Notifications',
+        subtitle: 'Push, email',
+        value: 'On',
+        icon: <EmojiIcon>🔔</EmojiIcon>,
+      },
       { title: 'Privacy', subtitle: 'Permissions & data', icon: <EmojiIcon>🔒</EmojiIcon> },
-      { title: 'Storage', subtitle: '2.3 GB of 5 GB used', value: '46%', icon: <EmojiIcon>💾</EmojiIcon> },
+      {
+        title: 'Storage',
+        subtitle: '2.3 GB of 5 GB used',
+        value: '46%',
+        icon: <EmojiIcon>💾</EmojiIcon>,
+      },
     ];
     const Column = ({ label }: { label: string }) => (
       <VStack gap="sm" style={{ flex: 1, minWidth: 280 }}>

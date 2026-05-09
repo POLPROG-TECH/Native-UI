@@ -57,7 +57,11 @@ export const Transform: Story = {
       <ListHeader title="settings" transform="uppercase" />
       <ListHeader title="SETTINGS" transform="lowercase" />
       <ListHeader title="my account settings" transform="capitalize" />
-      <ListHeader title="Settings" transform={(s) => `⚙ ${s} ⚙`} subtitle="Custom function transform" />
+      <ListHeader
+        title="Settings"
+        transform={(s) => `⚙ ${s} ⚙`}
+        subtitle="Custom function transform"
+      />
     </VStack>
   ),
 };

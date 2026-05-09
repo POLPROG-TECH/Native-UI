@@ -77,7 +77,9 @@ export const AllFormats: Story = {
         {(['auto', 'hm', 'hms', 'ms'] as const).map((format) => (
           <HStack key={format} gap="md" align="center">
             <Box style={{ width: 70 }}>
-              <Text variant="label" color="textSecondary">{format}</Text>
+              <Text variant="label" color="textSecondary">
+                {format}
+              </Text>
             </Box>
             <Countdown to={target} format={format} variant="body" color="textPrimary" />
           </HStack>
@@ -159,13 +161,10 @@ export const LowPriorityTick: Story = {
   },
   render: () => (
     <VStack gap="sm">
-      <Text variant="label" color="textSecondary">Re-renders every 30 s</Text>
-      <Countdown
-        to={inFuture(48 * 60 * 60 * 1000)}
-        format="hm"
-        tickMs={30_000}
-        variant="body"
-      />
+      <Text variant="label" color="textSecondary">
+        Re-renders every 30 s
+      </Text>
+      <Countdown to={inFuture(48 * 60 * 60 * 1000)} format="hm" tickMs={30_000} variant="body" />
     </VStack>
   ),
 };

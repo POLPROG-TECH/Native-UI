@@ -44,14 +44,29 @@ const DeleteConfirmation = () => {
       <Modal visible={visible} onClose={() => setVisible(false)} title="Delete Entry?">
         <VStack gap="md">
           <Text variant="body" color="textSecondary">
-            This action cannot be undone. The entry and all associated data will be permanently deleted.
+            This action cannot be undone. The entry and all associated data will be permanently
+            deleted.
           </Text>
           <HStack gap="md">
             <Box style={{ flex: 1 }}>
-              <Button title="Cancel" variant="outline" onPress={() => { setVisible(false); fn()(); }} />
+              <Button
+                title="Cancel"
+                variant="outline"
+                onPress={() => {
+                  setVisible(false);
+                  fn()();
+                }}
+              />
             </Box>
             <Box style={{ flex: 1 }}>
-              <Button title="Delete" variant="destructive" onPress={() => { setVisible(false); fn()(); }} />
+              <Button
+                title="Delete"
+                variant="destructive"
+                onPress={() => {
+                  setVisible(false);
+                  fn()();
+                }}
+              />
             </Box>
           </HStack>
         </VStack>
@@ -92,7 +107,13 @@ const QuickAddEntry = () => {
               fn()(v);
             }}
           />
-          <Button title="Save" onPress={() => { setVisible(false); fn()(); }} />
+          <Button
+            title="Save"
+            onPress={() => {
+              setVisible(false);
+              fn()();
+            }}
+          />
         </VStack>
       </Modal>
     </View>
@@ -113,7 +134,8 @@ const InfoAlert = () => {
       <Modal visible={visible} onClose={() => setVisible(false)} title="About Budgets">
         <VStack gap="md">
           <Text variant="body" color="textSecondary">
-            Budgets help you track spending against planned limits. Set monthly budgets per category to get alerts when you're close to your limit.
+            Budgets help you track spending against planned limits. Set monthly budgets per category
+            to get alerts when you're close to your limit.
           </Text>
           <Button title="Got It" onPress={() => setVisible(false)} />
         </VStack>

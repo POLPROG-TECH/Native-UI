@@ -56,7 +56,9 @@ export const Playground: Story = {
     children: (
       <VStack gap="sm">
         <Heading level={2}>Card Title</Heading>
-        <Text variant="body" color="textSecondary">Card content goes here. Cards are surface containers with elevation.</Text>
+        <Text variant="body" color="textSecondary">
+          Card content goes here. Cards are surface containers with elevation.
+        </Text>
       </VStack>
     ),
   },
@@ -97,12 +99,23 @@ export const NoPadding: Story = {
 
     return (
       <Card padded={false} style={{ maxWidth: 360, overflow: 'hidden' }}>
-        <Box style={{ height: 160, backgroundColor: theme.colors.primaryLight, alignItems: 'center', justifyContent: 'center' }}>
-          <Text variant="label" color="primary">Image Area</Text>
+        <Box
+          style={{
+            height: 160,
+            backgroundColor: theme.colors.primaryLight,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text variant="label" color="primary">
+            Image Area
+          </Text>
         </Box>
         <VStack gap="sm" style={{ padding: 16 }}>
           <Heading level={3}>Media Card</Heading>
-          <Text variant="bodySmall" color="textSecondary">Card with padded=false for edge-to-edge image at top.</Text>
+          <Text variant="bodySmall" color="textSecondary">
+            Card with padded=false for edge-to-edge image at top.
+          </Text>
         </VStack>
       </Card>
     );
@@ -124,12 +137,18 @@ export const ComplexContent: Story = {
             </HStack>
             <VStack gap="xs">
               <HStack justify="space-between">
-                <Text variant="bodySmall" color="textSecondary">Spent</Text>
+                <Text variant="bodySmall" color="textSecondary">
+                  Spent
+                </Text>
                 <Text variant="mono">€2,450.00</Text>
               </HStack>
               <HStack justify="space-between">
-                <Text variant="bodySmall" color="textSecondary">Budget</Text>
-                <Text variant="mono" color="textTertiary">€3,000.00</Text>
+                <Text variant="bodySmall" color="textSecondary">
+                  Budget
+                </Text>
+                <Text variant="mono" color="textTertiary">
+                  €3,000.00
+                </Text>
               </HStack>
             </VStack>
             <HStack gap="sm" justify="flex-end">
@@ -140,14 +159,27 @@ export const ComplexContent: Story = {
         </Card>
         <Card onPress={fn()}>
           <HStack gap="md" align="center">
-            <Box style={{ width: 48, height: 48, borderRadius: 12, backgroundColor: theme.colors.primaryLight, alignItems: 'center', justifyContent: 'center' }}>
+            <Box
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 12,
+                backgroundColor: theme.colors.primaryLight,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <Text variant="h2">📊</Text>
             </Box>
             <VStack gap="2xs" flex={1}>
               <Text variant="label">Analytics</Text>
-              <Text variant="bodySmall" color="textSecondary">View spending trends and reports</Text>
+              <Text variant="bodySmall" color="textSecondary">
+                View spending trends and reports
+              </Text>
             </VStack>
-            <Text variant="body" color="textTertiary">›</Text>
+            <Text variant="body" color="textTertiary">
+              ›
+            </Text>
           </HStack>
         </Card>
       </VStack>

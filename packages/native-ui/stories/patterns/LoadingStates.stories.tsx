@@ -92,7 +92,15 @@ export const SkeletonDashboard: Story = {
 export const FullScreenSpinner: Story = {
   name: 'Full Screen Spinner',
   render: () => (
-    <View style={{ height: 300, borderWidth: 1, borderColor: 'rgba(127,127,127,0.2)', borderRadius: 14, overflow: 'hidden' }}>
+    <View
+      style={{
+        height: 300,
+        borderWidth: 1,
+        borderColor: 'rgba(127,127,127,0.2)',
+        borderRadius: 14,
+        overflow: 'hidden',
+      }}
+    >
       <Spinner label="Loading your data..." />
     </View>
   ),
@@ -140,7 +148,9 @@ const ButtonLoadingDemo = () => {
   return (
     <VStack gap="lg" style={{ maxWidth: 420 }}>
       <Heading level={3}>Button Loading States</Heading>
-      <Text variant="body" color="textSecondary">Click "Save" to see loading state (2s timer).</Text>
+      <Text variant="body" color="textSecondary">
+        Click "Save" to see loading state (2s timer).
+      </Text>
       <VStack gap="md">
         <Button title="Save Entry" onPress={handlePress} loading={loading} />
         <Button title="Already Loading" onPress={() => {}} loading />
@@ -164,21 +174,27 @@ export const ProgressSteps: Story = {
         <VStack gap="xs">
           <HStack justify="space-between">
             <Text variant="bodySmall">Importing data...</Text>
-            <Text variant="bodySmall" color="textSecondary">25%</Text>
+            <Text variant="bodySmall" color="textSecondary">
+              25%
+            </Text>
           </HStack>
           <ProgressBar value={0.25} />
         </VStack>
         <VStack gap="xs">
           <HStack justify="space-between">
             <Text variant="bodySmall">Monthly budget</Text>
-            <Text variant="bodySmall" color="textSecondary">€2,100 / €3,000</Text>
+            <Text variant="bodySmall" color="textSecondary">
+              €2,100 / €3,000
+            </Text>
           </HStack>
           <ProgressBar value={0.7} />
         </VStack>
         <VStack gap="xs">
           <HStack justify="space-between">
             <Text variant="bodySmall">Storage used</Text>
-            <Text variant="bodySmall" color="error">92% - Almost full</Text>
+            <Text variant="bodySmall" color="error">
+              92% - Almost full
+            </Text>
           </HStack>
           <ProgressBar value={0.92} color="error" />
         </VStack>

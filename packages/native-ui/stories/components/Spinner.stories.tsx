@@ -72,13 +72,17 @@ export const Sizes: Story = {
         <View style={{ height: 80, justifyContent: 'center' }}>
           <Spinner size="small" />
         </View>
-        <Text variant="caption" color="textTertiary">small</Text>
+        <Text variant="caption" color="textTertiary">
+          small
+        </Text>
       </VStack>
       <VStack align="center" gap="sm">
         <View style={{ height: 80, justifyContent: 'center' }}>
           <Spinner size="large" />
         </View>
-        <Text variant="caption" color="textTertiary">large</Text>
+        <Text variant="caption" color="textTertiary">
+          large
+        </Text>
       </VStack>
     </HStack>
   ),

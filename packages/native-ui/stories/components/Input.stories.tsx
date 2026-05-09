@@ -46,9 +46,15 @@ const meta: Meta<InputProps> = {
     placeholder: { control: 'text' },
     error: { control: 'text', description: 'Error message below input' },
     required: { control: 'boolean', description: 'Adds * to label' },
-    editable: { control: 'boolean', description: 'Whether input is editable (disabled when false)' },
+    editable: {
+      control: 'boolean',
+      description: 'Whether input is editable (disabled when false)',
+    },
     secureTextEntry: { control: 'boolean', description: 'Password masking' },
-    keyboardType: { control: 'select', options: ['default', 'email-address', 'numeric', 'phone-pad', 'decimal-pad'] },
+    keyboardType: {
+      control: 'select',
+      options: ['default', 'email-address', 'numeric', 'phone-pad', 'decimal-pad'],
+    },
     onChangeText: { action: 'onChangeText' },
   },
 };
@@ -80,7 +86,12 @@ export const WithLabel: Story = {
   render: () => (
     <VStack gap="md" style={{ maxWidth: 360 }}>
       <Input label="Full Name" placeholder="John Doe" onChangeText={fn()} />
-      <Input label="Email" placeholder="john@example.com" keyboardType="email-address" onChangeText={fn()} />
+      <Input
+        label="Email"
+        placeholder="john@example.com"
+        keyboardType="email-address"
+        onChangeText={fn()}
+      />
       <Input label="Password" placeholder="Enter password" secureTextEntry onChangeText={fn()} />
     </VStack>
   ),
@@ -91,7 +102,9 @@ export const Required: Story = {
   render: () => (
     <VStack gap="md" style={{ maxWidth: 360 }}>
       <Input label="Project Name" placeholder="My Project" required onChangeText={fn()} />
-      <Text variant="caption" color="textTertiary">Required fields show * next to the label</Text>
+      <Text variant="caption" color="textTertiary">
+        Required fields show * next to the label
+      </Text>
     </VStack>
   ),
 };
@@ -106,13 +119,7 @@ export const ErrorState: Story = {
         error="Please enter a valid email address"
         onChangeText={fn()}
       />
-      <Input
-        label="Amount"
-        value=""
-        error="Amount is required"
-        required
-        onChangeText={fn()}
-      />
+      <Input label="Amount" value="" error="Amount is required" required onChangeText={fn()} />
     </VStack>
   ),
 };
@@ -122,7 +129,9 @@ export const Disabled: Story = {
   render: () => (
     <VStack gap="md" style={{ maxWidth: 360 }}>
       <Input label="Username" value="johndoe" editable={false} />
-      <Text variant="caption" color="textTertiary">Disabled inputs have reduced opacity and cannot be edited</Text>
+      <Text variant="caption" color="textTertiary">
+        Disabled inputs have reduced opacity and cannot be edited
+      </Text>
     </VStack>
   ),
 };
@@ -132,10 +141,20 @@ export const KeyboardTypes: Story = {
   render: () => (
     <VStack gap="md" style={{ maxWidth: 360 }}>
       <Input label="Default" placeholder="Any text" keyboardType="default" onChangeText={fn()} />
-      <Input label="Email" placeholder="email@example.com" keyboardType="email-address" onChangeText={fn()} />
+      <Input
+        label="Email"
+        placeholder="email@example.com"
+        keyboardType="email-address"
+        onChangeText={fn()}
+      />
       <Input label="Numeric" placeholder="12345" keyboardType="numeric" onChangeText={fn()} />
       <Input label="Decimal" placeholder="0.00" keyboardType="decimal-pad" onChangeText={fn()} />
-      <Input label="Phone" placeholder="+48 123 456 789" keyboardType="phone-pad" onChangeText={fn()} />
+      <Input
+        label="Phone"
+        placeholder="+48 123 456 789"
+        keyboardType="phone-pad"
+        onChangeText={fn()}
+      />
     </VStack>
   ),
 };
@@ -183,8 +202,19 @@ export const FormLayout: Story = {
         <Text variant="h2">Contact Information</Text>
         <Input label="First Name" placeholder="John" required onChangeText={fn()} />
         <Input label="Last Name" placeholder="Doe" required onChangeText={fn()} />
-        <Input label="Email" placeholder="john@example.com" keyboardType="email-address" required onChangeText={fn()} />
-        <Input label="Phone" placeholder="+48 123 456 789" keyboardType="phone-pad" onChangeText={fn()} />
+        <Input
+          label="Email"
+          placeholder="john@example.com"
+          keyboardType="email-address"
+          required
+          onChangeText={fn()}
+        />
+        <Input
+          label="Phone"
+          placeholder="+48 123 456 789"
+          keyboardType="phone-pad"
+          onChangeText={fn()}
+        />
         <Input label="Notes" placeholder="Optional notes..." onChangeText={fn()} />
       </VStack>
     </Box>

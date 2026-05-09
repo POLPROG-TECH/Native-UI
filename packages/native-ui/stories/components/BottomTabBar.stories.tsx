@@ -120,19 +120,25 @@ export const AllStates: Story = {
     return (
       <VStack gap="lg">
         <VStack gap="sm">
-          <Text variant="label" color="textSecondary">Default - 4 tabs, active = Home</Text>
+          <Text variant="label" color="textSecondary">
+            Default - 4 tabs, active = Home
+          </Text>
           <Frame>
             <BottomTabBar items={HOME_TABS} activeKey="home" onSelect={fn()} />
           </Frame>
         </VStack>
         <VStack gap="sm">
-          <Text variant="label" color="textSecondary">With badges</Text>
+          <Text variant="label" color="textSecondary">
+            With badges
+          </Text>
           <Frame>
             <BottomTabBar items={BADGED_TABS} activeKey="inbox" onSelect={fn()} />
           </Frame>
         </VStack>
         <VStack gap="sm">
-          <Text variant="label" color="textSecondary">Interactive (click to switch)</Text>
+          <Text variant="label" color="textSecondary">
+            Interactive (click to switch)
+          </Text>
           <Frame>
             <BottomTabBar items={HOME_TABS} activeKey={active} onSelect={setActive} />
           </Frame>
@@ -160,9 +166,16 @@ export const SafeAreaComparison: Story = {
         { label: 'Android 3-button nav', inset: 0 },
       ].map(({ label, inset }) => (
         <VStack key={label} gap="sm">
-          <Text variant="label" color="textSecondary">{label} - safeBottomInset = {inset}</Text>
+          <Text variant="label" color="textSecondary">
+            {label} - safeBottomInset = {inset}
+          </Text>
           <Frame>
-            <BottomTabBar items={HOME_TABS} activeKey="home" safeBottomInset={inset} onSelect={fn()} />
+            <BottomTabBar
+              items={HOME_TABS}
+              activeKey="home"
+              safeBottomInset={inset}
+              onSelect={fn()}
+            />
           </Frame>
         </VStack>
       ))}
@@ -174,11 +187,7 @@ export const ThreeTabsMinimal: Story = {
   name: 'Minimum 3 tabs',
   render: () => (
     <Frame>
-      <BottomTabBar
-        items={HOME_TABS.slice(0, 3)}
-        activeKey="stats"
-        onSelect={fn()}
-      />
+      <BottomTabBar items={HOME_TABS.slice(0, 3)} activeKey="stats" onSelect={fn()} />
     </Frame>
   ),
 };

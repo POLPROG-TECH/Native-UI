@@ -14,7 +14,7 @@ const meta: Meta<SwitchProps> = {
     docs: {
       description: {
         component: [
-          'Toggle control with optional label and subtitle. Wraps React Native\'s `Switch` with consistent styling.',
+          "Toggle control with optional label and subtitle. Wraps React Native's `Switch` with consistent styling.",
           '',
           '### Accessibility',
           '- Uses native `Switch` semantics (automatically announced as toggle)',
@@ -47,7 +47,16 @@ type Story = StoryObj<SwitchProps>;
 const Interactive = (props: Partial<SwitchProps> & { label?: string }) => {
   const [val, setVal] = useState(false);
 
-  return <Switch value={val} onValueChange={(v) => { setVal(v); fn()(v); }} {...props} />;
+  return (
+    <Switch
+      value={val}
+      onValueChange={(v) => {
+        setVal(v);
+        fn()(v);
+      }}
+      {...props}
+    />
+  );
 };
 
 export const Playground: Story = {

@@ -84,7 +84,9 @@ export const AllSizes: Story = {
     <VStack gap="lg">
       {(['sm', 'md', 'lg'] as const).map((size) => (
         <VStack key={size} gap="sm">
-          <Text variant="label" color="textSecondary">size="{size}"</Text>
+          <Text variant="label" color="textSecondary">
+            size="{size}"
+          </Text>
           <HStack gap="md">
             <Box p="md" bg="surface" radius="md">
               <StatTile label="TIME" value="01:24" size={size} />

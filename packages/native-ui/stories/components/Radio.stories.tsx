@@ -79,7 +79,10 @@ const RadioGroupExample = () => {
             key={opt.value}
             selected={selected === opt.value}
             label={opt.label}
-            onPress={() => { setSelected(opt.value); fn()(opt.value); }}
+            onPress={() => {
+              setSelected(opt.value);
+              fn()(opt.value);
+            }}
           />
         ))}
       </VStack>
@@ -96,7 +99,9 @@ export const WithoutLabel: Story = {
   name: 'Without Label (indicator only)',
   render: () => (
     <VStack gap="md">
-      <Text variant="caption" color="textTertiary">Used as trailing element in ListItem</Text>
+      <Text variant="caption" color="textTertiary">
+        Used as trailing element in ListItem
+      </Text>
       <Radio selected={false} onPress={fn()} accessibilityLabel="Option A" />
       <Radio selected={true} onPress={fn()} accessibilityLabel="Option B" />
     </VStack>

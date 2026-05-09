@@ -57,7 +57,9 @@ export const AllSizes: Story = {
       {(['sm', 'md', 'lg', 'xl'] as const).map((size) => (
         <VStack key={size} gap="xs" align="center">
           <Avatar initials="JD" size={size} accessibilityLabel="John Doe" />
-          <Text variant="caption" color="textTertiary">{size}</Text>
+          <Text variant="caption" color="textTertiary">
+            {size}
+          </Text>
         </VStack>
       ))}
     </HStack>
@@ -68,9 +70,11 @@ export const DifferentColors: Story = {
   name: 'Background Colors',
   render: () => (
     <HStack gap="md">
-      {['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4'].map((color) => (
-        <Avatar key={color} initials="AB" color={color} size="lg" accessibilityLabel="User" />
-      ))}
+      {['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4'].map(
+        (color) => (
+          <Avatar key={color} initials="AB" color={color} size="lg" accessibilityLabel="User" />
+        ),
+      )}
     </HStack>
   ),
 };
@@ -94,10 +98,20 @@ export const WithImage: Story = {
   name: 'With Image (Placeholder)',
   render: () => (
     <VStack gap="md">
-      <Text variant="caption" color="textTertiary">When source is provided, the image is shown. If it fails to load, initials are displayed.</Text>
+      <Text variant="caption" color="textTertiary">
+        When source is provided, the image is shown. If it fails to load, initials are displayed.
+      </Text>
       <HStack gap="md" align="center">
-        <Avatar source={{ uri: 'https://i.pravatar.cc/100?img=1' }} size="lg" accessibilityLabel="User 1" />
-        <Avatar source={{ uri: 'https://i.pravatar.cc/100?img=2' }} size="lg" accessibilityLabel="User 2" />
+        <Avatar
+          source={{ uri: 'https://i.pravatar.cc/100?img=1' }}
+          size="lg"
+          accessibilityLabel="User 1"
+        />
+        <Avatar
+          source={{ uri: 'https://i.pravatar.cc/100?img=2' }}
+          size="lg"
+          accessibilityLabel="User 2"
+        />
         <Avatar initials="FB" color="#EF4444" size="lg" accessibilityLabel="Fallback" />
       </HStack>
     </VStack>

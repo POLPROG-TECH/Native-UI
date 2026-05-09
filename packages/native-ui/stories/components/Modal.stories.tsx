@@ -58,7 +58,12 @@ const meta: Meta<ModalProps> = {
 export default meta;
 type Story = StoryObj<ModalProps>;
 
-const ModalDemo = ({ title, children, footer, dismissable }: Partial<ModalProps> & { children: React.ReactNode }) => {
+const ModalDemo = ({
+  title,
+  children,
+  footer,
+  dismissable,
+}: Partial<ModalProps> & { children: React.ReactNode }) => {
   const [visible, setVisible] = useState(false);
 
   return (
@@ -66,7 +71,10 @@ const ModalDemo = ({ title, children, footer, dismissable }: Partial<ModalProps>
       <Button title="Open Modal" onPress={() => setVisible(true)} />
       <Modal
         visible={visible}
-        onClose={() => { setVisible(false); fn()(); }}
+        onClose={() => {
+          setVisible(false);
+          fn()();
+        }}
         title={title}
         footer={footer}
         dismissable={dismissable}
@@ -80,7 +88,9 @@ const ModalDemo = ({ title, children, footer, dismissable }: Partial<ModalProps>
 export const Playground: Story = {
   render: () => (
     <ModalDemo title="Dialog Title">
-      <Text variant="body" color="textSecondary">This is the modal content. Tap the backdrop or press a button to close.</Text>
+      <Text variant="body" color="textSecondary">
+        This is the modal content. Tap the backdrop or press a button to close.
+      </Text>
     </ModalDemo>
   ),
 };
@@ -100,13 +110,28 @@ export const ConfirmationDialog: Story = {
             title="Delete Entry?"
             footer={
               <HStack gap="sm" justify="flex-end">
-                <Button title="Cancel" variant="ghost" onPress={() => { setVisible(false); fn()(); }} />
-                <Button title="Delete" variant="danger" onPress={() => { setVisible(false); fn()(); }} />
+                <Button
+                  title="Cancel"
+                  variant="ghost"
+                  onPress={() => {
+                    setVisible(false);
+                    fn()();
+                  }}
+                />
+                <Button
+                  title="Delete"
+                  variant="danger"
+                  onPress={() => {
+                    setVisible(false);
+                    fn()();
+                  }}
+                />
               </HStack>
             }
           >
             <Text variant="body" color="textSecondary">
-              This action cannot be undone. The entry and all associated data will be permanently removed.
+              This action cannot be undone. The entry and all associated data will be permanently
+              removed.
             </Text>
           </Modal>
         </>
@@ -133,12 +158,23 @@ export const FormDialog: Story = {
             footer={
               <HStack gap="sm" justify="flex-end">
                 <Button title="Cancel" variant="ghost" onPress={() => setVisible(false)} />
-                <Button title="Save" onPress={() => { setVisible(false); fn()(); }} />
+                <Button
+                  title="Save"
+                  onPress={() => {
+                    setVisible(false);
+                    fn()();
+                  }}
+                />
               </HStack>
             }
           >
             <VStack gap="md">
-              <Input label="Project Name" placeholder="Enter new name" value="My Project" onChangeText={fn()} />
+              <Input
+                label="Project Name"
+                placeholder="Enter new name"
+                value="My Project"
+                onChangeText={fn()}
+              />
             </VStack>
           </Modal>
         </>

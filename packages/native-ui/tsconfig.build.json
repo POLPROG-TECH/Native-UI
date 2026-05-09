@@ -7,5 +7,13 @@
     "noUnusedParameters": true
   },
   "include": ["src"],
-  "exclude": ["node_modules", "lib", "dist", "__tests__", "stories", "**/*.test.ts", "**/*.test.tsx"]
+  "exclude": [
+    "node_modules",
+    "lib",
+    "dist",
+    "__tests__",
+    "stories",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ]
 }

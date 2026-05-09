@@ -32,6 +32,7 @@ Native-UI/
 ```
 
 **Why this structure?**
+
 - Stories stay close to the component source for maintainability
 - The docs host is a separate app - keeps the published package clean
 - Root workspace scripts make it easy to run from anywhere
@@ -55,17 +56,17 @@ npm run build-storybook
 
 ## What's Inside
 
-| Section | Description |
-|---------|-------------|
-| **Introduction** | Overview, design principles, quick start |
-| **Getting Started** | Installation, provider setup, imports |
-| **Theming** | Light/dark modes, 7 color presets, custom themes |
-| **Tokens** | Colors, typography, spacing, elevation visualization |
-| **Primitives** | Box, Stack, Text, Heading, Divider, PressableScale |
-| **Components** | 26 components with interactive controls |
-| **Patterns** | Forms, settings, dialogs, loading states |
-| **Migration** | CostBoard → native-ui mapping guide |
-| **Accessibility** | Guidelines, roles, contrast, touch targets |
+| Section             | Description                                          |
+| ------------------- | ---------------------------------------------------- |
+| **Introduction**    | Overview, design principles, quick start             |
+| **Getting Started** | Installation, provider setup, imports                |
+| **Theming**         | Light/dark modes, 7 color presets, custom themes     |
+| **Tokens**          | Colors, typography, spacing, elevation visualization |
+| **Primitives**      | Box, Stack, Text, Heading, Divider, PressableScale   |
+| **Components**      | 26 components with interactive controls              |
+| **Patterns**        | Forms, settings, dialogs, loading states             |
+| **Migration**       | CostBoard → native-ui mapping guide                  |
+| **Accessibility**   | Guidelines, roles, contrast, touch targets           |
 
 ## Sharing the Static Build
 

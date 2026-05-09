@@ -38,14 +38,14 @@
 design system. Components are tuned to the platform defaults of iOS and Android
 so that any app built on top gets a native look and feel out of the box.
 
-| Area | What you get |
-|------|--------------|
-| **Tokens** | Colours (light + dark + high-contrast), typography scale (SF Pro / Roboto), spacing (4-pt grid), radius, shadow, motion, haptics |
-| **Primitives** | `Box`, `VStack`, `HStack`, `Text`, `Heading`, `Divider`, `PressableScale` |
+| Area           | What you get                                                                                                                                                                                                                        |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tokens**     | Colours (light + dark + high-contrast), typography scale (SF Pro / Roboto), spacing (4-pt grid), radius, shadow, motion, haptics                                                                                                    |
+| **Primitives** | `Box`, `VStack`, `HStack`, `Text`, `Heading`, `Divider`, `PressableScale`                                                                                                                                                           |
 | **Components** | Button, Card, Checkbox, Chip, HeaderBar, IconButton, Input, ListItem, ListSection, ListSwitchItem, Radio, ScreenContainer, SearchBar, Section, SettingsRow, Select, Skeleton, Spinner, Switch, TextArea, Toast, Avatar, InputPrompt |
-| **Theming** | `NativeUIProvider`, colour presets, system dark mode, font-scale tiers, runtime config |
-| **Platforms** | iOS 13+ and Android 6+ (React Native 0.74+). All components render and behave natively on both. |
-| **Output** | ESM + CJS + `.d.ts`, tree-shakeable, zero runtime dependencies beyond peers |
+| **Theming**    | `NativeUIProvider`, colour presets, system dark mode, font-scale tiers, runtime config                                                                                                                                              |
+| **Platforms**  | iOS 13+ and Android 6+ (React Native 0.74+). All components render and behave natively on both.                                                                                                                                     |
+| **Output**     | ESM + CJS + `.d.ts`, tree-shakeable, zero runtime dependencies beyond peers                                                                                                                                                         |
 
 ## Quick Start
 
@@ -81,9 +81,9 @@ Config is fully optional - defaults match the native platform on iOS 17 / Androi
 ```tsx
 <NativeUIProvider
   config={{
-    colorMode: 'system',          // 'light' | 'dark' | 'system'
-    preset: 'default',            // 'default' | 'ocean' | 'forest' | 'sunset' | ...
-    fontScale: 'regular',         // 'small' | 'regular' | 'large' | 'xlarge'
+    colorMode: 'system', // 'light' | 'dark' | 'system'
+    preset: 'default', // 'default' | 'ocean' | 'forest' | 'sunset' | ...
+    fontScale: 'regular', // 'small' | 'regular' | 'large' | 'xlarge'
     highContrast: false,
   }}
 >
@@ -95,7 +95,7 @@ Access the theme anywhere with hooks:
 
 ```tsx
 const { colors, spacing, typography } = useTheme();
-const semantic = useSemantic();     // { background, surface, primary, ... }
+const semantic = useSemantic(); // { background, surface, primary, ... }
 ```
 
 ## Storybook

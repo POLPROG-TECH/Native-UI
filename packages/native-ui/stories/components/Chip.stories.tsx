@@ -51,7 +51,14 @@ export default meta;
 type Story = StoryObj<ChipProps>;
 
 export const Playground: Story = {
-  args: { label: 'Category', selected: false, icon: '', disabled: false, size: 'md', onPress: fn() },
+  args: {
+    label: 'Category',
+    selected: false,
+    icon: '',
+    disabled: false,
+    size: 'md',
+    onPress: fn(),
+  },
 };
 
 export const States: Story = {
@@ -83,14 +90,18 @@ export const Sizes: Story = {
   render: () => (
     <VStack gap="md">
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">Small</Text>
+        <Text variant="caption" color="textTertiary">
+          Small
+        </Text>
         <ChipGroup>
           <Chip label="Tag A" size="sm" selected onPress={fn()} />
           <Chip label="Tag B" size="sm" onPress={fn()} />
         </ChipGroup>
       </VStack>
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">Medium (default)</Text>
+        <Text variant="caption" color="textTertiary">
+          Medium (default)
+        </Text>
         <ChipGroup>
           <Chip label="Tag A" size="md" selected onPress={fn()} />
           <Chip label="Tag B" size="md" onPress={fn()} />
@@ -101,12 +112,22 @@ export const Sizes: Story = {
 };
 
 const MultiSelectExample = () => {
-  const categories = ['🍕 Food', '🚗 Transport', '🛍️ Shopping', '🎬 Entertainment', '💊 Health', '📚 Education', '🏠 Housing', '💼 Business'];
+  const categories = [
+    '🍕 Food',
+    '🚗 Transport',
+    '🛍️ Shopping',
+    '🎬 Entertainment',
+    '💊 Health',
+    '📚 Education',
+    '🏠 Housing',
+    '💼 Business',
+  ];
   const [selected, setSelected] = useState<Set<string>>(new Set(['🍕 Food']));
   const toggle = (cat: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(cat)) next.delete(cat); else next.add(cat);
+      if (next.has(cat)) next.delete(cat);
+      else next.add(cat);
 
       fn()(Array.from(next));
 
@@ -122,7 +143,9 @@ const MultiSelectExample = () => {
           <Chip key={cat} label={cat} selected={selected.has(cat)} onPress={() => toggle(cat)} />
         ))}
       </ChipGroup>
-      <Text variant="caption" color="textTertiary">Selected: {selected.size} of {categories.length}</Text>
+      <Text variant="caption" color="textTertiary">
+        Selected: {selected.size} of {categories.length}
+      </Text>
     </VStack>
   );
 };
@@ -145,7 +168,9 @@ export const Shapes: Story = {
   render: () => (
     <VStack gap="md">
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">shape="pill" (default)</Text>
+        <Text variant="caption" color="textTertiary">
+          shape="pill" (default)
+        </Text>
         <ChipGroup>
           <Chip label="Food" shape="pill" onPress={fn()} />
           <Chip label="Travel" shape="pill" selected onPress={fn()} />
@@ -153,7 +178,9 @@ export const Shapes: Story = {
         </ChipGroup>
       </VStack>
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">shape="rounded"</Text>
+        <Text variant="caption" color="textTertiary">
+          shape="rounded"
+        </Text>
         <ChipGroup>
           <Chip label="Food" shape="rounded" onPress={fn()} />
           <Chip label="Travel" shape="rounded" selected onPress={fn()} />
@@ -161,7 +188,9 @@ export const Shapes: Story = {
         </ChipGroup>
       </VStack>
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">shape="square"</Text>
+        <Text variant="caption" color="textTertiary">
+          shape="square"
+        </Text>
         <ChipGroup>
           <Chip label="Food" shape="square" onPress={fn()} />
           <Chip label="Travel" shape="square" selected onPress={fn()} />

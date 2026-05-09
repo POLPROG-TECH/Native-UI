@@ -73,7 +73,13 @@ export const DifferentHeights: Story = {
   render: () => (
     <VStack gap="lg" style={{ maxWidth: 400 }}>
       {[2, 4, 6, 8].map((lines) => (
-        <TextArea key={lines} label={`${lines} lines`} placeholder={`TextArea with ${lines} visible lines`} lines={lines} onChangeText={fn()} />
+        <TextArea
+          key={lines}
+          label={`${lines} lines`}
+          placeholder={`TextArea with ${lines} visible lines`}
+          lines={lines}
+          onChangeText={fn()}
+        />
       ))}
     </VStack>
   ),
@@ -83,7 +89,13 @@ export const WithError: Story = {
   name: 'Error State',
   render: () => (
     <VStack gap="md" style={{ maxWidth: 400 }}>
-      <TextArea label="Description" value="Too short" error="Description must be at least 20 characters" required onChangeText={fn()} />
+      <TextArea
+        label="Description"
+        value="Too short"
+        error="Description must be at least 20 characters"
+        required
+        onChangeText={fn()}
+      />
     </VStack>
   ),
 };

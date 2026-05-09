@@ -112,12 +112,7 @@ export const SettingsPage: Story = {
           onPress={fn()}
         />
         <ListItem title="Subscription" value="Premium" onPress={fn()} />
-        <ListItem
-          title="Notifications"
-          trailing={<Badge count={3} />}
-          onPress={fn()}
-          hideDivider
-        />
+        <ListItem title="Notifications" trailing={<Badge count={3} />} onPress={fn()} hideDivider />
       </ListSection>
       <ListSection title="Preferences">
         <ListSwitchItem label="Dark Mode" value={false} onValueChange={fn()} />

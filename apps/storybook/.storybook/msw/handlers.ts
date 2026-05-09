@@ -50,10 +50,7 @@ export const defaultHandlers = [
   http.post(`${BASE}/entries`, async ({ request }) => {
     const body = (await request.json()) as { title?: string; amount?: number };
     if (!body.title || typeof body.amount !== 'number') {
-      return HttpResponse.json(
-        { message: 'title and amount are required' },
-        { status: 422 },
-      );
+      return HttpResponse.json({ message: 'title and amount are required' }, { status: 422 });
     }
     await delay(800);
     return HttpResponse.json(

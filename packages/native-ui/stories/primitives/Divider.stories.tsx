@@ -29,7 +29,10 @@ const meta: Meta<DividerProps> = {
     },
   },
   argTypes: {
-    inset: { control: { type: 'number', min: 0, max: 64, step: 4 }, description: 'Left and right margin inset in pixels' },
+    inset: {
+      control: { type: 'number', min: 0, max: 64, step: 4 },
+      description: 'Left and right margin inset in pixels',
+    },
   },
 };
 

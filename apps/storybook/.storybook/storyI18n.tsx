@@ -50,10 +50,7 @@ export const StoryLocaleProvider: React.FC<{
   locale: StoryLocale;
   children: React.ReactNode;
 }> = ({ locale, children }) => {
-  const value = React.useMemo(
-    () => ({ locale, isRTL: RTL_LOCALES.has(locale) }),
-    [locale],
-  );
+  const value = React.useMemo(() => ({ locale, isRTL: RTL_LOCALES.has(locale) }), [locale]);
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 };
 

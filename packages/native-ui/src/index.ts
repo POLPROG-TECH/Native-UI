@@ -137,6 +137,8 @@ export {
   ConfettiOverlay,
   StatTile,
   Countdown,
+  DatePickerInput,
+  DateRangePickerInput,
 } from './components';
 export type {
   ButtonProps,
@@ -204,4 +206,8 @@ export type {
   StatTileSize,
   CountdownProps,
   CountdownFormat,
+  DatePickerInputProps,
+  DatePickerMode,
+  DateRangePickerInputProps,
+  DateRangeValue,
 } from './components';

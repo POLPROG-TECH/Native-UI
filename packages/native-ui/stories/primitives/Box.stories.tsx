@@ -32,13 +32,50 @@ const meta: Meta<BoxProps> = {
     },
   },
   argTypes: {
-    p: { control: 'select', options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'], description: 'Uniform padding (spacing token)' },
-    px: { control: 'select', options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'], description: 'Horizontal padding' },
-    py: { control: 'select', options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'], description: 'Vertical padding' },
-    m: { control: 'select', options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'], description: 'Uniform margin' },
-    bg: { control: 'select', options: ['surface', 'surfaceSecondary', 'primary', 'primaryLight', 'error', 'errorLight', 'success', 'successLight'], description: 'Background color token' },
-    radius: { control: 'select', options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'full'], description: 'Border radius token' },
-    elevation: { control: 'select', options: ['none', 'sm', 'md', 'lg', 'xl'], description: 'Shadow elevation' },
+    p: {
+      control: 'select',
+      options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'],
+      description: 'Uniform padding (spacing token)',
+    },
+    px: {
+      control: 'select',
+      options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'],
+      description: 'Horizontal padding',
+    },
+    py: {
+      control: 'select',
+      options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'],
+      description: 'Vertical padding',
+    },
+    m: {
+      control: 'select',
+      options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'],
+      description: 'Uniform margin',
+    },
+    bg: {
+      control: 'select',
+      options: [
+        'surface',
+        'surfaceSecondary',
+        'primary',
+        'primaryLight',
+        'error',
+        'errorLight',
+        'success',
+        'successLight',
+      ],
+      description: 'Background color token',
+    },
+    radius: {
+      control: 'select',
+      options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'full'],
+      description: 'Border radius token',
+    },
+    elevation: {
+      control: 'select',
+      options: ['none', 'sm', 'md', 'lg', 'xl'],
+      description: 'Shadow elevation',
+    },
     flex: { control: 'number', description: 'Flex value' },
   },
 };
@@ -62,9 +99,7 @@ export const Spacing: Story = {
     <Box>
       {(['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl'] as const).map((size) => (
         <Box key={size} p={size} bg="primaryLight" radius="sm" m="xs">
-          <Text variant="bodySmall">
-            p="{size}"
-          </Text>
+          <Text variant="bodySmall">p="{size}"</Text>
         </Box>
       ))}
     </Box>
@@ -75,7 +110,16 @@ export const BackgroundColors: Story = {
   name: 'Background Tokens',
   render: () => (
     <Box style={{ gap: 8 }}>
-      {(['surface', 'surfaceSecondary', 'primaryLight', 'successLight', 'errorLight', 'warningLight'] as const).map((color) => (
+      {(
+        [
+          'surface',
+          'surfaceSecondary',
+          'primaryLight',
+          'successLight',
+          'errorLight',
+          'warningLight',
+        ] as const
+      ).map((color) => (
         <Box key={color} p="md" bg={color} radius="sm">
           <Text variant="bodySmall">bg="{color}"</Text>
         </Box>
@@ -89,7 +133,14 @@ export const ElevationLevels: Story = {
   render: () => (
     <Box style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 16 }}>
       {(['none', 'sm', 'md', 'lg', 'xl'] as const).map((level) => (
-        <Box key={level} p="lg" bg="surface" radius="md" elevation={level} style={{ width: 120, alignItems: 'center' }}>
+        <Box
+          key={level}
+          p="lg"
+          bg="surface"
+          radius="md"
+          elevation={level}
+          style={{ width: 120, alignItems: 'center' }}
+        >
           <Text variant="label">{level}</Text>
         </Box>
       ))}
@@ -106,11 +157,14 @@ export const Composition: Story = {
       </Box>
       <Box py="xs">
         <Text variant="body" color="textSecondary">
-          Box is the building block for composed layouts. Combine padding, background, radius, and elevation tokens.
+          Box is the building block for composed layouts. Combine padding, background, radius, and
+          elevation tokens.
         </Text>
       </Box>
       <Box p="md" bg="primaryLight" radius="sm" m="xs" style={{ marginTop: 12 }}>
-        <Text variant="label" color="primary">Nested Box with token props</Text>
+        <Text variant="label" color="primary">
+          Nested Box with token props
+        </Text>
       </Box>
     </Box>
   ),

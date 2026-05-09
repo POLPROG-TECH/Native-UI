@@ -25,8 +25,6 @@ import { Text } from '../../src/primitives/Text';
 import { TextArea } from '../../src/components/TextArea';
 import { useTheme } from '../../src/theme/ThemeProvider';
 
-
-
 const meta: Meta = {
   title: 'Patterns/Web Compatibility',
   parameters: {
@@ -69,52 +67,56 @@ export const AllPrimitives: Story = {
     const theme = useTheme();
 
     return (
-    <VStack spacing="md">
-      <Heading level={2}>Primitives</Heading>
+      <VStack spacing="md">
+        <Heading level={2}>Primitives</Heading>
 
-      <SectionLabel>Box</SectionLabel>
-      <Box
-        padding="md"
-        borderRadius="md"
-        style={{ backgroundColor: theme.colors.surfaceSecondary }}
-      >
-        <Text>Box with padding and border radius</Text>
-      </Box>
-
-      <SectionLabel>VStack & HStack</SectionLabel>
-      <VStack spacing="sm">
-        <HStack spacing="sm">
-          <Box padding="sm" style={{ backgroundColor: theme.colors.primaryLight, flex: 1 }}>
-            <Text>HStack 1</Text>
-          </Box>
-          <Box padding="sm" style={{ backgroundColor: theme.colors.primaryLight, flex: 1 }}>
-            <Text>HStack 2</Text>
-          </Box>
-          <Box padding="sm" style={{ backgroundColor: theme.colors.primaryLight, flex: 1 }}>
-            <Text>HStack 3</Text>
-          </Box>
-        </HStack>
-      </VStack>
-
-      <SectionLabel>Text</SectionLabel>
-      <Text variant="body">Body text</Text>
-      <Text variant="caption">Caption text</Text>
-
-      <SectionLabel>Heading</SectionLabel>
-      <Heading level={1}>Heading 1</Heading>
-      <Heading level={2}>Heading 2</Heading>
-      <Heading level={3}>Heading 3</Heading>
-
-      <SectionLabel>Divider</SectionLabel>
-      <Divider />
-
-      <SectionLabel>PressableScale</SectionLabel>
-      <PressableScale onPress={() => {}}>
-        <Box padding="md" borderRadius="md" style={{ backgroundColor: theme.colors.primaryLight }}>
-          <Text>Tap me (scales on press)</Text>
+        <SectionLabel>Box</SectionLabel>
+        <Box
+          padding="md"
+          borderRadius="md"
+          style={{ backgroundColor: theme.colors.surfaceSecondary }}
+        >
+          <Text>Box with padding and border radius</Text>
         </Box>
-      </PressableScale>
-    </VStack>
+
+        <SectionLabel>VStack & HStack</SectionLabel>
+        <VStack spacing="sm">
+          <HStack spacing="sm">
+            <Box padding="sm" style={{ backgroundColor: theme.colors.primaryLight, flex: 1 }}>
+              <Text>HStack 1</Text>
+            </Box>
+            <Box padding="sm" style={{ backgroundColor: theme.colors.primaryLight, flex: 1 }}>
+              <Text>HStack 2</Text>
+            </Box>
+            <Box padding="sm" style={{ backgroundColor: theme.colors.primaryLight, flex: 1 }}>
+              <Text>HStack 3</Text>
+            </Box>
+          </HStack>
+        </VStack>
+
+        <SectionLabel>Text</SectionLabel>
+        <Text variant="body">Body text</Text>
+        <Text variant="caption">Caption text</Text>
+
+        <SectionLabel>Heading</SectionLabel>
+        <Heading level={1}>Heading 1</Heading>
+        <Heading level={2}>Heading 2</Heading>
+        <Heading level={3}>Heading 3</Heading>
+
+        <SectionLabel>Divider</SectionLabel>
+        <Divider />
+
+        <SectionLabel>PressableScale</SectionLabel>
+        <PressableScale onPress={() => {}}>
+          <Box
+            padding="md"
+            borderRadius="md"
+            style={{ backgroundColor: theme.colors.primaryLight }}
+          >
+            <Text>Tap me (scales on press)</Text>
+          </Box>
+        </PressableScale>
+      </VStack>
     );
   },
 };

@@ -93,7 +93,9 @@ const EntryList: React.FC<{ refreshKey?: number; onRetry?: () => void }> = ({
           <HStack gap="md" align="center">
             <VStack gap="xs" style={{ flex: 1 }}>
               <Text variant="body">{e.title}</Text>
-              <Text variant="caption" color="textSecondary">{e.date}</Text>
+              <Text variant="caption" color="textSecondary">
+                {e.date}
+              </Text>
             </VStack>
             <Text variant="body" style={{ fontVariant: ['tabular-nums'] }}>
               {e.amount.toFixed(2)} zł
@@ -110,12 +112,7 @@ const RefreshableList: React.FC = () => {
   return (
     <VStack gap="md">
       <HStack gap="sm" justify="flex-end">
-        <Button
-          title="Refresh"
-          variant="ghost"
-          size="sm"
-          onPress={() => setKey((k) => k + 1)}
-        />
+        <Button title="Refresh" variant="ghost" size="sm" onPress={() => setKey((k) => k + 1)} />
       </HStack>
       <EntryList refreshKey={key} onRetry={() => setKey((k) => k + 1)} />
     </VStack>

@@ -11,7 +11,6 @@ import { Heading } from '../../src/primitives/Heading';
 import { InputPrompt } from '../../src/components/InputPrompt';
 import { Text } from '../../src/primitives/Text';
 
-
 const meta: Meta = {
   title: 'Patterns/Platform Aware',
   parameters: {
@@ -58,8 +57,8 @@ export const CurrentPlatform: Story = {
             <Badge label={Platform.OS} />
           </HStack>
           <Text variant="caption">
-            Storybook runs via react-native-web, so Platform.OS reports "web".
-            On a real device this would be "ios" or "android".
+            Storybook runs via react-native-web, so Platform.OS reports "web". On a real device this
+            would be "ios" or "android".
           </Text>
         </VStack>
       </Card>
@@ -77,8 +76,8 @@ export const InputPromptDemo: Story = {
       <VStack spacing="md">
         <Heading level={2}>InputPrompt</Heading>
         <Text variant="caption">
-          On iOS this delegates to the native Alert.prompt API. On Android and
-          web it renders a custom modal dialog.
+          On iOS this delegates to the native Alert.prompt API. On Android and web it renders a
+          custom modal dialog.
         </Text>
 
         <Divider />
@@ -88,9 +87,7 @@ export const InputPromptDemo: Story = {
             label={`Current: ${Platform.OS}`}
             variant={Platform.OS === 'web' ? 'info' : 'success'}
           />
-          <Badge
-            label={Platform.OS === 'ios' ? 'Native Alert' : 'Modal Dialog'}
-          />
+          <Badge label={Platform.OS === 'ios' ? 'Native Alert' : 'Modal Dialog'} />
         </HStack>
 
         <Button title="Open InputPrompt" onPress={() => setVisible(true)} />
@@ -124,9 +121,7 @@ export const PlatformPatterns: Story = {
   render: () => (
     <VStack spacing="md">
       <Heading level={2}>Platform Behavior Reference</Heading>
-      <Text variant="caption">
-        How each platform-aware component adapts its behavior.
-      </Text>
+      <Text variant="caption">How each platform-aware component adapts its behavior.</Text>
 
       <Divider />
 

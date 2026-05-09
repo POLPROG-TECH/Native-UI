@@ -39,7 +39,10 @@ const meta: Meta<PressableScaleProps> = {
     },
   },
   argTypes: {
-    scaleTo: { control: { type: 'number', min: 0.8, max: 1, step: 0.01 }, description: 'Scale factor when pressed (0.8-1.0)' },
+    scaleTo: {
+      control: { type: 'number', min: 0.8, max: 1, step: 0.01 },
+      description: 'Scale factor when pressed (0.8-1.0)',
+    },
     disabled: { control: 'boolean' },
     onPress: { action: 'pressed' },
   },
@@ -58,8 +61,22 @@ export const Playground: Story = {
 
     return (
       <PressableScale {...args}>
-        <View style={{ backgroundColor: theme.colors.primaryLight, paddingHorizontal: 24, paddingVertical: 14, borderRadius: 12 }}>
-          <RNText style={{ color: theme.colors.primary, fontSize: 15, fontWeight: '600', textAlign: 'center' }}>
+        <View
+          style={{
+            backgroundColor: theme.colors.primaryLight,
+            paddingHorizontal: 24,
+            paddingVertical: 14,
+            borderRadius: 12,
+          }}
+        >
+          <RNText
+            style={{
+              color: theme.colors.primary,
+              fontSize: 15,
+              fontWeight: '600',
+              textAlign: 'center',
+            }}
+          >
             Press me (scale to {args.scaleTo})
           </RNText>
         </View>
@@ -77,8 +94,17 @@ export const ScaleValues: Story = {
       <HStack gap="md" wrap>
         {[0.9, 0.93, 0.95, 0.97, 0.99].map((scale) => (
           <PressableScale key={scale} scaleTo={scale} onPress={() => {}}>
-            <View style={{ backgroundColor: theme.colors.primaryLight, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 10 }}>
-              <RNText style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>{scale}</RNText>
+            <View
+              style={{
+                backgroundColor: theme.colors.primaryLight,
+                paddingHorizontal: 20,
+                paddingVertical: 12,
+                borderRadius: 10,
+              }}
+            >
+              <RNText style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>
+                {scale}
+              </RNText>
             </View>
           </PressableScale>
         ))}
@@ -95,17 +121,38 @@ export const CustomContent: Story = {
     return (
       <VStack gap="md" style={{ maxWidth: 320 }}>
         <PressableScale onPress={() => {}}>
-          <View style={{ backgroundColor: theme.colors.textInverse, borderRadius: 14, padding: 16, borderWidth: 1, borderColor: theme.colors.border }}>
-            <RNText style={{ fontSize: 16, fontWeight: '600', color: theme.colors.textPrimary }}>Pressable Card</RNText>
+          <View
+            style={{
+              backgroundColor: theme.colors.textInverse,
+              borderRadius: 14,
+              padding: 16,
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+            }}
+          >
+            <RNText style={{ fontSize: 16, fontWeight: '600', color: theme.colors.textPrimary }}>
+              Pressable Card
+            </RNText>
             <RNText style={{ fontSize: 13, color: theme.colors.textSecondary, marginTop: 4 }}>
               Tap this card to see the scale animation. Works with any content.
             </RNText>
           </View>
         </PressableScale>
         <PressableScale onPress={() => {}} disabled>
-          <View style={{ backgroundColor: theme.colors.surfaceSecondary, borderRadius: 14, padding: 16, opacity: 0.5 }}>
-            <RNText style={{ fontSize: 16, fontWeight: '600', color: theme.colors.textPrimary }}>Disabled</RNText>
-            <RNText style={{ fontSize: 13, color: theme.colors.textSecondary, marginTop: 4 }}>This item is not pressable.</RNText>
+          <View
+            style={{
+              backgroundColor: theme.colors.surfaceSecondary,
+              borderRadius: 14,
+              padding: 16,
+              opacity: 0.5,
+            }}
+          >
+            <RNText style={{ fontSize: 16, fontWeight: '600', color: theme.colors.textPrimary }}>
+              Disabled
+            </RNText>
+            <RNText style={{ fontSize: 13, color: theme.colors.textSecondary, marginTop: 4 }}>
+              This item is not pressable.
+            </RNText>
           </View>
         </PressableScale>
       </VStack>
@@ -119,7 +166,7 @@ export const RespectReduceAnimations: Story = {
     docs: {
       description: {
         story: [
-          '`respectReduceAnimations` is `true` by default - when `theme.reduceAnimations` is enabled the spring collapses to an instant no-op so users with reduce-motion preferences don\'t get visible scaling.',
+          "`respectReduceAnimations` is `true` by default - when `theme.reduceAnimations` is enabled the spring collapses to an instant no-op so users with reduce-motion preferences don't get visible scaling.",
           '',
           'Set `respectReduceAnimations={false}` for cases where the scale is critical affordance (e.g. the only visual press feedback on an icon-only control). Prefer the default for everything else.',
         ].join('\n'),
@@ -132,13 +179,21 @@ export const RespectReduceAnimations: Story = {
     return (
       <VStack gap="md" style={{ maxWidth: 360 }}>
         <PressableScale onPress={() => {}}>
-          <View style={{ backgroundColor: theme.colors.primaryLight, padding: 14, borderRadius: 10 }}>
-            <RNText style={{ color: theme.colors.primary, fontWeight: '600' }}>Default (respects reduce-motion)</RNText>
+          <View
+            style={{ backgroundColor: theme.colors.primaryLight, padding: 14, borderRadius: 10 }}
+          >
+            <RNText style={{ color: theme.colors.primary, fontWeight: '600' }}>
+              Default (respects reduce-motion)
+            </RNText>
           </View>
         </PressableScale>
         <PressableScale onPress={() => {}} respectReduceAnimations={false}>
-          <View style={{ backgroundColor: theme.colors.textPrimary, padding: 14, borderRadius: 10 }}>
-            <RNText style={{ color: theme.colors.textInverse, fontWeight: '600' }}>Forced animation (ignores the setting)</RNText>
+          <View
+            style={{ backgroundColor: theme.colors.textPrimary, padding: 14, borderRadius: 10 }}
+          >
+            <RNText style={{ color: theme.colors.textInverse, fontWeight: '600' }}>
+              Forced animation (ignores the setting)
+            </RNText>
           </View>
         </PressableScale>
       </VStack>

@@ -54,16 +54,19 @@ const meta: Meta<BottomSheetProps> = {
 export default meta;
 type Story = StoryObj<BottomSheetProps>;
 
-const SheetDemo = ({ children, dismissable }: { children: React.ReactNode; dismissable?: boolean }) => {
+const SheetDemo = ({
+  children,
+  dismissable,
+}: {
+  children: React.ReactNode;
+  dismissable?: boolean;
+}) => {
   const [visible, setVisible] = useState(false);
 
   return (
     <>
       <Button title="Open Bottom Sheet" onPress={() => setVisible(true)} />
-      <BottomSheet
-        visible={visible}
-        onClose={() => setVisible(false)}
-        dismissable={dismissable}>
+      <BottomSheet visible={visible} onClose={() => setVisible(false)} dismissable={dismissable}>
         {children}
       </BottomSheet>
     </>
@@ -76,7 +79,10 @@ export const Playground: Story = {
     <SheetDemo dismissable={dismissable}>
       <VStack gap="md" style={{ padding: 16 }}>
         <Text variant="h2">Sheet Content</Text>
-        <Text variant="body" color="textSecondary">This content slides up from the bottom. Tap the backdrop{dismissable === false ? ' (disabled here)' : ''} to dismiss.</Text>
+        <Text variant="body" color="textSecondary">
+          This content slides up from the bottom. Tap the backdrop
+          {dismissable === false ? ' (disabled here)' : ''} to dismiss.
+        </Text>
         <Button title="Close" variant="secondary" onPress={fn()} />
       </VStack>
     </SheetDemo>
@@ -88,12 +94,20 @@ export const ActionMenu: Story = {
   render: () => (
     <SheetDemo>
       <VStack style={{ padding: 16 }}>
-        <Text variant="h3" style={{ marginBottom: 8 }}>Actions</Text>
+        <Text variant="h3" style={{ marginBottom: 8 }}>
+          Actions
+        </Text>
         <ListItem title="Edit" icon={<Text variant="body">✏️</Text>} onPress={fn()} />
         <ListItem title="Duplicate" icon={<Text variant="body">📋</Text>} onPress={fn()} />
         <ListItem title="Share" icon={<Text variant="body">📤</Text>} onPress={fn()} />
         <Divider />
-        <ListItem title="Delete" icon={<Text variant="body">🗑️</Text>} destructive onPress={fn()} hideDivider />
+        <ListItem
+          title="Delete"
+          icon={<Text variant="body">🗑️</Text>}
+          destructive
+          onPress={fn()}
+          hideDivider
+        />
       </VStack>
     </SheetDemo>
   ),

@@ -1,11 +1,5 @@
 import { useState, useCallback } from 'react';
-import {
-  StyleSheet,
-  TextInput,
-  View,
-  type TextInputProps,
-  type ViewStyle,
-} from 'react-native';
+import { StyleSheet, TextInput, View, type TextInputProps, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { FieldLabel } from './FieldLabel';
 import { FieldError } from './FieldError';

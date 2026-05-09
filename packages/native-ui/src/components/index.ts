@@ -115,3 +115,9 @@ export type { StatTileProps, StatTileTone, StatTileSize } from './StatTile';
 
 export { Countdown } from './Countdown';
 export type { CountdownProps, CountdownFormat } from './Countdown';
+
+export { DatePickerInput } from './DatePickerInput';
+export type { DatePickerInputProps, DatePickerMode } from './DatePickerInput';
+
+export { DateRangePickerInput } from './DateRangePickerInput';
+export type { DateRangePickerInputProps, DateRangeValue } from './DateRangePickerInput';

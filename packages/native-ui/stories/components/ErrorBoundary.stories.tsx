@@ -79,7 +79,9 @@ export const CustomFallbackNode: Story = {
     <ErrorBoundary
       fallback={
         <Box p="md" bg="surface" radius="md">
-          <Text variant="body" color="error">Widget unavailable right now.</Text>
+          <Text variant="body" color="error">
+            Widget unavailable right now.
+          </Text>
         </Box>
       }
     >
@@ -95,7 +97,9 @@ export const RenderFallback: Story = {
       renderFallback={(error, reset) => (
         <Box p="md" bg="surface" radius="md">
           <VStack gap="sm">
-            <Text variant="label" color="error">Oops: {error.message}</Text>
+            <Text variant="label" color="error">
+              Oops: {error.message}
+            </Text>
             <Button title="Reset and try again" variant="outline" onPress={reset} />
           </VStack>
         </Box>
@@ -132,10 +136,9 @@ export const ResetKeys: Story = {
   },
 };
 
-const WrappedWidget = withErrorBoundary(
-  () => <Crasher label="HOC-wrapped widget - crash me" />,
-  { fallbackMessage: 'Widget crashed - pulling in the fallback.' },
-);
+const WrappedWidget = withErrorBoundary(() => <Crasher label="HOC-wrapped widget - crash me" />, {
+  fallbackMessage: 'Widget crashed - pulling in the fallback.',
+});
 
 export const HOCPattern: Story = {
   name: 'withErrorBoundary HOC',

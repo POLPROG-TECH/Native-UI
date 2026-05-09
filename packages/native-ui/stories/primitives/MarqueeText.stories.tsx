@@ -89,13 +89,17 @@ export const FitsVsOverflows: Story = {
   render: () => (
     <VStack gap="md">
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">Fits - stays static</Text>
+        <Text variant="caption" color="textTertiary">
+          Fits - stays static
+        </Text>
         <Frame>
           <MarqueeText text="Short title" style={{ fontSize: 15 }} />
         </Frame>
       </VStack>
       <VStack gap="xs">
-        <Text variant="caption" color="textTertiary">Overflows - scrolls automatically</Text>
+        <Text variant="caption" color="textTertiary">
+          Overflows - scrolls automatically
+        </Text>
         <Frame>
           <MarqueeText
             text="This title definitely does not fit inside the container and will start scrolling"
@@ -113,7 +117,9 @@ export const SpeedVariants: Story = {
     <VStack gap="md">
       {[20, 40, 80].map((speed) => (
         <VStack key={speed} gap="xs">
-          <Text variant="caption" color="textTertiary">speed: {speed} px/s</Text>
+          <Text variant="caption" color="textTertiary">
+            speed: {speed} px/s
+          </Text>
           <Frame width={240}>
             <MarqueeText
               text="The quick brown fox jumps over the lazy dog many, many times"

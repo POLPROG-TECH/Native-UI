@@ -45,9 +45,7 @@ const meta: Meta<SearchBarProps> = {
 export default meta;
 type Story = StoryObj<SearchBarProps>;
 
-const InteractiveSearch = (
-  props: Partial<SearchBarProps> & { spy?: (t: string) => void } = {},
-) => {
+const InteractiveSearch = (props: Partial<SearchBarProps> & { spy?: (t: string) => void } = {}) => {
   const { spy, ...rest } = props;
   const [value, setValue] = useState('');
 
@@ -55,11 +53,16 @@ const InteractiveSearch = (
     <VStack gap="sm" style={{ maxWidth: 400 }}>
       <SearchBar
         value={value}
-        onChangeText={(text) => { setValue(text); spy?.(text); }}
+        onChangeText={(text) => {
+          setValue(text);
+          spy?.(text);
+        }}
         placeholder="Search entries..."
         {...rest}
       />
-      <Text variant="caption" color="textTertiary">Current value: "{value}"</Text>
+      <Text variant="caption" color="textTertiary">
+        Current value: "{value}"
+      </Text>
     </VStack>
   );
 };
@@ -116,11 +119,15 @@ export const CustomDebounce: Story = {
   render: () => (
     <VStack gap="lg">
       <VStack gap="xs">
-        <Text variant="labelSmall" color="textTertiary">No debounce (0ms)</Text>
+        <Text variant="labelSmall" color="textTertiary">
+          No debounce (0ms)
+        </Text>
         <InteractiveSearch debounceMs={0} placeholder="Instant search..." />
       </VStack>
       <VStack gap="xs">
-        <Text variant="labelSmall" color="textTertiary">Slow debounce (800ms)</Text>
+        <Text variant="labelSmall" color="textTertiary">
+          Slow debounce (800ms)
+        </Text>
         <InteractiveSearch debounceMs={800} placeholder="Slow search..." />
       </VStack>
     </VStack>
@@ -134,8 +141,17 @@ export const PrefilledSearch: Story = {
 
     return (
       <VStack gap="sm" style={{ maxWidth: 400 }}>
-        <SearchBar value={value} onChangeText={(text) => { setValue(text); fn()(text); }} placeholder="Search..." />
-        <Text variant="caption" color="textTertiary">Shows clear button when text is present</Text>
+        <SearchBar
+          value={value}
+          onChangeText={(text) => {
+            setValue(text);
+            fn()(text);
+          }}
+          placeholder="Search..."
+        />
+        <Text variant="caption" color="textTertiary">
+          Shows clear button when text is present
+        </Text>
       </VStack>
     );
   },

@@ -52,7 +52,11 @@ export const Playground: Story = {
 export const WithFooter: Story = {
   name: 'With Footer',
   render: () => (
-    <ListSection title="Data" footer="Exported data will be saved as CSV to your device." style={{ maxWidth: 400 }}>
+    <ListSection
+      title="Data"
+      footer="Exported data will be saved as CSV to your device."
+      style={{ maxWidth: 400 }}
+    >
       <ListItem title="Export Data" onPress={fn()} />
       <ListItem title="Import Data" onPress={fn()} hideDivider />
     </ListSection>
