@@ -1,11 +1,39 @@
 # @polprog/native-ui
 
+## 1.5.0
+
+### Minor Changes
+
+- cfe95b8: Code-quality audit fixes across the component library.
+
+  **Accessibility**
+  - `Input` / `TextArea` now append their error message to the accessible label and `TextArea` exposes a `disabled` accessibility state.
+  - `Switch` makes the entire label/subtitle row tappable and exposes the subtitle in the accessible name; the inner native switch is hidden from assistive tech when wrapped.
+  - `Modal` and `BottomSheet` backdrops are now exposed as a dismiss button (or hidden when non-dismissable), and decorative handles/glyphs in `BottomSheet`, `Select`, `ListItem` and `Checkbox` are hidden from screen readers.
+
+  **API**
+  - `Input` and `TextArea` now forward refs to the underlying `TextInput`.
+  - `Radio` accepts a `style` prop and triggers light haptics on press, matching `Checkbox`/`Switch`.
+  - `Box` now extends `ViewProps`, fixing the previously mistyped `accessibilityRole` and untyped passthrough props.
+  - The `selectedValue` / `onValueChange` aliases on `Select` are marked `@deprecated`.
+
+  **Performance**
+  - `Button`, `IconButton`, `Switch`, `Checkbox` and `Radio` are wrapped in `React.memo`, with memoized styles and a shared `useDebouncedPress` hook for press handling.
+  - `Select` uses `useWindowDimensions` and memoized callbacks instead of inline closures.
+
+  **Types**
+  - `elevation` tokens are now strongly typed via the exported `Elevation` type, removing `as ViewStyle` casts throughout the library.
+
+  A new public `useDebouncedPress` hook is exported for consumers.
+
+  **Docs**
+  - The Storybook dashboard now documents PhotoToPuzzle, the first production app built on Native-UI, with a production-usage card linking to https://polprog.pl/apps/PhotoToPuzzle/.
+
 ## 1.4.0
 
 ### Minor Changes
 
 - 6ebdff9: feat(DatePickerInput): Full-featured cross-platform date/time picker
-
   - Added `mode` prop supporting `date`, `time`, and `datetime` modes
   - Added `disabled`, `placeholder`, `testID`, `icon` props
   - Implemented controlled open/close via `isOpen` / `onOpen` / `onClose`
@@ -23,7 +51,6 @@
 - 223a23c: Code quality sweep: performance, accessibility, and DRY improvements across 10 components.
 
   **Performance**
-
   - `ListItem` - wrapped in `React.memo`
   - `Chip` - `handlePress` stabilised with `useCallback`.
   - `SettingsRow` / `SettingsSwitchRow` - merged `iconColorMap` memoised with `useMemo`.
@@ -31,13 +58,11 @@
   - `Countdown` - `onExpire` moved to a ref to avoid unnecessary effect re-runs.
 
   **Accessibility**
-
   - `Modal` - replaced incorrect `accessibilityRole="alert"` with `accessibilityViewIsModal`.
   - `BottomSheet` / `Select` sheet - replaced hardcoded `paddingBottom: 34` with `useSafeAreaInsets().bottom`.
   - `Select` - replaced hardcoded `maxHeight: 320` with `40%` of window height for better scaling with large text sizes.
 
   **DRY / Maintainability**
-
   - Extracted shared `FieldLabel` and `FieldError` components; refactored `Input`, `TextArea`, and `Select` to use them.
 
 ## 1.3.0
@@ -47,7 +72,6 @@
 - 58820f9: Component bug fixes, single-responsibility refactors, and a test-coverage push past 90%.
 
   **Fixes**
-
   - `SearchBar` - honour parent-driven resets even when the debounce timer is in flight.
   - `BottomTabBar` - hide the badge for `0`, negative, and empty-string counts.
   - `Countdown` - clear the interval the moment the counter expires instead of leaking timers.
@@ -56,11 +80,9 @@
   - `ErrorBoundary` - treat `resetKeys` transitioning between defined and `undefined` (and back) as a reset trigger.
 
   **Refactor**
-
   - Extracted helpers, hooks, and subcomponents across `SearchBar`, `BottomTabBar`, `Countdown`, `BottomSheet`, `Toast`, and `ErrorBoundary` for clearer single-responsibility boundaries.
 
   **Tests & infrastructure**
-
   - Added suites for `Avatar`, `Skeleton`, `ScreenContainer`, `Modal`, `BottomSheet`, `ConfettiOverlay`, `Select`, `InputPrompt`, `Divider`, `Heading`, `SectionLabel`, `PaginationDots`, `MarqueeText`, `PressableScale`, responsive tokens, `useResponsiveSpacing`, and `ThemeProvider`.
   - Centralised React Native and Reanimated jest mocks, injected `__DEV__` globally.
 
@@ -71,19 +93,16 @@
 - c7ac7bb: Add new components and full unit-test coverage.
 
   **New components**
-
   - `BottomTabBar` - iOS-style bottom tab rail with badges, safe-area insets, accessibility roles (`tab`/`tablist`) and `accessibilityState.selected`.
   - `Countdown` - self-ticking countdown with `hms`/`hm`/`ms`/`auto` format variants, `expiredLabel`, `onExpire` callback and `renderLabel` transform.
   - `StatTile` - compact metric tile with `label` / `value` / optional `caption`, supporting tones (`neutral`/`primary`/`success`/`warning`/`error`), sizes (`sm`/`md`/`lg`), `mono` digits and `align`.
 
   **Tests & infrastructure**
-
   - Added Jest + React Testing Library coverage for every component that can render in jsdom (Badge, BottomTabBar, Button, Card, Checkbox, Chip, Countdown, EmptyState, ErrorBoundary, HeaderBar, IconButton, Input, ListHeader, ListItem, ListSection, ListSwitchItem, ProgressBar, Radio, SearchBar, Section, SettingsRow, Spinner, StatTile, Switch, TextArea) plus export-shape tests for native-only components (Avatar, BottomSheet, ConfettiOverlay, InputPrompt, Modal, ScreenContainer, Select, Skeleton, Toast).
   - Raised the Jest coverage threshold to 50% across branches, functions, lines and statements (previously 25% for branches/functions).
   - Extended the `react-native` jsdom mock to expose `aria-label` / `aria-selected` / `aria-disabled` on `TouchableOpacity` and `Pressable`, and to suppress `onValueChange` on a disabled `Switch`.
 
   **Storybook**
-
   - Added stories for `BottomTabBar`, `Countdown` and `StatTile` with play-tests for interaction flows.
   - Fixed play-tests for `BottomTabBar` (use `role="tab"`) and `IconButton` (honour the 300 ms press debounce, allow `pointer-events: none` clicks on the disabled-state assertion).
   - Enabled MSW integration in the Storybook preview.
