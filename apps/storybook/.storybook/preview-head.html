@@ -11,7 +11,9 @@
    */
   .sb-show-main .docs-story,
   .sb-show-main .docs-story > div,
-  .sb-show-main .sbdocs-preview { overflow: visible !important; }
+  .sb-show-main .sbdocs-preview {
+    overflow: visible !important;
+  }
 
   /* H2 vs H3 hierarchy in Docs pages */
   .sbdocs.sbdocs-content h2 {
@@ -22,7 +24,7 @@
     margin-top: 1.5rem;
     margin-left: 0;
     padding-left: 12px;
-    border-left: 3px solid #E5E7EB;
+    border-left: 3px solid #e5e7eb;
   }
   .sbdocs.sbdocs-content h3 + p,
   .sbdocs.sbdocs-content h3 + ul,
@@ -35,20 +37,20 @@
   /* Tame <hr> (markdown "---" separators) */
   .sbdocs.sbdocs-content hr {
     border: 0;
-    border-top: 1px solid #F3F4F6;
+    border-top: 1px solid #f3f4f6;
     margin: 2rem 0;
   }
 
   /* Argstable: white text for disabled controls so it stays legible
      against Storybook's blue "Set" / "Disabled" pill backgrounds. */
   .docblock-argstable-body .control-disabled,
-  .docblock-argstable-body [class*="control-disabled"],
+  .docblock-argstable-body [class*='control-disabled'],
   .docblock-argstable-body button[disabled] {
-    color: #FFFFFF !important;
+    color: #ffffff !important;
   }
   .docblock-argstable-body .control-disabled *,
-  .docblock-argstable-body [class*="control-disabled"] *,
+  .docblock-argstable-body [class*='control-disabled'] *,
   .docblock-argstable-body button[disabled] * {
-    color: #FFFFFF !important;
+    color: #ffffff !important;
   }
 </style>

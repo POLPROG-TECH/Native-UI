@@ -1,50 +1,35 @@
+import { readdirSync } from 'node:fs';
 import { defineConfig } from 'tsup';
+
+/**
+ * Auto-generate a per-file entry map for tree-shakeable subpath imports
+ * (e.g. `@polprog/native-ui/components/Button`). Generating from disk avoids
+ * the drift that a hand-maintained list inevitably accumulates when new
+ * components are added.
+ */
+function entriesFrom(dir: 'components' | 'primitives'): Record<string, string> {
+  const entries: Record<string, string> = {};
+
+  for (const file of readdirSync(`src/${dir}`)) {
+    if (!file.endsWith('.tsx')) continue;
+    if (/\.(stories|test)\.tsx$/.test(file)) continue;
+    if (file === 'index.tsx') continue;
+
+    const name = file.replace(/\.tsx$/, '');
+
+    entries[`${dir}/${name}`] = `src/${dir}/${file}`;
+  }
+
+  return entries;
+}
 
 export default defineConfig({
   entry: {
     index: 'src/index.ts',
-    // Per-component entries for tree-shaking
-    'primitives/Box': 'src/primitives/Box.tsx',
-    'primitives/Stack': 'src/primitives/Stack.tsx',
-    'primitives/Text': 'src/primitives/Text.tsx',
-    'primitives/Heading': 'src/primitives/Heading.tsx',
-    'primitives/Divider': 'src/primitives/Divider.tsx',
-    'primitives/PressableScale': 'src/primitives/PressableScale.tsx',
-    'components/Button': 'src/components/Button.tsx',
-    'components/IconButton': 'src/components/IconButton.tsx',
-    'components/Card': 'src/components/Card.tsx',
-    'components/Input': 'src/components/Input.tsx',
-    'components/TextArea': 'src/components/TextArea.tsx',
-    'components/Select': 'src/components/Select.tsx',
-    'components/Checkbox': 'src/components/Checkbox.tsx',
-    'components/Switch': 'src/components/Switch.tsx',
-    'components/Radio': 'src/components/Radio.tsx',
-    'components/Chip': 'src/components/Chip.tsx',
-    'components/Badge': 'src/components/Badge.tsx',
-    'components/Avatar': 'src/components/Avatar.tsx',
-    'components/HeaderBar': 'src/components/HeaderBar.tsx',
-    'components/Modal': 'src/components/Modal.tsx',
-    'components/BottomSheet': 'src/components/BottomSheet.tsx',
-    'components/Toast': 'src/components/Toast.tsx',
-    'components/ProgressBar': 'src/components/ProgressBar.tsx',
-    'components/Skeleton': 'src/components/Skeleton.tsx',
-    'components/SearchBar': 'src/components/SearchBar.tsx',
-    'components/EmptyState': 'src/components/EmptyState.tsx',
-    'components/Spinner': 'src/components/Spinner.tsx',
-    'components/ListItem': 'src/components/ListItem.tsx',
-    'components/ListSection': 'src/components/ListSection.tsx',
-    'components/ListSwitchItem': 'src/components/ListSwitchItem.tsx',
-    'components/ListHeader': 'src/components/ListHeader.tsx',
-    'components/Section': 'src/components/Section.tsx',
-    'components/ScreenContainer': 'src/components/ScreenContainer.tsx',
-    'components/SettingsRow': 'src/components/SettingsRow.tsx',
-    'components/InputPrompt': 'src/components/InputPrompt.tsx',
-    'components/ErrorBoundary': 'src/components/ErrorBoundary.tsx',
-    'components/ConfettiOverlay': 'src/components/ConfettiOverlay.tsx',
-    'components/StatTile': 'src/components/StatTile.tsx',
-    'components/Countdown': 'src/components/Countdown.tsx',
     'tokens/index': 'src/tokens/index.ts',
     'theme/index': 'src/theme/index.ts',
+    ...entriesFrom('primitives'),
+    ...entriesFrom('components'),
   },
   format: ['esm', 'cjs'],
   dts: true,
@@ -53,7 +38,13 @@ export default defineConfig({
   clean: true,
   outDir: 'dist',
   tsconfig: 'tsconfig.build.json',
-  external: ['react', 'react-native', 'react-native-reanimated', 'react-native-safe-area-context'],
+  external: [
+    'react',
+    'react-native',
+    'react-native-reanimated',
+    'react-native-safe-area-context',
+    '@react-native-community/datetimepicker',
+  ],
   esbuildOptions(options) {
     options.jsx = 'automatic';
   },

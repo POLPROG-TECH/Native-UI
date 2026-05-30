@@ -97,11 +97,11 @@
     "node": ">=20"
   },
   "peerDependencies": {
+    "@react-native-community/datetimepicker": ">=7.0.0",
     "react": ">=18.0.0",
     "react-native": ">=0.72.0",
     "react-native-reanimated": ">=3.0.0",
-    "react-native-safe-area-context": ">=4.0.0",
-    "@react-native-community/datetimepicker": ">=7.0.0"
+    "react-native-safe-area-context": ">=4.0.0"
   },
   "peerDependenciesMeta": {
     "react-native-reanimated": {
@@ -126,6 +126,7 @@
     "@testing-library/react": "^16.3.2",
     "@testing-library/react-native": "^13.3.3",
     "@types/jest": "^30.0.0",
+    "@types/node": "^25.9.1",
     "@types/react": "^19.2.15",
     "@typescript-eslint/eslint-plugin": "^8.60.0",
     "@typescript-eslint/parser": "^8.60.0",

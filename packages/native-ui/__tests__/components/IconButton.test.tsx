@@ -8,14 +8,12 @@ function renderWithTheme(ui: React.ReactElement) {
 }
 
 describe('IconButton', () => {
-  it('should be exported as a function component', () => {
+  it('should be exported as a memoized React component', () => {
     // GIVEN the IconButton export from the components module
 
     // WHEN its runtime type is inspected
-    const actualType = typeof IconButton;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
+    // THEN it is a React.memo exotic component
+    expect((IconButton as unknown as { $$typeof: symbol }).$$typeof).toBe(Symbol.for('react.memo'));
   });
 
   it('should render its icon child when mounted', () => {

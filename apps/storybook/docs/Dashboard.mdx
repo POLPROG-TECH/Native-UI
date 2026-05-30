@@ -114,13 +114,37 @@ import { Meta } from '@storybook/addon-docs/blocks';
 <div className="nd-section">Consumer adoption</div>
 
 <div className="nd-panel">
-  <div className="nd-panel-head"><h3>Apps consuming native-ui</h3><span className="tag">1 tracked</span></div>
+  <div className="nd-panel-head"><h3>Apps consuming native-ui</h3><span className="tag">2 tracked</span></div>
   <div className="nd-adopt">
+    <div className="nd-adopt-row">
+      <div><div className="name">PhotoToPuzzle</div><span className="sub">Production app - privacy-first photo puzzle game for iOS, Android and tablets, built end to end on native-ui</span></div>
+      <div className="nd-adopt-bar"><span style={{ width: '100%' }} /></div>
+      <div className="pct">Live</div>
+    </div>
     <div className="nd-adopt-row">
       <div><div className="name">CostBoard</div><span className="sub">Grade A - native-ui primitives replace 94% of local components</span></div>
       <div className="nd-adopt-bar"><span style={{ width: '94%' }} /></div>
       <div className="pct">94%</div>
     </div>
+  </div>
+</div>
+
+<div className="nd-section">Used in production</div>
+
+<div className="nd-panel">
+  <div className="nd-panel-head"><h3>PhotoToPuzzle</h3><span className="tag">Production app</span></div>
+  <div className="nd-adopt">
+    <p style={{ margin: '0 0 14px', fontSize: '13.5px', lineHeight: 1.6, color: '#374151' }}>
+      Native-UI is already used in production by <strong>PhotoToPuzzle</strong>, a privacy-first photo puzzle game for iOS, Android, iPad, and Android tablets. The app uses Native-UI across its interface - from buttons, cards and modals to theme tokens, spacing and adaptive layouts. PhotoToPuzzle runs fully offline, keeps photos on-device, and shows how the library supports real mobile products across phones and tablets.
+    </p>
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
+      <span className="nd-chip ok">Production app</span>
+      <span className="nd-chip info">iOS + Android</span>
+      <span className="nd-chip info">Phone + Tablet</span>
+      <span className="nd-chip ok">Offline-first</span>
+      <span className="nd-chip info">Built with Native-UI</span>
+    </div>
+    <a href="https://polprog.pl/apps/PhotoToPuzzle/" target="_blank" rel="noopener noreferrer">View PhotoToPuzzle on POLPROG →</a>
   </div>
 </div>
 

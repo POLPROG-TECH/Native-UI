@@ -1,9 +1,12 @@
 // Minimal react-native mock for unit testing in jsdom environment
 const React = require('react');
 
+// `OS` is intentionally mutable so suites can exercise platform-specific
+// branches by temporarily setting `Platform.OS = 'android'` (restore in a
+// `finally`/`afterEach`). `select` resolves against the *current* OS.
 const Platform = {
   OS: 'ios',
-  select: (obj) => obj.ios ?? obj.default ?? {},
+  select: (obj) => obj[Platform.OS] ?? obj.default ?? obj.ios ?? {},
 };
 
 const StyleSheet = {
@@ -223,13 +226,38 @@ const ActivityIndicator = React.forwardRef(function ActivityIndicator(
 });
 
 const SwitchComponent = React.forwardRef(function Switch(
-  { value, onValueChange, disabled, ...props },
+  {
+    value,
+    onValueChange,
+    disabled,
+    accessibilityRole,
+    accessibilityState,
+    accessibilityLabel,
+    accessibilityElementsHidden,
+    importantForAccessibility,
+    accessible,
+    trackColor: _trackColor,
+    thumbColor: _thumbColor,
+    ios_backgroundColor: _iosBg,
+    style: _style,
+    ...props
+  },
   ref,
 ) {
+  // Mirror RN: a control marked inaccessible (or hidden from the a11y tree) is
+  // not exposed with its switch role to assistive tech / queries.
+  const hidden =
+    accessible === false ||
+    accessibilityElementsHidden === true ||
+    importantForAccessibility === 'no-hide-descendants';
   return React.createElement('input', {
     ref,
     type: 'checkbox',
-    role: 'switch',
+    role: hidden ? undefined : accessibilityRole || 'switch',
+    'aria-hidden': hidden ? true : undefined,
+    'aria-label': accessibilityLabel,
+    'aria-checked': accessibilityState?.checked,
+    'aria-disabled': accessibilityState?.disabled,
     checked: value,
     disabled,
     onChange: !disabled && onValueChange ? () => onValueChange(!value) : undefined,

@@ -1,6 +1,7 @@
-import { useState, useCallback } from 'react';
+import { forwardRef } from 'react';
 import { StyleSheet, TextInput, View, type TextInputProps, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
+import { useTextField } from '../hooks/useTextField';
 import { FieldLabel } from './FieldLabel';
 import { FieldError } from './FieldError';
 
@@ -20,7 +21,9 @@ export interface InputProps extends TextInputProps {
 
 /**
  * Themed text input with label, error state, and animated focus border.
- * Wraps React Native `TextInput` and forwards all standard props.
+ * Wraps React Native `TextInput` and forwards all standard props. The `ref` is
+ * forwarded to the underlying `TextInput`, so consumers can call `.focus()` /
+ * `.blur()` imperatively.
  *
  * @example
  * ```tsx
@@ -29,48 +32,24 @@ export interface InputProps extends TextInputProps {
  * <Input label="Bio" multiline numberOfLines={4} />
  * ```
  */
-export function Input({
-  label,
-  error,
-  required,
-  containerStyle,
-  style,
-  onFocus,
-  onBlur,
-  ...props
-}: InputProps) {
+export const Input = forwardRef<TextInput, InputProps>(function Input(
+  { label, error, required, containerStyle, style, onFocus, onBlur, ...props },
+  ref,
+) {
   const theme = useTheme();
-  const [isFocused, setIsFocused] = useState(false);
+  const { handleFocus, handleBlur, borderColor, inputTypography } = useTextField({
+    error,
+    onFocus,
+    onBlur,
+  });
 
-  const handleFocus = useCallback(
-    (e: Parameters<NonNullable<TextInputProps['onFocus']>>[0]) => {
-      setIsFocused(true);
-      onFocus?.(e);
-    },
-    [onFocus],
-  );
-
-  const handleBlur = useCallback(
-    (e: Parameters<NonNullable<TextInputProps['onBlur']>>[0]) => {
-      setIsFocused(false);
-      onBlur?.(e);
-    },
-    [onBlur],
-  );
-
-  const borderColor = error
-    ? theme.colors.error
-    : isFocused
-    ? theme.colors.primary
-    : theme.colors.border;
-
-  // Strip lineHeight - it causes uneven placeholder alignment on TextInput
-  const { lineHeight: _lh, ...inputTypography } = theme.typography.body;
+  const accessibilityLabel = [label, error].filter(Boolean).join(', ') || undefined;
 
   return (
     <View style={[styles.container, containerStyle]}>
       {label && <FieldLabel label={label} required={required} />}
       <TextInput
+        ref={ref}
         style={[
           styles.input,
           inputTypography,
@@ -84,7 +63,7 @@ export function Input({
           style,
         ]}
         placeholderTextColor={theme.colors.textTertiary}
-        accessibilityLabel={label}
+        accessibilityLabel={accessibilityLabel}
         accessibilityState={{ disabled: props.editable === false }}
         onFocus={handleFocus}
         onBlur={handleBlur}
@@ -93,7 +72,7 @@ export function Input({
       {error && <FieldError error={error} />}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

@@ -8,14 +8,12 @@ function renderWithTheme(ui: React.ReactElement) {
 }
 
 describe('Button', () => {
-  it('should be exported as a function component', () => {
+  it('should be exported as a memoized React component', () => {
     // GIVEN the Button export from the components module
 
     // WHEN its runtime type is inspected
-    const actualType = typeof Button;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
+    // THEN it is a React.memo exotic component
+    expect((Button as unknown as { $$typeof: symbol }).$$typeof).toBe(Symbol.for('react.memo'));
   });
 
   it('should render without crashing when mounted with title and onPress', () => {

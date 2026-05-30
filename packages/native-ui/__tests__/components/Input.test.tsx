@@ -8,14 +8,14 @@ function renderWithTheme(ui: React.ReactElement) {
 }
 
 describe('Input', () => {
-  it('should be exported as a function component', () => {
+  it('should be exported as a forwardRef React component', () => {
     // GIVEN the Input export from the components module
 
     // WHEN its runtime type is inspected
-    const actualType = typeof Input;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
+    // THEN it is a React.forwardRef exotic component
+    expect((Input as unknown as { $$typeof: symbol }).$$typeof).toBe(
+      Symbol.for('react.forward_ref'),
+    );
   });
 
   it('should render the label when a label prop is provided', () => {

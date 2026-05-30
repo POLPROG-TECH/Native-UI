@@ -8,4 +8,8 @@ coverage
 # MDX docs use hand-tuned JSX/SVG formatting where whitespace affects rendering
 # (e.g. <div>native<span>-</span>ui</div>). Prettier reformatting breaks the
 # Introduction hero layout - keep these files out of auto-format.
-apps/storybook/docs/*.mdx
+apps/storybook/docs/**/*.mdx
+
+# Vendored files - not authored by hand.
+apps/storybook/public/mockServiceWorker.js
+**/CHANGELOG.md

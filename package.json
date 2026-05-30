@@ -30,7 +30,8 @@
     "storybook": "npm run storybook --workspace=@polprog/storybook",
     "build-storybook": "npm run build --workspace=@polprog/storybook",
     "stories:check": "npm run stories:check --workspace=@polprog/native-ui",
-    "contract-test": "bash scripts/contract-test.sh",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "changeset publish",
@@ -40,13 +41,16 @@
     "packages/native-ui/src/**/*.{ts,tsx}": [
       "bash -c 'cd packages/native-ui && npx eslint --max-warnings 0'"
     ],
-    "packages/native-ui/**/*.{ts,tsx,js,json,md}": []
+    "**/*.{ts,tsx,js,mjs,json,md}": [
+      "prettier --write"
+    ]
   },
   "devDependencies": {
     "@changesets/cli": "^2.30.0",
     "@storybook/react-vite": "^10.4.1",
     "husky": "^9.1.7",
-    "lint-staged": "^17.0.5"
+    "lint-staged": "^17.0.5",
+    "prettier": "^3.4.2"
   },
   "msw": {
     "workerDirectory": [

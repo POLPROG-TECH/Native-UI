@@ -27,16 +27,24 @@ jobs:
           cache: npm
           registry-url: https://registry.npmjs.org
       - run: npm ci
+      - name: Typecheck
+        run: npm run typecheck --workspace=@polprog/native-ui
+      - name: Lint
+        run: npm run lint --workspace=@polprog/native-ui
+      - name: Format check
+        run: npm run format:check
+      - name: Test
+        run: npm run test --workspace=@polprog/native-ui
       - run: npm run build --workspace=@polprog/native-ui
       - name: Create Release PR or publish to npm
         uses: changesets/action@v1
         with:
           publish: npm run release
           version: npm run version
-          commit: "chore(release): version packages"
-          title: "chore(release): version packages"
+          commit: 'chore(release): version packages'
+          title: 'chore(release): version packages'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: "true"
+          NPM_CONFIG_PROVENANCE: 'true'

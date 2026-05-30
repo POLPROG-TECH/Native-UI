@@ -75,18 +75,18 @@ export function Chip({
   const bg = !selected
     ? theme.colors.surfaceSecondary
     : variant === 'soft'
-    ? theme.colors.primaryLight
-    : variant === 'outline'
-    ? 'transparent'
-    : theme.colors.primary;
+      ? theme.colors.primaryLight
+      : variant === 'outline'
+        ? 'transparent'
+        : theme.colors.primary;
 
   const borderColor = variant === 'outline' && selected ? theme.colors.primary : 'transparent';
 
   const labelColor = !selected
     ? theme.colors.textPrimary
     : variant === 'soft' || variant === 'outline'
-    ? theme.colors.primary
-    : getContrastText(theme.colors.primary);
+      ? theme.colors.primary
+      : getContrastText(theme.colors.primary);
 
   return (
     <TouchableOpacity

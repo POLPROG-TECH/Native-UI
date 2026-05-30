@@ -8,14 +8,12 @@ function renderWithTheme(ui: React.ReactElement) {
 }
 
 describe('Radio', () => {
-  it('should be exported as a function component', () => {
+  it('should be exported as a memoized React component', () => {
     // GIVEN the Radio export from the components module
 
     // WHEN its runtime type is inspected
-    const actualType = typeof Radio;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
+    // THEN it is a React.memo exotic component
+    expect((Radio as unknown as { $$typeof: symbol }).$$typeof).toBe(Symbol.for('react.memo'));
   });
 
   it('should render only the indicator when no onPress and no label are provided', () => {

@@ -1,6 +1,7 @@
-import { useState, useCallback } from 'react';
+import { forwardRef } from 'react';
 import { StyleSheet, TextInput, View, type TextInputProps, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
+import { useTextField } from '../hooks/useTextField';
 import { FieldLabel } from './FieldLabel';
 import { FieldError } from './FieldError';
 
@@ -15,50 +16,28 @@ export interface TextAreaProps extends Omit<TextInputProps, 'multiline'> {
 
 /**
  * Multiline text input (textarea equivalent) with label and error support.
+ * The `ref` is forwarded to the underlying `TextInput` so consumers can call
+ * `.focus()` / `.blur()` imperatively.
  */
-export function TextArea({
-  label,
-  error,
-  required,
-  lines = 4,
-  containerStyle,
-  style,
-  onFocus,
-  onBlur,
-  ...props
-}: TextAreaProps) {
+export const TextArea = forwardRef<TextInput, TextAreaProps>(function TextArea(
+  { label, error, required, lines = 4, containerStyle, style, onFocus, onBlur, ...props },
+  ref,
+) {
   const theme = useTheme();
-  const [isFocused, setIsFocused] = useState(false);
+  const { handleFocus, handleBlur, borderColor, inputTypography } = useTextField({
+    error,
+    onFocus,
+    onBlur,
+  });
 
-  const handleFocus = useCallback(
-    (e: Parameters<NonNullable<TextInputProps['onFocus']>>[0]) => {
-      setIsFocused(true);
-      onFocus?.(e);
-    },
-    [onFocus],
-  );
-
-  const handleBlur = useCallback(
-    (e: Parameters<NonNullable<TextInputProps['onBlur']>>[0]) => {
-      setIsFocused(false);
-      onBlur?.(e);
-    },
-    [onBlur],
-  );
-
-  const borderColor = error
-    ? theme.colors.error
-    : isFocused
-    ? theme.colors.primary
-    : theme.colors.border;
-
-  const { lineHeight: _lh, ...inputTypography } = theme.typography.body;
+  const accessibilityLabel = [label, error].filter(Boolean).join(', ') || undefined;
   const minHeight = lines * (theme.typography.body.lineHeight ?? 22);
 
   return (
     <View style={[styles.container, containerStyle]}>
       {label && <FieldLabel label={label} required={required} />}
       <TextInput
+        ref={ref}
         multiline
         textAlignVertical="top"
         style={[
@@ -74,7 +53,8 @@ export function TextArea({
           style,
         ]}
         placeholderTextColor={theme.colors.textTertiary}
-        accessibilityLabel={label}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityState={{ disabled: props.editable === false }}
         onFocus={handleFocus}
         onBlur={handleBlur}
         {...props}
@@ -82,7 +62,7 @@ export function TextArea({
       {error && <FieldError error={error} />}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

@@ -178,7 +178,13 @@ export const ListItem = React.memo(function ListItem({
         )}
         {resolvedTrailing}
         {shouldShowChevron &&
-          (renderChevron ? renderChevron() : <Text style={chevronStyle}>›</Text>)}
+          (renderChevron ? (
+            renderChevron()
+          ) : (
+            <Text style={chevronStyle} importantForAccessibility="no" accessibilityElementsHidden>
+              ›
+            </Text>
+          ))}
       </View>
     </View>
   );

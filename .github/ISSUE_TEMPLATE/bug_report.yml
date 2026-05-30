@@ -10,14 +10,14 @@ body:
     id: version
     attributes:
       label: Library version
-      placeholder: "1.0.0"
+      placeholder: '1.0.0'
     validations:
       required: true
   - type: input
     id: rn-version
     attributes:
       label: React Native version
-      placeholder: "0.79.2"
+      placeholder: '0.79.2'
     validations:
       required: true
   - type: dropdown

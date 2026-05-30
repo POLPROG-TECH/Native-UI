@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { PressableScale } from '../primitives/PressableScale';
 import { getHaptics } from '../utils/haptics';
+import { useDebouncedPress } from '../hooks/useDebouncedPress';
 
 export type IconButtonVariant = 'default' | 'primary' | 'ghost' | 'danger';
 export type IconButtonSize = 'sm' | 'md' | 'lg';
@@ -30,7 +31,7 @@ const SIZE_MAP = {
 /**
  * Icon-only pressable button with circular touch target.
  */
-export function IconButton({
+export const IconButton = React.memo(function IconButton({
   icon,
   onPress,
   accessibilityLabel,
@@ -41,64 +42,48 @@ export function IconButton({
   testID,
 }: IconButtonProps) {
   const theme = useTheme();
-  const pressedRef = useRef(false);
-  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
-    };
-  }, []);
+  const handlePress = useDebouncedPress(() => {
+    getHaptics().light();
+    onPress();
+  }, 300);
 
-  const handlePress = useCallback(() => {
-    if (pressedRef.current) return;
+  const containerStyle = useMemo(() => {
+    const dim = SIZE_MAP[size];
 
-    pressedRef.current = true;
-    try {
-      getHaptics().light();
-      onPress();
-    } finally {
-      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+    const container: ViewStyle[] = [
+      styles.base,
+      {
+        width: dim,
+        height: dim,
+        borderRadius: dim / 2,
+      },
+    ];
 
-      resetTimerRef.current = setTimeout(() => {
-        pressedRef.current = false;
-        resetTimerRef.current = null;
-      }, 300);
+    switch (variant) {
+      case 'primary':
+        container.push({ backgroundColor: theme.colors.primaryLight });
+        break;
+      case 'ghost':
+        container.push({ backgroundColor: 'transparent' });
+        break;
+      case 'danger':
+        container.push({ backgroundColor: theme.colors.errorLight });
+        break;
+      default:
+        container.push({ backgroundColor: theme.colors.surfaceSecondary });
     }
-  }, [onPress]);
 
-  const dim = SIZE_MAP[size];
+    if (disabled) {
+      container.push({ opacity: theme.opacity.disabled });
+    }
 
-  const containerStyle: ViewStyle[] = [
-    styles.base,
-    {
-      width: dim,
-      height: dim,
-      borderRadius: dim / 2,
-    },
-  ];
+    if (style) {
+      container.push(style);
+    }
 
-  switch (variant) {
-    case 'primary':
-      containerStyle.push({ backgroundColor: theme.colors.primaryLight });
-      break;
-    case 'ghost':
-      containerStyle.push({ backgroundColor: 'transparent' });
-      break;
-    case 'danger':
-      containerStyle.push({ backgroundColor: theme.colors.errorLight });
-      break;
-    default:
-      containerStyle.push({ backgroundColor: theme.colors.surfaceSecondary });
-  }
-
-  if (disabled) {
-    containerStyle.push({ opacity: theme.opacity.disabled });
-  }
-
-  if (style) {
-    containerStyle.push(style);
-  }
+    return container;
+  }, [theme, size, variant, disabled, style]);
 
   return (
     <PressableScale
@@ -115,7 +100,7 @@ export function IconButton({
       {icon}
     </PressableScale>
   );
-}
+});
 
 const styles = StyleSheet.create({
   base: {

@@ -63,24 +63,24 @@ export function StatTile({
     tone === 'primary'
       ? theme.colors.primary
       : tone === 'success'
-      ? theme.colors.success
-      : tone === 'warning'
-      ? theme.colors.warning
-      : tone === 'error'
-      ? theme.colors.error
-      : theme.colors.textPrimary;
+        ? theme.colors.success
+        : tone === 'warning'
+          ? theme.colors.warning
+          : tone === 'error'
+            ? theme.colors.error
+            : theme.colors.textPrimary;
 
   const valueVariant: 'monoLarge' | 'mono' | 'monoSmall' | 'h2' | 'h3' | 'title' = mono
     ? size === 'lg'
       ? 'monoLarge'
       : size === 'sm'
-      ? 'monoSmall'
-      : 'mono'
+        ? 'monoSmall'
+        : 'mono'
     : size === 'lg'
-    ? 'h2'
-    : size === 'sm'
-    ? 'title'
-    : 'h3';
+      ? 'h2'
+      : size === 'sm'
+        ? 'title'
+        : 'h3';
 
   return (
     <View

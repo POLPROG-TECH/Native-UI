@@ -73,7 +73,13 @@ function BottomSheetComponent({
           entering={FadeIn.duration(enterDuration)}
           style={[styles.backdrop, { backgroundColor: theme.colors.overlay }]}
         >
-          <Pressable style={StyleSheet.absoluteFill} onPress={dismissable ? onClose : undefined} />
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={dismissable ? onClose : undefined}
+            {...(dismissable
+              ? { accessibilityRole: 'button' as const, accessibilityLabel: 'Close' }
+              : { importantForAccessibility: 'no-hide-descendants' as const })}
+          />
         </Animated.View>
 
         <Animated.View
@@ -87,11 +93,12 @@ function BottomSheetComponent({
               borderTopRightRadius: theme.borderRadius.xl,
               paddingBottom: Math.max(insets.bottom, 16),
             },
-            theme.elevation.xl as ViewStyle,
+            theme.elevation.xl,
             style,
           ]}
+          accessibilityViewIsModal
         >
-          <View style={styles.handle}>
+          <View style={styles.handle} importantForAccessibility="no" accessibilityElementsHidden>
             <View style={[styles.handleBar, { backgroundColor: theme.colors.border }]} />
           </View>
           {children}
@@ -137,7 +144,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   backdrop: {
-    ...(StyleSheet.absoluteFill as object),
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   sheet: {
     maxHeight: '80%',

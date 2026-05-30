@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { StyleSheet, View, Text, Pressable, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { getHaptics } from '../utils/haptics';
@@ -18,7 +18,7 @@ export interface CheckboxProps {
 /**
  * A checkbox with optional label. Accessible and theme-aware.
  */
-export function Checkbox({
+export const Checkbox = React.memo(function Checkbox({
   checked,
   onChange,
   label,
@@ -51,6 +51,8 @@ export function Checkbox({
       accessibilityLabel={label}
     >
       <View
+        importantForAccessibility="no-hide-descendants"
+        accessibilityElementsHidden
         style={[
           styles.box,
           {
@@ -83,7 +85,7 @@ export function Checkbox({
       )}
     </Pressable>
   );
-}
+});
 
 const styles = StyleSheet.create({
   row: {

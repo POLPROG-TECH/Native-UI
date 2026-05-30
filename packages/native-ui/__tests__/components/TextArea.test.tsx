@@ -8,14 +8,14 @@ function renderWithTheme(ui: React.ReactElement) {
 }
 
 describe('TextArea', () => {
-  it('should be exported as a function component', () => {
+  it('should be exported as a forwardRef React component', () => {
     // GIVEN the TextArea export from the components module
 
     // WHEN its runtime type is inspected
-    const actualType = typeof TextArea;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
+    // THEN it is a React.forwardRef exotic component
+    expect((TextArea as unknown as { $$typeof: symbol }).$$typeof).toBe(
+      Symbol.for('react.forward_ref'),
+    );
   });
 
   it('should render the label when a label prop is provided', () => {

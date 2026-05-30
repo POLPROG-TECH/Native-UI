@@ -1,5 +1,7 @@
-import { StyleSheet, View, Text, Pressable } from 'react-native';
+import React, { useCallback } from 'react';
+import { StyleSheet, View, Text, Pressable, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
+import { getHaptics } from '../utils/haptics';
 
 export interface RadioProps {
   /** Whether this radio option is selected */
@@ -9,19 +11,27 @@ export interface RadioProps {
   onPress?: () => void;
   accessibilityLabel?: string;
   disabled?: boolean;
+  style?: ViewStyle;
 }
 
 /**
  * Radio button with optional label. Use within a group to allow single selection.
  */
-export function Radio({
+export const Radio = React.memo(function Radio({
   selected,
   label,
   onPress,
   accessibilityLabel: a11yLabel,
   disabled = false,
+  style,
 }: RadioProps) {
   const theme = useTheme();
+
+  const handlePress = useCallback(() => {
+    if (!onPress) return;
+    getHaptics().light();
+    onPress();
+  }, [onPress]);
 
   const indicator = selected ? (
     <View style={[styles.checkmark, { backgroundColor: theme.colors.primary }]}>
@@ -33,7 +43,7 @@ export function Radio({
 
   if (!onPress && !label) {
     return (
-      <View accessibilityRole="radio" accessibilityState={{ selected }}>
+      <View accessibilityRole="radio" accessibilityState={{ selected }} style={style}>
         {indicator}
       </View>
     );
@@ -41,12 +51,13 @@ export function Radio({
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
       disabled={disabled}
       style={({ pressed }) => [
         styles.row,
         pressed && { opacity: theme.opacity.pressed },
         disabled && { opacity: theme.opacity.disabled },
+        style,
       ]}
       accessibilityRole="radio"
       accessibilityState={{ selected, disabled }}
@@ -60,7 +71,7 @@ export function Radio({
       )}
     </Pressable>
   );
-}
+});
 
 const styles = StyleSheet.create({
   checkmark: {

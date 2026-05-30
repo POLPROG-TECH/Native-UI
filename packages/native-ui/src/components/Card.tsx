@@ -102,11 +102,11 @@ export function Card({
     size === 'compact'
       ? theme.spacing.md
       : size === 'spacious'
-      ? theme.spacing.xl
-      : theme.spacing.lg;
+        ? theme.spacing.xl
+        : theme.spacing.lg;
   const radiusValue = size === 'compact' ? theme.borderRadius.md : theme.borderRadius.lg;
 
-  const elevationStyle = theme.elevation[elevation] as ViewStyle;
+  const elevationStyle = theme.elevation[elevation];
 
   const cardStyle: ViewStyle[] = [
     styles.card,

@@ -1,4 +1,4 @@
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, type ViewStyle } from 'react-native';
 
 /** Spacing scale - 4-pt base grid, aligned to native iOS / Material conventions. */
 export const spacing = {
@@ -36,8 +36,11 @@ export const hitSlop = {
   android: { top: 10, bottom: 10, left: 10, right: 10 },
 } as const;
 
+/** Elevation token keys, from flat (`none`) to most pronounced (`xl`). */
+export type Elevation = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
 /** Elevation / shadow presets - subtle, platform-specific */
-export const elevation = {
+export const elevation: Record<Elevation, ViewStyle> = {
   none: {
     shadowColor: 'transparent',
     shadowOffset: { width: 0, height: 0 },
@@ -95,7 +98,7 @@ export const elevation = {
     android: { elevation: 6 },
     default: {},
   })!,
-} as const;
+};
 
 /** Color-parameterized glow shadow (accent glow effect) */
 export function glowShadow(color: string) {
@@ -156,4 +159,3 @@ export const easing = {
 export type Spacing = keyof typeof spacing;
 export type BorderRadius = keyof typeof borderRadius;
 export type IconSize = keyof typeof iconSize;
-export type Elevation = keyof typeof elevation;

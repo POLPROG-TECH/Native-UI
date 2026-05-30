@@ -14,6 +14,6 @@
     // → jest-junit/nyc → uuid@8). We do not call the affected APIs and the
     // code never runs in production builds. Remove once the upstream dev
     // dependencies ship a uuid@>=14 upgrade.
-    "GHSA-w5hq-g745-h8pq"
-  ]
+    "GHSA-w5hq-g745-h8pq",
+  ],
 }

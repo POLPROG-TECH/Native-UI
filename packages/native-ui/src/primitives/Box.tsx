@@ -1,12 +1,13 @@
 import React from 'react';
-import { View, type ViewStyle, type StyleProp } from 'react-native';
+import { View, type ViewStyle, type ViewProps, type StyleProp } from 'react-native';
 import { useTheme } from '../theme';
 import type { Spacing, BorderRadius, Elevation } from '../tokens/spacing';
 import type { ColorScheme } from '../tokens/colors';
 
-type ColorToken = keyof ColorScheme;
+/** Color tokens usable as a background (excludes composite tokens like `chart`). */
+type ColorToken = Exclude<keyof ColorScheme, 'chart'>;
 
-export interface BoxProps {
+export interface BoxProps extends Omit<ViewProps, 'style'> {
   /** Content rendered inside the box. */
   children?: React.ReactNode;
   /** Additional styles merged after token-based styles. */
@@ -38,9 +39,6 @@ export interface BoxProps {
 
   /** CSS `flex` shorthand value. */
   flex?: number;
-
-  /** Accessibility role forwarded to the underlying `View`. */
-  accessibilityRole?: ViewStyle extends { accessibilityRole?: infer R } ? R : never;
 }
 
 /**
@@ -94,13 +92,13 @@ export function Box({
 
   if (my !== undefined) computedStyle.marginVertical = theme.spacing[my];
 
-  if (bg !== undefined) computedStyle.backgroundColor = theme.colors[bg] as string;
+  if (bg !== undefined) computedStyle.backgroundColor = theme.colors[bg];
 
   if (resolvedRadius !== undefined) computedStyle.borderRadius = theme.borderRadius[resolvedRadius];
 
   if (flex !== undefined) computedStyle.flex = flex;
 
-  const elevationStyle = elev ? (theme.elevation[elev] as ViewStyle) : undefined;
+  const elevationStyle = elev ? theme.elevation[elev] : undefined;
 
   return (
     <View style={[computedStyle, elevationStyle, style]} {...rest}>

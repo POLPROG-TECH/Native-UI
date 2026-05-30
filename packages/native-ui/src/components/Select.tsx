@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import {
-  Dimensions,
   StyleSheet,
   View,
   Text,
   Modal,
   FlatList,
   Pressable,
+  useWindowDimensions,
   type ViewStyle,
   type TextStyle,
   type StyleProp,
@@ -48,13 +48,20 @@ export interface SelectProps<T extends string = string> {
   label?: string;
   /** The currently selected value, or `null` when nothing is selected. */
   value?: T | null;
-  /** Alias for `value`. Ignored when `value` is also provided. */
+  /**
+   * Alias for `value`. Ignored when `value` is also provided.
+   * @deprecated Prefer `value` for a single source of truth.
+   */
   selectedValue?: T | null;
   /** Array of options displayed in the dropdown list. */
   options: SelectOption<T>[];
   /** Callback fired when the user picks an option. Receives the selected `value`. */
   onChange?: (value: T) => void;
-  /** Alias for `onChange`. Invoked when both are provided. */
+  /**
+   * Alias for `onChange`. Invoked *in addition to* `onChange` when both are
+   * provided - pass only one to avoid duplicate handling.
+   * @deprecated Prefer `onChange`.
+   */
   onValueChange?: (value: T) => void;
   /**
    * Placeholder text shown when no value is selected.
@@ -129,8 +136,13 @@ const SelectRow = React.memo(function SelectRow({
       style={[styles.option, isSelected && { backgroundColor: primaryLightColor }]}
       accessibilityRole="radio"
       accessibilityState={{ selected: isSelected }}
+      accessibilityLabel={label}
     >
-      {icon && <Text style={styles.optionIcon}>{icon}</Text>}
+      {icon && (
+        <Text style={styles.optionIcon} importantForAccessibility="no" accessibilityElementsHidden>
+          {icon}
+        </Text>
+      )}
       <Text
         style={[
           bodyStyle,
@@ -142,7 +154,15 @@ const SelectRow = React.memo(function SelectRow({
       >
         {label}
       </Text>
-      {isSelected && <Text style={{ color: primaryColor }}>✓</Text>}
+      {isSelected && (
+        <Text
+          style={{ color: primaryColor }}
+          importantForAccessibility="no"
+          accessibilityElementsHidden
+        >
+          ✓
+        </Text>
+      )}
     </Pressable>
   );
 });
@@ -162,9 +182,10 @@ function SelectComponent<T extends string = string>({
 }: SelectProps<T>) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
   const [isOpen, setIsOpen] = useState(false);
 
-  const resolvedValue = value !== undefined ? value : selectedValue ?? null;
+  const resolvedValue = value !== undefined ? value : (selectedValue ?? null);
   const selectedOption = options.find((o) => o.value === resolvedValue);
 
   const handleSelect = useCallback(
@@ -176,6 +197,20 @@ function SelectComponent<T extends string = string>({
     [onChange, onValueChange],
   );
 
+  // FlatList keys/values are surfaced as `string`; option values are a `T`
+  // subtype of `string`, so this single boundary cast is sound and keeps the
+  // memoized, non-generic `SelectRow` simple.
+  const handleSelectString = useCallback(
+    (optionValue: string) => handleSelect(optionValue as T),
+    [handleSelect],
+  );
+
+  const open = useCallback(() => {
+    if (!disabled) setIsOpen(true);
+  }, [disabled]);
+
+  const close = useCallback(() => setIsOpen(false), []);
+
   const renderOption = useCallback(
     ({ item }: { item: SelectOption<T> }) => (
       <SelectRow
@@ -183,7 +218,7 @@ function SelectComponent<T extends string = string>({
         icon={item.icon}
         isSelected={item.value === resolvedValue}
         value={item.value}
-        onSelect={handleSelect as (value: string) => void}
+        onSelect={handleSelectString}
         primaryColor={theme.colors.primary}
         primaryLightColor={theme.colors.primaryLight}
         textPrimaryColor={theme.colors.textPrimary}
@@ -192,7 +227,7 @@ function SelectComponent<T extends string = string>({
     ),
     [
       resolvedValue,
-      handleSelect,
+      handleSelectString,
       theme.colors.primary,
       theme.colors.primaryLight,
       theme.colors.textPrimary,
@@ -205,7 +240,7 @@ function SelectComponent<T extends string = string>({
       {label && <FieldLabel label={label} required={required} />}
 
       <Pressable
-        onPress={() => !disabled && setIsOpen(true)}
+        onPress={open}
         style={[
           styles.trigger,
           {
@@ -217,6 +252,7 @@ function SelectComponent<T extends string = string>({
         ]}
         accessibilityRole="button"
         accessibilityLabel={label ?? placeholder}
+        accessibilityValue={selectedOption ? { text: selectedOption.label } : undefined}
         accessibilityState={{ disabled, expanded: isOpen }}
       >
         <Text
@@ -231,17 +267,18 @@ function SelectComponent<T extends string = string>({
         >
           {selectedOption?.label ?? placeholder}
         </Text>
-        <Text style={{ color: theme.colors.textTertiary, fontSize: 12 }}>▼</Text>
+        <Text
+          style={{ color: theme.colors.textTertiary, fontSize: 12 }}
+          importantForAccessibility="no"
+          accessibilityElementsHidden
+        >
+          ▼
+        </Text>
       </Pressable>
 
       {error && <FieldError error={error} />}
 
-      <Modal
-        visible={isOpen}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setIsOpen(false)}
-      >
+      <Modal visible={isOpen} transparent animationType="slide" onRequestClose={close}>
         {/*
          * Layout:
          *   - Absolute-fill Pressable backdrop: catches taps outside the sheet.
@@ -252,7 +289,7 @@ function SelectComponent<T extends string = string>({
         <View style={styles.overlay}>
           <Pressable
             style={[StyleSheet.absoluteFill, { backgroundColor: theme.colors.overlay }]}
-            onPress={() => setIsOpen(false)}
+            onPress={close}
             accessibilityRole="button"
             accessibilityLabel="Close"
           />
@@ -286,12 +323,12 @@ function SelectComponent<T extends string = string>({
             <FlatList
               data={options}
               keyExtractor={(item) => item.value}
-              style={{ maxHeight: Dimensions.get('window').height * 0.4 }}
+              style={{ maxHeight: windowHeight * 0.4 }}
               accessibilityRole="radiogroup"
               renderItem={renderOption}
             />
             <Pressable
-              onPress={() => setIsOpen(false)}
+              onPress={close}
               style={[styles.cancelButton, { borderTopColor: theme.colors.divider }]}
               accessibilityRole="button"
               accessibilityLabel="Cancel"

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useMemo } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,6 +10,7 @@ import {
 import { useTheme } from '../theme';
 import { PressableScale } from '../primitives/PressableScale';
 import { getHaptics } from '../utils/haptics';
+import { useDebouncedPress } from '../hooks/useDebouncedPress';
 
 export type ButtonVariant =
   | 'primary'
@@ -97,7 +98,7 @@ export interface ButtonProps {
  * <Button title="Next" renderRight={() => <ArrowRight />} onPress={next} />
  * ```
  */
-export function Button({
+export const Button = React.memo(function Button({
   title,
   onPress,
   variant = 'primary',
@@ -112,88 +113,72 @@ export function Button({
   style,
 }: ButtonProps) {
   const theme = useTheme();
-  const pressedRef = useRef(false);
-  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
-    };
-  }, []);
+  const handlePress = useDebouncedPress(() => {
+    getHaptics().medium();
+    onPress();
+  }, 400);
 
-  const handlePress = useCallback(() => {
-    if (pressedRef.current) return;
+  const { containerStyles, textStyles } = useMemo(() => {
+    const container: ViewStyle[] = [styles.base, { borderRadius: theme.borderRadius.md }];
+    const text: TextStyle[] = [];
 
-    pressedRef.current = true;
-    try {
-      getHaptics().medium();
-      onPress();
-    } finally {
-      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
-
-      resetTimerRef.current = setTimeout(() => {
-        pressedRef.current = false;
-        resetTimerRef.current = null;
-      }, 400);
+    switch (size) {
+      case 'sm':
+        container.push(SIZE_STYLES.sm);
+        text.push(theme.typography.labelSmall);
+        break;
+      case 'lg':
+        container.push(SIZE_STYLES.lg);
+        text.push(theme.typography.bodyLarge, LARGE_TEXT_WEIGHT);
+        break;
+      default:
+        container.push(SIZE_STYLES.md);
+        text.push(theme.typography.label);
     }
-  }, [onPress]);
 
-  const containerStyles: ViewStyle[] = [styles.base, { borderRadius: theme.borderRadius.md }];
-  const textStyles: TextStyle[] = [];
+    switch (variant) {
+      case 'primary':
+        container.push({ backgroundColor: theme.colors.primary });
+        text.push({ color: theme.colors.textInverse });
+        break;
+      case 'secondary':
+        container.push({ backgroundColor: theme.colors.primaryLight });
+        text.push({ color: theme.colors.primary });
+        break;
+      case 'outline':
+        container.push(OUTLINE_CONTAINER, { borderColor: theme.colors.border });
+        text.push({ color: theme.colors.textPrimary });
+        break;
+      case 'ghost':
+        container.push(TRANSPARENT_BG);
+        text.push({ color: theme.colors.primary });
+        break;
+      case 'danger':
+      case 'destructive':
+        container.push({ backgroundColor: theme.colors.error });
+        text.push({ color: theme.colors.textInverse });
+        break;
+    }
 
-  switch (size) {
-    case 'sm':
-      containerStyles.push(SIZE_STYLES.sm);
-      textStyles.push(theme.typography.labelSmall);
-      break;
-    case 'lg':
-      containerStyles.push(SIZE_STYLES.lg);
-      textStyles.push(theme.typography.bodyLarge, LARGE_TEXT_WEIGHT);
-      break;
-    default:
-      containerStyles.push(SIZE_STYLES.md);
-      textStyles.push(theme.typography.label);
-  }
+    if (disabled) {
+      container.push({ opacity: theme.opacity.disabled });
+    }
 
-  switch (variant) {
-    case 'primary':
-      containerStyles.push({ backgroundColor: theme.colors.primary });
-      textStyles.push({ color: theme.colors.textInverse });
-      break;
-    case 'secondary':
-      containerStyles.push({ backgroundColor: theme.colors.primaryLight });
-      textStyles.push({ color: theme.colors.primary });
-      break;
-    case 'outline':
-      containerStyles.push(OUTLINE_CONTAINER, { borderColor: theme.colors.border });
-      textStyles.push({ color: theme.colors.textPrimary });
-      break;
-    case 'ghost':
-      containerStyles.push(TRANSPARENT_BG);
-      textStyles.push({ color: theme.colors.primary });
-      break;
-    case 'danger':
-    case 'destructive':
-      containerStyles.push({ backgroundColor: theme.colors.error });
-      textStyles.push({ color: theme.colors.textInverse });
-      break;
-  }
+    if (fullWidth) {
+      container.push(FULL_WIDTH_STYLE);
+    }
 
-  if (disabled) {
-    containerStyles.push({ opacity: theme.opacity.disabled });
-  }
+    if (glow && !disabled) {
+      container.push(theme.glowShadow(resolveGlowColor(glow, variant, theme)));
+    }
 
-  if (fullWidth) {
-    containerStyles.push(FULL_WIDTH_STYLE);
-  }
+    if (style) {
+      container.push(style);
+    }
 
-  if (glow && !disabled) {
-    containerStyles.push(theme.glowShadow(resolveGlowColor(glow, variant, theme)));
-  }
-
-  if (style) {
-    containerStyles.push(style);
-  }
+    return { containerStyles: container, textStyles: text };
+  }, [theme, size, variant, disabled, fullWidth, glow, style]);
 
   const indicatorColor =
     variant === 'primary' || variant === 'danger' || variant === 'destructive'
@@ -223,7 +208,7 @@ export function Button({
       )}
     </PressableScale>
   );
-}
+});
 
 const SIZE_STYLES = StyleSheet.create({
   sm: { paddingVertical: 7, paddingHorizontal: 14, minHeight: 36 },

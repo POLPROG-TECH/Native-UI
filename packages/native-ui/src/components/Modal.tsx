@@ -93,6 +93,11 @@ function ModalComponent({
         <Pressable
           style={[styles.overlay, { backgroundColor: theme.colors.overlay }]}
           onPress={dismissable ? onClose : undefined}
+          accessibilityElementsHidden={!dismissable}
+          importantForAccessibility={dismissable ? 'yes' : 'no-hide-descendants'}
+          {...(dismissable
+            ? { accessibilityRole: 'button' as const, accessibilityLabel: 'Close' }
+            : {})}
         />
         <View
           style={[
@@ -101,7 +106,7 @@ function ModalComponent({
               backgroundColor: theme.colors.surface,
               borderRadius: theme.borderRadius.xl,
             },
-            theme.elevation.xl as ViewStyle,
+            theme.elevation.xl,
             style,
           ]}
           accessibilityViewIsModal={true}
@@ -165,7 +170,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   overlay: {
-    ...(StyleSheet.absoluteFill as object),
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   content: {
     width: '85%',
