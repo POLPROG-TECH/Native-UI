@@ -27,7 +27,7 @@
     "@vitejs/plugin-react": "^6.0.2",
     "axe-playwright": "^2.0.3",
     "chromatic": "^17.1.0",
-    "concurrently": "^9.2.1",
+    "concurrently": "^10.0.0",
     "http-server": "^14.1.1",
     "msw": "^2.14.6",
     "msw-storybook-addon": "^2.0.7",
