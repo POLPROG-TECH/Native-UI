@@ -89,4 +89,12 @@ describe('StatTile', () => {
     // THEN the label is present
     expect(screen.getByText('L')).toBeInTheDocument();
   });
+
+  it('should render a long value on a single shrink-to-fit line without crashing', () => {
+    // GIVEN a StatTile with a long value that would otherwise overflow
+    renderWithTheme(<StatTile label="YEAR" value="1 234 567,89 zl" />);
+
+    // WHEN the value is queried THEN it renders intact (single-line + shrink-to-fit)
+    expect(screen.getByText('1 234 567,89 zl')).toBeInTheDocument();
+  });
 });

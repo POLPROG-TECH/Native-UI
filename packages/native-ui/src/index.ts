@@ -58,7 +58,7 @@ export type {
 } from './tokens';
 
 // ─── Utilities ─────────────────────────────────────────────────
-export { configureHaptics, getHaptics } from './utils';
+export { configureHaptics, getHaptics, parseDecimalInput } from './utils';
 export type { HapticsInterface } from './utils';
 
 // ─── Hooks ─────────────────────────────────────────────────────
@@ -136,6 +136,7 @@ export {
   withErrorBoundary,
   ConfettiOverlay,
   StatTile,
+  ActionTile,
   Countdown,
   DatePickerInput,
   DateRangePickerInput,
@@ -204,6 +205,8 @@ export type {
   StatTileProps,
   StatTileTone,
   StatTileSize,
+  ActionTileProps,
+  ActionTileTone,
   CountdownProps,
   CountdownFormat,
   DatePickerInputProps,

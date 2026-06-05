@@ -96,7 +96,13 @@ export function StatTile({
       <Text variant="overline" color="textTertiary">
         {label}
       </Text>
-      <Text variant={valueVariant} style={{ color: valueColor, marginTop: theme.spacing['2xs'] }}>
+      <Text
+        variant={valueVariant}
+        style={{ color: valueColor, marginTop: theme.spacing['2xs'] }}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
+      >
         {value}
       </Text>
       {caption ? (

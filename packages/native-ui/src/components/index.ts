@@ -113,6 +113,9 @@ export type { ConfettiOverlayProps } from './ConfettiOverlay';
 export { StatTile } from './StatTile';
 export type { StatTileProps, StatTileTone, StatTileSize } from './StatTile';
 
+export { ActionTile } from './ActionTile';
+export type { ActionTileProps, ActionTileTone } from './ActionTile';
+
 export { Countdown } from './Countdown';
 export type { CountdownProps, CountdownFormat } from './Countdown';
 
