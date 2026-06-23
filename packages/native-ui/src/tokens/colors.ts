@@ -41,8 +41,11 @@ export type ThemePreset =
   | 'rose'
   | 'amoled';
 
+/** Accent presets shipped with the Bloom theme variant. */
+export type BloomPreset = 'violet' | 'grape' | 'coral' | 'ocean';
+
 export interface ThemePresetConfig {
-  id: ThemePreset;
+  id: string;
   accent: string;
   dark: {
     bg: string;
@@ -63,7 +66,7 @@ export interface ThemePresetConfig {
   };
 }
 
-export const THEME_PRESETS: ThemePresetConfig[] = [
+export const THEME_PRESETS: readonly ThemePresetConfig[] = [
   {
     id: 'default',
     accent: '#00E67A',
@@ -293,33 +296,189 @@ const HIGH_CONTRAST_SEMANTIC = {
   },
 };
 
+// ─── Color Palette (token foundation per theme variant) ────────
+/** Text colour ramp (primary/secondary/tertiary) for one mode. */
+export interface TextRamp {
+  textPrimary: string;
+  textSecondary: string;
+  textTertiary: string;
+}
+
+/** Feedback colours, each with a tinted `*Light` background, for one mode. */
+export interface SemanticRamp {
+  success: string;
+  successLight: string;
+  warning: string;
+  warningLight: string;
+  error: string;
+  errorLight: string;
+}
+
+/** Chrome colours that are neither accent, text, nor a surface tier. */
+export interface NeutralRamp {
+  border: string;
+  borderLight: string;
+  divider: string;
+  shadow: string;
+  overlay: string;
+  info: string;
+}
+
+/**
+ * The colour foundation a theme variant resolves against. Bundles the accent
+ * presets with the neutral, text, and feedback ramps that `resolveColorScheme`
+ * maps into a `ColorScheme`. `defaultColorPalette` reproduces the library's
+ * original values; a different palette (e.g. `bloomColorPalette`) swaps the
+ * whole set without touching the resolver or any component.
+ */
+export interface ColorPalette {
+  id: string;
+  /** Accent presets selectable via `preset`. */
+  presets: readonly ThemePresetConfig[];
+  /** Preset applied when the consumer doesn't pass one. */
+  defaultPreset: string;
+  /** Text ramps per `fontColor` variant. */
+  fontColors: Record<FontColor, { dark: TextRamp; light: TextRamp }>;
+  /** Text ramps used when `highContrast` is enabled. */
+  highContrastText: { dark: TextRamp; light: TextRamp };
+  /** Feedback ramps in normal contrast. */
+  semantic: { dark: SemanticRamp; light: SemanticRamp };
+  /** Feedback ramps when `highContrast` is enabled. */
+  highContrastSemantic: { dark: SemanticRamp; light: SemanticRamp };
+  /** Border / divider / shadow / overlay / info chrome per mode. */
+  neutrals: { dark: NeutralRamp; light: NeutralRamp };
+  /** Flat light-mode card surfaces (dark surfaces come from the preset tiers). */
+  lightSurface: string;
+  lightSurfaceElevated: string;
+  /** Text colour drawn on accent fills in light mode. */
+  lightTextInverse: string;
+  /** Chart series palette per mode. */
+  chart: { dark: readonly string[]; light: readonly string[] };
+  /**
+   * Optional override for the on-accent text colour. When omitted the resolver
+   * keeps the original behaviour: dark mode uses the preset background, light
+   * mode uses `lightTextInverse`. Bloom sets a light value so text stays
+   * legible on its violet accent in dark mode.
+   */
+  textInverse?: { dark?: string; light?: string };
+}
+
+/** Palette reproducing the library's original (Aurora) colour values. */
+export const defaultColorPalette: ColorPalette = {
+  id: 'default',
+  presets: THEME_PRESETS,
+  defaultPreset: 'default',
+  fontColors: FONT_COLORS,
+  highContrastText: HIGH_CONTRAST_COLORS,
+  highContrastSemantic: HIGH_CONTRAST_SEMANTIC,
+  semantic: {
+    dark: {
+      success: '#34D399',
+      successLight: '#064E3B',
+      warning: '#FBBF24',
+      warningLight: '#78350F',
+      error: '#EF4444',
+      errorLight: '#7F1D1D',
+    },
+    light: {
+      success: '#34D399',
+      successLight: '#D1FAE5',
+      warning: '#FBBF24',
+      warningLight: '#FEF3C7',
+      error: '#EF4444',
+      errorLight: '#FEE2E2',
+    },
+  },
+  neutrals: {
+    dark: {
+      border: '#2C2C2E',
+      borderLight: '#1E1E23',
+      divider: '#1E1E23',
+      shadow: 'rgba(0, 0, 0, 0.3)',
+      overlay: 'rgba(0, 0, 0, 0.7)',
+      info: '#60A5FA',
+    },
+    light: {
+      border: '#D1D1D6',
+      borderLight: '#E5E5EA',
+      divider: '#E5E5EA',
+      shadow: 'rgba(0, 0, 0, 0.04)',
+      overlay: 'rgba(0, 0, 0, 0.5)',
+      info: '#60A5FA',
+    },
+  },
+  lightSurface: '#FFFFFF',
+  lightSurfaceElevated: '#FFFFFF',
+  lightTextInverse: '#FFFFFF',
+  chart: {
+    dark: [
+      '#60A5FA',
+      '#34D399',
+      '#FBBF24',
+      '#F87171',
+      '#A78BFA',
+      '#F472B6',
+      '#22D3EE',
+      '#A3E635',
+      '#FB923C',
+      '#818CF8',
+    ],
+    light: [
+      '#3B82F6',
+      '#10B981',
+      '#F59E0B',
+      '#EF4444',
+      '#8B5CF6',
+      '#EC4899',
+      '#06B6D4',
+      '#84CC16',
+      '#F97316',
+      '#6366F1',
+    ],
+  },
+};
+
 // ─── Color Resolver ────────────────────────────────────────────
 export interface ResolveColorOptions {
   isDark: boolean;
-  preset: ThemePreset;
+  preset: string;
   fontColor: FontColor;
   highContrast: boolean;
   customAccent: string | null;
 }
 
-export function resolveColorScheme(options: ResolveColorOptions): ColorScheme {
+export function resolveColorScheme(
+  options: ResolveColorOptions,
+  palette: ColorPalette = defaultColorPalette,
+): ColorScheme {
   const { isDark, preset, fontColor, highContrast, customAccent } = options;
-  const presetConfig = (THEME_PRESETS.find((p) => p.id === preset) ??
-    THEME_PRESETS[0]) as ThemePresetConfig;
+  const found = palette.presets.find((p) => p.id === preset);
 
-  const fc = FONT_COLORS[fontColor] ?? FONT_COLORS.default;
+  if (!found && __DEV__) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[native-ui] Unknown preset "${preset}" for palette "${palette.id}" - falling back to "${palette.defaultPreset}".`,
+    );
+  }
+  const presetConfig = (found ??
+    palette.presets.find((p) => p.id === palette.defaultPreset) ??
+    palette.presets[0]) as ThemePresetConfig;
+
+  const fc = palette.fontColors[fontColor] ?? palette.fontColors.default;
   const textBase = isDark ? fc.dark : fc.light;
   const hc = highContrast
     ? isDark
-      ? HIGH_CONTRAST_COLORS.dark
-      : HIGH_CONTRAST_COLORS.light
+      ? palette.highContrastText.dark
+      : palette.highContrastText.light
     : null;
   const text = hc ?? textBase;
-  const hcSemantic = highContrast
+  const semanticBase = isDark ? palette.semantic.dark : palette.semantic.light;
+  const semantic = highContrast
     ? isDark
-      ? HIGH_CONTRAST_SEMANTIC.dark
-      : HIGH_CONTRAST_SEMANTIC.light
-    : null;
+      ? palette.highContrastSemantic.dark
+      : palette.highContrastSemantic.light
+    : semanticBase;
+  const neutrals = isDark ? palette.neutrals.dark : palette.neutrals.light;
 
   if (isDark) {
     const p = presetConfig.dark;
@@ -336,34 +495,23 @@ export function resolveColorScheme(options: ResolveColorOptions): ColorScheme {
       textPrimary: text.textPrimary,
       textSecondary: text.textSecondary,
       textTertiary: text.textTertiary,
-      textInverse: p.bg,
+      textInverse: hasCustom ? getContrastText(accentColor) : (palette.textInverse?.dark ?? p.bg),
       primary: accentColor,
       primaryLight: accentLight,
       primaryDark: accentDark,
-      success: hcSemantic?.success ?? '#34D399',
-      successLight: hcSemantic?.successLight ?? '#064E3B',
-      warning: hcSemantic?.warning ?? '#FBBF24',
-      warningLight: hcSemantic?.warningLight ?? '#78350F',
-      error: hcSemantic?.error ?? '#EF4444',
-      errorLight: hcSemantic?.errorLight ?? '#7F1D1D',
-      info: '#60A5FA',
-      border: '#2C2C2E',
-      borderLight: '#1E1E23',
-      divider: '#1E1E23',
-      shadow: 'rgba(0, 0, 0, 0.3)',
-      overlay: 'rgba(0, 0, 0, 0.7)',
-      chart: [
-        '#60A5FA',
-        '#34D399',
-        '#FBBF24',
-        '#F87171',
-        '#A78BFA',
-        '#F472B6',
-        '#22D3EE',
-        '#A3E635',
-        '#FB923C',
-        '#818CF8',
-      ],
+      success: semantic.success,
+      successLight: semantic.successLight,
+      warning: semantic.warning,
+      warningLight: semantic.warningLight,
+      error: semantic.error,
+      errorLight: semantic.errorLight,
+      info: neutrals.info,
+      border: neutrals.border,
+      borderLight: neutrals.borderLight,
+      divider: neutrals.divider,
+      shadow: neutrals.shadow,
+      overlay: neutrals.overlay,
+      chart: palette.chart.dark,
     };
   }
 
@@ -375,40 +523,31 @@ export function resolveColorScheme(options: ResolveColorOptions): ColorScheme {
 
   return {
     background: p.bg,
-    surface: '#FFFFFF',
-    surfaceElevated: '#FFFFFF',
+    surface: palette.lightSurface,
+    surfaceElevated: palette.lightSurfaceElevated,
     surfaceSecondary: p.secondary,
     textPrimary: text.textPrimary,
     textSecondary: text.textSecondary,
     textTertiary: text.textTertiary,
-    textInverse: '#FFFFFF',
+    textInverse: hasCustom
+      ? getContrastText(accentColor)
+      : (palette.textInverse?.light ?? palette.lightTextInverse),
     primary: accentColor,
     primaryLight: accentLight,
     primaryDark: accentDark,
-    success: hcSemantic?.success ?? '#34D399',
-    successLight: hcSemantic?.successLight ?? '#D1FAE5',
-    warning: hcSemantic?.warning ?? '#FBBF24',
-    warningLight: hcSemantic?.warningLight ?? '#FEF3C7',
-    error: hcSemantic?.error ?? '#EF4444',
-    errorLight: hcSemantic?.errorLight ?? '#FEE2E2',
-    info: '#60A5FA',
-    border: '#D1D1D6',
-    borderLight: '#E5E5EA',
-    divider: '#E5E5EA',
-    shadow: 'rgba(0, 0, 0, 0.04)',
-    overlay: 'rgba(0, 0, 0, 0.5)',
-    chart: [
-      '#3B82F6',
-      '#10B981',
-      '#F59E0B',
-      '#EF4444',
-      '#8B5CF6',
-      '#EC4899',
-      '#06B6D4',
-      '#84CC16',
-      '#F97316',
-      '#6366F1',
-    ],
+    success: semantic.success,
+    successLight: semantic.successLight,
+    warning: semantic.warning,
+    warningLight: semantic.warningLight,
+    error: semantic.error,
+    errorLight: semantic.errorLight,
+    info: neutrals.info,
+    border: neutrals.border,
+    borderLight: neutrals.borderLight,
+    divider: neutrals.divider,
+    shadow: neutrals.shadow,
+    overlay: neutrals.overlay,
+    chart: palette.chart.light,
   };
 }
 

@@ -10,6 +10,18 @@ export interface FontFamilies {
   medium: string;
   semiBold: string;
   bold: string;
+  /**
+   * Optional separate family for display text. When present, the typography
+   * scale routes display, heading, title, and numeric variants through it
+   * while body and label text keep the base family. When omitted, every
+   * variant uses the base family, so single-family presets are unchanged.
+   */
+  display?: {
+    regular: string;
+    medium: string;
+    semiBold: string;
+    bold: string;
+  };
 }
 
 /** Platform system font fallback (safe default - no asset loading required). */
@@ -28,20 +40,45 @@ export const spaceGroteskFontFamilies: FontFamilies = {
   bold: 'SpaceGrotesk_700Bold',
 };
 
-/** Weight → family lookup used when building typography variants. */
+/**
+ * Bloom preset - Outfit for display/headings, Plus Jakarta Sans for body.
+ * Consumers load both families themselves, e.g. via
+ * `@expo-google-fonts/outfit` and `@expo-google-fonts/plus-jakarta-sans`.
+ */
+export const bloomFontFamilies: FontFamilies = {
+  regular: 'PlusJakartaSans_400Regular',
+  medium: 'PlusJakartaSans_500Medium',
+  semiBold: 'PlusJakartaSans_600SemiBold',
+  bold: 'PlusJakartaSans_700Bold',
+  display: {
+    regular: 'Outfit_400Regular',
+    medium: 'Outfit_500Medium',
+    semiBold: 'Outfit_600SemiBold',
+    bold: 'Outfit_700Bold',
+  },
+};
+
+/**
+ * Weight → family lookup used when building typography variants. Pass
+ * `role: 'display'` to prefer the optional `display` family; it falls back to
+ * the base family when no display family is configured.
+ */
 export function familyForWeight(
   families: FontFamilies,
   weight: '400' | '500' | '600' | '700',
+  role: 'text' | 'display' = 'text',
 ): string {
+  const group = role === 'display' && families.display ? families.display : families;
+
   switch (weight) {
     case '700':
-      return families.bold;
+      return group.bold;
     case '600':
-      return families.semiBold;
+      return group.semiBold;
     case '500':
-      return families.medium;
+      return group.medium;
     default:
-      return families.regular;
+      return group.regular;
   }
 }
 

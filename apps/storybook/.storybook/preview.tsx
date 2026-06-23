@@ -1,6 +1,11 @@
 import React from 'react';
 import type { Decorator, Loader, Preview } from '@storybook/react';
-import { NativeUIProvider, useTheme, type NativeUIConfig } from '@polprog/native-ui';
+import {
+  NativeUIProvider,
+  useTheme,
+  type NativeUIConfig,
+  type ThemeVariantName,
+} from '@polprog/native-ui';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { nativeTheme } from './theme';
 import { fontsReady } from './fonts';
@@ -151,6 +156,7 @@ const ThemeCanvas = ({
 
 const ThemedStory = ({
   Story,
+  theme,
   colorMode,
   preset,
   fontSize,
@@ -160,6 +166,7 @@ const ThemedStory = ({
   padding,
 }: {
   Story: React.ComponentType;
+  theme: ThemeVariantName;
   colorMode: ColorMode;
   preset: Preset;
   fontSize: FontSize;
@@ -168,7 +175,7 @@ const ThemedStory = ({
   label?: string;
   padding?: number;
 }) => (
-  <NativeUIProvider config={{ colorMode, preset, fontSize, highContrast, reduceAnimations }}>
+  <NativeUIProvider config={{ theme, colorMode, preset, fontSize, highContrast, reduceAnimations }}>
     <ThemeCanvas label={label} padding={padding}>
       <Story />
     </ThemeCanvas>
@@ -178,6 +185,7 @@ const ThemedStory = ({
 /** Decorator that wraps every story in NativeUIProvider + locale context. */
 const withNativeUI: Decorator = (Story, context) => {
   const themeGlobal = (context.globals.theme ?? 'light') as ThemeGlobal;
+  const variant = (context.globals.variant ?? 'default') as ThemeVariantName;
   const preset = (context.globals.preset ?? 'default') as Preset;
   const fontSize = (context.globals.fontSize ?? 'default') as FontSize;
   const highContrast = context.globals.highContrast === 'on';
@@ -203,6 +211,7 @@ const withNativeUI: Decorator = (Story, context) => {
         <div style={{ display: 'flex', gap: 16 }}>
           <ThemedStory
             Story={Story}
+            theme={variant}
             colorMode="light"
             preset={preset}
             fontSize={fontSize}
@@ -213,6 +222,7 @@ const withNativeUI: Decorator = (Story, context) => {
           />
           <ThemedStory
             Story={Story}
+            theme={variant}
             colorMode="dark"
             preset={preset}
             fontSize={fontSize}
@@ -230,6 +240,7 @@ const withNativeUI: Decorator = (Story, context) => {
     <StoryLocaleProvider locale={locale}>
       <NativeUIProvider
         config={{
+          theme: variant,
           colorMode: themeGlobal,
           preset,
           fontSize,
@@ -420,21 +431,39 @@ const preview: Preview = {
         dynamicTitle: true,
       },
     },
+    variant: {
+      name: 'Theme variant',
+      description: 'Complete visual variant (Aurora / Bloom)',
+      defaultValue: 'default',
+      toolbar: {
+        title: 'Variant',
+        icon: 'component',
+        items: [
+          { value: 'default', title: 'Aurora' },
+          { value: 'bloom', title: 'Bloom' },
+        ],
+        dynamicTitle: true,
+      },
+    },
     preset: {
       name: 'Theme Preset',
-      description: 'Select color preset',
+      description:
+        'Accent preset. Pick one from the active Variant. A preset from the other variant falls back to that variant default.',
       defaultValue: 'default',
       toolbar: {
         title: 'Preset',
         icon: 'paintbrush',
         items: [
-          { value: 'default', title: 'Default (Indigo)' },
-          { value: 'midnight', title: 'Midnight' },
-          { value: 'ocean', title: 'Ocean' },
-          { value: 'forest', title: 'Forest' },
-          { value: 'sunset', title: 'Sunset' },
-          { value: 'rose', title: 'Rose' },
-          { value: 'amoled', title: 'AMOLED' },
+          { value: 'default', title: 'Aurora · Default' },
+          { value: 'midnight', title: 'Aurora · Midnight' },
+          { value: 'forest', title: 'Aurora · Forest' },
+          { value: 'sunset', title: 'Aurora · Sunset' },
+          { value: 'rose', title: 'Aurora · Rose' },
+          { value: 'amoled', title: 'Aurora · AMOLED' },
+          { value: 'violet', title: 'Bloom · Violet' },
+          { value: 'grape', title: 'Bloom · Grape' },
+          { value: 'coral', title: 'Bloom · Coral' },
+          { value: 'ocean', title: 'Ocean (Aurora + Bloom)' },
         ],
         dynamicTitle: true,
       },

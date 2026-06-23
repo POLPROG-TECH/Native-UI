@@ -40,7 +40,7 @@ export const hitSlop = {
 export type Elevation = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 /** Elevation / shadow presets - subtle, platform-specific */
-export const elevation: Record<Elevation, ViewStyle> = {
+export const elevation: ElevationScale = {
   none: {
     shadowColor: 'transparent',
     shadowOffset: { width: 0, height: 0 },
@@ -159,3 +159,17 @@ export const easing = {
 export type Spacing = keyof typeof spacing;
 export type BorderRadius = keyof typeof borderRadius;
 export type IconSize = keyof typeof iconSize;
+
+/**
+ * Structural corner-radius scale. Matches the keys of {@link borderRadius} but
+ * with plain `number` values, so a theme variant can ship a different scale
+ * (e.g. Bloom's rounder corners) while still satisfying the `Theme` contract.
+ */
+export type BorderRadiusScale = Record<BorderRadius, number>;
+
+/**
+ * Structural elevation scale: the shadow/elevation presets keyed by
+ * {@link Elevation}. A theme variant can ship its own map (e.g. Bloom's
+ * violet-tinted shadows) while still satisfying the `Theme` contract.
+ */
+export type ElevationScale = Record<Elevation, ViewStyle>;

@@ -3,7 +3,6 @@ import type { Typography, TypographyDensity } from '../tokens/typography';
 import type { FontFamilies } from '../tokens/fonts';
 import type {
   spacing,
-  borderRadius,
   iconSize,
   hitSlop,
   elevation,
@@ -13,10 +12,12 @@ import type {
   borderWidth,
   easing,
   glowShadow,
+  BorderRadiusScale,
 } from '../tokens/spacing';
-import type { ThemePreset, FontColor } from '../tokens/colors';
+import type { ThemePreset, BloomPreset, FontColor } from '../tokens/colors';
 import type { FontSize } from '../tokens/typography';
 import type { SemanticTokens } from '../tokens/semantic';
+import type { ThemeVariant, ThemeVariantName } from './variants';
 
 export interface Theme {
   colors: ColorScheme;
@@ -24,7 +25,7 @@ export interface Theme {
   /** Resolved font-family map (regular/medium/semiBold/bold). */
   fontFamilies: FontFamilies;
   spacing: typeof spacing;
-  borderRadius: typeof borderRadius;
+  borderRadius: BorderRadiusScale;
   iconSize: typeof iconSize;
   hitSlop: typeof hitSlop;
   elevation: typeof elevation;
@@ -42,10 +43,21 @@ export interface Theme {
 
 /** Configuration accepted by NativeUIProvider */
 export interface NativeUIConfig {
+  /**
+   * Complete visual theme variant. `'default'` (Aurora) is the original look;
+   * `'bloom'` is a violet, rounded, soft look. Pass a full
+   * `ThemeVariant` object to ship your own. A variant selects colours, radii,
+   * elevation, type density, and default fonts together. (default: 'default')
+   */
+  theme?: ThemeVariantName | ThemeVariant;
   /** Color mode: 'light', 'dark', or 'system' (default: 'system') */
   colorMode?: 'light' | 'dark' | 'system';
-  /** Theme preset (default: 'default') */
-  preset?: ThemePreset;
+  /**
+   * Accent preset. Aurora ships `'default' | 'midnight' | 'ocean' | 'forest' |
+   * 'sunset' | 'rose' | 'amoled'`; Bloom ships `'violet' | 'grape' | 'coral' |
+   * 'ocean'`. Defaults to the active variant's own default preset.
+   */
+  preset?: ThemePreset | BloomPreset;
   /** Font color variant (default: 'default') */
   fontColor?: FontColor;
   /** Font size tier (default: 'default') */

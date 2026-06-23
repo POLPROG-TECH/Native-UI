@@ -65,12 +65,54 @@ export type Typography = {
   amountSmall: TypographyStyle;
 };
 
+/**
+ * Variants routed through the optional `display` font family (headings,
+ * numerals). Everything else keeps the base text family. Mirrors the
+ * Outfit-for-headings / Plus-Jakarta-for-body split that defines the Bloom look.
+ */
+const DISPLAY_VARIANTS = new Set<keyof Typography>([
+  'displayLarge',
+  'displayMedium',
+  'h1',
+  'h2',
+  'h3',
+  'heading',
+  'title',
+  'mono',
+  'monoLarge',
+  'monoSmall',
+  'amount',
+  'amountLarge',
+  'amountSmall',
+]);
+
+/**
+ * Re-route display variants onto `families.display` when a consumer supplies a
+ * separate display family. A no-op for single-family presets, so existing
+ * scales are byte-identical.
+ */
+function applyDisplayFamily(scale: Typography, families: FontFamilies): Typography {
+  if (!families.display) return scale;
+
+  const result = {} as Typography;
+
+  for (const key of Object.keys(scale) as Array<keyof Typography>) {
+    const variant = scale[key];
+
+    result[key] = DISPLAY_VARIANTS.has(key)
+      ? { ...variant, fontFamily: familyForWeight(families, variant.fontWeight, 'display') }
+      : variant;
+  }
+
+  return result;
+}
+
 /** Build a typography scale bound to a given font-family configuration. */
 export function buildTypography(families: FontFamilies): Typography {
   const ff = (w: '400' | '500' | '600' | '700') => familyForWeight(families, w);
   const tab: TextStyle['fontVariant'] = ['tabular-nums'];
 
-  return {
+  const scale: Typography = {
     // Hero / large titles - used on empty states and landing screens.
     displayLarge: {
       fontFamily: ff('700'),
@@ -236,6 +278,8 @@ export function buildTypography(families: FontFamilies): Typography {
       letterSpacing: -0.24,
     },
   };
+
+  return applyDisplayFamily(scale, families);
 }
 
 /** Default (system-font) typography scale. Use `buildTypography()` with custom families
@@ -267,7 +311,7 @@ export function compactTypography(families: FontFamilies): Typography {
   const ff = (w: '400' | '500' | '600' | '700') => familyForWeight(families, w);
   const tab: TextStyle['fontVariant'] = ['tabular-nums'];
 
-  return {
+  const scale: Typography = {
     displayLarge: {
       fontFamily: ff('700'),
       fontSize: 48,
@@ -422,6 +466,8 @@ export function compactTypography(families: FontFamilies): Typography {
       letterSpacing: -0.08,
     },
   };
+
+  return applyDisplayFamily(scale, families);
 }
 
 /**

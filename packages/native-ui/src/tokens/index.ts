@@ -1,13 +1,25 @@
-export { colors, resolveColorScheme, getContrastText, THEME_PRESETS } from './colors';
+export {
+  colors,
+  resolveColorScheme,
+  getContrastText,
+  THEME_PRESETS,
+  defaultColorPalette,
+} from './colors';
 export type {
   ColorScheme,
   SemanticColor,
   ThemeColors,
   ThemePreset,
+  BloomPreset,
   ThemePresetConfig,
+  ColorPalette,
+  TextRamp,
+  SemanticRamp,
+  NeutralRamp,
   FontColor,
   ResolveColorOptions,
 } from './colors';
+export { bloomColorPalette, BLOOM_PRESETS } from './bloomPalette';
 
 export {
   typography,
@@ -28,6 +40,7 @@ export type {
 export {
   systemFontFamilies,
   spaceGroteskFontFamilies,
+  bloomFontFamilies,
   familyForWeight,
   familiesForLocale,
 } from './fonts';
@@ -46,7 +59,14 @@ export {
   easing,
   glowShadow,
 } from './spacing';
-export type { Spacing, BorderRadius, IconSize, Elevation } from './spacing';
+export type {
+  Spacing,
+  BorderRadius,
+  BorderRadiusScale,
+  IconSize,
+  Elevation,
+  ElevationScale,
+} from './spacing';
 
 export {
   defaultSemanticTokens,

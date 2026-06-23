@@ -9,11 +9,18 @@ component consumes via hooks. You never touch individual components to
 rebrand - you change the provider config and the whole tree updates
 synchronously.
 
-The theme system is built around three concepts:
+The theme system is built around four concepts:
 
-1. **Presets** - curated accent + neutral pairings (7 built-in).
-2. **Custom accent** - a single hex color that rebrands the whole app.
-3. **Semantic tokens** - designer-facing aliases that decouple intent
+1. **Theme variants** - complete visual identities (**Aurora**, the original
+   green, near-black look, and **Bloom**, a soft violet, rounded look) that
+   bundle colours, radii, elevation, type density and default fonts. Switch with
+   `config={{ theme: 'bloom' }}`, or use the **Variant** toolbar control above.
+   The biggest Aurora-to-Bloom differences show on `Card`, `Button`, `Chip`,
+   `Switch` and the `SettingsRow` list - open the **Patterns / Theme variants**
+   story to see them side by side.
+2. **Presets** - curated accent + neutral pairings (each variant ships its own).
+3. **Custom accent** - a single hex color that rebrands the whole app.
+4. **Semantic tokens** - designer-facing aliases that decouple intent
    from raw values (`semantic.colors.danger` rather than `colors.error`).
 
 ---

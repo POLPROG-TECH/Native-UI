@@ -1,7 +1,6 @@
 import React from 'react';
 import { Text as RNText, View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
-import type { ThemePreset } from '../../src/tokens/colors';
 import { getContrastText, resolveColorScheme, THEME_PRESETS } from '../../src/tokens/colors';
 import { useTheme } from '../../src/theme/ThemeProvider';
 
@@ -61,7 +60,7 @@ const ColorSection = ({ title, colors }: { title: string; colors: [string, strin
   );
 };
 
-const PresetCard = ({ preset, mode }: { preset: ThemePreset; mode: 'light' | 'dark' }) => {
+const PresetCard = ({ preset, mode }: { preset: string; mode: 'light' | 'dark' }) => {
   const scheme = resolveColorScheme({
     isDark: mode === 'dark',
     preset,

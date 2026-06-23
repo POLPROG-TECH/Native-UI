@@ -1,6 +1,16 @@
 // ─── Theme & Provider ──────────────────────────────────────────
-export { NativeUIProvider, useTheme, useColors, useThemeColors, useSemantic } from './theme';
-export type { Theme, NativeUIConfig } from './theme';
+export {
+  NativeUIProvider,
+  useTheme,
+  useColors,
+  useThemeColors,
+  useSemantic,
+  THEME_VARIANTS,
+  defaultThemeVariant,
+  bloomThemeVariant,
+  resolveThemeVariant,
+} from './theme';
+export type { Theme, NativeUIConfig, ThemeVariant, ThemeVariantName } from './theme';
 
 // ─── Design Tokens ─────────────────────────────────────────────
 export {
@@ -8,12 +18,16 @@ export {
   resolveColorScheme,
   getContrastText,
   THEME_PRESETS,
+  defaultColorPalette,
+  bloomColorPalette,
+  BLOOM_PRESETS,
   typography,
   compactTypography,
   resolveTypography,
   DEFAULT_TYPOGRAPHY_DENSITY,
   systemFontFamilies,
   spaceGroteskFontFamilies,
+  bloomFontFamilies,
   FONT_SCALE,
   spacing,
   borderRadius,
@@ -39,7 +53,12 @@ export type {
   SemanticColor,
   ThemeColors,
   ThemePreset,
+  BloomPreset,
   ThemePresetConfig,
+  ColorPalette,
+  TextRamp,
+  SemanticRamp,
+  NeutralRamp,
   FontColor,
   ResolveColorOptions,
   TypographyVariant,
@@ -47,8 +66,10 @@ export type {
   FontSize,
   Spacing,
   BorderRadius,
+  BorderRadiusScale,
   IconSize,
   Elevation,
+  ElevationScale,
   SemanticTokens,
   SemanticColorTokens,
   SemanticSpacingTokens,

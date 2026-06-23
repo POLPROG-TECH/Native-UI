@@ -4,17 +4,15 @@ import { resolveColorScheme } from '../tokens/colors';
 import {
   buildTypography,
   compactTypography,
-  DEFAULT_TYPOGRAPHY_DENSITY,
   FONT_SCALE,
   type Typography,
+  type TypographyDensity,
 } from '../tokens/typography';
-import { spaceGroteskFontFamilies, systemFontFamilies, type FontFamilies } from '../tokens/fonts';
+import { systemFontFamilies, type FontFamilies } from '../tokens/fonts';
 import {
   spacing,
-  borderRadius,
   iconSize,
   hitSlop,
-  elevation,
   duration,
   zIndex,
   opacity,
@@ -28,6 +26,7 @@ import {
   defaultSemanticTypography,
 } from '../tokens/semantic';
 import type { SemanticTokens } from '../tokens/semantic';
+import { resolveThemeVariant } from './variants';
 import type { Theme, NativeUIConfig } from './types';
 
 const ThemeContext = createContext<Theme | null>(null);
@@ -37,26 +36,15 @@ export interface NativeUIProviderProps {
   children?: React.ReactNode;
 }
 
-/**
- * Default font families applied when `NativeUIProvider.config.fontFamilies`
- * is omitted. Space Grotesk is the branded choice that ships with the design
- * system's reference look. Consumers are responsible for loading the actual
- * font files (e.g. via `expo-font` / `@expo-google-fonts/space-grotesk`).
- *
- * If Space Grotesk is not loaded, React Native falls back to the platform
- * system font at runtime - text remains readable but loses the branded feel.
- * Pass `systemFontFamilies` explicitly to skip Space Grotesk entirely.
- */
-const DEFAULT_FONT_FAMILIES: FontFamilies = spaceGroteskFontFamilies;
-
 type TypographyResolver = (families: FontFamilies) => Typography;
 
 /** Map config.typography → a pure resolver. Extracted to keep the provider flat. */
 function typographyResolverFor(
   override: NativeUIConfig['typography'],
+  density: TypographyDensity,
 ): TypographyResolver | Typography {
   if (override == null) {
-    return DEFAULT_TYPOGRAPHY_DENSITY === 'compact' ? compactTypography : buildTypography;
+    return density === 'compact' ? compactTypography : buildTypography;
   }
   if (typeof override === 'function') return override;
 
@@ -73,13 +61,22 @@ function typographyResolverFor(
  *
  * Defaults are tuned for a modern, branded mobile look:
  * - `typography` density is `'compact'` (15-pt body, larger displays).
- * - `fontFamilies` default to Space Grotesk (`DEFAULT_FONT_FAMILIES`). Load
- *   the font files in your app or pass `systemFontFamilies` to opt out.
+ * - `fontFamilies` default to the active variant's families (Aurora ships
+ *   Space Grotesk). Load the font files in your app or pass `systemFontFamilies`
+ *   to opt out.
  * - Spacing / radius / elevation tokens form a cohesive, opinionated scale.
  *
  * @example
  * ```tsx
  * <NativeUIProvider config={{ colorMode: 'dark' }}>
+ *   <App />
+ * </NativeUIProvider>
+ * ```
+ *
+ * Switch to the Bloom theme:
+ * ```tsx
+ * import { NativeUIProvider, bloomFontFamilies } from '@polprog/native-ui';
+ * <NativeUIProvider config={{ theme: 'bloom', fontFamilies: bloomFontFamilies }}>
  *   <App />
  * </NativeUIProvider>
  * ```
@@ -97,8 +94,9 @@ export function NativeUIProvider({ config = {}, children }: NativeUIProviderProp
   const systemScheme = useColorScheme();
 
   const {
+    theme: themeVariant,
     colorMode = 'system',
-    preset = 'default',
+    preset,
     fontColor = 'default',
     fontSize = 'default',
     highContrast = false,
@@ -109,6 +107,11 @@ export function NativeUIProvider({ config = {}, children }: NativeUIProviderProp
     semanticTokens: semanticOverrides,
   } = config;
 
+  // `resolveThemeVariant` returns shared registry singletons for the built-in
+  // names, so `variant` stays referentially stable across renders.
+  const variant = resolveThemeVariant(themeVariant);
+  const resolvedPreset = preset ?? variant.colorPalette.defaultPreset;
+
   const isDark = useMemo(() => {
     if (colorMode === 'system') return systemScheme === 'dark';
 
@@ -117,28 +120,31 @@ export function NativeUIProvider({ config = {}, children }: NativeUIProviderProp
 
   const colors = useMemo(
     () =>
-      resolveColorScheme({
-        isDark,
-        preset,
-        fontColor,
-        highContrast,
-        customAccent,
-      }),
-    [isDark, preset, fontColor, highContrast, customAccent],
+      resolveColorScheme(
+        {
+          isDark,
+          preset: resolvedPreset,
+          fontColor,
+          highContrast,
+          customAccent,
+        },
+        variant.colorPalette,
+      ),
+    [isDark, resolvedPreset, fontColor, highContrast, customAccent, variant],
   );
 
   const fontScale = FONT_SCALE[fontSize];
 
   const fontFamiliesKey = fontFamilies ? JSON.stringify(fontFamilies) : '';
   const resolvedFontFamilies: FontFamilies = useMemo(
-    () => ({ ...DEFAULT_FONT_FAMILIES, ...fontFamilies }),
+    () => ({ ...variant.fontFamilies, ...fontFamilies }),
     // Hash inline config so callers don't need to `useMemo` their own.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [fontFamiliesKey],
+    [fontFamiliesKey, variant],
   );
 
   const typography: Typography = useMemo(() => {
-    const resolver = typographyResolverFor(typographyOverride);
+    const resolver = typographyResolverFor(typographyOverride, variant.typographyDensity);
     const base = typeof resolver === 'function' ? resolver(resolvedFontFamilies) : resolver;
     if (!fontScale) return base;
 
@@ -147,16 +153,17 @@ export function NativeUIProvider({ config = {}, children }: NativeUIProviderProp
     // HeaderBar, etc.) scales - not only the <Text> primitive.
     const scaled = {} as Typography;
     for (const key of Object.keys(base) as Array<keyof Typography>) {
-      const variant = base[key];
+      const style = base[key];
+
       scaled[key] = {
-        ...variant,
-        fontSize: variant.fontSize + fontScale,
-        lineHeight: variant.lineHeight + fontScale,
+        ...style,
+        fontSize: style.fontSize + fontScale,
+        lineHeight: style.lineHeight + fontScale,
       };
     }
 
     return scaled;
-  }, [resolvedFontFamilies, typographyOverride, fontScale]);
+  }, [resolvedFontFamilies, typographyOverride, fontScale, variant]);
 
   const semanticKey = semanticOverrides ? JSON.stringify(semanticOverrides) : '';
   const semantic = useMemo<SemanticTokens>(
@@ -169,16 +176,18 @@ export function NativeUIProvider({ config = {}, children }: NativeUIProviderProp
     [semanticKey],
   );
 
+  const resolvedElevation = isDark ? variant.elevation.dark : variant.elevation.light;
+
   const theme = useMemo<Theme>(
     () => ({
       colors,
       typography,
       fontFamilies: resolvedFontFamilies,
       spacing,
-      borderRadius,
+      borderRadius: variant.borderRadius,
       iconSize,
       hitSlop,
-      elevation,
+      elevation: resolvedElevation,
       duration,
       zIndex,
       opacity,
@@ -190,7 +199,17 @@ export function NativeUIProvider({ config = {}, children }: NativeUIProviderProp
       reduceAnimations,
       fontScale,
     }),
-    [colors, typography, resolvedFontFamilies, semantic, isDark, reduceAnimations, fontScale],
+    [
+      colors,
+      typography,
+      resolvedFontFamilies,
+      variant,
+      resolvedElevation,
+      semantic,
+      isDark,
+      reduceAnimations,
+      fontScale,
+    ],
   );
 
   return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;

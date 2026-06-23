@@ -7,7 +7,7 @@
   <a href="https://www.npmjs.com/package/@polprog/native-ui"><img src="https://img.shields.io/npm/dm/@polprog/native-ui.svg?style=flat-square&color=6366f1" alt="npm downloads"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-6366f1?style=flat-square" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/TypeScript-strict-0A84FF?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript strict">
-  <img src="https://img.shields.io/badge/tests-188%20passed-22c55e?style=flat-square&logo=jest&logoColor=white" alt="Tests: 188 passed">
+  <img src="https://img.shields.io/badge/tests-626%20passed-22c55e?style=flat-square&logo=jest&logoColor=white" alt="Tests: 626 passed">
   <a href="https://github.com/polprog-tech/native-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/polprog-tech/native-ui/ci.yml?branch=master&style=flat-square" alt="CI"></a>
   <a href="https://polprog-tech.github.io/native-ui"><img src="https://img.shields.io/badge/Storybook-ff4785?style=flat-square&logo=storybook&logoColor=white" alt="Storybook"></a>
   <img src="https://img.shields.io/badge/React%20Native-0.74%2B-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React Native 0.74+">
@@ -37,9 +37,9 @@
   letter-spacing and line heights.
 - 🧩 **24+ production components** built on a small primitive layer
   (`Box`, `VStack`, `HStack`, `Text`, `PressableScale`, …).
-- 🎨 **Theme engine** - colour presets, dark/light/system mode, high contrast
+- 🎨 **Theme engine** - two visual variants (Aurora, Bloom), colour presets, dark/light/system mode, high contrast
   and font-scale tiers - all driven by tokens.
-- 🧪 **Tested** - 188 unit tests (GIVEN/WHEN/THEN) covering tokens,
+- 🧪 **Tested** - 626 unit tests (GIVEN/WHEN/THEN) covering tokens,
   primitives, components, and public exports.
 - 📦 **Tree-shakeable** ESM + CJS build with full `.d.ts` (via `tsup`).
 - ♿ **Accessible by default** - screen-reader labels, roles, reduced motion
@@ -151,19 +151,60 @@ function ProfileScreen() {
 
 The `NativeUIProvider` accepts a `config` prop:
 
-| Property           | Type                               | Default     | Description                |
-| ------------------ | ---------------------------------- | ----------- | -------------------------- |
-| `colorMode`        | `'light' \| 'dark' \| 'system'`    | `'system'`  | Color mode                 |
-| `preset`           | `ThemePreset`                      | `'default'` | Theme preset (7 available) |
-| `fontColor`        | `'default' \| 'warm' \| 'cool'`    | `'default'` | Font color variant         |
-| `fontSize`         | `'default' \| 'medium' \| 'large'` | `'default'` | Font size tier             |
-| `highContrast`     | `boolean`                          | `false`     | High contrast mode         |
-| `reduceAnimations` | `boolean`                          | `false`     | Reduce motion              |
-| `customAccent`     | `string \| null`                   | `null`      | Custom accent color (hex)  |
+| Property           | Type                                   | Default     | Description                                                   |
+| ------------------ | -------------------------------------- | ----------- | ------------------------------------------------------------- |
+| `theme`            | `'default' \| 'bloom' \| ThemeVariant` | `'default'` | Complete visual variant (Aurora / Bloom)                      |
+| `colorMode`        | `'light' \| 'dark' \| 'system'`        | `'system'`  | Color mode                                                    |
+| `preset`           | `ThemePreset \| BloomPreset`           | per variant | Accent preset; each variant ships its own (Aurora 7, Bloom 4) |
+| `fontColor`        | `'default' \| 'warm' \| 'cool'`        | `'default'` | Font color variant                                            |
+| `fontSize`         | `'default' \| 'medium' \| 'large'`     | `'default'` | Font size tier                                                |
+| `highContrast`     | `boolean`                              | `false`     | High contrast mode                                            |
+| `reduceAnimations` | `boolean`                              | `false`     | Reduce motion                                                 |
+| `customAccent`     | `string \| null`                       | `null`      | Custom accent color (hex)                                     |
 
-### Available Presets
+### Theme variants: Aurora & Bloom
 
-`default` · `midnight` · `ocean` · `forest` · `sunset` · `rose` · `amoled`
+A **theme variant** bundles a complete visual identity - colour palette, corner
+radii, elevation, type density, and default fonts - behind one name. Pass
+`theme` to switch the whole look; everything else (`colorMode`, `preset`,
+`customAccent`, ...) keeps working on top of it.
+
+| Variant    | `id`        | Personality                                                           |
+| ---------- | ----------- | --------------------------------------------------------------------- |
+| **Aurora** | `'default'` | The original look - green accent, near-black surfaces, Space Grotesk. |
+| **Bloom**  | `'bloom'`   | Violet/pink accents, rounded corners, purple-tinted, soft.            |
+
+```tsx
+import { NativeUIProvider } from '@polprog/native-ui';
+
+<NativeUIProvider config={{ theme: 'bloom', colorMode: 'system' }}>
+  <App />
+</NativeUIProvider>;
+```
+
+Each variant ships its own accent presets, selectable via `preset`:
+
+- **Aurora**: `default` · `midnight` · `ocean` · `forest` · `sunset` · `rose` · `amoled`
+- **Bloom**: `violet` · `grape` · `coral` · `ocean`
+
+#### Fonts
+
+Aurora defaults to Space Grotesk; Bloom pairs **Outfit** (headings, numerals)
+with **Plus Jakarta Sans** (body, labels). The library only references the
+family names - load the font files in your app and pass the matching preset:
+
+```tsx
+import { bloomFontFamilies } from '@polprog/native-ui';
+// load e.g. @expo-google-fonts/outfit + @expo-google-fonts/plus-jakarta-sans
+<NativeUIProvider config={{ theme: 'bloom', fontFamilies: bloomFontFamilies }} />;
+```
+
+If a font is not loaded, React Native falls back to the system font - text stays
+readable but loses the branded feel.
+
+> **Note:** Bloom renders its primary action as a solid violet fill. A
+> violet-to-pink gradient button is an app-level flourish, not a library
+> primitive, so it is intentionally not baked into the theme.
 
 ### Accessing the theme
 
@@ -439,7 +480,7 @@ packages/native-ui/
 │   ├── components/  # Higher-level UI components
 │   ├── utils/       # Haptics, helpers
 │   └── index.ts     # Barrel export
-├── __tests__/       # Jest + @testing-library/react (188 tests)
+├── __tests__/       # Jest + @testing-library/react (626 tests)
 ├── stories/         # Storybook stories (source of truth for docs)
 ├── package.json
 ├── tsconfig.json

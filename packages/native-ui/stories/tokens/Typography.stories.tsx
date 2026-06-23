@@ -486,9 +486,7 @@ export const DefaultFontFamilies: StoryObj = {
           >
             spaceGroteskFontFamilies (provider default)
           </RNText>
-          {(
-            Object.keys(spaceGroteskFontFamilies) as Array<keyof typeof spaceGroteskFontFamilies>
-          ).map((w) => (
+          {(['regular', 'medium', 'semiBold', 'bold'] as const).map((w) => (
             <RNText key={w} style={{ fontSize: 13 }}>
               <RNText style={{ fontFamily: 'monospace', color: colors.primary }}>{w}</RNText>
               {' → '}
@@ -507,13 +505,11 @@ export const DefaultFontFamilies: StoryObj = {
           >
             systemFontFamilies (opt-out)
           </RNText>
-          {(Object.keys(systemFontFamilies) as Array<keyof typeof systemFontFamilies>).map((w) => (
+          {(['regular', 'medium', 'semiBold', 'bold'] as const).map((w) => (
             <RNText key={w} style={{ fontSize: 13 }}>
               <RNText style={{ fontFamily: 'monospace', color: colors.primary }}>{w}</RNText>
               {' → '}
-              <RNText style={{ color: colors.textPrimary }}>
-                {systemFontFamilies[w] ?? '(platform default)'}
-              </RNText>
+              <RNText style={{ color: colors.textPrimary }}>{systemFontFamilies[w]}</RNText>
             </RNText>
           ))}
         </View>
