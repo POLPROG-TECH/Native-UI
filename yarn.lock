@@ -89,13 +89,6 @@
     "@types/jsesc" "^2.5.0"
     jsesc "^3.0.2"
 
-"@babel/helper-annotate-as-pure@^7.29.7":
-  version "7.29.7"
-  resolved "https://registry.npmjs.org/@babel/helper-annotate-as-pure/-/helper-annotate-as-pure-7.29.7.tgz"
-  integrity sha512-OoK6239jHPuSQOoS0kfTVKn0b/rVTk0seKq4Gd2UMLtmOVLjDC0ki3e+c90Trqv2gMfvJFqkiljrr568+qddiw==
-  dependencies:
-    "@babel/types" "^7.29.7"
-
 "@babel/helper-annotate-as-pure@^8.0.0":
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/@babel/helper-annotate-as-pure/-/helper-annotate-as-pure-8.0.0.tgz#e094d0ea95f319cdc399fe25ec82e4b3dddb8461"
@@ -385,12 +378,12 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.14.5"
 
-"@babel/plugin-syntax-flow@^7.29.7":
-  version "7.29.7"
-  resolved "https://registry.npmjs.org/@babel/plugin-syntax-flow/-/plugin-syntax-flow-7.29.7.tgz"
-  integrity sha512-ajMX6QPcyomotqwpzhkYGxcK2i/us0rs1Qo9QvUpa+Fca0FTmqrzKrctoIYLMxcOhGZldGT/BAVkRGTWBiR8gQ==
+"@babel/plugin-syntax-flow@^8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-flow/-/plugin-syntax-flow-8.0.1.tgz#c60a42b101056ec3b2c986a4a3be82ca4fbe2f94"
+  integrity sha512-0cXdg5GCKK+PoV+Anjbi0yAXq/mq1iIRBiMG1REOLc4iLN4jj86dWS08qMatUYAsNMzkcurn4okYHnoy0B1Txg==
   dependencies:
-    "@babel/helper-plugin-utils" "^7.29.7"
+    "@babel/helper-plugin-utils" "^8.0.1"
 
 "@babel/plugin-syntax-import-attributes@^7.24.7":
   version "7.29.7"
@@ -630,13 +623,13 @@
   dependencies:
     "@babel/helper-plugin-utils" "^8.0.1"
 
-"@babel/plugin-transform-flow-strip-types@^7.29.7":
-  version "7.29.7"
-  resolved "https://registry.npmjs.org/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-7.29.7.tgz"
-  integrity sha512-wRHeUjUjCZnMHmiO5bRgjFLcoEh7JyTdByOW11ahhwNa4V0bmeGEaIvt51yq0zQp2yWIpqfxXXPyUP6GFJZHOQ==
+"@babel/plugin-transform-flow-strip-types@^8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-flow-strip-types/-/plugin-transform-flow-strip-types-8.0.1.tgz#07d26ff28dfc596e7d48470ca81c94055ba3b8e4"
+  integrity sha512-jEfYZWRhHvJPt2ckSBYtFGWHG/rbxer5IiVqV5BoSY42bMG/2PZUfWXcU67jcPLH6fKe8eRncmLZLzVu76TdAA==
   dependencies:
-    "@babel/helper-plugin-utils" "^7.29.7"
-    "@babel/plugin-syntax-flow" "^7.29.7"
+    "@babel/helper-plugin-utils" "^8.0.1"
+    "@babel/plugin-syntax-flow" "^8.0.1"
 
 "@babel/plugin-transform-for-of@^8.0.1":
   version "8.0.1"
@@ -1012,14 +1005,14 @@
     core-js-compat "^3.48.0"
     semver "^7.7.3"
 
-"@babel/preset-flow@^7.29.7":
-  version "7.29.7"
-  resolved "https://registry.npmjs.org/@babel/preset-flow/-/preset-flow-7.29.7.tgz"
-  integrity sha512-KYIRV0BuaN68CDdsqFkAD7MU7yipUqQNuNElwATdxaIdpTjhvtY82QvkBJs7zV3Evxj2jFAAZ1iO8nyy0nhjqA==
+"@babel/preset-flow@^8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@babel/preset-flow/-/preset-flow-8.0.1.tgz#317d2d179c810dfc5c76420586c1e5a2ce64a563"
+  integrity sha512-E8fAfRu5i6CsZ4ryXdpUh9viJnXC3EiM6HQxUw26wSsICzKSdq00YxKV1gS2JZz2NAUMPLJrjjxazflNctx+dw==
   dependencies:
-    "@babel/helper-plugin-utils" "^7.29.7"
-    "@babel/helper-validator-option" "^7.29.7"
-    "@babel/plugin-transform-flow-strip-types" "^7.29.7"
+    "@babel/helper-plugin-utils" "^8.0.1"
+    "@babel/helper-validator-option" "^8.0.0"
+    "@babel/plugin-transform-flow-strip-types" "^8.0.1"
 
 "@babel/preset-modules@^0.2.0":
   version "0.2.0"
