@@ -1690,10 +1690,10 @@
     "@eslint/core" "^1.2.1"
     levn "^0.4.1"
 
-"@fontsource/space-grotesk@^5.2.10":
-  version "5.2.10"
-  resolved "https://registry.npmjs.org/@fontsource/space-grotesk/-/space-grotesk-5.2.10.tgz"
-  integrity sha512-XNXEbT74OIITPqw2H6HXwPDp85fy43uxfBwFR5PU+9sLnjuLj12KlhVM9nZVN6q6dlKjkuN8JisW/OBxwxgUew==
+"@fontsource/space-grotesk@^5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/space-grotesk/-/space-grotesk-5.3.0.tgz#248f33358ba78cee84832832f7a79c77a096c7e0"
+  integrity sha512-ksnGizDPXIDuvqcTYTSrmZ+evx9sDlS8rp7+42BQ7wU+spt3twEoXfbJz672C+5CLg6VeUQwRy5RXshWb67LcQ==
 
 "@hapi/address@^5.1.1":
   version "5.1.1"
