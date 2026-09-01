@@ -37,7 +37,7 @@ jobs:
         run: npm run test --workspace=@polprog/native-ui
       - run: npm run build --workspace=@polprog/native-ui
       - name: Create Release PR or publish to npm
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
           publish: npm run release
           version: npm run version
