@@ -30,7 +30,7 @@
     "concurrently": "^10.0.5",
     "http-server": "^14.1.1",
     "msw": "^2.15.0",
-    "msw-storybook-addon": "^2.0.7",
+    "msw-storybook-addon": "^3.0.3",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-native-web": "^0.21.2",
