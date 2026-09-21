@@ -4368,10 +4368,10 @@ chokidar@^4.0.3:
   dependencies:
     readdirp "^4.0.1"
 
-chromatic@^17.5.0:
-  version "17.5.0"
-  resolved "https://registry.npmjs.org/chromatic/-/chromatic-17.5.0.tgz"
-  integrity sha512-jYtXDaY1VeaNaWMom4HewLQTL574s4wTtkg5Kryov9Cj7D6i8Pe7twpLsetG7apxD0aITWUhx6KiqfN6p380rw==
+chromatic@^18.9.4:
+  version "18.9.4"
+  resolved "https://registry.yarnpkg.com/chromatic/-/chromatic-18.9.4.tgz#f41ab03ad2a9d2d39a5badc946189bca694e1981"
+  integrity sha512-+/socRBceUAk19XwvnnJTgkgw6YJ5Fh58HoWM5ipiLwTnZS82r/cCM164ROKYVajeuCeo3ROsH+6nVHAylin5g==
   dependencies:
     semver "^7.3.5"
 
