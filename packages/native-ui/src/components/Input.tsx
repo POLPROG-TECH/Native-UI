@@ -1,9 +1,17 @@
-import { forwardRef } from 'react';
+import {
+  forwardRef,
+  type ComponentRef,
+  type ForwardRefExoticComponent,
+  type RefAttributes,
+} from 'react';
 import { StyleSheet, TextInput, View, type TextInputProps, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { useTextField } from '../hooks/useTextField';
 import { FieldLabel } from './FieldLabel';
 import { FieldError } from './FieldError';
+
+// Since React Native 0.87 `TextInput` as a type is the component, not its instance.
+type TextInputRef = ComponentRef<typeof TextInput>;
 
 export interface InputProps extends TextInputProps {
   /** Label displayed above the input in uppercase. */
@@ -19,6 +27,9 @@ export interface InputProps extends TextInputProps {
   containerStyle?: ViewStyle;
 }
 
+// Explicit type keeps the emitted declaration portable across React Native versions.
+type InputType = ForwardRefExoticComponent<InputProps & RefAttributes<TextInputRef>>;
+
 /**
  * Themed text input with label, error state, and animated focus border.
  * Wraps React Native `TextInput` and forwards all standard props. The `ref` is
@@ -32,7 +43,7 @@ export interface InputProps extends TextInputProps {
  * <Input label="Bio" multiline numberOfLines={4} />
  * ```
  */
-export const Input = forwardRef<TextInput, InputProps>(function Input(
+export const Input: InputType = forwardRef<TextInputRef, InputProps>(function Input(
   { label, error, required, containerStyle, style, onFocus, onBlur, ...props },
   ref,
 ) {

@@ -5,6 +5,8 @@ import { Input } from '../../src/components/Input';
 import { TextArea } from '../../src/components/TextArea';
 import { NativeUIProvider } from '../../src/theme';
 
+type TextInputRef = React.ComponentRef<typeof TextInput>;
+
 function renderWithTheme(ui: React.ReactElement) {
   return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
 }
@@ -12,7 +14,7 @@ function renderWithTheme(ui: React.ReactElement) {
 describe('text field ref forwarding', () => {
   it('should forward a ref to the underlying TextInput for Input', () => {
     // GIVEN a ref passed to an Input
-    const ref = React.createRef<TextInput>();
+    const ref = React.createRef<TextInputRef>();
 
     // WHEN the Input is rendered inside a theme provider
     renderWithTheme(<Input ref={ref} label="Email" />);
@@ -24,7 +26,7 @@ describe('text field ref forwarding', () => {
 
   it('should forward a ref to the underlying TextInput for TextArea', () => {
     // GIVEN a ref passed to a TextArea
-    const ref = React.createRef<TextInput>();
+    const ref = React.createRef<TextInputRef>();
 
     // WHEN the TextArea is rendered inside a theme provider
     renderWithTheme(<TextArea ref={ref} label="Bio" />);

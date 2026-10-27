@@ -13,12 +13,7 @@ import { getHaptics } from '../utils/haptics';
 import { useDebouncedPress } from '../hooks/useDebouncedPress';
 
 export type ButtonVariant =
-  | 'primary'
-  | 'secondary'
-  | 'outline'
-  | 'ghost'
-  | 'danger'
-  | 'destructive';
+  'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'destructive';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps {

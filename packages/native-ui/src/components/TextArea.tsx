@@ -1,9 +1,17 @@
-import { forwardRef } from 'react';
+import {
+  forwardRef,
+  type ComponentRef,
+  type ForwardRefExoticComponent,
+  type RefAttributes,
+} from 'react';
 import { StyleSheet, TextInput, View, type TextInputProps, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { useTextField } from '../hooks/useTextField';
 import { FieldLabel } from './FieldLabel';
 import { FieldError } from './FieldError';
+
+// Since React Native 0.87 `TextInput` as a type is the component, not its instance.
+type TextInputRef = ComponentRef<typeof TextInput>;
 
 export interface TextAreaProps extends Omit<TextInputProps, 'multiline'> {
   label?: string;
@@ -14,12 +22,15 @@ export interface TextAreaProps extends Omit<TextInputProps, 'multiline'> {
   containerStyle?: ViewStyle;
 }
 
+// Explicit type keeps the emitted declaration portable across React Native versions.
+type TextAreaType = ForwardRefExoticComponent<TextAreaProps & RefAttributes<TextInputRef>>;
+
 /**
  * Multiline text input (textarea equivalent) with label and error support.
  * The `ref` is forwarded to the underlying `TextInput` so consumers can call
  * `.focus()` / `.blur()` imperatively.
  */
-export const TextArea = forwardRef<TextInput, TextAreaProps>(function TextArea(
+export const TextArea: TextAreaType = forwardRef<TextInputRef, TextAreaProps>(function TextArea(
   { label, error, required, lines = 4, containerStyle, style, onFocus, onBlur, ...props },
   ref,
 ) {

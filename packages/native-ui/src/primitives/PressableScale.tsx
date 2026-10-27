@@ -47,6 +47,11 @@ export interface PressableScaleProps extends Omit<PressableProps, 'style' | 'chi
 
 type PressableRef = React.ComponentRef<typeof Pressable>;
 
+// Explicit type keeps the emitted declaration portable across React Native versions.
+type PressableScaleType = React.ForwardRefExoticComponent<
+  PressableScaleProps & React.RefAttributes<PressableRef>
+>;
+
 /**
  * Headless primitive exposing the press-scale animation logic used by
  * `PressableScale`. Returns the handlers and an animated style that consumers
@@ -177,43 +182,44 @@ const AnimatedPressableFallback = Animated.createAnimatedComponent(Pressable);
  * both React 18 and React 19. Declaring `ref` as a plain prop (React 19
  * API) would silently drop the ref on React 18 consumers.
  */
-export const PressableScale = React.forwardRef<PressableRef, PressableScaleProps>(
-  function PressableScale(
-    {
-      children,
-      style,
-      onPress,
-      onPressIn,
-      onPressOut,
-      scaleTo = 0.97,
-      respectReduceAnimations = true,
-      ...rest
-    },
-    ref,
-  ) {
-    const { animatedStyle, handlers, isReanimated } = usePressableScale(scaleTo, {
-      respectReduceAnimations,
-    });
-    const AnimatedPressable =
-      (isReanimated && AnimatedPressableReanimated) || AnimatedPressableFallback;
-
-    return (
-      <AnimatedPressable
-        ref={ref as React.Ref<PressableRef>}
-        {...rest}
-        onPress={onPress}
-        onPressIn={(e) => {
-          handlers.onPressIn();
-          onPressIn?.(e);
-        }}
-        onPressOut={(e) => {
-          handlers.onPressOut();
-          onPressOut?.(e);
-        }}
-        style={[...(Array.isArray(style) ? style : style ? [style] : []), animatedStyle]}
-      >
-        {children}
-      </AnimatedPressable>
-    );
+export const PressableScale: PressableScaleType = React.forwardRef<
+  PressableRef,
+  PressableScaleProps
+>(function PressableScale(
+  {
+    children,
+    style,
+    onPress,
+    onPressIn,
+    onPressOut,
+    scaleTo = 0.97,
+    respectReduceAnimations = true,
+    ...rest
   },
-);
+  ref,
+) {
+  const { animatedStyle, handlers, isReanimated } = usePressableScale(scaleTo, {
+    respectReduceAnimations,
+  });
+  const AnimatedPressable =
+    (isReanimated && AnimatedPressableReanimated) || AnimatedPressableFallback;
+
+  return (
+    <AnimatedPressable
+      ref={ref as React.Ref<PressableRef>}
+      {...rest}
+      onPress={onPress}
+      onPressIn={(e) => {
+        handlers.onPressIn();
+        onPressIn?.(e);
+      }}
+      onPressOut={(e) => {
+        handlers.onPressOut();
+        onPressOut?.(e);
+      }}
+      style={[...(Array.isArray(style) ? style : style ? [style] : []), animatedStyle]}
+    >
+      {children}
+    </AnimatedPressable>
+  );
+});

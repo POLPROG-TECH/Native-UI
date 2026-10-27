@@ -6,7 +6,7 @@ versioning, and releasing.
 
 ## Prerequisites
 
-- **Node.js 20+** (see `.nvmrc`)
+- **Node.js 22+** (see `.nvmrc`)
 - **npm 10+**
 - Familiarity with React Native, TypeScript, and testing.
 

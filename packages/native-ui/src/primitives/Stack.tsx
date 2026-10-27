@@ -3,6 +3,7 @@ import { View, type ViewProps, type ViewStyle, type StyleProp } from 'react-nati
 import { useTheme } from '../theme';
 import type { Spacing, BorderRadius, Elevation } from '../tokens/spacing';
 import type { ColorScheme } from '../tokens/colors';
+import type { Mutable } from '../utils/types';
 
 type ColorToken = Exclude<keyof ColorScheme, 'chart'>;
 
@@ -17,12 +18,7 @@ export interface StackBaseProps extends Omit<ViewProps, 'style'> {
   align?: 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline';
   /** Alignment of children on the main axis */
   justify?:
-    | 'flex-start'
-    | 'flex-end'
-    | 'center'
-    | 'space-between'
-    | 'space-around'
-    | 'space-evenly';
+    'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
   /** Flex value */
   flex?: number;
   /** Allow wrapping */
@@ -69,7 +65,7 @@ function useStackStyle({
   elevation: elev,
 }: Omit<StackBaseProps, 'children' | 'style'>): ViewStyle {
   const theme = useTheme();
-  const s: ViewStyle = {};
+  const s: Mutable<ViewStyle> = {};
 
   const resolvedGap = gap ?? spacing;
   if (resolvedGap) s.gap = theme.spacing[resolvedGap];

@@ -10,6 +10,9 @@ import {
 } from 'react-native';
 import { useTheme } from '../theme';
 
+// Since React Native 0.87 `TextInput` as a type is the component, not its instance.
+type TextInputRef = React.ComponentRef<typeof TextInput>;
+
 export interface SearchBarProps {
   value: string;
   onChangeText: (text: string) => void;
@@ -115,7 +118,7 @@ export function SearchBar({
 }: SearchBarProps) {
   const theme = useTheme();
   const [localValue, setLocalValue] = useState(value);
-  const inputRef = useRef<TextInput>(null);
+  const inputRef = useRef<TextInputRef>(null);
   const { schedule, cancel, isPending } = useDebouncedEmit(onChangeText, debounceMs);
 
   // Sync from the controlled `value` prop only when no local edit is in flight.

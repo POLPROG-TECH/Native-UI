@@ -33,13 +33,7 @@ export type ThemeColors = keyof ColorScheme;
 
 // ─── Theme Presets ─────────────────────────────────────────────
 export type ThemePreset =
-  | 'default'
-  | 'midnight'
-  | 'ocean'
-  | 'forest'
-  | 'sunset'
-  | 'rose'
-  | 'amoled';
+  'default' | 'midnight' | 'ocean' | 'forest' | 'sunset' | 'rose' | 'amoled';
 
 /** Accent presets shipped with the Bloom theme variant. */
 export type BloomPreset = 'violet' | 'grape' | 'coral' | 'ocean';

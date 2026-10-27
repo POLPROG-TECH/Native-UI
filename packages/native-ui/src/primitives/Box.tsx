@@ -3,6 +3,7 @@ import { View, type ViewStyle, type ViewProps, type StyleProp } from 'react-nati
 import { useTheme } from '../theme';
 import type { Spacing, BorderRadius, Elevation } from '../tokens/spacing';
 import type { ColorScheme } from '../tokens/colors';
+import type { Mutable } from '../utils/types';
 
 /** Color tokens usable as a background (excludes composite tokens like `chart`). */
 type ColorToken = Exclude<keyof ColorScheme, 'chart'>;
@@ -75,7 +76,7 @@ export function Box({
 }: BoxProps) {
   const theme = useTheme();
 
-  const computedStyle: ViewStyle = {};
+  const computedStyle: Mutable<ViewStyle> = {};
 
   const resolvedP = p ?? padding;
   const resolvedRadius = radius ?? borderRadius;

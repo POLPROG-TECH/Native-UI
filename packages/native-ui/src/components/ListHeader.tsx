@@ -2,11 +2,7 @@ import { View, Text } from 'react-native';
 import { useTheme } from '../theme';
 
 export type ListHeaderTransform =
-  | 'uppercase'
-  | 'lowercase'
-  | 'capitalize'
-  | 'none'
-  | ((input: string) => string);
+  'uppercase' | 'lowercase' | 'capitalize' | 'none' | ((input: string) => string);
 
 export type ListHeaderSize = 'lg' | 'md' | 'sm' | 'xs';
 
