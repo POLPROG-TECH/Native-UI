@@ -50,6 +50,16 @@ export default [
   },
   {
     /*
+     * Manager addons are bundled by Storybook's own esbuild step with the
+     * classic JSX transform (`React.createElement`), so `React` must be in
+     * scope there. Telling the parser so keeps that import from being
+     * reported as unused; removing it breaks the published manager UI.
+     */
+    files: ['.storybook/manager/**/*.tsx'],
+    languageOptions: { parserOptions: { jsxPragma: 'React' } },
+  },
+  {
+    /*
      * The demo fetch hook resets to `loading` when its request key changes,
      * the plain un-cached fetch pattern the MSW stories are meant to show.
      * Deriving that state during render instead would change the states the

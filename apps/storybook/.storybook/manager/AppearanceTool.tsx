@@ -1,3 +1,10 @@
+/** @jsxRuntime classic */
+/*
+ * Storybook bundles manager addons with the classic JSX transform and only
+ * exposes `react` (not `react/jsx-runtime`) as a manager global, so this file
+ * compiles to `React.createElement` and needs `React` in scope.
+ */
+import React from 'react';
 import { useGlobals, useStorybookApi, useStorybookState } from 'storybook/manager-api';
 import { Button, PopoverProvider, ToggleButton } from 'storybook/internal/components';
 import { PaintBrushIcon } from '@storybook/icons';
