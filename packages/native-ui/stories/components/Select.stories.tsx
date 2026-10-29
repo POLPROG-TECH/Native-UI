@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { fn, within, userEvent, expect, waitFor } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Select } from '../../src/components/Select';
 import { Text } from '../../src/primitives/Text';
+import { SystemIcon } from '../../src/primitives/SystemIcon';
 import { VStack } from '../../src/primitives/Stack';
 import type { SelectOption, SelectProps } from '../../src/components/Select';
 
@@ -15,6 +16,13 @@ const categoryOptions: SelectOption<string>[] = [
   { label: 'Education', value: 'education', icon: '📚' },
 ];
 
+/* Render-function icons follow the theme: textSecondary, primaryText when selected. */
+const priorityOptions: SelectOption<string>[] = [
+  { label: 'Information', value: 'info', icon: (p) => <SystemIcon name="info" {...p} /> },
+  { label: 'Warning', value: 'warning', icon: (p) => <SystemIcon name="alert" {...p} /> },
+  { label: 'Done', value: 'done', icon: (p) => <SystemIcon name="check" {...p} /> },
+];
+
 const currencyOptions: SelectOption<string>[] = [
   { label: 'PLN (Polish Złoty)', value: 'PLN' },
   { label: 'EUR (Euro)', value: 'EUR' },
@@ -25,21 +33,30 @@ const currencyOptions: SelectOption<string>[] = [
 const meta: Meta = {
   title: 'Components/Select',
   parameters: {
+    a11y: {
+      /*
+       * react-native-web's Modal renders aria-modal without role="dialog";
+       * the native Modal has no such markup.
+       */
+      options: { rules: { 'aria-allowed-attr': { enabled: false } } },
+    },
     docs: {
       description: {
         component: [
-          'Modal-based selection control with no native dependencies. Generic over the value type `<T>`.',
+          'Selection control with no native dependencies. Generic over the value type `<T>`.',
           '',
           '### Features',
-          '- Modal-based picker (no native picker dependency)',
-          '- Optional icons per option',
-          '- Checkmark on selected option',
-          '- FlatList with max-height 320px for scrollable lists',
+          '- Options open in a `BottomSheet`: drag handle, swipe and VoiceOver escape-gesture dismissal, keyboard avoidance, safe area',
+          '- The sheet is capped at `bottomSheet.maxWidth` (640) and centered on tablets and web',
+          '- Optional icons per option: an `IconSlot` render function `({ color, size }) => node`, a node or an emoji string',
+          '- Hairline separators, checkmark on the selected option',
+          '- Full-width Cancel action that closes without calling `onChange`',
+          '- Keyboard focus ring on the trigger and the options',
           '- Error/required states matching Input component',
           '',
           '### Design tokens',
-          '- Same border/label styling as Input',
-          '- Modal uses `colors.surfaceElevated`',
+          '- `theme.components.select` for the trigger and option rows',
+          '- `theme.components.bottomSheet` for the sheet surface, handle, paddings and width cap',
           '',
           '### Import',
           '```tsx',
@@ -55,7 +72,7 @@ const meta: Meta = {
 export default meta;
 
 const ControlledSelect = (
-  props: Partial<SelectProps<string>> & {
+  props: Omit<SelectProps<string>, 'value' | 'onChange'> & {
     options: SelectOption<string>[];
     spy?: (v: string) => void;
   },
@@ -65,7 +82,7 @@ const ControlledSelect = (
 
   return (
     <Select
-      {...(rest as any)}
+      {...rest}
       value={value}
       onChange={(v: string) => {
         setValue(v);
@@ -89,10 +106,10 @@ export const Playground: StoryObj<{ onChange: (v: string) => void }> = {
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    // The trigger exposes accessibilityLabel = label ?? placeholder
+    /* The trigger exposes accessibilityLabel = label ?? placeholder */
     const trigger = await canvas.findByRole('button', { name: /category/i });
     await userEvent.click(trigger);
-    // The modal portals into body - query the wider screen.
+    /* The modal portals into body - query the wider screen. */
     const screen = within(document.body);
     const option = await waitFor(() => screen.getByRole('radio', { name: /food & drink/i }), {
       timeout: 3000,
@@ -110,6 +127,8 @@ export const Playground: StoryObj<{ onChange: (v: string) => void }> = {
 /** Cancelling the modal must NOT call `onChange`. */
 export const CancelInteraction: StoryObj<{ onChange: (v: string) => void }> = {
   name: 'Interaction · Cancel does not fire onChange',
+  /* The play function finds the button by its English label; pin the locale for every theme run. */
+  globals: { locale: 'en' },
   args: { onChange: fn() },
   render: (args) => (
     <VStack gap="md" style={{ maxWidth: 360 }}>
@@ -143,6 +162,15 @@ export const WithIcons: StoryObj = {
   ),
 };
 
+export const WithIconSlots: StoryObj = {
+  name: 'With Themed Icons',
+  render: () => (
+    <VStack gap="md" style={{ maxWidth: 360 }}>
+      <ControlledSelect label="Priority" options={priorityOptions} />
+    </VStack>
+  ),
+};
+
 export const WithoutIcons: StoryObj = {
   name: 'Without Icons',
   render: () => (
@@ -170,6 +198,12 @@ export const ErrorState: StoryObj = {
 
 export const Disabled: StoryObj = {
   name: 'Disabled',
+  parameters: {
+    a11y: {
+      /* WCAG 1.4.3 exempts inactive controls; the dimmed look is intentional. */
+      options: { rules: { 'color-contrast': { enabled: false } } },
+    },
+  },
   render: () => (
     <VStack gap="md" style={{ maxWidth: 360 }}>
       <Select label="Category" value="food" options={categoryOptions} onChange={fn()} disabled />

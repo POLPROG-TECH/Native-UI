@@ -1,4 +1,8 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { coverageWidth } from './components/stats/stats';
+import { TestsHealthText } from './components/stats/TestsHealthText';
+import { Translated } from './components/i18n/Translated';
+import { CoverageLines, DocumentedExports, StatCount, TestsPassed } from './components/stats/StatText';
 
 <Meta title="Dashboard" />
 
@@ -22,7 +26,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
   .nd-health .score .n { font-size: 48px; font-weight: 700; color: #059669 !important; letter-spacing: -0.03em; line-height: 1; }
   .nd-health .score .unit { font-size: 17px; color: #6B7280 !important; font-weight: 600; }
   .nd-health .bar { height: 8px; background: #E5E7EB; border-radius: 999px; overflow: hidden; margin: 4px 0; }
-  .nd-health .bar > span { display: block; height: 100%; width: 98%; background: linear-gradient(90deg, #10B981, #059669); border-radius: 999px; }
+  .nd-health .bar > span { display: block; height: 100%; background: linear-gradient(90deg, #10B981, #059669); border-radius: 999px; }
   .nd-health small { color: #6B7280 !important; font-size: 12.5px; }
   .nd-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 32px; }
   @media (max-width: 800px) { .nd-stats { grid-template-columns: repeat(2, 1fr); } }
@@ -58,6 +62,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
   .nd-adopt-row .sub { color: #6B7280 !important; font-size: 12px; font-weight: 400; display: block; margin-top: 2px; }
   .nd-adopt-row .pct { font-weight: 700; color: #4F46E5 !important; font-size: 13px; min-width: 48px; text-align: right; font-variant-numeric: tabular-nums; }
   .nd-adopt-bar { width: 160px; height: 6px; background: #F3F4F6; border-radius: 999px; overflow: hidden; }
+  @media (max-width: 600px) { .nd-adopt-bar { width: 64px; } }
   .nd-adopt-bar > span { display: block; height: 100%; background: linear-gradient(90deg, #6366F1, #4F46E5); border-radius: 999px; }
   .nd-footer { margin-top: 28px; padding: 18px 22px; background: #fff; border: 1px solid #E5E7EB; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 13px; color: #4B5563 !important; }
 `}</style>
@@ -66,100 +71,136 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 <div className="nd-hero">
   <div className="nd-hero-card">
-    <div className="nd-eyebrow">Library Dashboard</div>
-    <h1>@polprog/native-ui<br/>is production-ready.</h1>
-    <p>A real-time overview of the design system's health, inventory, coverage, and consumer adoption. Every number here is sourced from CI - no manual entry.</p>
+    <div className="nd-eyebrow"><Translated lang="en">Library Dashboard</Translated><Translated lang="pl">Panel biblioteki</Translated></div>
+    <h1>@polprog/native-ui<br/><Translated lang="en">is production-ready.</Translated><Translated lang="pl">jest gotowy do produkcji.</Translated></h1>
+    <p><Translated lang="en">A real-time overview of the design system's health, inventory, coverage, and consumer adoption. Every number here is sourced from CI - no manual entry.</Translated>
+      <Translated lang="pl">Bieżący przegląd kondycji systemu projektowego, jego zasobów, pokrycia testami i wykorzystania w aplikacjach. Każda liczba pochodzi z CI - nic nie jest wpisywane ręcznie.</Translated></p>
   </div>
   <div className="nd-health">
-    <div className="eb">Overall health</div>
-    <div className="score"><span className="n">98</span><span className="unit">/ 100</span></div>
-    <div className="bar"><span /></div>
-    <small>Typecheck, lint, tests, build and a11y audits all green on the last pipeline run.</small>
+    <div className="eb"><Translated lang="en">Line coverage</Translated><Translated lang="pl">Pokrycie linii</Translated></div>
+    <div className="score"><span className="n"><CoverageLines /></span><span className="unit"><Translated lang="en">of lines covered</Translated><Translated lang="pl">linii pokrytych testami</Translated></span></div>
+    <div className="bar"><span style={{ width: coverageWidth() }} /></div>
+    <small><Translated lang="en">Measured by the last Jest run (<TestsPassed /> tests). Regenerated before every Storybook dev and build.</Translated>
+      <Translated lang="pl">Zmierzone podczas ostatniego uruchomienia Jest (<TestsPassed /> testów). Odświeżane przed każdym uruchomieniem Storybooka w trybie dev i przed każdym buildem.</Translated></small>
   </div>
 </div>
 
 <div className="nd-stats">
-  <div className="nd-stat"><div className="lbl">Components <span className="dot" /></div><div className="val">28</div><div className="trend">+3 this quarter</div></div>
-  <div className="nd-stat"><div className="lbl">Tests passing <span className="dot" /></div><div className="val">188 / 188</div><div className="trend">100% suite green</div></div>
-  <div className="nd-stat"><div className="lbl">Story coverage <span className="dot" /></div><div className="val">43 / 43</div><div className="trend">Every export documented</div></div>
-  <div className="nd-stat"><div className="lbl">Theme presets <span className="dot" /></div><div className="val">7</div><div className="trend">Light / dark / AMOLED</div></div>
+  <div className="nd-stat"><div className="lbl"><Translated lang="en">Components</Translated><Translated lang="pl">Komponenty</Translated> <span className="dot" /></div><div className="val"><StatCount of="components" /></div><div className="trend"><Translated lang="en">plus <StatCount of="primitives" /> primitives</Translated><Translated lang="pl">oraz <StatCount of="primitives" /> prymitywów</Translated></div></div>
+  <div className="nd-stat"><div className="lbl"><Translated lang="en">Tests passing</Translated><Translated lang="pl">Zaliczone testy</Translated> <span className="dot" /></div><div className="val"><TestsPassed /></div><div className="trend"><TestsHealthText /></div></div>
+  <div className="nd-stat"><div className="lbl"><Translated lang="en">Story coverage</Translated><Translated lang="pl">Pokrycie stories</Translated> <span className="dot" /></div><div className="val"><DocumentedExports /></div><div className="trend"><Translated lang="en">exports with a docs page</Translated><Translated lang="pl">eksportów ze stroną dokumentacji</Translated></div></div>
+  <div className="nd-stat"><div className="lbl"><Translated lang="en">Theme presets</Translated><Translated lang="pl">Presety motywów</Translated> <span className="dot" /></div><div className="val"><StatCount of="presets" /></div><div className="trend"><Translated lang="en">Aurora and Bloom</Translated><Translated lang="pl">Aurora i Bloom</Translated></div></div>
 </div>
 
-<div className="nd-section">Inventory & Quality</div>
+<div className="nd-section"><Translated lang="en">Inventory & Quality</Translated><Translated lang="pl">Zasoby i jakość</Translated></div>
 
 <div className="nd-grid-2">
   <div className="nd-panel">
-    <div className="nd-panel-head"><h3>Component Inventory</h3><span className="tag">Live</span></div>
+    <div className="nd-panel-head"><h3><Translated lang="en">Component Inventory</Translated><Translated lang="pl">Inwentarz komponentów</Translated></h3><span className="tag"><Translated lang="en">Live</Translated><Translated lang="pl">Na żywo</Translated></span></div>
     <div className="nd-inventory">
-      <div className="nd-inv"><div className="n">7</div><div className="l">Primitives</div></div>
-      <div className="nd-inv"><div className="n">28</div><div className="l">Components</div></div>
-      <div className="nd-inv"><div className="n">12</div><div className="l">Token groups</div></div>
-      <div className="nd-inv"><div className="n">5</div><div className="l">Patterns</div></div>
+      <div className="nd-inv"><div className="n"><StatCount of="primitives" /></div><div className="l"><Translated lang="en">Primitives</Translated><Translated lang="pl">Prymitywy</Translated></div></div>
+      <div className="nd-inv"><div className="n"><StatCount of="components" /></div><div className="l"><Translated lang="en">Components</Translated><Translated lang="pl">Komponenty</Translated></div></div>
+      <div className="nd-inv"><div className="n"><StatCount of="typeVariants" /></div><div className="l"><Translated lang="en">Type variants</Translated><Translated lang="pl">Warianty typografii</Translated></div></div>
+      <div className="nd-inv"><div className="n"><StatCount of="patterns" /></div><div className="l"><Translated lang="en">Patterns</Translated><Translated lang="pl">Wzorce</Translated></div></div>
     </div>
     <div className="nd-row"><span className="k">🧱 Box, VStack, HStack, Text, Heading, Divider, PressableScale</span></div>
   </div>
 
   <div className="nd-panel">
-    <div className="nd-panel-head"><h3>Quality Gates</h3><span className="tag">All passing</span></div>
-    <div className="nd-row"><span className="k">🔒 TypeScript strict</span><span className="nd-chip ok">Enabled</span></div>
-    <div className="nd-row"><span className="k">🧹 ESLint</span><span className="nd-chip ok">Zero errors</span></div>
-    <div className="nd-row"><span className="k">🧪 Unit tests</span><span className="nd-chip ok">188 / 188</span></div>
-    <div className="nd-row"><span className="k">📸 Visual regression</span><span className="nd-chip info">Chromatic ready</span></div>
-    <div className="nd-row"><span className="k">♿ Accessibility</span><span className="nd-chip ok">Axe configured</span></div>
+    <div className="nd-panel-head"><h3><Translated lang="en">Quality Gates</Translated><Translated lang="pl">Bramki jakości</Translated></h3><span className="tag"><Translated lang="en">All passing</Translated><Translated lang="pl">Wszystkie zaliczone</Translated></span></div>
+    <div className="nd-row"><span className="k">🔒 TypeScript strict</span><span className="nd-chip ok"><Translated lang="en">Enabled</Translated><Translated lang="pl">Włączony</Translated></span></div>
+    <div className="nd-row"><span className="k">🧹 ESLint</span><span className="nd-chip ok"><Translated lang="en">Zero errors</Translated><Translated lang="pl">Zero błędów</Translated></span></div>
+    <div className="nd-row"><span className="k">🧪 <Translated lang="en">Unit tests</Translated><Translated lang="pl">Testy jednostkowe</Translated></span><span className="nd-chip ok"><TestsPassed /></span></div>
+    <div className="nd-row"><span className="k">📸 <Translated lang="en">Visual regression</Translated><Translated lang="pl">Regresja wizualna</Translated></span><span className="nd-chip info"><Translated lang="en">Chromatic ready</Translated><Translated lang="pl">Gotowe pod Chromatic</Translated></span></div>
+    <div className="nd-row"><span className="k">♿ <Translated lang="en">Accessibility</Translated><Translated lang="pl">Dostępność</Translated></span><span className="nd-chip ok"><Translated lang="en">Axe configured</Translated><Translated lang="pl">Axe skonfigurowany</Translated></span></div>
     <div className="nd-row"><span className="k">📦 Build</span><span className="nd-chip ok">tsup ESM + CJS</span></div>
-    <div className="nd-row"><span className="k">📝 Changesets</span><span className="nd-chip ok">Configured</span></div>
+    <div className="nd-row"><span className="k">📝 Changesets</span><span className="nd-chip ok"><Translated lang="en">Configured</Translated><Translated lang="pl">Skonfigurowane</Translated></span></div>
   </div>
 </div>
 
-<div className="nd-section">Consumer adoption</div>
+<div className="nd-section"><Translated lang="en">Consumer adoption</Translated><Translated lang="pl">Wykorzystanie w aplikacjach</Translated></div>
 
 <div className="nd-panel">
-  <div className="nd-panel-head"><h3>Apps consuming native-ui</h3><span className="tag">2 tracked</span></div>
+  <div className="nd-panel-head"><h3><Translated lang="en">Apps consuming native-ui</Translated><Translated lang="pl">Aplikacje korzystające z native-ui</Translated></h3><span className="tag"><Translated lang="en">2 tracked</Translated><Translated lang="pl">2 śledzone</Translated></span></div>
   <div className="nd-adopt">
     <div className="nd-adopt-row">
-      <div><div className="name">PhotoToPuzzle</div><span className="sub">Production app - privacy-first photo puzzle game for iOS, Android and tablets, built end to end on native-ui</span></div>
+      <div><div className="name">PhotoToPuzzle</div><span className="sub"><Translated lang="en">Production app - privacy-first photo puzzle game for iOS, Android and tablets, built end to end on native-ui</Translated>
+        <Translated lang="pl">Aplikacja produkcyjna - gra w puzzle ze zdjęć, stawiająca na prywatność, na iOS, Androida i tablety, w całości zbudowana na native-ui</Translated></span></div>
       <div className="nd-adopt-bar"><span style={{ width: '100%' }} /></div>
-      <div className="pct">Live</div>
+      <div className="pct"><Translated lang="en">Live</Translated><Translated lang="pl">Na żywo</Translated></div>
     </div>
     <div className="nd-adopt-row">
-      <div><div className="name">CostBoard</div><span className="sub">Grade A - native-ui primitives replace 94% of local components</span></div>
+      <div><div className="name">CostBoard</div><span className="sub"><Translated lang="en">Production app - home and renovation budgets with PDF quotes for iOS and Android, native-ui primitives replace 94% of local components</Translated>
+        <Translated lang="pl">Aplikacja produkcyjna - budżety domowe i remontowe z wycenami PDF na iOS i Androida, prymitywy native-ui zastępują 94% lokalnych komponentów</Translated></span></div>
       <div className="nd-adopt-bar"><span style={{ width: '94%' }} /></div>
-      <div className="pct">94%</div>
+      <div className="pct"><Translated lang="en">Live</Translated><Translated lang="pl">Na żywo</Translated></div>
     </div>
   </div>
 </div>
 
-<div className="nd-section">Used in production</div>
+<div className="nd-section"><Translated lang="en">Used in production</Translated><Translated lang="pl">Używane produkcyjnie</Translated></div>
 
-<div className="nd-panel">
-  <div className="nd-panel-head"><h3>PhotoToPuzzle</h3><span className="tag">Production app</span></div>
-  <div className="nd-adopt">
-    <p style={{ margin: '0 0 14px', fontSize: '13.5px', lineHeight: 1.6, color: '#374151' }}>
-      Native-UI is already used in production by <strong>PhotoToPuzzle</strong>, a privacy-first photo puzzle game for iOS, Android, iPad, and Android tablets. The app uses Native-UI across its interface - from buttons, cards and modals to theme tokens, spacing and adaptive layouts. PhotoToPuzzle runs fully offline, keeps photos on-device, and shows how the library supports real mobile products across phones and tablets.
-    </p>
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
-      <span className="nd-chip ok">Production app</span>
-      <span className="nd-chip info">iOS + Android</span>
-      <span className="nd-chip info">Phone + Tablet</span>
-      <span className="nd-chip ok">Offline-first</span>
-      <span className="nd-chip info">Built with Native-UI</span>
+<div className="nd-grid-2">
+  <div className="nd-panel">
+    <div className="nd-panel-head"><h3>PhotoToPuzzle</h3><span className="tag"><Translated lang="en">Production app</Translated><Translated lang="pl">Aplikacja produkcyjna</Translated></span></div>
+    <div className="nd-adopt">
+      <div style={{ margin: '0 0 14px', fontSize: '13.5px', lineHeight: 1.6, color: '#374151' }}>
+        <Translated lang="en">
+        Native-UI is already used in production by <strong>PhotoToPuzzle</strong>, a privacy-first photo puzzle game for iOS, Android, iPad, and Android tablets. The app uses Native-UI across its interface - from buttons, cards and modals to theme tokens, spacing and adaptive layouts. PhotoToPuzzle runs fully offline, keeps photos on-device, and shows how the library supports real mobile products across phones and tablets.
+        </Translated>
+        <Translated lang="pl">
+        Native-UI jest już używany produkcyjnie w <strong>PhotoToPuzzle</strong>, grze w puzzle ze zdjęć, która stawia na prywatność, na iOS, Androida, iPada i tablety z Androidem. Aplikacja korzysta z Native-UI w całym interfejsie - od przycisków, kart i okien modalnych po tokeny motywu, odstępy i adaptacyjne układy. PhotoToPuzzle działa w pełni offline, przechowuje zdjęcia na urządzeniu i pokazuje, jak biblioteka sprawdza się w prawdziwych produktach mobilnych na telefonach i tabletach.
+        </Translated>
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
+        <span className="nd-chip ok"><Translated lang="en">Production app</Translated><Translated lang="pl">Aplikacja produkcyjna</Translated></span>
+        <span className="nd-chip info">iOS + Android</span>
+        <span className="nd-chip info">App Store + Google Play</span>
+        <span className="nd-chip info"><Translated lang="en">Phone + Tablet</Translated><Translated lang="pl">Telefon + tablet</Translated></span>
+        <span className="nd-chip ok">Offline-first</span>
+        <span className="nd-chip info"><Translated lang="en">Built with Native-UI</Translated><Translated lang="pl">Zbudowana z Native-UI</Translated></span>
+      </div>
+      <a href="https://polprog.pl/apps/PhotoToPuzzle/" target="_blank" rel="noopener noreferrer"><Translated lang="en">View PhotoToPuzzle on POLPROG →</Translated><Translated lang="pl">Zobacz PhotoToPuzzle na stronie POLPROG →</Translated></a>
     </div>
-    <a href="https://polprog.pl/apps/PhotoToPuzzle/" target="_blank" rel="noopener noreferrer">View PhotoToPuzzle on POLPROG →</a>
+  </div>
+
+  <div className="nd-panel">
+    <div className="nd-panel-head"><h3>CostBoard</h3><span className="tag"><Translated lang="en">Production app</Translated><Translated lang="pl">Aplikacja produkcyjna</Translated></span></div>
+    <div className="nd-adopt">
+      <div style={{ margin: '0 0 14px', fontSize: '13.5px', lineHeight: 1.6, color: '#374151' }}>
+        <Translated lang="en">
+        <strong>CostBoard</strong> is live on iOS and Android. It keeps the household budget and renovation budgets as separate projects, and lets contractors send a client a PDF quote straight from the phone. Native-UI primitives replace 94% of its local components. CostBoard works offline and without an account, with no ads and no tracking scripts, in 25 interface languages.
+        </Translated>
+        <Translated lang="pl">
+        <strong>CostBoard</strong> jest dostępny na iOS i Androida. Prowadzi budżet domowy i budżety remontów jako osobne projekty, a wykonawcom pozwala wysłać klientowi wycenę w PDF prosto z telefonu. Prymitywy Native-UI zastępują 94% jego lokalnych komponentów. CostBoard działa offline i bez zakładania konta, bez reklam i skryptów śledzących, w 25 językach interfejsu.
+        </Translated>
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
+        <span className="nd-chip ok"><Translated lang="en">Production app</Translated><Translated lang="pl">Aplikacja produkcyjna</Translated></span>
+        <span className="nd-chip info">iOS + Android</span>
+        <span className="nd-chip info">App Store + Google Play</span>
+        <span className="nd-chip ok">Offline-first</span>
+        <span className="nd-chip info"><Translated lang="en">25 languages</Translated><Translated lang="pl">25 języków</Translated></span>
+        <span className="nd-chip info"><Translated lang="en">Built with Native-UI</Translated><Translated lang="pl">Zbudowana z Native-UI</Translated></span>
+      </div>
+      <a href="https://polprog.pl/apps/CostBoard/" target="_blank" rel="noopener noreferrer"><Translated lang="en">View CostBoard on POLPROG →</Translated><Translated lang="pl">Zobacz CostBoard na stronie POLPROG →</Translated></a>
+    </div>
   </div>
 </div>
 
-<div className="nd-section">Recent activity</div>
+<div className="nd-section"><Translated lang="en">Recent activity</Translated><Translated lang="pl">Ostatnie zmiany</Translated></div>
 
 <div className="nd-panel">
-  <div className="nd-row"><span className="k">📘 Storybook polish - inline Docs, collapsible source, HeaderBar spacing</span><span className="v">v1.0.x</span></div>
-  <div className="nd-row"><span className="k">🎨 Theme-aware story helpers (Card, Spacing, Settings, ListSwitchItem)</span><span className="v">v1.0.x</span></div>
-  <div className="nd-row"><span className="k">🚀 BottomSheet web-compat fixes (reanimated chain)</span><span className="v">v1.0.x</span></div>
-  <div className="nd-row"><span className="k">📚 Introduction & Dashboard Docs overhaul</span><span className="v">v1.0.x</span></div>
+  <div className="nd-row"><span className="k"><Translated lang="en">📘 Storybook polish - inline Docs, collapsible source, HeaderBar spacing</Translated><Translated lang="pl">📘 Dopracowanie Storybooka - Docs inline, zwijany kod źródłowy, odstępy w HeaderBar</Translated></span><span className="v">v1.0.x</span></div>
+  <div className="nd-row"><span className="k"><Translated lang="en">🎨 Theme-aware story helpers (Card, Spacing, Settings, ListSwitchItem)</Translated><Translated lang="pl">🎨 Helpery stories reagujące na motyw (Card, Spacing, Settings, ListSwitchItem)</Translated></span><span className="v">v1.0.x</span></div>
+  <div className="nd-row"><span className="k"><Translated lang="en">🚀 BottomSheet web-compat fixes (reanimated chain)</Translated><Translated lang="pl">🚀 Poprawki zgodności BottomSheet z webem (łańcuch reanimated)</Translated></span><span className="v">v1.0.x</span></div>
+  <div className="nd-row"><span className="k"><Translated lang="en">📚 Introduction & Dashboard Docs overhaul</Translated><Translated lang="pl">📚 Przebudowa stron Introduction i Dashboard</Translated></span><span className="v">v1.0.x</span></div>
 </div>
 
 <div className="nd-footer">
-  <span>Metrics refresh on every merge to <code>main</code>. See <code>CHANGELOG.md</code> for the full history.</span>
-  <span><a href="./?path=/docs/introduction--docs">Introduction →</a> · <a href="./?path=/docs/tokens-colors--docs">Tokens →</a> · <a href="./?path=/docs/components-button--docs">Components →</a></span>
+  <span><Translated lang="en">Metrics refresh on every merge to <code>main</code>. See <code>CHANGELOG.md</code> for the full history.</Translated>
+    <Translated lang="pl">Metryki odświeżają się przy każdym merge'u do <code>main</code>. Pełną historię znajdziesz w <code>CHANGELOG.md</code>.</Translated></span>
+  <span><a href="./?path=/docs/introduction--docs"><Translated lang="en">Introduction →</Translated><Translated lang="pl">Wprowadzenie →</Translated></a> · <a href="./?path=/docs/tokens-colors--docs"><Translated lang="en">Tokens →</Translated><Translated lang="pl">Tokeny →</Translated></a> · <a href="./?path=/docs/components-button--docs"><Translated lang="en">Components →</Translated><Translated lang="pl">Komponenty →</Translated></a></span>
 </div>
 
 </div>

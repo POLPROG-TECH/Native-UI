@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { FieldError } from '../../src/components/FieldError';
 import type { FieldErrorProps } from '../../src/components/FieldError';

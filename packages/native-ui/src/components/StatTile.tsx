@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, View, type ViewStyle } from 'react-native';
+import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { Text } from '../primitives/Text';
-
-export type StatTileTone = 'neutral' | 'primary' | 'success' | 'warning' | 'error';
-export type StatTileSize = 'sm' | 'md' | 'lg';
+import { StatTileCaption, StatTileValue } from './statTile/StatTileParts';
+import type { StatTileTone, StatTileSize } from './statTile/types';
+export type { StatTileTone, StatTileSize } from './statTile/types';
 
 export interface StatTileProps {
   /** Uppercase label rendered above the value (e.g. "TIME", "SCORE"). */
@@ -30,7 +30,7 @@ export interface StatTileProps {
   align?: 'left' | 'center';
   /** Whether the value uses tabular-nums (monospaced figures). @default true */
   mono?: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   testID?: string;
 }
 
@@ -39,6 +39,7 @@ export interface StatTileProps {
  *
  * Designed for score/result grids (Time · Moves · Score), dashboards, and
  * social-share cards. Stays visually consistent with `Card` content density.
+ * Spacing comes from `theme.components.statTile`.
  *
  * @example
  * ```tsx
@@ -57,59 +58,21 @@ export function StatTile({
   style,
   testID,
 }: StatTileProps) {
-  const theme = useTheme();
-
-  const valueColor =
-    tone === 'primary'
-      ? theme.colors.primary
-      : tone === 'success'
-        ? theme.colors.success
-        : tone === 'warning'
-          ? theme.colors.warning
-          : tone === 'error'
-            ? theme.colors.error
-            : theme.colors.textPrimary;
-
-  const valueVariant: 'monoLarge' | 'mono' | 'monoSmall' | 'h2' | 'h3' | 'title' = mono
-    ? size === 'lg'
-      ? 'monoLarge'
-      : size === 'sm'
-        ? 'monoSmall'
-        : 'mono'
-    : size === 'lg'
-      ? 'h2'
-      : size === 'sm'
-        ? 'title'
-        : 'h3';
+  const { labels } = useTheme();
+  const alignItems = align === 'center' ? 'center' : 'flex-start';
 
   return (
     <View
-      style={[
-        styles.container,
-        { alignItems: align === 'center' ? 'center' : 'flex-start' },
-        style,
-      ]}
+      style={[styles.container, { alignItems }, style]}
       testID={testID}
       accessibilityRole="text"
-      accessibilityLabel={`${label}: ${typeof value === 'string' ? value : ''}`}
+      accessibilityLabel={labels.statValue(label, typeof value === 'string' ? value : '')}
     >
       <Text variant="overline" color="textTertiary">
         {label}
       </Text>
-      <Text
-        variant={valueVariant}
-        style={{ color: valueColor, marginTop: theme.spacing['2xs'] }}
-        numberOfLines={1}
-        adjustsFontSizeToFit
-        minimumFontScale={0.7}
-      >
-        {value}
-      </Text>
-      {caption ? (
-        <Text variant="caption" color="textSecondary" style={{ marginTop: 2 }}>
-          {caption}
-        </Text>
-      ) : null}
+      <StatTileValue value={value} tone={tone} size={size} mono={mono} />
+      {caption ? <StatTileCaption caption={caption} /> : null}
     </View>
   );
 }

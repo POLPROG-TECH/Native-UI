@@ -51,6 +51,7 @@ export const StoryLocaleProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ locale, children }) => {
   const value = React.useMemo(() => ({ locale, isRTL: RTL_LOCALES.has(locale) }), [locale]);
+
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 };
 
@@ -270,4 +271,9 @@ export const STORY_DICT: Record<StoryLocale, StoryDict> = {
 };
 
 /** Shorthand for `STORY_DICT[locale]` with safe fallback to English. */
-export const dict = (locale: StoryLocale): StoryDict => STORY_DICT[locale] ?? STORY_DICT.en;
+export const dict = (locale: StoryLocale): StoryDict => {
+  /* The locale arrives as a toolbar global, so an unknown value can reach this lookup. */
+  const dictionaries: Partial<Record<string, StoryDict>> = STORY_DICT;
+
+  return dictionaries[locale] ?? STORY_DICT.en;
+};

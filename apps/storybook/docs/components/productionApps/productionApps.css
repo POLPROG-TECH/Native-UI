@@ -1,0 +1,317 @@
+/*
+ * "Shipped with native-ui" cards. Each card receives its brand colours as
+ * --app-from / --app-to; banner text sits on a gradient that only mixes 40%
+ * of the lighter brand colour in, which keeps white text above 4.5:1.
+ * Heading rules carry `.nui-apps.sb-unstyled` to outrank the docs-wide
+ * `.sbdocs-content h2/h3` spacing in preview-head.html.
+ */
+.nui-apps {
+  --apps-ink: #0f172a;
+  --apps-ink-muted: #475569;
+  --apps-ink-subtle: #64748b;
+  --apps-border: #e2e8f0;
+  --apps-chip: #f1f5f9;
+  --apps-live: #4ade80;
+  --apps-card: #ffffff;
+  --apps-eyebrow: #4f46e5;
+
+  margin: 0 0 44px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Brand banners and CTAs keep their colours; only the page-facing surfaces flip. */
+:root[data-nui-scheme='dark'] .nui-apps {
+  --apps-ink: #f8fafc;
+  --apps-ink-muted: #cbd5e1;
+  --apps-ink-subtle: #94a3b8;
+  --apps-border: #26304a;
+  --apps-chip: #1e2740;
+  --apps-card: #131a2e;
+  --apps-eyebrow: #a5b4fc;
+}
+
+:root[data-nui-scheme='dark'] .nui-app-metrics dd {
+  color: color-mix(in srgb, var(--app-to) 70%, #ffffff);
+}
+
+.nui-apps *,
+.nui-apps *::before,
+.nui-apps *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.nui-apps-head {
+  margin-bottom: 20px;
+}
+
+.nui-apps-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--apps-eyebrow);
+}
+
+.nui-apps-eyebrow::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--apps-live);
+  box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.25);
+}
+
+.nui-apps.sb-unstyled .nui-apps-head h2 {
+  margin: 8px 0 0;
+  padding: 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--apps-ink);
+  border: 0;
+}
+
+.nui-apps.sb-unstyled .nui-apps-head p {
+  margin: 8px 0 0;
+  max-width: 620px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--apps-ink-muted);
+}
+
+.nui-apps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 20px;
+}
+
+.nui-app-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--apps-border);
+  border-radius: 20px;
+  background: var(--apps-card);
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.nui-app-card:hover,
+.nui-app-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 48px -20px color-mix(in srgb, var(--app-from) 55%, transparent);
+}
+
+.nui-app-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 22px 20px;
+  background: linear-gradient(
+    135deg,
+    var(--app-from),
+    color-mix(in srgb, var(--app-to) 40%, var(--app-from))
+  );
+  overflow: hidden;
+}
+
+/* Soft highlight in the corner opposite the text, for depth only. */
+.nui-app-banner::after {
+  content: '';
+  position: absolute;
+  right: -60px;
+  top: -80px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.22), transparent 70%);
+  pointer-events: none;
+}
+
+.nui-app-icon {
+  flex-shrink: 0;
+  border-radius: 16px;
+  box-shadow:
+    0 12px 24px -10px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.25);
+  transition: transform 300ms cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+
+.nui-app-card:hover .nui-app-icon {
+  transform: rotate(-6deg) scale(1.06);
+}
+
+.nui-app-heading {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.nui-app-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.nui-app-live::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--apps-live);
+  animation: nui-app-pulse 2s ease-in-out infinite;
+}
+
+.nui-apps.sb-unstyled .nui-app-heading h3 {
+  margin-top: 6px;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  border: 0;
+  padding: 0;
+  margin-left: 0;
+}
+
+.nui-apps.sb-unstyled .nui-app-heading p {
+  margin: 2px 0 0;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.nui-app-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--apps-border);
+}
+
+.nui-app-metrics > div {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+  padding: 14px 16px;
+}
+
+.nui-app-metrics > div + div {
+  border-left: 1px solid var(--apps-border);
+}
+
+.nui-app-metrics dd {
+  color: var(--app-from);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.nui-app-metrics dt {
+  color: var(--apps-ink-subtle);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.nui-app-desc {
+  padding: 16px 22px 0;
+  color: var(--apps-ink-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.nui-app-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 14px 22px 18px;
+  list-style: none;
+}
+
+.nui-app-tags li {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--apps-chip);
+  color: var(--apps-ink-muted);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.nui-app-cta {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 8px;
+  /* Auto top margin pins the CTA to the card bottom, so both cards line up. */
+  margin: auto 22px 22px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: var(--app-from);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: gap 160ms ease;
+}
+
+.nui-app-cta:hover {
+  gap: 12px;
+  color: #fff;
+}
+
+.nui-app-cta:focus-visible {
+  outline: 2px solid var(--app-from);
+  outline-offset: 3px;
+}
+
+.nui-app-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes nui-app-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(74, 222, 128, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nui-app-card,
+  .nui-app-icon,
+  .nui-app-cta,
+  .nui-app-live::before {
+    transition: none;
+    animation: none;
+  }
+
+  .nui-app-card:hover,
+  .nui-app-card:focus-within,
+  .nui-app-card:hover .nui-app-icon {
+    transform: none;
+  }
+}

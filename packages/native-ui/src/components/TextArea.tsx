@@ -4,25 +4,25 @@ import {
   type ForwardRefExoticComponent,
   type RefAttributes,
 } from 'react';
-import { StyleSheet, TextInput, View, type TextInputProps, type ViewStyle } from 'react-native';
+import { TextInput, type StyleProp, type TextInputProps, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { useTextField } from '../hooks/useTextField';
-import { FieldLabel } from './FieldLabel';
-import { FieldError } from './FieldError';
+import { FieldFrame } from './field/FieldFrame';
+import type { TypographyStyle } from '../tokens/typography';
 
-// Since React Native 0.87 `TextInput` as a type is the component, not its instance.
+/** Since React Native 0.87 `TextInput` as a type is the component, not its instance. */
 type TextInputRef = ComponentRef<typeof TextInput>;
 
 export interface TextAreaProps extends Omit<TextInputProps, 'multiline'> {
   label?: string;
   error?: string;
   required?: boolean;
-  /** Number of visible lines (default: 4) */
+  /** Number of visible lines. @default theme.components.textArea.defaultLines (4) */
   lines?: number;
-  containerStyle?: ViewStyle;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
-// Explicit type keeps the emitted declaration portable across React Native versions.
+/** Explicit type keeps the emitted declaration portable across React Native versions. */
 type TextAreaType = ForwardRefExoticComponent<TextAreaProps & RefAttributes<TextInputRef>>;
 
 /**
@@ -31,57 +31,34 @@ type TextAreaType = ForwardRefExoticComponent<TextAreaProps & RefAttributes<Text
  * `.focus()` / `.blur()` imperatively.
  */
 export const TextArea: TextAreaType = forwardRef<TextInputRef, TextAreaProps>(function TextArea(
-  { label, error, required, lines = 4, containerStyle, style, onFocus, onBlur, ...props },
+  { label, error, required, lines, containerStyle, style, onFocus, onBlur, testID, ...props },
   ref,
 ) {
   const theme = useTheme();
-  const { handleFocus, handleBlur, borderColor, inputTypography } = useTextField({
-    error,
-    onFocus,
-    onBlur,
-  });
-
-  const accessibilityLabel = [label, error].filter(Boolean).join(', ') || undefined;
-  const minHeight = lines * (theme.typography.body.lineHeight ?? 22);
+  const tokens = theme.components.textArea;
+  const field = useTextField({ label, error, editable: props.editable, tokens, onFocus, onBlur });
+  /* A typography object built in plain JS may leave the body line height out. */
+  const body: Partial<TypographyStyle> = theme.typography.body;
+  const lineHeight = body.lineHeight ?? tokens.fallbackLineHeight;
+  const minHeight = (lines ?? tokens.defaultLines) * lineHeight;
 
   return (
-    <View style={[styles.container, containerStyle]}>
-      {label && <FieldLabel label={label} required={required} />}
+    <FieldFrame
+      label={label}
+      required={required}
+      error={error}
+      style={[{ marginBottom: tokens.containerMarginBottom }, containerStyle]}
+      testID={testID ? `${testID}-container` : undefined}
+    >
       <TextInput
         ref={ref}
+        testID={testID}
         multiline
         textAlignVertical="top"
-        style={[
-          styles.input,
-          inputTypography,
-          {
-            backgroundColor: theme.colors.surfaceSecondary,
-            borderColor,
-            borderRadius: theme.borderRadius.lg,
-            color: theme.colors.textPrimary,
-            minHeight,
-          },
-          style,
-        ]}
-        placeholderTextColor={theme.colors.textTertiary}
-        accessibilityLabel={accessibilityLabel}
-        accessibilityState={{ disabled: props.editable === false }}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
+        style={[field.inputTypography, { ...field.boxStyle, minHeight }, style]}
+        {...field.inputProps}
         {...props}
       />
-      {error && <FieldError error={error} />}
-    </View>
+    </FieldFrame>
   );
-});
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-  },
-  input: {
-    borderWidth: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
 });

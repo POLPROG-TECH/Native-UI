@@ -1,5 +1,4 @@
-import React from 'react';
-import { View, Text as RNText } from 'react-native';
+import { Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
 import { within, userEvent, expect, fn } from 'storybook/test';
 import { Box } from '../../src/primitives/Box';
@@ -31,33 +30,30 @@ const meta: Meta<ButtonProps> = {
           '- `accessibilityState.disabled` is set when disabled or loading',
           '- Uses `accessibilityLabel` from `title` by default',
           '- Haptic feedback on press (when configured)',
-          '',
-          '### Do',
-          '- ✅ Use **one** `primary` button per view - the most important action',
-          '- ✅ Pair `primary` + `ghost` in form footers (Save / Cancel)',
-          '- ✅ Use `danger` for destructive actions that cannot be undone',
-          '- ✅ Wrap long labels with `fullWidth` to keep layout predictable',
-          '',
-          "### Don't",
-          '- ❌ Stack two `primary` buttons - decision paralysis + visual noise',
-          '- ❌ Use `danger` for mere "discard changes" - reserve it for real deletion',
-          '- ❌ Disable a `primary` button as validation feedback; show an inline error instead',
-          '- ❌ Hardcode colours via style overrides - go through `preset` or `customAccent`',
-          '',
-          '### Import',
-          '```tsx',
-          "import { Button } from '@polprog/native-ui';",
-          '```',
         ].join('\n'),
       },
     },
+    /* Rendered as Do / Don't cards by the docs page template. */
+    guidelines: {
+      do: [
+        'Use one `primary` button per view: the most important action',
+        'Pair `primary` + `ghost` in form footers (Save / Cancel)',
+        'Use `danger` for destructive actions that cannot be undone',
+        'Wrap long labels with `fullWidth` to keep layout predictable',
+      ],
+      dont: [
+        'Stack two `primary` buttons: decision paralysis and visual noise',
+        'Use `danger` for mere "discard changes"; reserve it for real deletion',
+        'Disable a `primary` button as validation feedback; show an inline error instead',
+        'Hardcode colours via style overrides; go through `preset` or `customAccent`',
+      ],
+    },
     a11y: {
-      config: {
-        rules: [
-          { id: 'button-name', enabled: true },
-          { id: 'color-contrast', enabled: true },
-          { id: 'focus-order-semantics', enabled: true },
-        ],
+      options: {
+        rules: {
+          'button-name': { enabled: true },
+          'focus-order-semantics': { enabled: true },
+        },
       },
     },
   },
@@ -367,17 +363,17 @@ export const LongContent: Story = {
 };
 
 /**
- * High-contrast preview. Exercise the story with the "Contrast" toolbar
+ * High-contrast preview. Exercise the story with "Contrast" in the Appearance menu
  * toggle set to **High contrast** to verify borders thicken and text
  * meets WCAG AAA on primary surfaces.
  */
 export const HighContrastPreview: Story = {
-  name: 'High contrast (use toolbar)',
+  name: 'High contrast (use Appearance menu)',
   parameters: {
     docs: {
       description: {
         story:
-          'Flip the **Contrast** toolbar global to "High contrast" to see how buttons adapt. All five variants remain keyboard-focusable with visible focus rings.',
+          'Set **Contrast** in the **Appearance** menu to "High contrast" to see how buttons adapt. All five variants remain keyboard-focusable with visible focus rings.',
       },
     },
   },

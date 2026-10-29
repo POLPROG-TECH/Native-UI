@@ -1,13 +1,16 @@
 import React from 'react';
-import { View, Text, StyleSheet, type ViewStyle } from 'react-native';
+import { View, StyleSheet, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
-import { IconButton } from './IconButton';
+import type { HeaderTitleAlign } from '../tokens/components';
+import { HeaderBackSlot, HeaderSlotPlaceholder, HeaderTitle } from './headerBar/HeaderBarParts';
+
+export type { HeaderTitleAlign };
 
 export interface HeaderBarProps {
-  /** Title shown centered between the back button and the right slot. */
+  /** Title shown between the back button and the right slot. */
   title?: string;
   /**
-   * Render prop for a custom centered title node (e.g. a brand wordmark/logo).
+   * Render prop for a custom title node (e.g. a brand wordmark/logo).
    * When provided, takes precedence over `title`. The `title` string remains
    * available for fallback accessibility purposes.
    *
@@ -23,121 +26,81 @@ export interface HeaderBarProps {
    * header without any left action.
    */
   onBack?: () => void;
-  /** Accessibility label for the back button. Defaults to "Go back". */
+  /** Accessibility label for the back button. @default labels.goBack */
   backAccessibilityLabel?: string;
   /** Test ID for the back button. */
   backTestID?: string;
   /**
    * Custom icon for the back button. Receives theme-aware `color` + `size`
-   * so callers can stay consistent. If omitted, a simple chevron glyph is
-   * rendered (consumers are encouraged to pass their preferred icon).
+   * so callers can stay consistent. Defaults to a left chevron.
    */
   renderBackIcon?: (props: { size: number; color: string }) => React.ReactNode;
+  /** Extra styles for the back button (e.g. a bordered "card" look). */
+  backButtonStyle?: StyleProp<ViewStyle>;
   /** Optional node rendered on the right side (e.g. a share `IconButton`). */
   right?: React.ReactNode;
   /**
    * When `true`, reserves the right-slot width even when `right` is not
-   * provided. Keeps the title visually centered. Defaults to `true`.
+   * provided. Keeps a centered title visually centered. Defaults to `true`
+   * for centered titles and `false` for left-aligned ones.
    */
   symmetric?: boolean;
   /**
    * Visual density.
-   * - `regular` (default) - 17/22 600 title (iOS navigation-bar style).
-   * - `large`             - 22/28 700 title, slightly more breathing room.
-   *                         Use on hero/landing screens.
+   * - `regular` (default) - `components.headerBar.regularTitleVariant`.
+   * - `large`             - `components.headerBar.largeTitleVariant`, for
+   *                         hero/landing screens.
    * @default 'regular'
    */
   variant?: 'regular' | 'large';
-  style?: ViewStyle;
+  /**
+   * Title alignment. `left` gives the compact "back button + left title"
+   * layout common in content apps.
+   * @default theme.components.headerBar.titleAlign ('center')
+   */
+  titleAlign?: HeaderTitleAlign;
+  /** Extra styles for the title text. */
+  titleStyle?: StyleProp<TextStyle>;
+  style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
 /**
- * Screen header: round back `IconButton` on the left, centered title,
- * optional right slot. Framework-agnostic - wire up navigation in the consumer.
+ * Screen header: round back `IconButton` on the left, title, optional right
+ * slot. Framework-agnostic - wire up navigation in the consumer. Dimensions
+ * come from `theme.components.headerBar`.
  *
  * Use `renderTitle` to drop in a custom node (e.g. a brand wordmark) in place
  * of the plain-text title.
  */
-export function HeaderBar({
-  title,
-  renderTitle,
-  onBack,
-  backAccessibilityLabel = 'Go back',
-  backTestID,
-  renderBackIcon,
-  right,
-  symmetric = true,
-  variant = 'regular',
-  style,
-}: HeaderBarProps) {
-  const theme = useTheme();
-
-  const BTN_SIZE = 36;
-  const ICON_SIZE = 20;
-  const titleStyle = variant === 'large' ? theme.typography.heading : theme.typography.title;
-
-  const backIcon = renderBackIcon ? (
-    renderBackIcon({ size: ICON_SIZE, color: theme.colors.textPrimary })
-  ) : (
-    <Text
-      style={{
-        fontSize: ICON_SIZE + 4,
-        lineHeight: ICON_SIZE + 4,
-        color: theme.colors.textPrimary,
-        fontWeight: '600',
-      }}
-    >
-      ‹
-    </Text>
-  );
-
-  const rightSlot =
-    right !== undefined ? (
-      right
-    ) : symmetric ? (
-      <View style={{ width: BTN_SIZE, height: BTN_SIZE }} />
-    ) : null;
-
-  const leftSlot = onBack ? (
-    <IconButton
-      icon={backIcon}
-      onPress={onBack}
-      accessibilityLabel={backAccessibilityLabel}
-      size="md"
-      {...(backTestID ? { testID: backTestID } : {})}
-    />
-  ) : symmetric ? (
-    <View style={{ width: BTN_SIZE, height: BTN_SIZE }} />
-  ) : null;
-
-  let titleNode: React.ReactNode;
-  if (renderTitle) {
-    titleNode = (
-      <View style={styles.title} accessibilityRole="header" accessibilityLabel={title}>
-        {renderTitle()}
-      </View>
-    );
-  } else if (title) {
-    titleNode = (
-      <Text
-        numberOfLines={1}
-        style={[titleStyle, styles.title, { color: theme.colors.textPrimary }]}
-        accessibilityRole="header"
-      >
-        {title}
-      </Text>
-    );
-  } else {
-    titleNode = <View style={styles.title} />;
-  }
+export function HeaderBar(props: HeaderBarProps) {
+  const { right, variant = 'regular' } = props;
+  const tokens = useTheme().components.headerBar;
+  const align = props.titleAlign ?? tokens.titleAlign;
+  const reserveSides = props.symmetric ?? align === 'center';
+  const placeholder = reserveSides ? <HeaderSlotPlaceholder /> : null;
 
   return (
-    <View style={[styles.container, { marginBottom: theme.spacing.sm }, style]}>
-      {leftSlot}
-
-      {titleNode}
-
-      {rightSlot}
+    <View
+      testID={props.testID}
+      style={[styles.container, { marginBottom: tokens.marginBottom }, props.style]}
+    >
+      <HeaderBackSlot
+        onBack={props.onBack}
+        accessibilityLabel={props.backAccessibilityLabel}
+        testID={props.backTestID}
+        renderIcon={props.renderBackIcon}
+        style={props.backButtonStyle}
+        reserveSpace={reserveSides}
+      />
+      <HeaderTitle
+        title={props.title}
+        renderTitle={props.renderTitle}
+        variant={variant}
+        align={align}
+        titleStyle={props.titleStyle}
+      />
+      {right !== undefined ? right : placeholder}
     </View>
   );
 }
@@ -147,10 +110,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  title: {
-    flex: 1,
-    textAlign: 'center',
-    marginHorizontal: 8,
   },
 });

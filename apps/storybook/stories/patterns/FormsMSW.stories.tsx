@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import preview from '../../.storybook/preview';
+import { useState, type FC } from 'react';
 import { within, userEvent, expect, waitFor, fn } from 'storybook/test';
 import { Button, Card, Input, VStack, Heading, Text } from '@polprog/native-ui';
 import { usePost } from '../../.storybook/msw/hooks';
+import { isRecord, stringField } from '../../.storybook/msw/json';
 import { mockEndpoints } from '../../.storybook/msw/handlers';
 
 /**
@@ -15,11 +16,19 @@ import { mockEndpoints } from '../../.storybook/msw/handlers';
  */
 type LoginResponse = { token: string; user: { email: string } };
 
-const LoginForm: React.FC<{ onSuccess?: (data: LoginResponse) => void }> = ({ onSuccess }) => {
+function parseLoginResponse(value: unknown): LoginResponse | null {
+  const token = stringField(value, 'token');
+  const email = stringField(isRecord(value) ? value.user : undefined, 'email');
+
+  return token === undefined || email === undefined ? null : { token, user: { email } };
+}
+
+const LoginForm: FC<{ onSuccess?: (data: LoginResponse) => void }> = ({ onSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { state, submit } = usePost<{ email: string; password: string }, LoginResponse>(
     '/auth/login',
+    parseLoginResponse,
   );
 
   const loading = state.status === 'loading';
@@ -50,7 +59,10 @@ const LoginForm: React.FC<{ onSuccess?: (data: LoginResponse) => void }> = ({ on
         title={loading ? 'Signing in…' : 'Sign in'}
         onPress={async () => {
           const res = await submit({ email, password });
-          if (res.ok) onSuccess?.(res.data);
+
+          if (res.ok) {
+            onSuccess?.(res.data);
+          }
         }}
         disabled={loading}
       />
@@ -66,7 +78,7 @@ const LoginForm: React.FC<{ onSuccess?: (data: LoginResponse) => void }> = ({ on
   );
 };
 
-const meta: Meta<typeof LoginForm> = {
+const meta = preview.meta({
   title: 'Patterns/Network · Forms',
   component: LoginForm,
   parameters: {
@@ -81,12 +93,9 @@ const meta: Meta<typeof LoginForm> = {
     },
   },
   args: { onSuccess: fn() },
-};
+});
 
-export default meta;
-type Story = StoryObj<typeof LoginForm>;
-
-export const HappyPath: Story = {
+export const HappyPath = meta.story({
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await userEvent.type(canvas.getByTestId('login-email'), 'user@polprog.dev');
@@ -100,9 +109,9 @@ export const HappyPath: Story = {
     );
     await expect(args.onSuccess).toHaveBeenCalledTimes(1);
   },
-};
+});
 
-export const InvalidCredentials: Story = {
+export const InvalidCredentials = meta.story({
   name: 'Invalid credentials (401)',
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -117,9 +126,9 @@ export const InvalidCredentials: Story = {
     );
     await expect(args.onSuccess).not.toHaveBeenCalled();
   },
-};
+});
 
-export const ServerError: Story = {
+export const ServerError = meta.story({
   name: 'Server error (401 override)',
   parameters: {
     msw: { handlers: [mockEndpoints.loginUnauthorized()] },
@@ -137,4 +146,4 @@ export const ServerError: Story = {
     );
     await expect(args.onSuccess).not.toHaveBeenCalled();
   },
-};
+});

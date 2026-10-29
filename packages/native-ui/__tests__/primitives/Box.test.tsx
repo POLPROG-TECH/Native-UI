@@ -1,147 +1,141 @@
-import React from 'react';
-import { render } from '@testing-library/react';
 import { Box } from '../../src/primitives/Box';
-import { NativeUIProvider } from '../../src/theme';
 import { spacing, borderRadius } from '../../src/tokens/spacing';
-
-function renderWithTheme(ui: React.ReactElement) {
-  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
-}
+import { renderWithTheme } from '../test-utils';
 
 describe('Box', () => {
-  it('should be exported as a function component', () => {
-    // GIVEN the Box export from the primitives module
+  describe('GIVEN the Box export from the primitives module', () => {
+    describe('WHEN its runtime type is inspected', () => {
+      it('THEN it is a function component', () => {
+        const actualType = typeof Box;
 
-    // WHEN its runtime type is inspected
-    const actualType = typeof Box;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
+        expect(actualType).toBe('function');
+      });
+    });
   });
 
-  it('should render without crashing when mounted with no props', () => {
-    // GIVEN an empty Box element
+  describe('GIVEN an empty Box element', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the container has a rendered child element', () => {
+        const { container } = renderWithTheme(<Box />);
 
-    // WHEN the component is rendered inside a theme provider
-    const { container } = renderWithTheme(<Box />);
-
-    // THEN the container has a rendered child element
-    expect(container.firstChild).toBeTruthy();
+        expect(container.firstChild).toBeTruthy();
+      });
+    });
   });
 
-  it('should render children inside the Box when children are provided', () => {
-    // GIVEN a Box element containing a child span
+  describe('GIVEN a Box element containing a child span', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the child text is present in the document', () => {
+        const { getByText } = renderWithTheme(
+          <Box>
+            <span>child</span>
+          </Box>,
+        );
 
-    // WHEN the component is rendered inside a theme provider
-    const { getByText } = renderWithTheme(
-      <Box>
-        <span>child</span>
-      </Box>,
-    );
-
-    // THEN the child text is present in the document
-    expect(getByText('child')).toBeInTheDocument();
+        expect(getByText('child')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should apply padding from spacing token when p prop is provided', () => {
-    // GIVEN a Box element with p="md"
+  describe('GIVEN a Box element with p="md"', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it("THEN the element's padding matches the md spacing token", () => {
+        const { container } = renderWithTheme(<Box p="md" />);
 
-    // WHEN the component is rendered inside a theme provider
-    const { container } = renderWithTheme(<Box p="md" />);
-
-    // THEN the element's padding matches the md spacing token
-    const el = container.firstChild as HTMLElement;
-    expect(el.style.padding).toBe(`${spacing.md}px`);
+        const el = container.firstChild as HTMLElement;
+        expect(el.style.padding).toBe(`${spacing.md}px`);
+      });
+    });
   });
 
-  it('should apply horizontal padding from spacing token when px prop is provided', () => {
-    // GIVEN a Box element with px="lg"
+  describe('GIVEN a Box element with px="lg"', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN paddingLeft and paddingRight match the lg spacing token', () => {
+        const { container } = renderWithTheme(<Box px="lg" />);
 
-    // WHEN the component is rendered inside a theme provider
-    const { container } = renderWithTheme(<Box px="lg" />);
-
-    // THEN paddingLeft and paddingRight match the lg spacing token
-    const el = container.firstChild as HTMLElement;
-    expect(el.style.paddingLeft).toBe(`${spacing.lg}px`);
-    expect(el.style.paddingRight).toBe(`${spacing.lg}px`);
+        const el = container.firstChild as HTMLElement;
+        expect(el.style.paddingLeft).toBe(`${spacing.lg}px`);
+        expect(el.style.paddingRight).toBe(`${spacing.lg}px`);
+      });
+    });
   });
 
-  it('should apply vertical padding from spacing token when py prop is provided', () => {
-    // GIVEN a Box element with py="sm"
+  describe('GIVEN a Box element with py="sm"', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN paddingTop and paddingBottom match the sm spacing token', () => {
+        const { container } = renderWithTheme(<Box py="sm" />);
 
-    // WHEN the component is rendered inside a theme provider
-    const { container } = renderWithTheme(<Box py="sm" />);
-
-    // THEN paddingTop and paddingBottom match the sm spacing token
-    const el = container.firstChild as HTMLElement;
-    expect(el.style.paddingTop).toBe(`${spacing.sm}px`);
-    expect(el.style.paddingBottom).toBe(`${spacing.sm}px`);
+        const el = container.firstChild as HTMLElement;
+        expect(el.style.paddingTop).toBe(`${spacing.sm}px`);
+        expect(el.style.paddingBottom).toBe(`${spacing.sm}px`);
+      });
+    });
   });
 
-  it('should apply margin from spacing token when m prop is provided', () => {
-    // GIVEN a Box element with m="xl"
+  describe('GIVEN a Box element with m="xl"', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it("THEN the element's margin matches the xl spacing token", () => {
+        const { container } = renderWithTheme(<Box m="xl" />);
 
-    // WHEN the component is rendered inside a theme provider
-    const { container } = renderWithTheme(<Box m="xl" />);
-
-    // THEN the element's margin matches the xl spacing token
-    const el = container.firstChild as HTMLElement;
-    expect(el.style.margin).toBe(`${spacing.xl}px`);
+        const el = container.firstChild as HTMLElement;
+        expect(el.style.margin).toBe(`${spacing.xl}px`);
+      });
+    });
   });
 
-  it('should apply border radius from token when radius prop is provided', () => {
-    // GIVEN a Box element with radius="md"
+  describe('GIVEN a Box element with radius="md"', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it("THEN the element's borderRadius matches the md radius token", () => {
+        const { container } = renderWithTheme(<Box radius="md" />);
 
-    // WHEN the component is rendered inside a theme provider
-    const { container } = renderWithTheme(<Box radius="md" />);
-
-    // THEN the element's borderRadius matches the md radius token
-    const el = container.firstChild as HTMLElement;
-    expect(el.style.borderRadius).toBe(`${borderRadius.md}px`);
+        const el = container.firstChild as HTMLElement;
+        expect(el.style.borderRadius).toBe(`${borderRadius.md}px`);
+      });
+    });
   });
 
-  it('should apply a background color when bg prop references a theme color token', () => {
-    // GIVEN a Box element with bg="surface"
+  describe('GIVEN a Box element with bg="surface"', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the element has a backgroundColor style applied', () => {
+        const { container } = renderWithTheme(<Box bg="surface" />);
 
-    // WHEN the component is rendered inside a theme provider
-    const { container } = renderWithTheme(<Box bg="surface" />);
-
-    // THEN the element has a backgroundColor style applied
-    const el = container.firstChild as HTMLElement;
-    expect(el.style.backgroundColor).toBeTruthy();
+        const el = container.firstChild as HTMLElement;
+        expect(el.style.backgroundColor).toBeTruthy();
+      });
+    });
   });
 
-  it('should apply flex style when flex prop is provided', () => {
-    // GIVEN a Box element with flex={1}
+  describe('GIVEN a Box element with flex={1}', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the element\'s flex style contains "1"', () => {
+        const { container } = renderWithTheme(<Box flex={1} />);
 
-    // WHEN the component is rendered inside a theme provider
-    const { container } = renderWithTheme(<Box flex={1} />);
-
-    // THEN the element's flex style contains "1"
-    const el = container.firstChild as HTMLElement;
-    expect(el.style.flex).toContain('1');
+        const el = container.firstChild as HTMLElement;
+        expect(el.style.flex).toContain('1');
+      });
+    });
   });
 
-  it('should render without error when elevation prop is provided', () => {
-    // GIVEN a Box element with elevation="sm"
+  describe('GIVEN a Box element with elevation="sm"', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the element renders without error', () => {
+        const { container } = renderWithTheme(<Box elevation="sm" />);
 
-    // WHEN the component is rendered inside a theme provider
-    const { container } = renderWithTheme(<Box elevation="sm" />);
-
-    // THEN the element renders without error
-    const el = container.firstChild as HTMLElement;
-    expect(el).toBeTruthy();
+        const el = container.firstChild as HTMLElement;
+        expect(el).toBeTruthy();
+      });
+    });
   });
 
-  it('should merge custom style with token derived styles when style prop is provided', () => {
-    // GIVEN a Box element with p="md" and a custom width style
+  describe('GIVEN a Box element with p="md" and a custom width style', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN both token padding and custom width styles are applied', () => {
+        const { container } = renderWithTheme(<Box p="md" style={{ width: 100 }} />);
 
-    // WHEN the component is rendered inside a theme provider
-    const { container } = renderWithTheme(<Box p="md" style={{ width: 100 }} />);
-
-    // THEN both token padding and custom width styles are applied
-    const el = container.firstChild as HTMLElement;
-    expect(el.style.padding).toBe(`${spacing.md}px`);
-    expect(el.style.width).toBe('100px');
+        const el = container.firstChild as HTMLElement;
+        expect(el.style.padding).toBe(`${spacing.md}px`);
+        expect(el.style.width).toBe('100px');
+      });
+    });
   });
 });

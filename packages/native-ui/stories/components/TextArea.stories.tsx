@@ -1,7 +1,5 @@
-import React from 'react';
 import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Text } from '../../src/primitives/Text';
 import { TextArea } from '../../src/components/TextArea';
 import { VStack } from '../../src/primitives/Stack';
 import type { TextAreaProps } from '../../src/components/TextArea';

@@ -1,0 +1,181 @@
+/*
+ * Component docs page chrome (ComponentDocsPage). Colours are custom
+ * properties with a dark variant, matching the manager's light/dark themes.
+ */
+.nui-docs {
+  --docs-ink: #0f172a;
+  --docs-muted: #64748b;
+  --docs-border: #e2e8f0;
+  --docs-surface: #f8fafc;
+  --docs-accent: #4f46e5;
+  --docs-do: #059669;
+  --docs-do-bg: #ecfdf5;
+  --docs-dont: #dc2626;
+  --docs-dont-bg: #fef2f2;
+}
+
+:root[data-nui-scheme='dark'] .nui-docs {
+  --docs-ink: #f8fafc;
+  --docs-muted: #94a3b8;
+  --docs-border: #26304a;
+  --docs-surface: #131a2e;
+  --docs-accent: #a5b4fc;
+  --docs-do: #34d399;
+  --docs-do-bg: rgba(16, 185, 129, 0.12);
+  --docs-dont: #f87171;
+  --docs-dont-bg: rgba(239, 68, 68, 0.12);
+}
+
+.nui-docs-header {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--docs-border);
+}
+
+.nui-docs-eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--docs-accent);
+}
+
+.nui-docs-header .sbdocs-title {
+  margin: 0;
+}
+
+.nui-docs-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.nui-docs-badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--docs-border);
+  background: var(--docs-surface);
+  color: var(--docs-ink);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.nui-docs-badge.is-new,
+.nui-docs-badge.is-stable,
+.nui-docs-badge.is-a11y {
+  border-color: color-mix(in srgb, var(--docs-do) 40%, transparent);
+  color: var(--docs-do);
+}
+
+.nui-docs-badge.is-native-only,
+.nui-docs-badge.is-beta {
+  border-color: rgba(234, 88, 12, 0.4);
+  color: #ea580c;
+}
+
+.nui-docs-badge.is-deprecated {
+  border-color: color-mix(in srgb, var(--docs-dont) 40%, transparent);
+  color: var(--docs-dont);
+}
+
+.nui-docs-usage {
+  margin-left: 4px;
+  font-size: 12.5px;
+  color: var(--docs-muted);
+}
+
+.nui-docs-usage a {
+  color: var(--docs-accent);
+  font-weight: 600;
+}
+
+.nui-docs-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.nui-docs-import {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 12px;
+  border: 1px solid var(--docs-border);
+  border-radius: 10px;
+  background: var(--docs-surface);
+}
+
+.nui-docs-import code {
+  background: none;
+  border: 0;
+  color: var(--docs-ink);
+  font-size: 12.5px;
+}
+
+.nui-docs-import button,
+.nui-docs-source {
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--docs-border);
+  background: transparent;
+  color: var(--docs-ink);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nui-docs-import button:hover,
+.nui-docs-source:hover {
+  border-color: var(--docs-accent);
+  color: var(--docs-accent);
+}
+
+.nui-docs-guidelines {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+  margin: 32px 0;
+}
+
+.nui-docs-guide {
+  padding: 18px 20px;
+  border-radius: 14px;
+  border-top: 3px solid var(--docs-do);
+  background: var(--docs-do-bg);
+}
+
+.nui-docs-guide.is-dont {
+  border-top-color: var(--docs-dont);
+  background: var(--docs-dont-bg);
+}
+
+.sbdocs .nui-docs-guide h3 {
+  margin: 0 0 10px;
+  padding: 0;
+  border: 0;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--docs-do);
+}
+
+.sbdocs .nui-docs-guide.is-dont h3 {
+  color: var(--docs-dont);
+}
+
+.nui-docs-guide ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--docs-ink);
+}

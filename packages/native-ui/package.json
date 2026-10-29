@@ -52,13 +52,18 @@
     "typecheck": "tsc --noEmit -p tsconfig.build.json",
     "typecheck:all": "tsc --noEmit",
     "typecheck:tests": "tsc --noEmit -p tsconfig.test.json",
-    "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings 0",
-    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:ci": "jest --ci --coverage --maxWorkers=2",
+    "test:ci": "jest --ci --coverage --maxWorkers=2 --json --outputFile=coverage/jest-results.json",
+    "test:report": "jest --coverage --json --outputFile=coverage/jest-results.json",
+    "test:native": "jest --selectProjects native",
     "stories:check": "node scripts/generate-stories.mjs --check",
+    "check:cycles": "madge --circular --extensions ts,tsx src",
+    "api:report": "node scripts/api-report.mjs",
+    "api:check": "node scripts/api-report.mjs --check",
     "stories:generate": "node scripts/generate-stories.mjs --fix",
     "audit": "node scripts/audit-consumer.mjs",
     "verify-tarball": "node scripts/verify-tarball.mjs"
@@ -98,15 +103,15 @@
     "node": ">=20"
   },
   "peerDependencies": {
-    "@react-native-community/datetimepicker": ">=7.0.0",
-    "react": ">=18.0.0",
-    "react-native": ">=0.72.0",
-    "react-native-reanimated": ">=3.0.0",
-    "react-native-safe-area-context": ">=4.0.0"
+    "@react-native-community/datetimepicker": ">=9.0.0",
+    "react": ">=19.0.0",
+    "react-native": ">=0.84.0",
+    "react-native-reanimated": ">=4.0.0",
+    "react-native-safe-area-context": ">=5.0.0"
   },
   "peerDependenciesMeta": {
     "react-native-reanimated": {
-      "optional": true
+      "optional": false
     },
     "react-native-safe-area-context": {
       "optional": false
@@ -121,6 +126,8 @@
     "@babel/preset-react": "^8.0.1",
     "@babel/preset-typescript": "^8.0.7",
     "@eslint/js": "^10.0.1",
+    "@react-native/babel-preset": "0.88.0",
+    "@react-native/jest-preset": "0.88.0",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/jest-native": "^5.4.3",
@@ -139,11 +146,13 @@
     "globals": "^17.13.0",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
+    "madge": "8.0.0",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-native": "0.88.0",
     "react-native-reanimated": "^4.7.1",
     "react-native-safe-area-context": "^5.10.1",
+    "react-native-worklets": "^0.13.1",
     "react-test-renderer": "19.3.1",
     "rimraf": "^6.0.1",
     "ts-jest": "^29.4.15",

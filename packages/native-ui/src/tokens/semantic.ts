@@ -6,34 +6,28 @@ import type { ColorScheme } from './colors';
 import type { Spacing } from './spacing';
 import type { TypographyVariant } from './typography';
 
-// ─── Semantic Color Tokens ─────────────────────────────────────
 export interface SemanticColorTokens {
-  // Actions
   actionPrimary: keyof ColorScheme;
   actionSecondary: keyof ColorScheme;
   actionDanger: keyof ColorScheme;
   actionDisabled: keyof ColorScheme;
 
-  // Feedback
   feedbackSuccess: keyof ColorScheme;
   feedbackWarning: keyof ColorScheme;
   feedbackError: keyof ColorScheme;
   feedbackInfo: keyof ColorScheme;
 
-  // Surfaces
   surfaceApp: keyof ColorScheme;
   surfaceCard: keyof ColorScheme;
   surfaceModal: keyof ColorScheme;
   surfaceInput: keyof ColorScheme;
 
-  // Text
   textHeading: keyof ColorScheme;
   textBody: keyof ColorScheme;
   textMuted: keyof ColorScheme;
   textInverse: keyof ColorScheme;
   textLink: keyof ColorScheme;
 
-  // Borders
   borderDefault: keyof ColorScheme;
   borderFocused: keyof ColorScheme;
   borderError: keyof ColorScheme;
@@ -59,14 +53,13 @@ export const defaultSemanticColors: SemanticColorTokens = {
   textBody: 'textPrimary',
   textMuted: 'textSecondary',
   textInverse: 'textInverse',
-  textLink: 'primary',
+  textLink: 'primaryText',
 
   borderDefault: 'border',
   borderFocused: 'primary',
   borderError: 'error',
 };
 
-// ─── Semantic Spacing Tokens ───────────────────────────────────
 export interface SemanticSpacingTokens {
   pageHorizontal: Spacing;
   pageVertical: Spacing;
@@ -87,7 +80,6 @@ export const defaultSemanticSpacing: SemanticSpacingTokens = {
   stackGap: 'md',
 };
 
-// ─── Semantic Typography Tokens ────────────────────────────────
 export interface SemanticTypographyTokens {
   pageTitle: TypographyVariant;
   sectionTitle: TypographyVariant;
@@ -108,7 +100,6 @@ export const defaultSemanticTypography: SemanticTypographyTokens = {
   captionDefault: 'caption',
 };
 
-// ─── Combined ──────────────────────────────────────────────────
 export interface SemanticTokens {
   colors: SemanticColorTokens;
   spacing: SemanticSpacingTokens;

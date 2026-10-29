@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { fn } from 'storybook/test';
 import { Text } from '../../src/primitives/Text';
@@ -11,6 +11,7 @@ import type {
 
 const meta: Meta<DateRangePickerInputProps> = {
   title: 'Components/DateRangePickerInput',
+  tags: ['native-only'],
   component: DateRangePickerInput,
   parameters: {
     docs: {
@@ -142,6 +143,12 @@ export const WithErrors: Story = {
 
 export const Disabled: Story = {
   name: 'Disabled',
+  parameters: {
+    a11y: {
+      /* WCAG 1.4.3 exempts inactive controls; the dimmed look is intentional. */
+      options: { rules: { 'color-contrast': { enabled: false } } },
+    },
+  },
   render: () => (
     <VStack gap="md" style={{ maxWidth: 480 }}>
       <DateRangePickerInput

@@ -1,62 +1,61 @@
-import { useEffect } from 'react';
-import { View, StyleSheet, type DimensionValue, type ViewStyle } from 'react-native';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withRepeat,
-  withTiming,
-  Easing,
-} from 'react-native-reanimated';
+import {
+  View,
+  StyleSheet,
+  type DimensionValue,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
+import Animated from 'react-native-reanimated';
 import { useTheme } from '../theme';
+import { useSkeletonPulse } from './skeleton/useSkeletonPulse';
 
 export interface SkeletonProps {
   width: DimensionValue;
   height: DimensionValue;
+  /** @default theme.components.skeleton.radius (`borderRadius.md`) */
   borderRadius?: number;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
+  testID?: string;
+  /**
+   * Accessible name announced while content loads.
+   * @default labels.loading from `NativeUIConfig.labels`
+   */
+  accessibilityLabel?: string;
 }
 
 /**
  * Animated skeleton loading placeholder. Respects `reduceAnimations`.
- * Defaults to `borderRadius.md` (14) so it blends with typical cards.
+ * Defaults to `theme.components.skeleton.radius` (`borderRadius.md`) so it
+ * blends with typical cards.
  *
  * Also exposes `Skeleton.Card` - a bordered card-shaped preset useful while
  * list items or dashboard widgets are loading.
  */
-function SkeletonBase({ width, height, borderRadius: radius, style }: SkeletonProps) {
+function SkeletonBase({
+  width,
+  height,
+  borderRadius,
+  style,
+  testID,
+  accessibilityLabel,
+}: SkeletonProps) {
   const theme = useTheme();
-  const shimmerOpacity = useSharedValue(0.3);
-
-  useEffect(() => {
-    if (theme.reduceAnimations) {
-      shimmerOpacity.value = 0.5;
-
-      return;
-    }
-    shimmerOpacity.value = withRepeat(
-      withTiming(0.7, { duration: 800, easing: Easing.inOut(Easing.ease) }),
-      -1,
-      true,
-    );
-  }, [shimmerOpacity, theme.reduceAnimations]);
-
-  const animStyle = useAnimatedStyle(() => ({
-    opacity: shimmerOpacity.value,
-  }));
+  const pulseStyle = useSkeletonPulse();
 
   return (
     <Animated.View
+      testID={testID}
       style={[
         {
           width,
           height,
           backgroundColor: theme.colors.surfaceSecondary,
-          borderRadius: radius ?? theme.borderRadius.md,
+          borderRadius: borderRadius ?? theme.components.skeleton.radius,
         },
-        animStyle,
+        pulseStyle,
         style,
       ]}
-      accessibilityLabel="Loading content"
+      accessibilityLabel={accessibilityLabel ?? theme.labels.loading}
       accessibilityElementsHidden
     />
   );
@@ -68,12 +67,51 @@ export interface SkeletonCardProps {
    */
   lines?: number;
   /** Optional override for the card container. */
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
+  testID?: string;
   /**
    * When `true`, renders a square avatar placeholder on the leading side
    * (useful for list-item skeletons). Defaults to `false`.
    */
   withAvatar?: boolean;
+  /**
+   * Accessible name announced while content loads.
+   * @default labels.loading from `NativeUIConfig.labels`
+   */
+  accessibilityLabel?: string;
+}
+
+/** Leading avatar circle with title and subtitle bars, for list-item cards. */
+function SkeletonAvatarHeader() {
+  const theme = useTheme();
+  const tokens = theme.components.skeletonCard;
+
+  return (
+    <View style={[cardStyles.row, { gap: tokens.gap }]}>
+      <SkeletonBase
+        width={tokens.avatarSize}
+        height={tokens.avatarSize}
+        borderRadius={theme.borderRadius.full}
+      />
+      <View style={[cardStyles.text, { gap: tokens.avatarTextGap }]}>
+        <SkeletonBase width={tokens.avatarTitleWidth} height={tokens.avatarTitleHeight} />
+        <SkeletonBase width={tokens.avatarSubtitleWidth} height={tokens.avatarSubtitleHeight} />
+      </View>
+    </View>
+  );
+}
+
+/** Full-width body lines; the last one is shorter, like a paragraph end. */
+function SkeletonBodyLines({ count }: { count: number }) {
+  const tokens = useTheme().components.skeletonCard;
+
+  return Array.from({ length: Math.max(0, count) }).map((_, index) => (
+    <SkeletonBase
+      key={index}
+      width={index === count - 1 ? tokens.lastLineWidth : '100%'}
+      height={tokens.lineHeight}
+    />
+  ));
 }
 
 /**
@@ -86,39 +124,34 @@ export interface SkeletonCardProps {
  * {loading ? <SkeletonCard lines={3} /> : <RealContent />}
  * ```
  */
-export function SkeletonCard({ lines = 2, style, withAvatar = false }: SkeletonCardProps) {
+export function SkeletonCard(props: SkeletonCardProps) {
+  const { lines = 2, withAvatar = false } = props;
   const theme = useTheme();
+  const tokens = theme.components.skeletonCard;
 
   return (
     <View
+      testID={props.testID}
       style={[
         cardStyles.card,
         {
-          padding: theme.spacing.md,
-          borderRadius: theme.borderRadius.lg,
+          padding: tokens.padding,
+          borderRadius: tokens.radius,
           backgroundColor: theme.colors.surfaceSecondary,
-          gap: theme.spacing.sm,
+          gap: tokens.gap,
         },
-        style,
+        props.style,
       ]}
       accessible
-      accessibilityLabel="Loading content"
+      accessibilityLabel={props.accessibilityLabel ?? theme.labels.loading}
       accessibilityRole="progressbar"
     >
       {withAvatar ? (
-        <View style={[cardStyles.row, { gap: theme.spacing.sm }]}>
-          <SkeletonBase width={40} height={40} borderRadius={theme.borderRadius.full} />
-          <View style={{ flex: 1, gap: theme.spacing.xs }}>
-            <SkeletonBase width="60%" height={14} />
-            <SkeletonBase width="40%" height={12} />
-          </View>
-        </View>
+        <SkeletonAvatarHeader />
       ) : (
-        <SkeletonBase width="55%" height={16} />
+        <SkeletonBase width={tokens.titleWidth} height={tokens.titleHeight} />
       )}
-      {Array.from({ length: Math.max(0, lines) }).map((_, i) => (
-        <SkeletonBase key={i} width={i === lines - 1 ? '75%' : '100%'} height={12} />
-      ))}
+      <SkeletonBodyLines count={lines} />
     </View>
   );
 }
@@ -136,5 +169,8 @@ const cardStyles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  text: {
+    flex: 1,
   },
 });

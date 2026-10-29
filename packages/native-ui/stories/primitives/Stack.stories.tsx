@@ -1,21 +1,20 @@
-import React from 'react';
 import { View, Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from '../../src/primitives/Box';
-import { HStack, VStack } from '../../src/primitives/Stack';
+import { HStack, VStack, type StackBaseProps } from '../../src/primitives/Stack';
 import { useTheme } from '../../src/theme/ThemeProvider';
+import { getContrastText } from '../../src/tokens/colorUtils';
 
 const Placeholder = ({ label, color }: { label: string; color?: string }) => {
   const theme = useTheme();
   const bg = color ?? theme.colors.primaryLight;
+  const ink = color ? getContrastText(bg) : theme.colors.primaryText;
 
   return (
     <View
       style={{ backgroundColor: bg, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 8 }}
     >
-      <RNText style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>
-        {label}
-      </RNText>
+      <RNText style={{ color: ink, fontSize: 13, fontWeight: '600' }}>{label}</RNText>
     </View>
   );
 };
@@ -74,11 +73,11 @@ const meta: Meta = {
 };
 
 export default meta;
-type StoryType = StoryObj;
+type StoryType = StoryObj<StackBaseProps>;
 
 export const Playground: StoryType = {
   args: { gap: 'md' },
-  render: (args: any) => (
+  render: (args) => (
     <VStack gap={args.gap}>
       <Placeholder label="Item 1" />
       <Placeholder label="Item 2" />
@@ -115,7 +114,7 @@ export const VStackGaps: StoryObj = {
               style={{
                 fontSize: 12,
                 fontWeight: '600',
-                color: theme.colors.primary,
+                color: theme.colors.primaryText,
                 marginBottom: 4,
                 fontFamily: 'monospace',
               }}
@@ -208,7 +207,7 @@ export const HStackAlign: StoryObj = {
                   height: 30,
                 }}
               >
-                <RNText style={{ color: theme.colors.textInverse, fontSize: 12 }}>S</RNText>
+                <RNText style={{ color: theme.colors.onPrimary, fontSize: 12 }}>S</RNText>
               </View>
               <View
                 style={{
@@ -218,7 +217,7 @@ export const HStackAlign: StoryObj = {
                   height: 50,
                 }}
               >
-                <RNText style={{ color: theme.colors.textInverse, fontSize: 12 }}>M</RNText>
+                <RNText style={{ color: theme.colors.onSuccess, fontSize: 12 }}>M</RNText>
               </View>
               <View
                 style={{
@@ -228,7 +227,7 @@ export const HStackAlign: StoryObj = {
                   height: 70,
                 }}
               >
-                <RNText style={{ color: theme.colors.textInverse, fontSize: 12 }}>L</RNText>
+                <RNText style={{ color: theme.colors.onWarning, fontSize: 12 }}>L</RNText>
               </View>
             </HStack>
           </Box>

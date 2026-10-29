@@ -1,5 +1,6 @@
 import { typography, FONT_SCALE } from '../../src/tokens/typography';
 import type { TypographyVariant } from '../../src/tokens/typography';
+import { defined } from '../shared/defined';
 
 const allVariants: TypographyVariant[] = [
   'displayLarge',
@@ -20,203 +21,188 @@ const allVariants: TypographyVariant[] = [
   'mono',
   'monoLarge',
   'monoSmall',
-  'amount',
-  'amountLarge',
-  'amountSmall',
 ];
 
 describe('typography tokens', () => {
-  it('should define every expected variant on the typography object', () => {
-    // GIVEN the full list of expected typography variant names
+  describe('GIVEN the full list of expected typography variant names', () => {
+    describe('WHEN each variant is looked up on the typography object', () => {
+      it('THEN every lookup returns a defined style entry', () => {
+        const lookups = allVariants.map((variant) => typography[variant]);
 
-    // WHEN each variant is looked up on the typography object
-    const lookups = allVariants.map((variant) => typography[variant]);
-
-    // THEN every lookup returns a defined style entry
-    lookups.forEach((style) => {
-      expect(style).toBeDefined();
+        lookups.forEach((style) => {
+          expect(style).toBeDefined();
+        });
+      });
     });
   });
 
-  it('should define required style properties on every variant', () => {
-    // GIVEN the full list of typography variants
+  describe('GIVEN the full list of typography variants', () => {
+    describe("WHEN each variant's style is inspected", () => {
+      it('THEN every style has fontFamily, fontSize, lineHeight and fontWeight', () => {
+        const styles = allVariants.map((variant) => typography[variant]);
 
-    // WHEN each variant's style is inspected
-    const styles = allVariants.map((variant) => typography[variant]);
-
-    // THEN every style has fontFamily, fontSize, lineHeight and fontWeight
-    styles.forEach((style) => {
-      expect(style).toHaveProperty('fontFamily');
-      expect(style).toHaveProperty('fontSize');
-      expect(style).toHaveProperty('lineHeight');
-      expect(style).toHaveProperty('fontWeight');
+        styles.forEach((style) => {
+          expect(style).toHaveProperty('fontFamily');
+          expect(style).toHaveProperty('fontSize');
+          expect(style).toHaveProperty('lineHeight');
+          expect(style).toHaveProperty('fontWeight');
+        });
+      });
     });
   });
 
-  it('should use semibold weight 600 for heading variants', () => {
-    // GIVEN the three heading variants h1, h2 and h3
+  describe('GIVEN the three heading variants h1, h2 and h3', () => {
+    describe('WHEN their font weights are read', () => {
+      it('THEN every heading weight is "600"', () => {
+        const weights = [
+          typography.h1.fontWeight,
+          typography.h2.fontWeight,
+          typography.h3.fontWeight,
+        ];
 
-    // WHEN their font weights are read
-    const weights = [typography.h1.fontWeight, typography.h2.fontWeight, typography.h3.fontWeight];
-
-    // THEN every heading weight is "600"
-    weights.forEach((weight) => {
-      expect(weight).toBe('600');
+        weights.forEach((weight) => {
+          expect(weight).toBe('600');
+        });
+      });
     });
   });
 
-  it('should use regular or medium weights for body variants', () => {
-    // GIVEN the body, bodyLarge and bodySmall variants
+  describe('GIVEN the body, bodyLarge and bodySmall variants', () => {
+    describe('WHEN their font weights are read', () => {
+      it('THEN body weights are 400 or 500 as documented', () => {
+        const bodyWeight = typography.body.fontWeight;
+        const bodyLargeWeight = typography.bodyLarge.fontWeight;
+        const bodySmallWeight = typography.bodySmall.fontWeight;
 
-    // WHEN their font weights are read
-    const bodyWeight = typography.body.fontWeight;
-    const bodyLargeWeight = typography.bodyLarge.fontWeight;
-    const bodySmallWeight = typography.bodySmall.fontWeight;
-
-    // THEN body weights are 400 or 500 as documented
-    expect(bodyWeight).toBe('400');
-    expect(['400', '500']).toContain(bodyLargeWeight);
-    expect(bodySmallWeight).toBe('400');
-  });
-
-  it('should make display variants the largest font sizes', () => {
-    // GIVEN the display and h1 variants
-
-    // WHEN the display font sizes are compared to h1
-    const { fontSize: displayLarge } = typography.displayLarge;
-    const { fontSize: displayMedium } = typography.displayMedium;
-    const { fontSize: h1 } = typography.h1;
-
-    // THEN displayLarge is strictly larger and displayMedium is at least as large as h1
-    expect(displayLarge).toBeGreaterThan(h1);
-    expect(displayMedium).toBeGreaterThanOrEqual(h1);
-  });
-
-  it('should decrease font sizes from displayLarge down to caption', () => {
-    // GIVEN the typography hierarchy from displayLarge to caption
-
-    // WHEN consecutive font sizes are compared
-    const dl = typography.displayLarge.fontSize;
-    const dm = typography.displayMedium.fontSize;
-    const h1 = typography.h1.fontSize;
-    const h2 = typography.h2.fontSize;
-    const h3 = typography.h3.fontSize;
-    const body = typography.body.fontSize;
-    const bodySmall = typography.bodySmall.fontSize;
-    const caption = typography.caption.fontSize;
-
-    // THEN font sizes strictly decrease through the hierarchy
-    expect(dl).toBeGreaterThan(dm);
-    expect(dm).toBeGreaterThanOrEqual(h1);
-    expect(h1).toBeGreaterThan(h2);
-    expect(h2).toBeGreaterThan(h3);
-    expect(body).toBeGreaterThan(bodySmall);
-    expect(bodySmall).toBeGreaterThan(caption);
-  });
-
-  it('should have lineHeight greater than or equal to fontSize for every variant', () => {
-    // GIVEN the full list of typography variants
-
-    // WHEN each variant's style is inspected
-    const styles = allVariants.map((variant) => typography[variant]);
-
-    // THEN every variant's lineHeight is at least its fontSize
-    styles.forEach((style) => {
-      expect(style.lineHeight).toBeGreaterThanOrEqual(style.fontSize);
+        expect(bodyWeight).toBe('400');
+        expect(['400', '500']).toContain(bodyLargeWeight);
+        expect(bodySmallWeight).toBe('400');
+      });
     });
   });
 
-  it('should match Apple native iOS text style values for key variants', () => {
-    // GIVEN the documented Apple HIG font size and line height values
+  describe('GIVEN the display and h1 variants', () => {
+    describe('WHEN the display font sizes are compared to h1', () => {
+      it('THEN displayLarge is strictly larger and displayMedium is at least as large as h1', () => {
+        const { fontSize: displayLarge } = typography.displayLarge;
+        const { fontSize: displayMedium } = typography.displayMedium;
+        const { fontSize: h1 } = typography.h1;
 
-    // WHEN the corresponding variant styles are read
-    const body = typography.body;
-    const h1 = typography.h1;
-    const displayLarge = typography.displayLarge;
-    const caption = typography.caption;
-    const overline = typography.overline;
-    const title = typography.title;
-    const bodyMedium = typography.bodyMedium;
-    const bodySmall = typography.bodySmall;
-
-    // THEN every variant matches the Apple HIG values
-    expect(body.fontSize).toBe(17);
-    expect(body.lineHeight).toBe(22);
-    expect(h1.fontSize).toBe(28);
-    expect(displayLarge.fontSize).toBe(34);
-    expect(caption.fontSize).toBe(13);
-    expect(caption.lineHeight).toBe(18);
-    expect(overline.fontSize).toBe(11);
-    expect(overline.letterSpacing).toBeGreaterThan(0);
-    expect(title.fontSize).toBe(17);
-    expect(bodyMedium.fontSize).toBe(16);
-    expect(bodySmall.fontSize).toBe(15);
-  });
-
-  it('should use tabular nums fontVariant on every mono variant', () => {
-    // GIVEN the three mono variants
-
-    // WHEN their fontVariant arrays are read
-    const monoVariants = [
-      typography.mono.fontVariant,
-      typography.monoLarge.fontVariant,
-      typography.monoSmall.fontVariant,
-    ];
-
-    // THEN each one contains "tabular-nums"
-    monoVariants.forEach((fv) => {
-      expect(fv).toContain('tabular-nums');
+        expect(displayLarge).toBeGreaterThan(h1);
+        expect(displayMedium).toBeGreaterThanOrEqual(h1);
+      });
     });
   });
 
-  it('should alias deprecated amount variants to mono font sizes', () => {
-    // GIVEN the three amount aliases and their mono counterparts
+  describe('GIVEN the typography hierarchy from displayLarge to caption', () => {
+    describe('WHEN consecutive font sizes are compared', () => {
+      it('THEN font sizes strictly decrease through the hierarchy', () => {
+        const dl = typography.displayLarge.fontSize;
+        const dm = typography.displayMedium.fontSize;
+        const h1 = typography.h1.fontSize;
+        const h2 = typography.h2.fontSize;
+        const h3 = typography.h3.fontSize;
+        const body = typography.body.fontSize;
+        const bodySmall = typography.bodySmall.fontSize;
+        const caption = typography.caption.fontSize;
 
-    // WHEN their font sizes are compared
-    const amount = typography.amount.fontSize;
-    const amountLarge = typography.amountLarge.fontSize;
-    const amountSmall = typography.amountSmall.fontSize;
+        expect(dl).toBeGreaterThan(dm);
+        expect(dm).toBeGreaterThanOrEqual(h1);
+        expect(h1).toBeGreaterThan(h2);
+        expect(h2).toBeGreaterThan(h3);
+        expect(body).toBeGreaterThan(bodySmall);
+        expect(bodySmall).toBeGreaterThan(caption);
+      });
+    });
+  });
 
-    // THEN every amount font size equals its mono equivalent
-    expect(amount).toBe(typography.mono.fontSize);
-    expect(amountLarge).toBe(typography.monoLarge.fontSize);
-    expect(amountSmall).toBe(typography.monoSmall.fontSize);
+  describe('GIVEN the full list of typography variants', () => {
+    describe("WHEN each variant's style is inspected", () => {
+      it("THEN every variant's lineHeight is at least its fontSize", () => {
+        const styles = allVariants.map((variant) => typography[variant]);
+
+        styles.forEach((style) => {
+          expect(style.lineHeight).toBeGreaterThanOrEqual(style.fontSize);
+        });
+      });
+    });
+  });
+
+  describe('GIVEN the documented Apple HIG font size and line height values', () => {
+    describe('WHEN the corresponding variant styles are read', () => {
+      it('THEN every variant matches the Apple HIG values', () => {
+        const body = typography.body;
+        const h1 = typography.h1;
+        const displayLarge = typography.displayLarge;
+        const caption = typography.caption;
+        const overline = typography.overline;
+        const title = typography.title;
+        const bodyMedium = typography.bodyMedium;
+        const bodySmall = typography.bodySmall;
+
+        expect(body.fontSize).toBe(17);
+        expect(body.lineHeight).toBe(22);
+        expect(h1.fontSize).toBe(28);
+        expect(displayLarge.fontSize).toBe(34);
+        expect(caption.fontSize).toBe(13);
+        expect(caption.lineHeight).toBe(18);
+        expect(overline.fontSize).toBe(11);
+        expect(overline.letterSpacing).toBeGreaterThan(0);
+        expect(title.fontSize).toBe(17);
+        expect(bodyMedium.fontSize).toBe(16);
+        expect(bodySmall.fontSize).toBe(15);
+      });
+    });
+  });
+
+  describe('GIVEN the three mono variants', () => {
+    describe('WHEN their fontVariant arrays are read', () => {
+      it('THEN each one contains "tabular-nums"', () => {
+        const monoVariants = [
+          typography.mono.fontVariant,
+          typography.monoLarge.fontVariant,
+          typography.monoSmall.fontVariant,
+        ];
+
+        monoVariants.forEach((fv) => {
+          expect(fv).toContain('tabular-nums');
+        });
+      });
+    });
   });
 });
 
 describe('FONT_SCALE', () => {
-  it('should expose default medium and large tier properties', () => {
-    // GIVEN the exported FONT_SCALE object
+  describe('GIVEN the exported FONT_SCALE object', () => {
+    describe('WHEN its tier keys are inspected', () => {
+      it('THEN it has default, medium and large properties', () => {
+        const scale = FONT_SCALE;
 
-    // WHEN its tier keys are inspected
-    const scale = FONT_SCALE;
+        expect(scale).toHaveProperty('default');
+        expect(scale).toHaveProperty('medium');
+        expect(scale).toHaveProperty('large');
+      });
+    });
 
-    // THEN it has default, medium and large properties
-    expect(scale).toHaveProperty('default');
-    expect(scale).toHaveProperty('medium');
-    expect(scale).toHaveProperty('large');
+    describe('WHEN the default tier value is read', () => {
+      it('THEN it is zero', () => {
+        const defaultTier = FONT_SCALE['default'];
+
+        expect(defaultTier).toBe(0);
+      });
+    });
   });
 
-  it('should set default tier scaling to zero', () => {
-    // GIVEN the exported FONT_SCALE object
+  describe('GIVEN the default, medium and large tier values', () => {
+    describe('WHEN the tiers are compared pairwise', () => {
+      it('THEN medium exceeds default and large exceeds medium', () => {
+        const defaultTier = defined(FONT_SCALE['default'], 'default tier');
+        const mediumTier = defined(FONT_SCALE['medium'], 'medium tier');
+        const largeTier = defined(FONT_SCALE['large'], 'large tier');
 
-    // WHEN the default tier value is read
-    const defaultTier = FONT_SCALE['default'];
-
-    // THEN it is zero
-    expect(defaultTier).toBe(0);
-  });
-
-  it('should assign higher scaling to larger tiers', () => {
-    // GIVEN the default, medium and large tier values
-
-    // WHEN the tiers are compared pairwise
-    const defaultTier = FONT_SCALE['default']!;
-    const mediumTier = FONT_SCALE['medium']!;
-    const largeTier = FONT_SCALE['large']!;
-
-    // THEN medium exceeds default and large exceeds medium
-    expect(mediumTier).toBeGreaterThan(defaultTier);
-    expect(largeTier).toBeGreaterThan(mediumTier);
+        expect(mediumTier).toBeGreaterThan(defaultTier);
+        expect(largeTier).toBeGreaterThan(mediumTier);
+      });
+    });
   });
 });

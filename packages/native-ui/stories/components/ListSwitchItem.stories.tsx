@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { fn } from 'storybook/test';
 import { Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from '../../src/primitives/Box';
+import { SystemIcon } from '../../src/primitives/SystemIcon';
 import { ListSwitchItem } from '../../src/components/ListSwitchItem';
-import { VStack } from '../../src/primitives/Stack';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import type { ListSwitchItemProps } from '../../src/components/ListSwitchItem';
 
@@ -110,6 +110,11 @@ export const WithSubtitleAndIcon: Story = {
         label="Biometrics"
         subtitle="Use Face ID / fingerprint to unlock"
         icon={<EmojiIcon>🔐</EmojiIcon>}
+      />
+      <Interactive
+        label="Show info tips"
+        subtitle="Icon as a SystemIcon render function"
+        icon={({ color, size }) => <SystemIcon name="info" color={color} size={size} />}
         hideDivider
       />
     </Box>

@@ -1,38 +1,22 @@
 import React from 'react';
 import {
   Pressable,
-  Animated,
-  Platform,
+  type GestureResponderEvent,
   type PressableProps,
   type ViewStyle,
   type StyleProp,
 } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { useTheme } from '../theme';
-
-// ─── Optional reanimated integration ──────────────────────────────
-// If `react-native-reanimated` is installed, we use its spring-based
-// animation for richer feel. Otherwise we fall back to core RN's
-// `Animated` API so consumers don't need to pull in reanimated.
-type ReanimatedModule = {
-  default: typeof import('react-native-reanimated').default;
-  useSharedValue: typeof import('react-native-reanimated').useSharedValue;
-  useAnimatedStyle: typeof import('react-native-reanimated').useAnimatedStyle;
-  withSpring: typeof import('react-native-reanimated').withSpring;
-};
-
-let reanimated: ReanimatedModule | null = null;
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const rn = require('react-native-reanimated') as ReanimatedModule;
-  if (rn && rn.default && typeof rn.useSharedValue === 'function') reanimated = rn;
-} catch {
-  reanimated = null;
-}
+import { useFocusRing } from '../hooks/useFocusRing';
 
 export interface PressableScaleProps extends Omit<PressableProps, 'style' | 'children'> {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
-  /** Scale factor on press (default: 0.97) */
+  /**
+   * Scale factor on press.
+   * @default theme.components.pressable.scaleTo (0.97)
+   */
   scaleTo?: number;
   /**
    * When `true` (default), the scale animation is skipped while
@@ -47,177 +31,115 @@ export interface PressableScaleProps extends Omit<PressableProps, 'style' | 'chi
 
 type PressableRef = React.ComponentRef<typeof Pressable>;
 
-// Explicit type keeps the emitted declaration portable across React Native versions.
+/** Explicit type keeps the emitted declaration portable across React Native versions. */
 type PressableScaleType = React.ForwardRefExoticComponent<
   PressableScaleProps & React.RefAttributes<PressableRef>
 >;
 
-/**
- * Headless primitive exposing the press-scale animation logic used by
- * `PressableScale`. Returns the handlers and an animated style that consumers
- * can apply to any custom element. Uses `react-native-reanimated` when
- * available, and falls back to core RN `Animated` otherwise.
- */
-type PressableScaleHookResult = {
-  animatedStyle: StyleProp<ViewStyle>;
+/** Style produced by Reanimated's `useAnimatedStyle` for the press scale. */
+export type PressScaleStyle = ReturnType<typeof useAnimatedStyle<ViewStyle>>;
+
+/** What `usePressableScale` returns. */
+export interface PressableScaleHookResult {
+  /** Apply to an `Animated` (Reanimated) component's style. */
+  animatedStyle: PressScaleStyle;
   handlers: { onPressIn: () => void; onPressOut: () => void };
-  isReanimated: boolean;
-};
+}
 
 export interface UsePressableScaleOptions {
   /** @see PressableScaleProps.respectReduceAnimations */
   respectReduceAnimations?: boolean;
 }
 
-function usePressableScaleReanimated(
-  scaleTo: number,
-  options?: UsePressableScaleOptions,
-): PressableScaleHookResult {
-  const { reduceAnimations } = useTheme();
-  const respectReduce = options?.respectReduceAnimations ?? true;
-  const effectiveReduce = respectReduce && reduceAnimations;
-  const rn = reanimated!;
-  const scale = rn.useSharedValue(1);
-  const animatedStyle = rn.useAnimatedStyle(() => {
-    if (effectiveReduce) return {};
-
-    return { transform: [{ scale: scale.value }] };
-  });
-
-  return {
-    animatedStyle: animatedStyle as unknown as StyleProp<ViewStyle>,
-    handlers: {
-      onPressIn: () => {
-        if (!effectiveReduce) {
-          scale.value = rn.withSpring(scaleTo, { damping: 15, stiffness: 400 });
-        }
-      },
-      onPressOut: () => {
-        if (!effectiveReduce) {
-          scale.value = rn.withSpring(1, { damping: 15, stiffness: 400 });
-        }
-      },
-    },
-    isReanimated: true,
-  };
+interface PressScaleConfig {
+  scaleTo: number;
+  /** True when the scale animation must be skipped for reduced motion. */
+  reduceMotion: boolean;
+  damping: number;
+  stiffness: number;
 }
 
-function usePressableScaleFallback(
-  scaleTo: number,
+function usePressScaleConfig(
+  scaleToProp: number | undefined,
   options?: UsePressableScaleOptions,
-): PressableScaleHookResult {
-  const { reduceAnimations } = useTheme();
+): PressScaleConfig {
+  const { reduceAnimations, components } = useTheme();
+  const tokens = components.pressable;
   const respectReduce = options?.respectReduceAnimations ?? true;
-  const effectiveReduce = respectReduce && reduceAnimations;
-  // Lazy-init pattern: `useRef(new Animated.Value(1))` would allocate a
-  // fresh `Animated.Value` on every render and throw away all but the
-  // first. `Animated.Value` registers a native-driver listener, so the
-  // thrown-away instances still create bridge traffic until GC. This
-  // creates the value exactly once per component instance.
-  const scaleRef = React.useRef<Animated.Value | null>(null);
-  if (scaleRef.current === null) scaleRef.current = new Animated.Value(1);
-
-  const scale = scaleRef.current;
-  const animatedStyle: StyleProp<ViewStyle> = effectiveReduce
-    ? undefined
-    : { transform: [{ scale }] };
 
   return {
-    animatedStyle,
-    handlers: {
-      onPressIn: () => {
-        if (!effectiveReduce) {
-          Animated.spring(scale, {
-            toValue: scaleTo,
-            useNativeDriver: Platform.OS !== 'web',
-            damping: 15,
-            stiffness: 400,
-          }).start();
-        }
-      },
-      onPressOut: () => {
-        if (!effectiveReduce) {
-          Animated.spring(scale, {
-            toValue: 1,
-            useNativeDriver: Platform.OS !== 'web',
-            damping: 15,
-            stiffness: 400,
-          }).start();
-        }
-      },
-    },
-    isReanimated: false,
+    scaleTo: scaleToProp ?? tokens.scaleTo,
+    reduceMotion: respectReduce && reduceAnimations,
+    damping: tokens.springDamping,
+    stiffness: tokens.springStiffness,
   };
 }
 
 /**
- * Headless primitive exposing the press-scale animation logic used by
- * `PressableScale`. Returns the handlers and an animated style that consumers
- * can apply to any custom element. Uses `react-native-reanimated` when
- * available, and falls back to core RN `Animated` otherwise.
- *
- * The implementation is selected at module load time, so hook order remains
- * stable across renders regardless of which backend is used.
+ * Headless primitive exposing the press-scale animation used by
+ * `PressableScale`: handlers plus an animated style to apply to any
+ * Reanimated component.
  */
-export const usePressableScale: (
-  scaleTo?: number,
+export function usePressableScale(
+  scaleToProp?: number,
   options?: UsePressableScaleOptions,
-) => PressableScaleHookResult = reanimated
-  ? (scaleTo = 0.97, options) => usePressableScaleReanimated(scaleTo, options)
-  : (scaleTo = 0.97, options) => usePressableScaleFallback(scaleTo, options);
+): PressableScaleHookResult {
+  const { scaleTo, reduceMotion, damping, stiffness } = usePressScaleConfig(scaleToProp, options);
+  const scale = useSharedValue(1);
+  const animatedStyle = useAnimatedStyle<ViewStyle>(() =>
+    reduceMotion ? {} : { transform: [{ scale: scale.value }] },
+  );
+  const springTo = (target: number) => {
+    if (!reduceMotion) {
+      scale.value = withSpring(target, { damping, stiffness });
+    }
+  };
 
-const AnimatedPressableReanimated = reanimated
-  ? reanimated.default.createAnimatedComponent(Pressable)
-  : null;
-const AnimatedPressableFallback = Animated.createAnimatedComponent(Pressable);
+  return {
+    animatedStyle,
+    handlers: { onPressIn: () => springTo(scaleTo), onPressOut: () => springTo(1) },
+  };
+}
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+/** Runs the scale handler first, then the consumer's own press callback. */
+function chainPressHandler(
+  scaleHandler: () => void,
+  consumerHandler: ((event: GestureResponderEvent) => void) | null | undefined,
+) {
+  return (event: GestureResponderEvent) => {
+    scaleHandler();
+    consumerHandler?.(event);
+  };
+}
 
 /**
  * A pressable wrapper that applies a spring scale animation on press.
  * Respects the `reduceAnimations` theme preference by default - opt out with
  * `respectReduceAnimations={false}` when the scale is critical feedback.
  *
- * Works with or without `react-native-reanimated` installed.
- *
- * Ref forwarding: uses `React.forwardRef` so the ref prop is honoured on
- * both React 18 and React 19. Declaring `ref` as a plain prop (React 19
- * API) would silently drop the ref on React 18 consumers.
+ * The ref reaches the underlying `Pressable`.
  */
 export const PressableScale: PressableScaleType = React.forwardRef<
   PressableRef,
   PressableScaleProps
->(function PressableScale(
-  {
-    children,
-    style,
-    onPress,
-    onPressIn,
-    onPressOut,
-    scaleTo = 0.97,
-    respectReduceAnimations = true,
-    ...rest
-  },
-  ref,
-) {
-  const { animatedStyle, handlers, isReanimated } = usePressableScale(scaleTo, {
-    respectReduceAnimations,
+>(function PressableScale(props, ref) {
+  const { children, style, onPressIn, onPressOut, onFocus, onBlur, scaleTo, ...rest } = props;
+  const { respectReduceAnimations, ...pressableProps } = rest;
+  const { focusProps, focusRingStyle } = useFocusRing(onFocus, onBlur);
+  const { animatedStyle, handlers } = usePressableScale(scaleTo, {
+    respectReduceAnimations: respectReduceAnimations ?? true,
   });
-  const AnimatedPressable =
-    (isReanimated && AnimatedPressableReanimated) || AnimatedPressableFallback;
 
   return (
     <AnimatedPressable
-      ref={ref as React.Ref<PressableRef>}
-      {...rest}
-      onPress={onPress}
-      onPressIn={(e) => {
-        handlers.onPressIn();
-        onPressIn?.(e);
-      }}
-      onPressOut={(e) => {
-        handlers.onPressOut();
-        onPressOut?.(e);
-      }}
-      style={[...(Array.isArray(style) ? style : style ? [style] : []), animatedStyle]}
+      ref={ref}
+      {...pressableProps}
+      {...focusProps}
+      onPressIn={chainPressHandler(handlers.onPressIn, onPressIn)}
+      onPressOut={chainPressHandler(handlers.onPressOut, onPressOut)}
+      style={[style, focusRingStyle, animatedStyle]}
     >
       {children}
     </AnimatedPressable>

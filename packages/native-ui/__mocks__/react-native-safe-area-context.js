@@ -1,4 +1,3 @@
-const React = require('react');
 module.exports = {
   SafeAreaView: ({ children }) => children,
   SafeAreaProvider: ({ children }) => children,

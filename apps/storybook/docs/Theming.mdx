@@ -1,6 +1,9 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { Translated } from './components/i18n/Translated';
 
 <Meta title="Theming" />
+
+<Translated lang="en">
 
 # Theming
 
@@ -14,7 +17,7 @@ The theme system is built around four concepts:
 1. **Theme variants** - complete visual identities (**Aurora**, the original
    green, near-black look, and **Bloom**, a soft violet, rounded look) that
    bundle colours, radii, elevation, type density and default fonts. Switch with
-   `config={{ theme: 'bloom' }}`, or use the **Variant** toolbar control above.
+   `config={{ theme: 'bloom' }}`, or use **Variant** in the **Appearance** menu above.
    The biggest Aurora-to-Bloom differences show on `Card`, `Button`, `Chip`,
    `Switch` and the `SettingsRow` list - open the **Patterns / Theme variants**
    story to see them side by side.
@@ -27,23 +30,55 @@ The theme system is built around four concepts:
 
 ## 1. The ten-second mental model
 
+</Translated>
+
+<Translated lang="pl">
+
+# Motywy
+
+Native-UI opiera się na **jednym rozwiązanym obiekcie motywu**, z którego
+każdy komponent korzysta przez hooki. Aby zmienić identyfikację wizualną,
+nigdy nie ruszasz pojedynczych komponentów - zmieniasz konfigurację
+providera, a całe drzewo aktualizuje się synchronicznie.
+
+System motywów opiera się na czterech pojęciach:
+
+1. **Warianty motywu** - kompletne identyfikacje wizualne (**Aurora**,
+   oryginalny zielony, niemal czarny wygląd, oraz **Bloom**, miękki,
+   fioletowy, zaokrąglony wygląd), które łączą kolory, promienie, elewację,
+   gęstość typografii i domyślne fonty. Przełączysz je przez
+   `config={{ theme: 'bloom' }}` albo opcją **Variant** w menu **Appearance** powyżej.
+   Największe różnice między Aurorą a Bloom widać na `Card`, `Button`, `Chip`,
+   `Switch` i liście `SettingsRow` - otwórz story **Patterns / Theme variants**,
+   aby zobaczyć je obok siebie.
+2. **Presety** - dobrane pary kolorów akcentu i neutralnych (każdy wariant ma własne).
+3. **Własny akcent** - jeden kolor hex, który zmienia identyfikację całej aplikacji.
+4. **Tokeny semantyczne** - aliasy dla projektantów, które oddzielają
+   intencję od surowych wartości (`semantic.colors.danger` zamiast `colors.error`).
+
+---
+
+## 1. Model mentalny w dziesięć sekund
+
+</Translated>
+
 <div style={{ display: 'grid', gap: 12, padding: 16, background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 12, margin: '16px 0' }}>
   <div style={{ padding: 14, background: '#EEF2FF', border: '1px solid #C7D2FE', borderRadius: 10 }}>
-    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: '#4338CA', textTransform: 'uppercase' }}>1 · Input</div>
+    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: '#4338CA', textTransform: 'uppercase' }}>1 · <Translated lang="en">Input</Translated><Translated lang="pl">Wejście</Translated></div>
     <div style={{ marginTop: 4, fontSize: 14, color: '#1F2937' }}>
-      <code>&lt;NativeUIProvider config=&#123;...&#125;&gt;</code> + OS <code>useColorScheme()</code>
+      <code>&lt;NativeUIProvider config=&#123;...&#125;&gt;</code> + <Translated lang="en">OS</Translated><Translated lang="pl">systemowe</Translated> <code>useColorScheme()</code>
     </div>
   </div>
   <div style={{ textAlign: 'center', color: '#9CA3AF', fontSize: 18, lineHeight: 1 }}>↓</div>
   <div style={{ padding: 14, background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 10 }}>
-    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: '#6B7280', textTransform: 'uppercase' }}>2 · Resolve</div>
+    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: '#6B7280', textTransform: 'uppercase' }}>2 · <Translated lang="en">Resolve</Translated><Translated lang="pl">Rozwiązanie</Translated></div>
     <div style={{ marginTop: 4, fontSize: 14, color: '#1F2937' }}>
-      <code>resolveColorScheme()</code> · <code>resolveTypography()</code> · semantic overrides merge
+      <code>resolveColorScheme()</code> · <code>resolveTypography()</code> · <Translated lang="en">semantic overrides merge</Translated><Translated lang="pl">scalenie nadpisań semantycznych</Translated>
     </div>
   </div>
   <div style={{ textAlign: 'center', color: '#9CA3AF', fontSize: 18, lineHeight: 1 }}>↓</div>
   <div style={{ padding: 14, background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: 10 }}>
-    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: '#047857', textTransform: 'uppercase' }}>3 · Theme (frozen)</div>
+    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: '#047857', textTransform: 'uppercase' }}>3 · <Translated lang="en">Theme (frozen)</Translated><Translated lang="pl">Motyw (zamrożony)</Translated></div>
     <div style={{ marginTop: 6, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(90px, 1fr))', gap: 6, fontSize: 12, color: '#065F46' }}>
       <span>colors</span><span>typography</span><span>spacing</span>
       <span>radii</span><span>elevation</span><span>motion</span>
@@ -52,12 +87,14 @@ The theme system is built around four concepts:
   </div>
   <div style={{ textAlign: 'center', color: '#9CA3AF', fontSize: 18, lineHeight: 1 }}>↓</div>
   <div style={{ padding: 14, background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 10 }}>
-    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: '#6B7280', textTransform: 'uppercase' }}>4 · Consume</div>
+    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: '#6B7280', textTransform: 'uppercase' }}>4 · <Translated lang="en">Consume</Translated><Translated lang="pl">Użycie</Translated></div>
     <div style={{ marginTop: 4, fontSize: 14, color: '#1F2937' }}>
       <code>useTheme()</code> · <code>useColors()</code> · <code>useSemantic()</code>
     </div>
   </div>
 </div>
+
+<Translated lang="en">
 
 All components downstream of `NativeUIProvider` read from the same
 frozen `Theme` object. Re-renders only happen when the provider `config`
@@ -80,20 +117,65 @@ accent. Switching preset is a one-prop change.
 | `rose` | Pink `#E11D48` | Pink `#FB7185` | Fitness, community, media |
 | `amoled` | White `#FFFFFF` | Pure white on `#000000` | OLED battery savings |
 
+</Translated>
+
+<Translated lang="pl">
+
+Wszystkie komponenty poniżej `NativeUIProvider` czytają z tego samego
+zamrożonego obiektu `Theme`. Ponowne renderowanie następuje tylko wtedy,
+gdy faktycznie zmieni się `config` providera albo systemowy schemat
+kolorów.
+
+---
+
+## 2. Presety kolorów
+
+Każdy preset zawiera dopasowane palety jasną **i** ciemną oraz główny
+kolor akcentu. Zmiana presetu to zmiana jednego propa.
+
+| Preset | Akcent jasny | Akcent ciemny | Zastosowanie |
+|---|---|---|---|
+| `default` | Indygo `#4F46E5` | Indygo `#818CF8` | Uniwersalne aplikacje firmowe |
+| `midnight` | Łupkowy niebieski `#6366F1` | Łupkowy `#A5B4FC` | Profesjonalne / korporacyjne |
+| `ocean` | Cyjan `#0891B2` | Cyjan `#22D3EE` | Świeże, nowoczesne narzędzia |
+| `forest` | Szmaragd `#059669` | Szmaragd `#34D399` | Zdrowie, natura, zrównoważony rozwój |
+| `sunset` | Bursztyn `#D97706` | Bursztyn `#FBBF24` | Ciepłe aplikacje konsumenckie / lifestyle |
+| `rose` | Róż `#E11D48` | Róż `#FB7185` | Fitness, społeczności, media |
+| `amoled` | Biały `#FFFFFF` | Czysta biel na `#000000` | Oszczędność baterii na ekranach OLED |
+
+</Translated>
+
 ```tsx
 <NativeUIProvider config={{ preset: 'forest', colorMode: 'system' }}>
 ```
 
-> Switch presets **live** using the **Preset** toolbar at the top of
+<Translated lang="en">
+
+> Switch presets **live** using **Accent preset** in the **Appearance** menu at the top of
 > any story in this Storybook to see the impact across every component.
 
 ---
 
 ## 3. Color modes
 
+</Translated>
+
+<Translated lang="pl">
+
+> Przełączaj presety **na żywo** opcją **Accent preset** w menu **Appearance** u góry
+> dowolnego story w tym Storybooku, aby zobaczyć efekt we wszystkich komponentach.
+
+---
+
+## 3. Tryby kolorów
+
+</Translated>
+
 ```tsx
 <NativeUIProvider config={{ colorMode: 'system' }}>
 ```
+
+<Translated lang="en">
 
 - `'light'` / `'dark'` - forced, useful for settings screens that let
   users override the OS preference.
@@ -156,9 +238,78 @@ surfaces (~9 % alpha over the base).
 
 One hex color. Done.
 
+</Translated>
+
+<Translated lang="pl">
+
+- `'light'` / `'dark'` - wymuszone, przydatne na ekranach ustawień, które
+  pozwalają użytkownikom nadpisać preferencję systemu.
+- `'system'` - podąża za `useColorScheme()`; renderuje się ponownie
+  automatycznie, gdy użytkownik przełączy ustawienie w systemie.
+
+Każdy preset rozwiązuje się do pełnego `ColorScheme` z ponad 25 tokenami
+semantycznymi, więc nigdy nie dobierasz koloru hex ręcznie.
+
+### Co otrzymujesz (rozwiązany schemat)
+
+<details>
+<summary>Powierzchnie</summary>
+
+- `background` - Tło głównego widoku aplikacji.
+- `surface` - Tło karty / arkusza / listy.
+- `surfaceElevated` - Modale, popovery.
+- `surfaceSecondary` - Pogrupowana treść (sekcje ustawień).
+- `overlay` - Półprzezroczyste tło za modalami / arkuszami.
+
+</details>
+
+<details>
+<summary>Tekst</summary>
+
+- `textPrimary` - Treść + nagłówki.
+- `textSecondary` - Podpisy, tekst pomocniczy.
+- `textTertiary` - Wyciszony / placeholder.
+- `textInverse` - Tekst na kolorowych tłach.
+- `textOnPrimary` - Tekst na kolorze akcentu (dobierany automatycznie wg WCAG).
+
+</details>
+
+<details>
+<summary>Semantyczne kolory stanów</summary>
+
+- `primary` / `primaryLight` / `primaryDark`
+- `success` / `successLight`
+- `warning` / `warningLight`
+- `error` / `errorLight`
+- `info` / `infoLight`
+
+Każdy wariant `*Light` jest wstępnie zabarwiony na potrzeby badge'y,
+callouts i zabarwionych powierzchni (~9 % alfa nad kolorem bazowym).
+
+</details>
+
+<details>
+<summary>System</summary>
+
+- `border` / `borderLight` - Cienkie linie 1px / 0.5px.
+- `divider` - Separatory list.
+- `shadow` - Kolor elewacji (cień w iOS, elevation w Androidzie).
+
+</details>
+
+---
+
+## 4. Własny akcent (nadpisanie marki)
+
+Jeden kolor hex. Gotowe.
+
+</Translated>
+
 ```tsx
 <NativeUIProvider config={{ customAccent: '#7C3AED', colorMode: 'system' }}>
 ```
+
+<Translated lang="en">
 
 Internally `customAccent` flows through `tintColor()` and the contrast
 picker so:
@@ -181,6 +332,33 @@ For a complete rebrand, pass a partial `semantic` object. Anything you
 omit falls back to the preset defaults, so you only override what you
 care about.
 
+</Translated>
+
+<Translated lang="pl">
+
+Wewnętrznie `customAccent` przechodzi przez `tintColor()` i mechanizm
+doboru kontrastu, więc:
+
+- `primary` = Twój hex
+- `primaryLight` = Twój hex z ~15 % alfa (dla zabarwionych powierzchni)
+- `primaryDark` = Twój hex z przesuniętą luminancją dla stanów wciśnięcia
+- `textOnPrimary` = automatycznie dobrany czarny/biały, spełniający WCAG AA na Twoim kolorze
+
+> **Kompromis.** `customAccent` nadpisuje **tylko** rodzinę primary.
+> `success` / `error` / kolory neutralne pozostają z presetu. Jeśli
+> potrzebujesz pełnych nadpisań na poziomie marki, użyj zamiast tego
+> propa `semantic` (następna sekcja).
+
+---
+
+## 5. Nadpisywanie tokenów semantycznych
+
+Przy pełnej zmianie identyfikacji przekaż częściowy obiekt `semantic`.
+Wszystko, co pominiesz, wraca do domyślnych wartości presetu, więc
+nadpisujesz tylko to, na czym Ci zależy.
+
+</Translated>
+
 ```tsx
 <NativeUIProvider
   config={{
@@ -196,6 +374,8 @@ care about.
   }}
 >
 ```
+
+<Translated lang="en">
 
 Components that consume semantic aliases (`useSemantic()`) switch
 instantly. Good candidates for per-app override: `brand`, `danger`,
@@ -215,6 +395,30 @@ drilling.
 | `reduceAnimations: true` | `PressableScale` and `Skeleton` skip animations; `BottomSheet` / `Toast` use instant transitions. |
 | `fontColor: 'warm'` / `'cool'` | Tints text tokens by ±2° on the color wheel for eye strain. |
 
+</Translated>
+
+<Translated lang="pl">
+
+Komponenty korzystające z aliasów semantycznych (`useSemantic()`)
+przełączają się natychmiast. Dobrzy kandydaci do nadpisania per aplikacja:
+`brand`, `danger`, `successToneBg`, `screenGutter`.
+
+---
+
+## 6. Przełączniki dostępności
+
+Wszystkie cztery przełączniki można łączyć; każdy komponent reaguje bez
+przekazywania propsów w dół drzewa.
+
+| Konfiguracja | Efekt |
+|---|---|
+| `fontSize: 'large'` | +4 px w każdym wariancie typografii, zgodnie z „Larger Text” w iOS. |
+| `highContrast: true` | Podnosi `textSecondary` do wagi / krycia `textPrimary`. |
+| `reduceAnimations: true` | `PressableScale` i `Skeleton` pomijają animacje; `BottomSheet` / `Toast` używają natychmiastowych przejść. |
+| `fontColor: 'warm'` / `'cool'` | Zabarwia tokeny tekstu o ±2° na kole barw, aby zmniejszyć zmęczenie oczu. |
+
+</Translated>
+
 ```tsx
 <NativeUIProvider
   config={{
@@ -224,6 +428,8 @@ drilling.
   }}
 >
 ```
+
+<Translated lang="en">
 
 > **Pair with OS preferences.** In real apps, drive these values from
 > `AccessibilityInfo.isReduceMotionEnabled()` and
@@ -238,9 +444,30 @@ drilling.
 | `regular` | 17/22 (iOS-default) | Marketing, primary flows, read-once screens |
 | `compact` | 15/20 | Settings bundles, transaction lists, data-dense screens |
 
+</Translated>
+
+<Translated lang="pl">
+
+> **Łącz z preferencjami systemu.** W prawdziwych aplikacjach ustawiaj te
+> wartości na podstawie `AccessibilityInfo.isReduceMotionEnabled()` i
+> `PixelRatio.getFontScale()` zamiast wpisywać je na sztywno.
+
+---
+
+## 7. Gęstość typografii
+
+| Gęstość | Body | Zastosowanie |
+|---|---|---|
+| `regular` | 17/22 (domyślne w iOS) | Marketing, główne ścieżki, ekrany czytane raz |
+| `compact` | 15/20 | Zestawy ustawień, listy transakcji, ekrany gęste od danych |
+
+</Translated>
+
 ```tsx
 <NativeUIProvider config={{ typography: 'compact' }}>
 ```
+
+<Translated lang="en">
 
 Compact recovers ~12 % vertical real estate on settings screens without
 information loss. See **Components / SettingsRow** for the side-by-side
@@ -249,6 +476,20 @@ comparison.
 ---
 
 ## 8. Consuming theme in custom components
+
+</Translated>
+
+<Translated lang="pl">
+
+Tryb compact odzyskuje ~12 % miejsca w pionie na ekranach ustawień bez
+utraty informacji. Porównanie obok siebie znajdziesz w
+**Components / SettingsRow**.
+
+---
+
+## 8. Korzystanie z motywu we własnych komponentach
+
+</Translated>
 
 ```tsx
 import { useTheme, useColors, useSemantic } from '@polprog/native-ui';
@@ -268,6 +509,8 @@ const colors = useColors();
 const semantic = useSemantic();
 ```
 
+<Translated lang="en">
+
 Pick the smallest hook. They are backed by separate React Contexts so
 your custom component only re-renders when the slice it reads actually
 changes.
@@ -275,6 +518,20 @@ changes.
 ---
 
 ## 9. Brand-specific theme recipe
+
+</Translated>
+
+<Translated lang="pl">
+
+Wybieraj najmniejszy hook. Każdy opiera się na osobnym React Context, więc
+Twój komponent renderuje się ponownie tylko wtedy, gdy faktycznie zmieni
+się odczytywany przez niego fragment.
+
+---
+
+## 9. Przepis na motyw marki
+
+</Translated>
 
 ```tsx
 const BRAND_CONFIG: NativeUIConfig = {
@@ -303,6 +560,8 @@ export default function App() {
 }
 ```
 
+<Translated lang="en">
+
 > **Do not** spread theme config through app state if you can avoid it.
 > Pin it to a module constant - React will skip the reconciliation cost
 > of a new config object on every render.
@@ -315,3 +574,22 @@ export default function App() {
 - **Tokens / Spacing & Radii** - spacing scale, radius tokens.
 - **Tokens / Typography** - type ramp and density details.
 - **Components / Button** - see every token in action on a single component.
+
+</Translated>
+
+<Translated lang="pl">
+
+> **Nie** przekazuj konfiguracji motywu przez stan aplikacji, jeśli możesz
+> tego uniknąć. Przypnij ją do stałej modułu - React pominie wtedy koszt
+> uzgadniania nowego obiektu konfiguracji przy każdym renderowaniu.
+
+---
+
+## Co czytać dalej
+
+- **Accessibility** - lista kontrolna WCAG + wkład każdego tokenu.
+- **Tokens / Spacing & Radii** - skala odstępów, tokeny promieni.
+- **Tokens / Typography** - skala typografii i szczegóły gęstości.
+- **Components / Button** - wszystkie tokeny w działaniu na jednym komponencie.
+
+</Translated>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '../../src/components/Button';
@@ -9,12 +9,20 @@ import type { InputPromptProps } from '../../src/components/InputPrompt';
 
 const meta: Meta<InputPromptProps> = {
   title: 'Components/InputPrompt',
+  tags: ['native-only'],
   component: InputPrompt,
   parameters: {
+    a11y: {
+      /*
+       * react-native-web's Modal renders aria-modal without role="dialog";
+       * the native Modal has no such markup.
+       */
+      options: { rules: { 'aria-allowed-attr': { enabled: false } } },
+    },
     docs: {
       description: {
         component: [
-          'Cross-platform text-input prompt. Uses native `Alert.prompt` on iOS for a seamless experience, and falls back to a custom `Modal` with a `TextInput` on Android/web.',
+          'Cross-platform text-input prompt. Uses the system `Alert.prompt` on iOS and falls back to a custom `Modal` with a `TextInput` on Android/web.',
           '',
           '> **Storybook note:** In the web Storybook context, the Android/web fallback (custom Modal) is always shown. On iOS devices the native prompt will be used instead.',
           '',

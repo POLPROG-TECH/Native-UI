@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { FieldLabel } from '../../src/components/FieldLabel';
 import type { FieldLabelProps } from '../../src/components/FieldLabel';

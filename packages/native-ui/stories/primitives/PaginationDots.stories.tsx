@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Pressable, Text as RNText } from 'react-native';
+import { useState } from 'react';
+import { View, Pressable } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
 import { HStack, VStack } from '../../src/primitives/Stack';
 import { PaginationDots } from '../../src/primitives/PaginationDots';
@@ -128,7 +128,7 @@ const Interactive = () => {
             backgroundColor: theme.colors.surfaceSecondary,
           }}
         >
-          <RNText style={{ fontSize: 14 }}>◀ Prev</RNText>
+          <Text variant="bodySmall">◀ Prev</Text>
         </Pressable>
         <Pressable
           onPress={() => setCurrent((c) => Math.min(count - 1, c + 1))}
@@ -139,7 +139,7 @@ const Interactive = () => {
             backgroundColor: theme.colors.surfaceSecondary,
           }}
         >
-          <RNText style={{ fontSize: 14 }}>Next ▶</RNText>
+          <Text variant="bodySmall">Next ▶</Text>
         </Pressable>
       </HStack>
     </VStack>

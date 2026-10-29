@@ -1,4 +1,3 @@
-import React from 'react';
 import { fn, within, userEvent, expect } from 'storybook/test';
 import { Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';

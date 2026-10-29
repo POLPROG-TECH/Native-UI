@@ -1,0 +1,140 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { Translated } from './components/i18n/Translated';
+
+<Meta title="Upgrading to 2.0" />
+
+<Translated lang="en">
+
+# Upgrading to 2.0
+
+2.0 removes APIs that were deprecated in 1.x, raises the peer dependency
+floor to the versions the library is verified on, and changes a few visual
+defaults for accessibility. Most apps need a handful of search-and-replace
+edits.
+
+## 1. Peer dependencies
+
+| Package | 1.x | 2.0 |
+| --- | --- | --- |
+| `react` | 18+ | **19+** |
+| `react-native` | 0.72+ | **0.84+** |
+| `react-native-reanimated` | optional, 3+ | **required, 4+** (install its `react-native-worklets` peer) |
+| `react-native-safe-area-context` | 4+ | **5+** |
+| `@react-native-community/datetimepicker` (optional) | 7+ | **9+** |
+
+## 2. Removed APIs
+
+| Removed | Replace with |
+| --- | --- |
+| `useThemeColors()` | `useColors()` |
+| `<Button variant="destructive">` | `<Button variant="danger">` |
+| `typography.amount` / `amountLarge` / `amountSmall`, `<Text variant="amount">` | `mono` / `monoLarge` / `monoSmall` |
+| `<Card longPressHint="...">` | `<Card accessibilityHint="...">` |
+| `<Select selectedValue={v} onValueChange={f}>` | `<Select value={v} onChange={f}>` |
+| `components.select.titlePadding*`, `cancelPaddingVertical`, `cancelMarginTop`, `minBottomPadding` | the `components.bottomSheet` paddings (the option sheet is a BottomSheet) |
+| `usePressableScale().isReanimated` | nothing (Reanimated is always used) |
+
+TypeScript reports every removed name, so `tsc --noEmit` lists the places to
+change.
+
+## 3. Behavior and visual changes
+
+- **Text contrast.** Text colors meet WCAG AA (`minTextContrast`, default
+  4.5) on every surface. Accent-colored text uses `colors.primaryText`, which
+  is darker than `primary` in the default light theme. `<Text color="primary">`
+  resolves to it automatically. `textInverse` equals `onPrimary` (dark ink on
+  the bright default accent).
+- **Error color.** The default light `error` is `#DC2626`.
+- **Bloom violet.** The accent moved from `#7c5cff` to `#7658f3` so white
+  labels reach AA.
+- **Toast** uses the inverse surface. Restore the old card with
+  `components: { toast: { appearance: 'surface' } }`.
+- **Select** opens a BottomSheet (handle, drag to dismiss, stacked Cancel
+  button). Tests that queried the old sheet markup may need new queries; the
+  sheet has testID `${testID}-sheet`.
+- **Controls.** Switch off tracks, ProgressBar tracks and field borders use
+  `controlTrack` / `controlBorder` (3:1 contrast), so they are darker in light
+  mode.
+- **`parseDecimalInput`** returns `NaN` for input with trailing garbage
+  (`"12abc"`) instead of a truncated number, and understands thousands
+  grouping.
+
+## 4. CostBoard checklist
+
+The CostBoard app uses three removed APIs:
+
+- `QuotationFormScreen.tsx`: `<Select ... onValueChange={setStatus}>` becomes
+  `onChange={setStatus}`; the `variant="destructive"` delete button becomes
+  `variant="danger"`.
+- `QuotationLineItemFormScreen.tsx`: `variant={bold ? 'amount' : 'amountSmall'}`
+  becomes `'mono' : 'monoSmall'`.
+
+</Translated>
+
+<Translated lang="pl">
+
+# Aktualizacja do 2.0
+
+Wersja 2.0 usuwa API oznaczone jako przestarzałe w 1.x, podnosi minimalne
+wersje zależności peer do tych, na których biblioteka jest sprawdzana, i
+zmienia kilka domyślnych ustawień wizualnych z myślą o dostępności. W
+większości aplikacji wystarczy kilka zamian typu „znajdź i zamień”.
+
+## 1. Zależności peer
+
+| Pakiet | 1.x | 2.0 |
+| --- | --- | --- |
+| `react` | 18+ | **19+** |
+| `react-native` | 0.72+ | **0.84+** |
+| `react-native-reanimated` | opcjonalny, 3+ | **wymagany, 4+** (zainstaluj też jego zależność `react-native-worklets`) |
+| `react-native-safe-area-context` | 4+ | **5+** |
+| `@react-native-community/datetimepicker` (opcjonalny) | 7+ | **9+** |
+
+## 2. Usunięte API
+
+| Usunięte | Zastąp przez |
+| --- | --- |
+| `useThemeColors()` | `useColors()` |
+| `<Button variant="destructive">` | `<Button variant="danger">` |
+| `typography.amount` / `amountLarge` / `amountSmall`, `<Text variant="amount">` | `mono` / `monoLarge` / `monoSmall` |
+| `<Card longPressHint="...">` | `<Card accessibilityHint="...">` |
+| `<Select selectedValue={v} onValueChange={f}>` | `<Select value={v} onChange={f}>` |
+| `components.select.titlePadding*`, `cancelPaddingVertical`, `cancelMarginTop`, `minBottomPadding` | odstępy z `components.bottomSheet` (lista opcji to teraz BottomSheet) |
+| `usePressableScale().isReanimated` | nic (Reanimated jest używany zawsze) |
+
+TypeScript zgłasza każdą usuniętą nazwę, więc `tsc --noEmit` wypisze
+wszystkie miejsca do zmiany.
+
+## 3. Zmiany w zachowaniu i wyglądzie
+
+- **Kontrast tekstu.** Kolory tekstu spełniają WCAG AA (`minTextContrast`,
+  domyślnie 4.5) na każdej powierzchni. Tekst w kolorze akcentu używa
+  `colors.primaryText`, który w domyślnym jasnym motywie jest ciemniejszy od
+  `primary`. `<Text color="primary">` korzysta z niego automatycznie.
+  `textInverse` jest równy `onPrimary` (ciemny tekst na jasnym domyślnym
+  akcencie).
+- **Kolor błędu.** Domyślny jasny `error` to `#DC2626`.
+- **Fiolet Bloom.** Akcent zmienił się z `#7c5cff` na `#7658f3`, żeby białe
+  etykiety spełniały AA.
+- **Toast** używa odwróconej powierzchni (inverse surface). Starą kartę
+  przywrócisz przez `components: { toast: { appearance: 'surface' } }`.
+- **Select** otwiera BottomSheet (uchwyt, zamykanie przeciągnięciem,
+  przycisk Cancel pod listą). Testy, które szukały starego znacznika arkusza,
+  mogą wymagać nowych zapytań; arkusz ma testID `${testID}-sheet`.
+- **Kontrolki.** Tor wyłączonego Switcha, tor ProgressBar i obramowania pól
+  używają `controlTrack` / `controlBorder` (kontrast 3:1), więc w trybie
+  jasnym są ciemniejsze.
+- **`parseDecimalInput`** zwraca `NaN` dla danych ze śmieciami na końcu
+  (`"12abc"`) zamiast obciętej liczby i rozumie separatory tysięcy.
+
+## 4. Lista zmian dla CostBoard
+
+Aplikacja CostBoard używa trzech usuniętych API:
+
+- `QuotationFormScreen.tsx`: `<Select ... onValueChange={setStatus}>` zmień na
+  `onChange={setStatus}`; przycisk usuwania `variant="destructive"` zmień na
+  `variant="danger"`.
+- `QuotationLineItemFormScreen.tsx`: `variant={bold ? 'amount' : 'amountSmall'}`
+  zmień na `'mono' : 'monoSmall'`.
+
+</Translated>

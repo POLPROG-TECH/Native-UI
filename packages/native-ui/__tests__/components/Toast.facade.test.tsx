@@ -1,45 +1,46 @@
 import { toast } from '../../src/components/Toast';
 
 describe('toast singleton facade', () => {
-  it('should expose show and hide as callable functions', () => {
-    // GIVEN the module-level toast facade
+  describe('GIVEN the module-level toast facade', () => {
+    describe('WHEN its shape is inspected', () => {
+      it('THEN show and hide are both callable functions', () => {
+        const showType = typeof toast.show;
+        const hideType = typeof toast.hide;
 
-    // WHEN its shape is inspected
-    const showType = typeof toast.show;
-    const hideType = typeof toast.hide;
-
-    // THEN show and hide are both callable functions
-    expect(showType).toBe('function');
-    expect(hideType).toBe('function');
+        expect(showType).toBe('function');
+        expect(hideType).toBe('function');
+      });
+    });
   });
 
-  it('should not throw when show or hide is called without a mounted Toast root', () => {
-    // GIVEN no <Toast /> root is mounted in this test
+  describe('GIVEN no <Toast /> root is mounted in this test', () => {
+    describe('WHEN show and hide are invoked with a valid config and no args', () => {
+      it('THEN neither call throws', () => {
+        const callShowAndHide = () => {
+          toast.show({ message: 'hi' });
+          toast.hide();
+        };
 
-    // WHEN show and hide are invoked with a valid config and no args
-    const callShowAndHide = () => {
-      toast.show({ message: 'hi' });
-      toast.hide();
-    };
-
-    // THEN neither call throws
-    expect(callShowAndHide).not.toThrow();
+        expect(callShowAndHide).not.toThrow();
+      });
+    });
   });
 
-  it('should accept optional action props when show is called with full config', () => {
-    // GIVEN a config with an action label and callback
-    const onAction = jest.fn();
-    const config = {
-      message: 'Saved',
-      actionLabel: 'Undo',
-      onAction,
-      duration: 3000,
-    };
+  describe('GIVEN a config with an action label and callback', () => {
+    describe('WHEN show is called with the full config shape', () => {
+      it('THEN the call completes without throwing', () => {
+        const onAction = jest.fn();
+        const config = {
+          message: 'Saved',
+          actionLabel: 'Undo',
+          onAction,
+          duration: 3000,
+        };
 
-    // WHEN show is called with the full config shape
-    const callShow = () => toast.show(config);
+        const callShow = () => toast.show(config);
 
-    // THEN the call completes without throwing
-    expect(callShow).not.toThrow();
+        expect(callShow).not.toThrow();
+      });
+    });
   });
 });

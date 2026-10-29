@@ -2,10 +2,7 @@ import React from 'react';
 import { Text as RNText, type TextProps as RNTextProps, type TextStyle } from 'react-native';
 import { useTheme } from '../theme';
 import type { TypographyVariant } from '../tokens/typography';
-import type { ColorScheme } from '../tokens/colors';
-
-/** Color tokens safe to use for text (excludes composite tokens like `chart`). */
-type ColorToken = Exclude<keyof ColorScheme, 'chart'>;
+import { textColorOf, type TextColorToken } from '../tokens/textTokens';
 
 export interface TextProps extends RNTextProps {
   /**
@@ -14,10 +11,11 @@ export interface TextProps extends RNTextProps {
    */
   variant?: TypographyVariant;
   /**
-   * Theme color token applied as the text color.
+   * Theme color token applied as the text color. Accent and feedback keys
+   * (`primary`, `success`, ...) resolve to their readable `*Text` variants.
    * @default 'textPrimary'
    */
-  color?: ColorToken;
+  color?: TextColorToken;
   /** Horizontal text alignment. */
   align?: TextStyle['textAlign'];
   /** Content to render. */
@@ -49,7 +47,7 @@ export function Text({
       style={[
         base,
         {
-          color: theme.colors[color],
+          color: textColorOf(theme.colors, color),
           textAlign: align,
         },
         style,

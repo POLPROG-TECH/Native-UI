@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Chip, ChipGroup } from '../../src/components/Chip';
 import { Text } from '../../src/primitives/Text';
 import { VStack } from '../../src/primitives/Stack';
+import { SystemIcon } from '../../src/primitives/SystemIcon';
 import type { ChipProps } from '../../src/components/Chip';
 
 const meta: Meta<ChipProps> = {
@@ -40,7 +41,11 @@ const meta: Meta<ChipProps> = {
   argTypes: {
     label: { control: 'text' },
     selected: { control: 'boolean' },
-    icon: { control: 'text', description: 'Leading emoji/icon string' },
+    icon: {
+      control: 'text',
+      description:
+        'Leading icon: a render function `({ color, size }) => node` (preferred, follows the label color), a node, or an emoji string (kept for compatibility)',
+    },
     disabled: { control: 'boolean' },
     size: { control: 'select', options: ['sm', 'md'] },
     onPress: { action: 'onPress' },
@@ -86,6 +91,32 @@ export const WithIcons: Story = {
   ),
 };
 
+export const WithSystemIcons: Story = {
+  name: 'With SystemIcon render functions',
+  render: () => (
+    <ChipGroup>
+      <Chip
+        label="Done"
+        selected
+        icon={({ color, size }) => <SystemIcon name="check" color={color} size={size} />}
+        onPress={fn()}
+      />
+      <Chip
+        label="Add filter"
+        icon={({ color, size }) => <SystemIcon name="plus" color={color} size={size} />}
+        onPress={fn()}
+      />
+      <Chip
+        label="Search"
+        variant="soft"
+        selected
+        icon={({ color, size }) => <SystemIcon name="search" color={color} size={size} />}
+        onPress={fn()}
+      />
+    </ChipGroup>
+  ),
+};
+
 export const Sizes: Story = {
   render: () => (
     <VStack gap="md">
@@ -126,8 +157,12 @@ const MultiSelectExample = () => {
   const toggle = (cat: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      if (next.has(cat)) next.delete(cat);
-      else next.add(cat);
+
+      if (next.has(cat)) {
+        next.delete(cat);
+      } else {
+        next.add(cat);
+      }
 
       fn()(Array.from(next));
 

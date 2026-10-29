@@ -11,9 +11,17 @@ function entriesFrom(dir: 'components' | 'primitives'): Record<string, string> {
   const entries: Record<string, string> = {};
 
   for (const file of readdirSync(`src/${dir}`)) {
-    if (!file.endsWith('.tsx')) continue;
-    if (/\.(stories|test)\.tsx$/.test(file)) continue;
-    if (file === 'index.tsx') continue;
+    if (!file.endsWith('.tsx')) {
+      continue;
+    }
+
+    if (/\.(stories|test)\.tsx$/.test(file)) {
+      continue;
+    }
+
+    if (file === 'index.tsx') {
+      continue;
+    }
 
     const name = file.replace(/\.tsx$/, '');
 

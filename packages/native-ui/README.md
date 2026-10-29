@@ -7,9 +7,9 @@
   <a href="https://www.npmjs.com/package/@polprog/native-ui"><img src="https://img.shields.io/npm/dm/@polprog/native-ui.svg?style=flat-square&color=6366f1" alt="npm downloads"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-6366f1?style=flat-square" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/TypeScript-strict-0A84FF?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript strict">
-  <img src="https://img.shields.io/badge/tests-626%20passed-22c55e?style=flat-square&logo=jest&logoColor=white" alt="Tests: 626 passed">
+  <img src="https://img.shields.io/badge/tests-1021%20passed-22c55e?style=flat-square&logo=jest&logoColor=white" alt="Tests: 1021 passed">
   <a href="https://github.com/polprog-tech/native-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/polprog-tech/native-ui/ci.yml?branch=master&style=flat-square" alt="CI"></a>
-  <a href="https://polprog-tech.github.io/native-ui"><img src="https://img.shields.io/badge/Storybook-ff4785?style=flat-square&logo=storybook&logoColor=white" alt="Storybook"></a>
+  <a href="https://polprog-tech.github.io/Native-UI"><img src="https://img.shields.io/badge/Storybook-ff4785?style=flat-square&logo=storybook&logoColor=white" alt="Storybook"></a>
   <img src="https://img.shields.io/badge/React%20Native-0.74%2B-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React Native 0.74+">
 </p>
 
@@ -39,7 +39,7 @@
   (`Box`, `VStack`, `HStack`, `Text`, `PressableScale`, …).
 - 🎨 **Theme engine** - two visual variants (Aurora, Bloom), colour presets, dark/light/system mode, high contrast
   and font-scale tiers - all driven by tokens.
-- 🧪 **Tested** - 626 unit tests (GIVEN/WHEN/THEN) covering tokens,
+- 🧪 **Tested** - 1021 unit tests (GIVEN/WHEN/THEN) covering tokens,
   primitives, components, and public exports.
 - 📦 **Tree-shakeable** ESM + CJS build with full `.d.ts` (via `tsup`).
 - ♿ **Accessible by default** - screen-reader labels, roles, reduced motion
@@ -86,6 +86,20 @@ configureHaptics({
 ```
 
 ---
+
+## Compatibility
+
+Peer dependency ranges start at the versions the library is verified on: CI
+runs React Native 0.88, React 19.3, Reanimated 4.7 and Safe Area Context 5.11,
+and the CostBoard app runs React Native 0.84 with React 19.2 in production.
+
+| Peer                                                | Supported                                    |
+| --------------------------------------------------- | -------------------------------------------- |
+| `react`                                             | 19.0+                                        |
+| `react-native`                                      | 0.84+                                        |
+| `react-native-reanimated`                           | 4.0+ (with its `react-native-worklets` peer) |
+| `react-native-safe-area-context`                    | 5.0+                                         |
+| `@react-native-community/datetimepicker` (optional) | 9.0+                                         |
 
 ## Quick Start
 
@@ -151,16 +165,22 @@ function ProfileScreen() {
 
 The `NativeUIProvider` accepts a `config` prop:
 
-| Property           | Type                                   | Default     | Description                                                   |
-| ------------------ | -------------------------------------- | ----------- | ------------------------------------------------------------- |
-| `theme`            | `'default' \| 'bloom' \| ThemeVariant` | `'default'` | Complete visual variant (Aurora / Bloom)                      |
-| `colorMode`        | `'light' \| 'dark' \| 'system'`        | `'system'`  | Color mode                                                    |
-| `preset`           | `ThemePreset \| BloomPreset`           | per variant | Accent preset; each variant ships its own (Aurora 7, Bloom 4) |
-| `fontColor`        | `'default' \| 'warm' \| 'cool'`        | `'default'` | Font color variant                                            |
-| `fontSize`         | `'default' \| 'medium' \| 'large'`     | `'default'` | Font size tier                                                |
-| `highContrast`     | `boolean`                              | `false`     | High contrast mode                                            |
-| `reduceAnimations` | `boolean`                              | `false`     | Reduce motion                                                 |
-| `customAccent`     | `string \| null`                       | `null`      | Custom accent color (hex)                                     |
+| Property           | Type                                   | Default     | Description                                                     |
+| ------------------ | -------------------------------------- | ----------- | --------------------------------------------------------------- |
+| `theme`            | `'default' \| 'bloom' \| ThemeVariant` | `'default'` | Complete visual variant (Aurora / Bloom)                        |
+| `colorMode`        | `'light' \| 'dark' \| 'system'`        | `'system'`  | Color mode                                                      |
+| `preset`           | `ThemePreset \| BloomPreset`           | per variant | Accent preset; each variant ships its own (Aurora 7, Bloom 4)   |
+| `fontColor`        | `'default' \| 'warm' \| 'cool'`        | `'default'` | Font color variant                                              |
+| `fontSize`         | `'default' \| 'medium' \| 'large'`     | `'default'` | Font size tier                                                  |
+| `highContrast`     | `boolean`                              | `false`     | High contrast mode                                              |
+| `reduceAnimations` | `boolean`                              | `false`     | Reduce motion                                                   |
+| `customAccent`     | `string \| null`                       | `null`      | Custom accent color (hex)                                       |
+| `minTextContrast`  | `number`                               | `4.5`       | Minimum contrast of text on solid fills (`colors.on*`); 7 = AAA |
+| `labels`           | `Partial<NativeUILabels>`              | English     | Strings the library renders itself (a11y labels, captions)      |
+| `locale`           | `string`                               | `'en-US'`   | BCP 47 locale for date formatting                               |
+| `spacing`          | `Partial<SpacingScale>`                | -           | Overrides for single spacing steps                              |
+| `borderRadius`     | `Partial<BorderRadiusScale>`           | per variant | Overrides for single corner radii                               |
+| `components`       | `ComponentTokenOverrides`              | -           | Per-component tokens (paddings, sizes, durations, colors)       |
 
 ### Theme variants: Aurora & Bloom
 
@@ -261,6 +281,82 @@ Pass `semanticTokens` inside `config` to merge custom semantic color / spacing
 </NativeUIProvider>
 ```
 
+### Text on colored fills
+
+Every solid fill has a matching text token: `onPrimary`, `onSuccess`,
+`onWarning`, `onError`, `onInfo`. The resolver keeps the palette's designed ink
+when it reaches `minTextContrast` (WCAG AA 4.5:1 by default) and otherwise
+switches to the near-black or near-white ink that does. `textInverse` stays as
+an alias of `onPrimary`.
+
+Colors used as text on surfaces have readable variants too: `primaryText`,
+`successText`, `warningText`, `errorText` and `infoText`, and the text ramp
+(`textPrimary`, `textSecondary`, `textTertiary`) itself is held to
+`minTextContrast` on every surface. Palette values that already pass are kept
+as designed; failing ones are shaded just enough to pass. `<Text>` and
+`<Heading>` map `color="primary"` (and the feedback keys) to these variants
+automatically. Helpers: `contrastRatio`, `getContrastText`, `resolveOnColor`,
+`ensureReadable`, `textColorOf`, `withAlpha`.
+
+### Icons
+
+Every component that shows an icon accepts an `IconSlot`: a render function
+`({ color, size }) => <Icon ... />` (preferred, follows theme and state), a
+React node, or a string such as an emoji (kept for compatibility). Use
+`renderIconSlot(slot, { color, size })` in your own components.
+
+### Keyboard focus
+
+Pressable controls draw a themed focus ring (`components.focusRing`) when
+focused from a keyboard, D-pad or Tab key on web. Use `useFocusRing()` for your
+own pressables.
+
+### Localising the library
+
+Accessibility labels, default captions and placeholders rendered by the
+library come from `config.labels`; unset keys fall back to English. Individual
+props (e.g. `Select.placeholder`, `Modal.closeAccessibilityLabel`) still win
+per instance.
+
+```tsx
+<NativeUIProvider
+  config={{
+    locale: 'pl-PL',
+    labels: {
+      close: 'Zamknij',
+      cancel: 'Anuluj',
+      clear: 'Wyczyść',
+      selectPlaceholder: 'Wybierz...',
+      stepOf: (current, total) => `Krok ${current} z ${total}`,
+      countdownUnits: { hours: ' godz.', minutes: ' min', seconds: ' s' },
+    },
+  }}
+>
+```
+
+Read them in your own components with `useLabels()`.
+
+### Component tokens
+
+Every dimension, duration and threshold a component uses lives in
+`theme.components.<component>` instead of the component source. Override any of
+them per component; unspecified tokens keep their defaults, and defaults derived
+from the global scales follow `config.spacing` / `config.borderRadius`.
+
+```tsx
+<NativeUIProvider
+  config={{
+    borderRadius: { xl: 28 },
+    components: {
+      bottomSheet: { backgroundColor: '#0F172A', footerLayout: 'fill' },
+      toast: { offset: 96, durationMs: 4000 },
+      headerBar: { titleAlign: 'left' },
+      emptyState: { defaultSize: 'sm' },
+    },
+  }}
+>
+```
+
 ### Subpath imports and tree-shaking
 
 The package is marked `"sideEffects": false`, so any bundler capable of
@@ -271,16 +367,18 @@ components from the barrel import:
 import { Button, Card } from '@polprog/native-ui'; // only those ship
 ```
 
-Heavier components (`Toast`, `BottomSheet`, `Skeleton`) rely on
-`react-native-reanimated`. If you don't import them, you don't need the
-peer dependency installed - it is declared optional.
+`react-native-reanimated` is a required peer dependency. `Toast`,
+`BottomSheet`, `Skeleton`, `ConfettiOverlay`, `MarqueeText` and
+`PaginationDots` import it statically, and Metro resolves every import of the
+barrel at bundle time (tree-shaking does not skip module resolution), so the
+package must be installed even if you never render those components.
 
 ---
 
 ## Component Reference
 
 > Browse the full catalogue with live examples, accessibility notes and code
-> snippets in **[Storybook](https://polprog-tech.github.io/native-ui)**.
+> snippets in **[Storybook](https://polprog-tech.github.io/Native-UI)**.
 
 ### Primitives
 
@@ -311,31 +409,33 @@ peer dependency installed - it is declared optional.
 
 ### Display
 
-| Component     | Description                                                      |
-| ------------- | ---------------------------------------------------------------- |
-| `Card`        | Surface container with elevation. Pressable when `onPress` given |
-| `Badge`       | Count badge or status dot                                        |
-| `Avatar`      | Circular image or initials avatar                                |
-| `ProgressBar` | Horizontal progress bar with semantic colors                     |
-| `Skeleton`    | Animated loading placeholder                                     |
-| `Spinner`     | Full-screen loading indicator                                    |
-| `EmptyState`  | Zero-state placeholder with icon, title, action                  |
+| Component          | Description                                                      |
+| ------------------ | ---------------------------------------------------------------- |
+| `Card`             | Surface container with elevation. Pressable when `onPress` given |
+| `Badge`            | Count badge or status dot                                        |
+| `Avatar`           | Circular image or initials avatar                                |
+| `ProgressBar`      | Horizontal progress bar with semantic colors                     |
+| `Skeleton`         | Animated loading placeholder                                     |
+| `Spinner`          | Full-screen loading indicator                                    |
+| `EmptyState`       | Zero-state placeholder with icon, title, action; `sm`/`md`/`lg`  |
+| `SegmentedControl` | Single-choice segmented control (radio group)                    |
 
 ### Overlay
 
 | Component            | Description                                 |
 | -------------------- | ------------------------------------------- |
 | `Modal`              | Centered dialog with title, content, footer |
-| `BottomSheet`        | Slide-up bottom sheet                       |
+| `BottomSheet`        | Slide-up bottom sheet with drag-to-dismiss  |
 | `Toast` / `useToast` | Snackbar notification                       |
 
 ### Layout
 
-| Component         | Description                                                      |
-| ----------------- | ---------------------------------------------------------------- |
-| `ScreenContainer` | Full-screen layout with safe area, background, tablet constraint |
-| `Section`         | Content section with title header                                |
-| `ListItem`        | Configurable list row (settings, menus, navigation)              |
+| Component              | Description                                                          |
+| ---------------------- | -------------------------------------------------------------------- |
+| `ScreenContainer`      | Full-screen layout with safe area, background, tablet constraint     |
+| `Section`              | Content section with title header                                    |
+| `ListItem`             | Configurable list row (settings, menus, navigation)                  |
+| `KeyboardLiftedFooter` | Form action bar that stays above the keyboard (Android edge-to-edge) |
 
 ---
 
@@ -480,7 +580,7 @@ packages/native-ui/
 │   ├── components/  # Higher-level UI components
 │   ├── utils/       # Haptics, helpers
 │   └── index.ts     # Barrel export
-├── __tests__/       # Jest + @testing-library/react (626 tests)
+├── __tests__/       # Jest + @testing-library/react
 ├── stories/         # Storybook stories (source of truth for docs)
 ├── package.json
 ├── tsconfig.json

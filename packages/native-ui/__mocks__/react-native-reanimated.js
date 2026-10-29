@@ -2,32 +2,23 @@ const React = require('react');
 
 const createAnimatedComponent = (component) => component;
 
-// Lightweight passthrough used for `Animated.View` / `Animated.Text`. Renders
-// a plain DOM element so children and props flow through to jsdom assertions.
-// Also translates common RN accessibility props to their ARIA equivalents so
-// tests can query with `getByRole` / `getByLabelText` consistently with the
-// rest of the react-native mock.
-const makePassthrough = (elementType) =>
-  function AnimatedPassthrough({
-    children,
-    accessibilityLabel,
-    accessibilityRole,
-    accessibilityElementsHidden: _aeh,
-    ...rest
-  }) {
-    return React.createElement(
-      elementType,
-      {
-        ...rest,
-        role: accessibilityRole,
-        'aria-label': accessibilityLabel,
-      },
-      children,
-    );
-  };
+/*
+ * `Animated.View` / `Animated.Text` render through the react-native mock so
+ * they share its style flattening, ARIA translation and testID handling.
+ * Layout-animation props have no jsdom meaning and are dropped.
+ */
+const makePassthrough = (componentName) =>
+  React.forwardRef(function AnimatedPassthrough(
+    { entering: _entering, exiting: _exiting, layout: _layout, ...rest },
+    ref,
+  ) {
+    const RN = require('react-native');
 
-const AnimatedView = makePassthrough('div');
-const AnimatedText = makePassthrough('span');
+    return React.createElement(RN[componentName], { ...rest, ref });
+  });
+
+const AnimatedView = makePassthrough('View');
+const AnimatedText = makePassthrough('Text');
 
 const makeAnimationBuilder = () => {
   const builder = {};
@@ -36,11 +27,16 @@ const makeAnimationBuilder = () => {
   builder.springify = jest.fn(() => builder);
   builder.damping = jest.fn(() => builder);
   builder.build = jest.fn(() => builder);
+
   return builder;
 };
 
 module.exports = {
-  useSharedValue: jest.fn((init) => ({ value: init })),
+  /*
+   * Like the real hook, the shared value keeps its identity across renders,
+   * so writes made from gesture or effect callbacks survive a re-render.
+   */
+  useSharedValue: jest.fn((init) => React.useRef({ value: init }).current),
   useAnimatedStyle: jest.fn(() => ({})),
   withTiming: jest.fn((val) => val),
   withSpring: jest.fn((val) => val),

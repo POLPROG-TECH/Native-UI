@@ -1,6 +1,9 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { Translated } from './components/i18n/Translated';
 
 <Meta title="Getting Started" />
+
+<Translated lang="en">
 
 # Getting Started
 
@@ -32,6 +35,42 @@ Expo (managed or bare), and - for documentation purposes - under
 
 ## 2. Install
 
+</Translated>
+
+<Translated lang="pl">
+
+# Pierwsze kroki
+
+Jednostronicowa lista kontrolna gotowa do produkcji, dzięki której
+uruchomisz `@polprog/native-ui` w swojej aplikacji React Native - od
+świeżej instalacji do pierwszego ekranu z motywem w mniej niż pięć minut.
+
+> **Dla kogo.** Dla zespołów, które mają już projekt React Native
+> (czysty RN albo Expo SDK 50+) i chcą gotowego do wpięcia design systemu,
+> opartego na tokenach, domyślnie dostępnego i gotowego do produkcji.
+
+---
+
+## 1. Wymagania wstępne
+
+| Wymaganie | Minimum | Uwagi |
+|---|---|---|
+| React Native | **0.72** | 0.76+ zalecane dla New Architecture |
+| React | **18.0** | Wymagane dla automatycznego JSX i funkcji współbieżnych |
+| TypeScript | **5.0** | Typy są dostarczane w pakiecie; `skipLibCheck` opcjonalne |
+| `react-native-reanimated` | **3.0** | Napędza `PressableScale`, `BottomSheet`, `Skeleton` |
+| `react-native-safe-area-context` | **4.0** | Wymagane przez `ScreenContainer` + `BottomTabBar` |
+
+Native-UI nie jest związany z konkretnym frameworkiem: działa z React
+Native CLI, Expo (managed lub bare) oraz - na potrzeby dokumentacji - z
+`react-native-web` w Storybooku / Vite.
+
+---
+
+## 2. Instalacja
+
+</Translated>
+
 ```bash
 # Package + peer deps
 npm install @polprog/native-ui react-native-reanimated react-native-safe-area-context
@@ -39,6 +78,8 @@ npm install @polprog/native-ui react-native-reanimated react-native-safe-area-co
 # Pod install for iOS (bare RN only)
 cd ios && pod install && cd ..
 ```
+
+<Translated lang="en">
 
 > **Reanimated setup.** If this is a brand-new project, follow the
 > Reanimated
@@ -52,6 +93,25 @@ cd ios && pod install && cd ..
 
 A single provider is the whole setup. Everything downstream reads theme,
 typography, spacing and motion tokens from it.
+
+</Translated>
+
+<Translated lang="pl">
+
+> **Konfiguracja Reanimated.** Jeśli to zupełnie nowy projekt, dodaj
+> plugin Babel zgodnie z
+> [instrukcją instalacji](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation)
+> Reanimated - w przeciwnym razie `PressableScale` rzuci błąd przy
+> pierwszym renderowaniu.
+
+---
+
+## 3. Opakuj aplikację
+
+Cała konfiguracja to jeden provider. Wszystko poniżej niego odczytuje z
+niego tokeny motywu, typografii, odstępów i animacji.
+
+</Translated>
 
 ```tsx
 import { NativeUIProvider } from '@polprog/native-ui';
@@ -75,6 +135,8 @@ export default function App() {
 }
 ```
 
+<Translated lang="en">
+
 > **Order matters.** `SafeAreaProvider` **must** wrap `NativeUIProvider`
 > so `ScreenContainer` and `BottomTabBar` can read insets synchronously
 > on first render - otherwise you will see a one-frame layout jump on
@@ -83,6 +145,22 @@ export default function App() {
 ---
 
 ## 4. First screen
+
+</Translated>
+
+<Translated lang="pl">
+
+> **Kolejność ma znaczenie.** `SafeAreaProvider` **musi** opakowywać
+> `NativeUIProvider`, aby `ScreenContainer` i `BottomTabBar` mogły
+> synchronicznie odczytać wcięcia przy pierwszym renderowaniu - inaczej
+> na urządzeniach iPhone Pro / z Dynamic Island zobaczysz przeskok układu
+> trwający jedną klatkę.
+
+---
+
+## 4. Pierwszy ekran
+
+</Translated>
 
 ```tsx
 import {
@@ -114,6 +192,8 @@ export function HomeScreen() {
 }
 ```
 
+<Translated lang="en">
+
 That is a full screen: themed surface, safe-area handling, semantic
 typography, token-driven spacing, accessible pressable - zero setup
 beyond step 3.
@@ -125,6 +205,24 @@ beyond step 3.
 Interactive primitives (`Button`, `PressableScale`, `Toast`) call into a
 pluggable haptics interface. Wire it once at app boot, then every
 component benefits.
+
+</Translated>
+
+<Translated lang="pl">
+
+To kompletny ekran: powierzchnia z motywem, obsługa safe area, semantyczna
+typografia, odstępy oparte na tokenach, dostępny element dotykowy - bez
+żadnej konfiguracji poza krokiem 3.
+
+---
+
+## 5. Wibracje haptyczne (opcjonalnie)
+
+Interaktywne komponenty bazowe (`Button`, `PressableScale`, `Toast`)
+korzystają z wymiennego interfejsu haptyki. Podłącz go raz przy starcie
+aplikacji, a skorzysta na tym każdy komponent.
+
+</Translated>
 
 ```tsx
 import { configureHaptics } from '@polprog/native-ui';
@@ -139,6 +237,8 @@ configureHaptics({
 });
 ```
 
+<Translated lang="en">
+
 > **Graceful degradation.** If you never call `configureHaptics`, every
 > component silently skips haptics - no crashes, no warnings, no bundle
 > bloat. Perfect for Expo Go dev.
@@ -148,6 +248,22 @@ configureHaptics({
 ## 6. Consume tokens in custom components
 
 The provider exposes the full resolved theme through three tiny hooks:
+
+</Translated>
+
+<Translated lang="pl">
+
+> **Łagodna degradacja.** Jeśli nigdy nie wywołasz `configureHaptics`,
+> każdy komponent po cichu pominie haptykę - bez awarii, bez ostrzeżeń,
+> bez puchnięcia paczki. Idealne do pracy w Expo Go.
+
+---
+
+## 6. Korzystanie z tokenów we własnych komponentach
+
+Provider udostępnia cały rozwiązany motyw przez trzy niewielkie hooki:
+
+</Translated>
 
 ```tsx
 import { useTheme, useColors, useSemantic } from '@polprog/native-ui';
@@ -170,6 +286,8 @@ function CustomCard() {
   );
 }
 ```
+
+<Translated lang="en">
 
 Pick the smallest hook that covers your need - each one only re-renders
 its consumers when the values it reads actually change.
@@ -201,6 +319,43 @@ For teams shipping multiple apps from one repo:
 
 ### Metro config (`metro.config.js`)
 
+</Translated>
+
+<Translated lang="pl">
+
+Wybierz najmniejszy hook, który pokrywa Twoje potrzeby - każdy z nich
+ponownie renderuje swoich konsumentów tylko wtedy, gdy odczytywane
+wartości faktycznie się zmienią.
+
+---
+
+## 7. Dokumentacja konfiguracji providera
+
+| Prop | Typ | Domyślnie | Opis |
+|---|---|---|---|
+| `colorMode` | `'light'` / `'dark'` / `'system'` | `'system'` | Przy `'system'` podąża za `useColorScheme()` |
+| `preset` | `ThemePreset` | `'default'` | Jeden z 7 wbudowanych presetów kolorów |
+| `customAccent` | `string` lub `null` | `null` | Kolor hex, który nadpisuje `primary`/`primaryLight`/`primaryDark` |
+| `fontColor` | `'default'` / `'warm'` / `'cool'` | `'default'` | Zabarwia tokeny tekstu (przyjazne dla dostępności) |
+| `fontSize` | `'default'` / `'medium'` / `'large'` | `'default'` | Globalna skala a11y (+0 / +2 / +4 px) |
+| `highContrast` | `boolean` | `false` | Wzmacnia kontrast tekstu na powierzchniach |
+| `reduceAnimations` | `boolean` | `false` | Wyłącza animacje sprężynowe / shimmer / skalowania |
+| `typography` | `'regular'` / `'compact'` / `Typography` | `'regular'` | Preset gęstości (compact oszczędza ~12 % w pionie) |
+| `fontFamilies` | `FontFamilies` | systemowe | Nadpisz, aby użyć fontu swojej marki |
+| `semantic` | `SemanticTokens` | domyślne | Nadpisuje semantyczne tokeny kolorów / odstępów / typografii |
+
+Szczegółowe omówienie każdego z nich znajdziesz w **Theming**.
+
+---
+
+## 8. Konfiguracja monorepo
+
+Dla zespołów, które wydają wiele aplikacji z jednego repozytorium:
+
+### Konfiguracja Metro (`metro.config.js`)
+
+</Translated>
+
 ```js
 const path = require('path');
 const { getDefaultConfig } = require('@react-native/metro-config');
@@ -212,7 +367,17 @@ config.watchFolders = [
 module.exports = config;
 ```
 
+<Translated lang="en">
+
 ### TypeScript path mapping (`tsconfig.json`)
+
+</Translated>
+
+<Translated lang="pl">
+
+### Mapowanie ścieżek TypeScript (`tsconfig.json`)
+
+</Translated>
 
 ```json
 {
@@ -223,6 +388,8 @@ module.exports = config;
   }
 }
 ```
+
+<Translated lang="en">
 
 > **Symlink vs file dep.** For CI reliability, prefer `"file:../../packages/native-ui"` in
 > `package.json` over `npm link` - it survives `npm ci` and locks the
@@ -237,3 +404,24 @@ module.exports = config;
 - **Accessibility** - WCAG 2.2 AA checklist and live-region patterns.
 - **Patterns / AppShell** - composing `HeaderBar` + `BottomTabBar` +
   `ScreenContainer` into the canonical app layout.
+
+</Translated>
+
+<Translated lang="pl">
+
+> **Symlink a zależność plikowa.** Dla niezawodności CI w `package.json`
+> wybierz `"file:../../packages/native-ui"` zamiast `npm link` - przetrwa
+> `npm ci` i zablokuje dokładnie to drzewo źródeł, którego używa build.
+
+---
+
+## Co czytać dalej
+
+- **Theming** - presety, własne akcenty, nadpisania marki, tryb ciemny.
+- **Migration** - przejście z warstwy UI specyficznej dla aplikacji bez
+  żadnych awarii.
+- **Accessibility** - lista kontrolna WCAG 2.2 AA i wzorce live region.
+- **Patterns / AppShell** - łączenie `HeaderBar` + `BottomTabBar` +
+  `ScreenContainer` w kanoniczny układ aplikacji.
+
+</Translated>

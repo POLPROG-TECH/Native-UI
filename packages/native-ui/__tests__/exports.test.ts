@@ -5,349 +5,283 @@
 import * as NativeUI from '../src/index';
 
 describe('theme exports', () => {
-  it('should export NativeUIProvider as a function component', () => {
-    // GIVEN the NativeUI library entry point
+  describe('GIVEN the NativeUI library entry point', () => {
+    describe('WHEN the NativeUIProvider export is inspected', () => {
+      it('THEN it is defined and is a function', () => {
+        const provider = NativeUI.NativeUIProvider;
 
-    // WHEN the NativeUIProvider export is inspected
-    const provider = NativeUI.NativeUIProvider;
+        expect(provider).toBeDefined();
+        expect(typeof provider).toBe('function');
+      });
+    });
 
-    // THEN it is defined and is a function
-    expect(provider).toBeDefined();
-    expect(typeof provider).toBe('function');
-  });
+    describe('WHEN the useTheme export is inspected', () => {
+      it('THEN it is a function', () => {
+        const type = typeof NativeUI.useTheme;
 
-  it('should export useTheme as a function', () => {
-    // GIVEN the NativeUI library entry point
+        expect(type).toBe('function');
+      });
+    });
 
-    // WHEN the useTheme export is inspected
-    const type = typeof NativeUI.useTheme;
+    describe('WHEN the useColors export is inspected', () => {
+      it('THEN it is a function', () => {
+        const type = typeof NativeUI.useColors;
 
-    // THEN it is a function
-    expect(type).toBe('function');
-  });
+        expect(type).toBe('function');
+      });
+    });
 
-  it('should export useColors as a function', () => {
-    // GIVEN the NativeUI library entry point
+    describe('WHEN the useSemantic export is inspected', () => {
+      it('THEN it is a function', () => {
+        const type = typeof NativeUI.useSemantic;
 
-    // WHEN the useColors export is inspected
-    const type = typeof NativeUI.useColors;
-
-    // THEN it is a function
-    expect(type).toBe('function');
-  });
-
-  it('should export useThemeColors alias as a function', () => {
-    // GIVEN the NativeUI library entry point
-
-    // WHEN the useThemeColors alias export is inspected
-    const type = typeof NativeUI.useThemeColors;
-
-    // THEN it is a function
-    expect(type).toBe('function');
-  });
-
-  it('should export useSemantic as a function', () => {
-    // GIVEN the NativeUI library entry point
-
-    // WHEN the useSemantic export is inspected
-    const type = typeof NativeUI.useSemantic;
-
-    // THEN it is a function
-    expect(type).toBe('function');
+        expect(type).toBe('function');
+      });
+    });
   });
 });
 
 describe('token exports', () => {
-  it('should export colors with light and dark schemes', () => {
-    // GIVEN the NativeUI library entry point
+  describe('GIVEN the NativeUI library entry point', () => {
+    describe('WHEN the colors export is inspected', () => {
+      it('THEN colors and its light and dark schemes are defined', () => {
+        const { colors } = NativeUI;
 
-    // WHEN the colors export is inspected
-    const { colors } = NativeUI;
+        expect(colors).toBeDefined();
+        expect(colors.light).toBeDefined();
+        expect(colors.dark).toBeDefined();
+      });
+    });
 
-    // THEN colors and its light and dark schemes are defined
-    expect(colors).toBeDefined();
-    expect(colors.light).toBeDefined();
-    expect(colors.dark).toBeDefined();
-  });
+    describe('WHEN the resolveColorScheme export is inspected', () => {
+      it('THEN it is a function', () => {
+        const type = typeof NativeUI.resolveColorScheme;
 
-  it('should export resolveColorScheme as a function', () => {
-    // GIVEN the NativeUI library entry point
+        expect(type).toBe('function');
+      });
+    });
 
-    // WHEN the resolveColorScheme export is inspected
-    const type = typeof NativeUI.resolveColorScheme;
+    describe('WHEN the getContrastText export is inspected', () => {
+      it('THEN it is a function', () => {
+        const type = typeof NativeUI.getContrastText;
 
-    // THEN it is a function
-    expect(type).toBe('function');
-  });
+        expect(type).toBe('function');
+      });
+    });
 
-  it('should export getContrastText as a function', () => {
-    // GIVEN the NativeUI library entry point
+    describe('WHEN the THEME_PRESETS export is inspected', () => {
+      it('THEN it is an array', () => {
+        const isArray = Array.isArray(NativeUI.THEME_PRESETS);
 
-    // WHEN the getContrastText export is inspected
-    const type = typeof NativeUI.getContrastText;
+        expect(isArray).toBe(true);
+      });
+    });
 
-    // THEN it is a function
-    expect(type).toBe('function');
-  });
+    describe('WHEN the typography export is inspected', () => {
+      it('THEN typography and its body variant are defined', () => {
+        const { typography } = NativeUI;
 
-  it('should export THEME PRESETS as an array', () => {
-    // GIVEN the NativeUI library entry point
+        expect(typography).toBeDefined();
+        expect(typography.body).toBeDefined();
+      });
+    });
 
-    // WHEN the THEME_PRESETS export is inspected
-    const isArray = Array.isArray(NativeUI.THEME_PRESETS);
+    describe('WHEN the FONT_SCALE export is inspected', () => {
+      it('THEN it is defined', () => {
+        const value = NativeUI.FONT_SCALE;
 
-    // THEN it is an array
-    expect(isArray).toBe(true);
-  });
+        expect(value).toBeDefined();
+      });
+    });
 
-  it('should export typography with body variant defined', () => {
-    // GIVEN the NativeUI library entry point
+    describe('WHEN the spacing export is inspected', () => {
+      it('THEN spacing is defined and spacing.md is numeric', () => {
+        const { spacing } = NativeUI;
 
-    // WHEN the typography export is inspected
-    const { typography } = NativeUI;
+        expect(spacing).toBeDefined();
+        expect(typeof spacing.md).toBe('number');
+      });
+    });
 
-    // THEN typography and its body variant are defined
-    expect(typography).toBeDefined();
-    expect(typography.body).toBeDefined();
-  });
+    describe('WHEN the borderRadius export is inspected', () => {
+      it('THEN it is defined', () => {
+        const value = NativeUI.borderRadius;
 
-  it('should export FONT SCALE as a defined object', () => {
-    // GIVEN the NativeUI library entry point
+        expect(value).toBeDefined();
+      });
+    });
 
-    // WHEN the FONT_SCALE export is inspected
-    const value = NativeUI.FONT_SCALE;
+    describe('WHEN the iconSize export is inspected', () => {
+      it('THEN it is defined', () => {
+        const value = NativeUI.iconSize;
 
-    // THEN it is defined
-    expect(value).toBeDefined();
-  });
+        expect(value).toBeDefined();
+      });
+    });
 
-  it('should export spacing with numeric md entry', () => {
-    // GIVEN the NativeUI library entry point
+    describe('WHEN the hitSlop export is inspected', () => {
+      it('THEN it is defined', () => {
+        const value = NativeUI.hitSlop;
 
-    // WHEN the spacing export is inspected
-    const { spacing } = NativeUI;
+        expect(value).toBeDefined();
+      });
+    });
 
-    // THEN spacing is defined and spacing.md is numeric
-    expect(spacing).toBeDefined();
-    expect(typeof spacing.md).toBe('number');
-  });
+    describe('WHEN the elevation export is inspected', () => {
+      it('THEN it is defined', () => {
+        const value = NativeUI.elevation;
 
-  it('should export borderRadius as a defined object', () => {
-    // GIVEN the NativeUI library entry point
+        expect(value).toBeDefined();
+      });
+    });
 
-    // WHEN the borderRadius export is inspected
-    const value = NativeUI.borderRadius;
+    describe('WHEN the duration export is inspected', () => {
+      it('THEN it is defined', () => {
+        const value = NativeUI.duration;
 
-    // THEN it is defined
-    expect(value).toBeDefined();
-  });
+        expect(value).toBeDefined();
+      });
+    });
 
-  it('should export iconSize as a defined object', () => {
-    // GIVEN the NativeUI library entry point
+    describe('WHEN the zIndex export is inspected', () => {
+      it('THEN it is defined', () => {
+        const value = NativeUI.zIndex;
 
-    // WHEN the iconSize export is inspected
-    const value = NativeUI.iconSize;
+        expect(value).toBeDefined();
+      });
+    });
 
-    // THEN it is defined
-    expect(value).toBeDefined();
-  });
+    describe('WHEN the opacity export is inspected', () => {
+      it('THEN it is defined', () => {
+        const value = NativeUI.opacity;
 
-  it('should export hitSlop as a defined object', () => {
-    // GIVEN the NativeUI library entry point
+        expect(value).toBeDefined();
+      });
+    });
 
-    // WHEN the hitSlop export is inspected
-    const value = NativeUI.hitSlop;
+    describe('WHEN the borderWidth export is inspected', () => {
+      it('THEN it is defined', () => {
+        const value = NativeUI.borderWidth;
 
-    // THEN it is defined
-    expect(value).toBeDefined();
-  });
+        expect(value).toBeDefined();
+      });
+    });
 
-  it('should export elevation as a defined object', () => {
-    // GIVEN the NativeUI library entry point
+    describe('WHEN the easing export is inspected', () => {
+      it('THEN it is defined', () => {
+        const value = NativeUI.easing;
 
-    // WHEN the elevation export is inspected
-    const value = NativeUI.elevation;
+        expect(value).toBeDefined();
+      });
+    });
 
-    // THEN it is defined
-    expect(value).toBeDefined();
-  });
+    describe('WHEN the glowShadow export is inspected', () => {
+      it('THEN it is a function', () => {
+        const type = typeof NativeUI.glowShadow;
 
-  it('should export duration as a defined object', () => {
-    // GIVEN the NativeUI library entry point
+        expect(type).toBe('function');
+      });
+    });
 
-    // WHEN the duration export is inspected
-    const value = NativeUI.duration;
+    describe('WHEN the default semantic token exports are inspected', () => {
+      it('THEN all four default semantic token objects are defined', () => {
+        const {
+          defaultSemanticTokens,
+          defaultSemanticColors,
+          defaultSemanticSpacing,
+          defaultSemanticTypography,
+        } = NativeUI;
 
-    // THEN it is defined
-    expect(value).toBeDefined();
-  });
-
-  it('should export zIndex as a defined object', () => {
-    // GIVEN the NativeUI library entry point
-
-    // WHEN the zIndex export is inspected
-    const value = NativeUI.zIndex;
-
-    // THEN it is defined
-    expect(value).toBeDefined();
-  });
-
-  it('should export opacity as a defined object', () => {
-    // GIVEN the NativeUI library entry point
-
-    // WHEN the opacity export is inspected
-    const value = NativeUI.opacity;
-
-    // THEN it is defined
-    expect(value).toBeDefined();
-  });
-
-  it('should export borderWidth as a defined object', () => {
-    // GIVEN the NativeUI library entry point
-
-    // WHEN the borderWidth export is inspected
-    const value = NativeUI.borderWidth;
-
-    // THEN it is defined
-    expect(value).toBeDefined();
-  });
-
-  it('should export easing as a defined object', () => {
-    // GIVEN the NativeUI library entry point
-
-    // WHEN the easing export is inspected
-    const value = NativeUI.easing;
-
-    // THEN it is defined
-    expect(value).toBeDefined();
-  });
-
-  it('should export glowShadow as a function', () => {
-    // GIVEN the NativeUI library entry point
-
-    // WHEN the glowShadow export is inspected
-    const type = typeof NativeUI.glowShadow;
-
-    // THEN it is a function
-    expect(type).toBe('function');
-  });
-
-  it('should export every default semantic token object', () => {
-    // GIVEN the NativeUI library entry point
-
-    // WHEN the default semantic token exports are inspected
-    const {
-      defaultSemanticTokens,
-      defaultSemanticColors,
-      defaultSemanticSpacing,
-      defaultSemanticTypography,
-    } = NativeUI;
-
-    // THEN all four default semantic token objects are defined
-    expect(defaultSemanticTokens).toBeDefined();
-    expect(defaultSemanticColors).toBeDefined();
-    expect(defaultSemanticSpacing).toBeDefined();
-    expect(defaultSemanticTypography).toBeDefined();
+        expect(defaultSemanticTokens).toBeDefined();
+        expect(defaultSemanticColors).toBeDefined();
+        expect(defaultSemanticSpacing).toBeDefined();
+        expect(defaultSemanticTypography).toBeDefined();
+      });
+    });
   });
 });
 
 describe('utility exports', () => {
-  it('should export configureHaptics as a function', () => {
-    // GIVEN the NativeUI library entry point
+  describe('GIVEN the NativeUI library entry point', () => {
+    describe('WHEN the configureHaptics export is inspected', () => {
+      it('THEN it is a function', () => {
+        const type = typeof NativeUI.configureHaptics;
 
-    // WHEN the configureHaptics export is inspected
-    const type = typeof NativeUI.configureHaptics;
+        expect(type).toBe('function');
+      });
+    });
 
-    // THEN it is a function
-    expect(type).toBe('function');
-  });
+    describe('WHEN the getHaptics export is inspected', () => {
+      it('THEN it is a function', () => {
+        const type = typeof NativeUI.getHaptics;
 
-  it('should export getHaptics as a function', () => {
-    // GIVEN the NativeUI library entry point
-
-    // WHEN the getHaptics export is inspected
-    const type = typeof NativeUI.getHaptics;
-
-    // THEN it is a function
-    expect(type).toBe('function');
+        expect(type).toBe('function');
+      });
+    });
   });
 });
 
 describe('primitive exports', () => {
-  it('should export Box as a function component', () => {
-    // GIVEN the NativeUI library entry point
+  describe('GIVEN the NativeUI library entry point', () => {
+    describe('WHEN the Box export is inspected', () => {
+      it('THEN it is a function component', () => {
+        const type = typeof NativeUI.Box;
 
-    // WHEN the Box export is inspected
-    const type = typeof NativeUI.Box;
+        expect(type).toBe('function');
+      });
+    });
 
-    // THEN it is a function component
-    expect(type).toBe('function');
-  });
+    describe('WHEN the VStack export is inspected', () => {
+      it('THEN it is a function component', () => {
+        const type = typeof NativeUI.VStack;
 
-  it('should export VStack as a function component', () => {
-    // GIVEN the NativeUI library entry point
+        expect(type).toBe('function');
+      });
+    });
 
-    // WHEN the VStack export is inspected
-    const type = typeof NativeUI.VStack;
+    describe('WHEN the HStack export is inspected', () => {
+      it('THEN it is a function component', () => {
+        const type = typeof NativeUI.HStack;
 
-    // THEN it is a function component
-    expect(type).toBe('function');
-  });
+        expect(type).toBe('function');
+      });
+    });
 
-  it('should export HStack as a function component', () => {
-    // GIVEN the NativeUI library entry point
+    describe('WHEN the Text export is inspected', () => {
+      it('THEN it is a function component', () => {
+        const type = typeof NativeUI.Text;
 
-    // WHEN the HStack export is inspected
-    const type = typeof NativeUI.HStack;
+        expect(type).toBe('function');
+      });
+    });
 
-    // THEN it is a function component
-    expect(type).toBe('function');
-  });
+    describe('WHEN the Heading export is inspected', () => {
+      it('THEN it is a function component', () => {
+        const type = typeof NativeUI.Heading;
 
-  it('should export Text as a function component', () => {
-    // GIVEN the NativeUI library entry point
+        expect(type).toBe('function');
+      });
+    });
 
-    // WHEN the Text export is inspected
-    const type = typeof NativeUI.Text;
+    describe('WHEN the Divider export is inspected', () => {
+      it('THEN it is a function component', () => {
+        const type = typeof NativeUI.Divider;
 
-    // THEN it is a function component
-    expect(type).toBe('function');
-  });
+        expect(type).toBe('function');
+      });
+    });
 
-  it('should export Heading as a function component', () => {
-    // GIVEN the NativeUI library entry point
+    describe('WHEN the PressableScale export is inspected', () => {
+      it('THEN it is a renderable component - either a plain function or a forwardRef exotic (which is an object with $$typeof = ForwardRef). PressableScale wraps itself in forwardRef so consumers on both React 18 and React 19 can forward a ref to the underlying Pressable', () => {
+        const type = typeof NativeUI.PressableScale;
 
-    // WHEN the Heading export is inspected
-    const type = typeof NativeUI.Heading;
+        expect(['function', 'object']).toContain(type);
 
-    // THEN it is a function component
-    expect(type).toBe('function');
-  });
-
-  it('should export Divider as a function component', () => {
-    // GIVEN the NativeUI library entry point
-
-    // WHEN the Divider export is inspected
-    const type = typeof NativeUI.Divider;
-
-    // THEN it is a function component
-    expect(type).toBe('function');
-  });
-
-  it('should export PressableScale as a function component', () => {
-    // GIVEN the NativeUI library entry point
-
-    // WHEN the PressableScale export is inspected
-    const type = typeof NativeUI.PressableScale;
-
-    // THEN it is a renderable component - either a plain function or a
-    // forwardRef exotic (which is an object with $$typeof = ForwardRef).
-    // PressableScale wraps itself in forwardRef so consumers on both
-    // React 18 and React 19 can forward a ref to the underlying Pressable.
-    expect(['function', 'object']).toContain(type);
-    if (type === 'object') {
-      expect(NativeUI.PressableScale).toHaveProperty('render');
-    }
+        if (type === 'object') {
+          expect(NativeUI.PressableScale).toHaveProperty('render');
+        }
+      });
+    });
   });
 });
 
@@ -387,14 +321,14 @@ describe('component exports', () => {
   ] as const;
 
   componentNames.forEach((name) => {
-    it(`should export ${name} from the entry point`, () => {
-      // GIVEN the NativeUI library entry point
+    describe('GIVEN the NativeUI library entry point', () => {
+      describe('WHEN the named export is read from the module', () => {
+        it('THEN the named component is available', () => {
+          const value = (NativeUI as Record<string, unknown>)[name];
 
-      // WHEN the named export is read from the module
-      const value = (NativeUI as Record<string, unknown>)[name];
-
-      // THEN the named component is available
-      expect(value).toBeDefined();
+          expect(value).toBeDefined();
+        });
+      });
     });
   });
 });

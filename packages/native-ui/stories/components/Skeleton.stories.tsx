@@ -1,5 +1,3 @@
-import React from 'react';
-import { View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from '../../src/primitives/Box';
 import { HStack, VStack } from '../../src/primitives/Stack';

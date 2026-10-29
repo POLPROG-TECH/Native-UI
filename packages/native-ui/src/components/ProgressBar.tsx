@@ -1,5 +1,7 @@
-import { StyleSheet, View, type ViewStyle } from 'react-native';
+import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
+import { ProgressFill } from './progressBar/ProgressFill';
+import { clampProgress, progressAccessibilityValue } from './progressBar/progressValue';
 
 export type ProgressBarColor = 'primary' | 'success' | 'warning' | 'error';
 
@@ -10,13 +12,24 @@ export interface ProgressBarProps {
   progress?: number;
   /** Semantic color token or direct color string */
   color?: ProgressBarColor | string;
-  /** Height in pixels (default: 8) */
+  /** Height in points. @default theme.components.progressBar.height (8) */
   height?: number;
   accessibilityLabel?: string;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
+  /** Test ID of the track; the fill receives `{testID}-fill`. */
+  testID?: string;
 }
 
-const SEMANTIC_COLORS: ProgressBarColor[] = ['primary', 'success', 'warning', 'error'];
+const SEMANTIC_COLORS: readonly ProgressBarColor[] = ['primary', 'success', 'warning', 'error'];
+
+function isSemanticColor(color: string): color is ProgressBarColor {
+  return (SEMANTIC_COLORS as readonly string[]).includes(color);
+}
+
+/** Pill-shaped track: the radius is half the height. */
+function trackStyle(height: number, backgroundColor: string): ViewStyle {
+  return { height, borderRadius: height / 2, backgroundColor };
+}
 
 /**
  * Horizontal progress bar with semantic color support.
@@ -25,46 +38,28 @@ export function ProgressBar({
   value,
   progress,
   color = 'primary',
-  height = 8,
+  height: heightProp,
   accessibilityLabel,
   style,
+  testID,
 }: ProgressBarProps) {
   const theme = useTheme();
-  const resolved = value ?? progress ?? 0;
-  const clampedValue = Math.min(Math.max(resolved, 0), 1);
-
-  const barColor = SEMANTIC_COLORS.includes(color as ProgressBarColor)
-    ? theme.colors[color as ProgressBarColor]
-    : color;
+  const height = heightProp ?? theme.components.progressBar.height;
+  const fraction = clampProgress(value ?? progress ?? 0);
 
   return (
     <View
-      style={[
-        styles.track,
-        {
-          height,
-          borderRadius: height / 2,
-          backgroundColor: theme.colors.surfaceSecondary,
-        },
-        style,
-      ]}
+      testID={testID}
+      style={[styles.track, trackStyle(height, theme.colors.controlTrack), style]}
       accessibilityRole="progressbar"
-      accessibilityValue={{
-        min: 0,
-        max: 100,
-        now: Math.round(clampedValue * 100),
-      }}
+      accessibilityValue={progressAccessibilityValue(fraction)}
       accessibilityLabel={accessibilityLabel}
     >
-      <View
-        style={[
-          styles.fill,
-          {
-            backgroundColor: barColor,
-            width: `${clampedValue * 100}%`,
-            borderRadius: height / 2,
-          },
-        ]}
+      <ProgressFill
+        fraction={fraction}
+        color={isSemanticColor(color) ? theme.colors[color] : color}
+        height={height}
+        testID={testID ? `${testID}-fill` : undefined}
       />
     </View>
   );
@@ -73,8 +68,5 @@ export function ProgressBar({
 const styles = StyleSheet.create({
   track: {
     overflow: 'hidden',
-  },
-  fill: {
-    height: '100%',
   },
 });

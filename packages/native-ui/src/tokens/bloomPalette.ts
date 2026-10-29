@@ -53,7 +53,8 @@ function bloomPreset(id: BloomPreset, accent: string, ramp: BloomAccentRamp): Th
 }
 
 export const BLOOM_PRESETS: readonly ThemePresetConfig[] = [
-  bloomPreset('violet', '#7c5cff', {
+  /* #7658f3 rather than #7c5cff: the nearest shade where white labels reach WCAG AA. */
+  bloomPreset('violet', '#7658f3', {
     dark: { accentLight: '#2a2150', accentDark: '#a594ff' },
     light: { accentLight: '#ece8ff', accentDark: '#5b3fd6' },
   }),

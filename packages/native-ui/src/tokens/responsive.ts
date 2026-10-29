@@ -5,16 +5,21 @@ import { spacing } from './spacing';
 type Breakpoint = 'compact' | 'regular' | 'expanded';
 
 const BREAKPOINTS = {
-  compact: 0, // phones portrait
-  regular: 600, // phones landscape / small tablets
-  expanded: 840, // tablets
+  compact: 0 /* phones portrait */,
+  regular: 600 /* phones landscape / small tablets */,
+  expanded: 840 /* tablets */,
 } as const;
 
 function getBreakpoint(): Breakpoint {
   const { width } = Dimensions.get('window');
-  if (width >= BREAKPOINTS.expanded) return 'expanded';
 
-  if (width >= BREAKPOINTS.regular) return 'regular';
+  if (width >= BREAKPOINTS.expanded) {
+    return 'expanded';
+  }
+
+  if (width >= BREAKPOINTS.regular) {
+    return 'regular';
+  }
 
   return 'compact';
 }
@@ -28,22 +33,22 @@ export interface ResponsiveSpacing {
 
 const RESPONSIVE_MAP: Record<Breakpoint, Record<keyof ResponsiveSpacing, Spacing>> = {
   compact: {
-    pageHorizontal: 'lg', // 16
-    pageVertical: 'xl', // 20
-    sectionGap: '2xl', // 24
-    cardPadding: 'lg', // 16
+    pageHorizontal: 'lg',
+    pageVertical: 'xl',
+    sectionGap: '2xl',
+    cardPadding: 'lg',
   },
   regular: {
-    pageHorizontal: 'xl', // 20
-    pageVertical: '2xl', // 24
-    sectionGap: '3xl', // 32
-    cardPadding: 'xl', // 20
+    pageHorizontal: 'xl',
+    pageVertical: '2xl',
+    sectionGap: '3xl',
+    cardPadding: 'xl',
   },
   expanded: {
-    pageHorizontal: '3xl', // 32
-    pageVertical: '3xl', // 32
-    sectionGap: '2xl', // 40
-    cardPadding: '2xl', // 24
+    pageHorizontal: '3xl',
+    pageVertical: '3xl',
+    sectionGap: '2xl',
+    cardPadding: '2xl',
   },
 };
 

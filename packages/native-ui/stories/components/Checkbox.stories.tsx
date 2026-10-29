@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { Card } from '../../src/components/Card';
@@ -20,6 +20,7 @@ const meta: Meta<CheckboxProps> = {
           '- `accessibilityRole="checkbox"`',
           '- `accessibilityState.checked` and `accessibilityState.disabled`',
           '- Label used as `accessibilityLabel`',
+          '- Keyboard focus (Tab on web, D-pad, hardware keyboards) draws the themed ring from `components.focusRing`; pointer focus does not. Radio, SegmentedControl, BottomTabBar, DatePickerInput, DateRangePickerInput and the SearchBar clear button share the same behaviour',
           '',
           '### Sizes',
           '- `sm`: 18px - compact lists, tables',
@@ -128,4 +129,34 @@ export const FormExample: Story = {
       </VStack>
     </Card>
   ),
+};
+
+export const KeyboardFocus: Story = {
+  name: 'Keyboard focus',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Press Tab to focus each checkbox: the themed focus ring (`components.focusRing`) replaces the browser outline. Clicking with a pointer focuses the control without a ring, matching `:focus-visible`.',
+      },
+    },
+  },
+  render: () => (
+    <VStack gap="md">
+      <Interactive label="Email notifications" />
+      <Interactive label="Push notifications" />
+    </VStack>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const email = canvas.getByRole('checkbox', { name: 'Email notifications' });
+    const push = canvas.getByRole('checkbox', { name: 'Push notifications' });
+
+    await userEvent.tab();
+    await expect(email).toHaveFocus();
+    await expect(getComputedStyle(email).outlineStyle).toBe('solid');
+
+    await userEvent.click(push);
+    await expect(getComputedStyle(push).outlineStyle).not.toBe('solid');
+  },
 };

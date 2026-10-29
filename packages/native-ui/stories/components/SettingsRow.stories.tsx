@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { fn } from 'storybook/test';
-import { Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from '../../src/primitives/Box';
+import { SystemIcon } from '../../src/primitives/SystemIcon';
 import { SettingsRow, SettingsSwitchRow } from '../../src/components/SettingsRow';
 import { Text } from '../../src/primitives/Text';
 import { VStack, HStack } from '../../src/primitives/Stack';
-import { NativeUIProvider } from '../../src/theme/ThemeProvider';
+import { DensityProvider } from '../shared/DensityProvider';
 import type { SettingsRowProps } from '../../src/components/SettingsRow';
 
 const meta: Meta<SettingsRowProps> = {
@@ -16,10 +16,10 @@ const meta: Meta<SettingsRowProps> = {
     docs: {
       description: {
         component: [
-          'High-level settings row that wraps `ListItem` with emoji icon backgrounds. Designed for building iOS-style settings screens quickly.',
+          'High-level settings row that wraps `ListItem` with a squared icon. Designed for building iOS-style settings screens quickly.',
           '',
           '### Anatomy',
-          '- Emoji icon with colored background circle',
+          '- Icon in a rounded square: a render function `({ color, size }) => <SystemIcon ... />` (preferred) draws `onPrimary` on a solid `primary` square; emoji strings (kept for compatibility) keep their tint from the emoji color map',
           '- Title + optional subtitle',
           '- Optional right-aligned value text',
           '- Optional trailing element or auto chevron',
@@ -40,7 +40,10 @@ const meta: Meta<SettingsRowProps> = {
     label: { control: 'text', description: 'Row label' },
     subtitle: { control: 'text', description: 'Secondary text below label' },
     value: { control: 'text', description: 'Right-aligned value text' },
-    icon: { control: 'text', description: 'Emoji icon character' },
+    icon: {
+      control: 'text',
+      description: 'Render function (preferred), node, or emoji string (tinted by the emoji map)',
+    },
     showChevron: { control: 'boolean', description: 'Show trailing chevron' },
     destructive: { control: 'boolean', description: 'Red destructive styling' },
     disabled: { control: 'boolean', description: 'Disabled state' },
@@ -73,6 +76,32 @@ export const Default: Story = {
       <SettingsRow label="Notifications" icon="🔔" onPress={fn()} />
       <SettingsRow label="Appearance" icon="🎨" onPress={fn()} />
       <SettingsRow label="Privacy" icon="🔒" onPress={fn()} isLast />
+    </Box>
+  ),
+};
+
+export const WithSystemIcons: Story = {
+  name: 'With SystemIcon render functions',
+  render: () => (
+    <Box bg="surface" radius="lg" style={{ maxWidth: 400, overflow: 'hidden' }}>
+      <SettingsRow
+        label="Search"
+        icon={({ color, size }) => <SystemIcon name="search" color={color} size={size} />}
+        onPress={fn()}
+      />
+      <SettingsRow
+        label="About"
+        icon={({ color, size }) => <SystemIcon name="info" color={color} size={size} />}
+        onPress={fn()}
+      />
+      <SettingsRow label="Folders" icon="📁" subtitle="Emoji icon (legacy)" onPress={fn()} />
+      <SettingsRow
+        label="Remove account"
+        icon={({ color, size }) => <SystemIcon name="minus" color={color} size={size} />}
+        destructive
+        onPress={fn()}
+        isLast
+      />
     </Box>
   ),
 };
@@ -317,12 +346,12 @@ export const Density: Story = {
 
     return (
       <HStack gap="lg" align="flex-start" style={{ flexWrap: 'wrap' }}>
-        <NativeUIProvider config={{ typography: 'regular' }}>
+        <DensityProvider typography="regular">
           <Column label="REGULAR" />
-        </NativeUIProvider>
-        <NativeUIProvider config={{ typography: 'compact' }}>
+        </DensityProvider>
+        <DensityProvider typography="compact">
           <Column label="COMPACT" />
-        </NativeUIProvider>
+        </DensityProvider>
       </HStack>
     );
   },

@@ -1,11 +1,17 @@
 import { Platform, StyleSheet, type ViewStyle } from 'react-native';
 
-/** Spacing scale - 4-pt base grid, aligned to native iOS / Material conventions. */
+/**
+ * Spacing scale - 4-pt base grid, aligned to native iOS / Material conventions.
+ * `smPlus` (12) and `mdPlus` (20) fill the steps components use most between
+ * `sm`/`md` and `md`/`lg`, so those values no longer need literal numbers.
+ */
 export const spacing = {
   '2xs': 2,
   xs: 4,
   sm: 8,
+  smPlus: 12,
   md: 16,
+  mdPlus: 20,
   lg: 24,
   xl: 32,
   '2xl': 40,
@@ -57,7 +63,7 @@ export const elevation: ElevationScale = {
     },
     android: { elevation: 1 },
     default: {},
-  })!,
+  }),
   sm: Platform.select({
     ios: {
       shadowColor: '#000',
@@ -67,7 +73,7 @@ export const elevation: ElevationScale = {
     },
     android: { elevation: 1 },
     default: {},
-  })!,
+  }),
   md: Platform.select({
     ios: {
       shadowColor: '#000',
@@ -77,7 +83,7 @@ export const elevation: ElevationScale = {
     },
     android: { elevation: 2 },
     default: {},
-  })!,
+  }),
   lg: Platform.select({
     ios: {
       shadowColor: '#000',
@@ -87,7 +93,7 @@ export const elevation: ElevationScale = {
     },
     android: { elevation: 4 },
     default: {},
-  })!,
+  }),
   xl: Platform.select({
     ios: {
       shadowColor: '#000',
@@ -97,7 +103,7 @@ export const elevation: ElevationScale = {
     },
     android: { elevation: 6 },
     default: {},
-  })!,
+  }),
 };
 
 /** Color-parameterized glow shadow (accent glow effect) */
@@ -157,6 +163,11 @@ export const easing = {
 } as const;
 
 export type Spacing = keyof typeof spacing;
+/**
+ * Structural spacing scale with plain `number` values, so apps can override
+ * individual steps via `NativeUIConfig.spacing` while satisfying `Theme`.
+ */
+export type SpacingScale = Record<Spacing, number>;
 export type BorderRadius = keyof typeof borderRadius;
 export type IconSize = keyof typeof iconSize;
 

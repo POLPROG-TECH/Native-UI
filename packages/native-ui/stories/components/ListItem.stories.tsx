@@ -1,4 +1,3 @@
-import React from 'react';
 import { fn } from 'storybook/test';
 import { Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
@@ -10,7 +9,8 @@ import { Radio } from '../../src/components/Radio';
 import { Box } from '../../src/primitives/Box';
 import { VStack, HStack } from '../../src/primitives/Stack';
 import { Text } from '../../src/primitives/Text';
-import { NativeUIProvider } from '../../src/theme/ThemeProvider';
+import { SystemIcon } from '../../src/primitives/SystemIcon';
+import { DensityProvider } from '../shared/DensityProvider';
 import { useTheme } from '../../src/theme/ThemeProvider';
 
 const EmojiIcon = ({ children, bg }: { children: string; bg?: string }) => {
@@ -36,7 +36,8 @@ const EmojiIcon = ({ children, bg }: { children: string; bg?: string }) => {
 
 const DestructiveEmojiIcon = ({ children }: { children: string }) => {
   const theme = useTheme();
-  // Lightly tint the icon pill with the error color - works for light & dark.
+
+  /* Lightly tint the icon pill with the error color - works for light & dark. */
   return <EmojiIcon bg={`${theme.colors.error}22`}>{children}</EmojiIcon>;
 };
 
@@ -106,6 +107,36 @@ export const NavigationRows: Story = {
       <ListItem title="Notifications" icon={<EmojiIcon>🔔</EmojiIcon>} onPress={fn()} />
       <ListItem title="Appearance" icon={<EmojiIcon>🎨</EmojiIcon>} onPress={fn()} />
       <ListItem title="Privacy" icon={<EmojiIcon>🔒</EmojiIcon>} onPress={fn()} hideDivider />
+    </Box>
+  ),
+};
+
+export const WithSystemIcons: Story = {
+  name: 'With SystemIcon render functions',
+  render: () => (
+    <Box bg="surface" radius="lg" style={{ maxWidth: 400, overflow: 'hidden' }}>
+      <ListItem
+        title="Search"
+        icon={({ color, size }) => <SystemIcon name="search" color={color} size={size} />}
+        onPress={fn()}
+      />
+      <ListItem
+        title="Add account"
+        icon={({ color, size }) => <SystemIcon name="plus" color={color} size={size} />}
+        onPress={fn()}
+      />
+      <ListItem
+        title="More options"
+        icon={({ color, size }) => <SystemIcon name="more" color={color} size={size} />}
+        onPress={fn()}
+      />
+      <ListItem
+        title="Remove device"
+        icon={({ color, size }) => <SystemIcon name="minus" color={color} size={size} />}
+        destructive
+        onPress={fn()}
+        hideDivider
+      />
     </Box>
   ),
 };
@@ -265,12 +296,12 @@ export const Density: Story = {
 
     return (
       <HStack gap="lg" align="flex-start" style={{ flexWrap: 'wrap' }}>
-        <NativeUIProvider config={{ typography: 'regular' }}>
+        <DensityProvider typography="regular">
           <Column label="REGULAR" />
-        </NativeUIProvider>
-        <NativeUIProvider config={{ typography: 'compact' }}>
+        </DensityProvider>
+        <DensityProvider typography="compact">
           <Column label="COMPACT" />
-        </NativeUIProvider>
+        </DensityProvider>
       </HStack>
     );
   },

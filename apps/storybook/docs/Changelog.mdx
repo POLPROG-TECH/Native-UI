@@ -1,6 +1,9 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { Translated } from './components/i18n/Translated';
 
 <Meta title="Changelog" />
+
+<Translated lang="en">
 
 # Changelog
 
@@ -18,13 +21,16 @@ We follow [**Semantic Versioning**](https://semver.org):
 - **Patch** (`1.1.1`) - bug fixes, docs, a11y tweaks, internal refactors.
 
 > **How to upgrade.** Run `npm install @polprog/native-ui@latest` then
-> check this page for deprecations and the **Migration** doc for any
-> breaking-change recipes. Deprecations warn once in dev; they do not
-> break the build.
+> check this page for deprecations and the **Upgrading to 2.0** doc for
+> breaking-change recipes. Deprecated APIs are marked `@deprecated` in the
+> types, so editors flag them before they are removed.
 
 ---
 
-## Unreleased
+## Unreleased (2.0.0)
+
+Breaking release: removes the 1.x deprecations, raises the peer floor and
+changes some visual defaults for accessibility. See **Upgrading to 2.0**.
 
 ### Added
 
@@ -64,7 +70,7 @@ We follow [**Semantic Versioning**](https://semver.org):
 - **Extended play-tests** for `IconButton` (click + disabled),
   `SearchBar` (debounced emission + clear), `Select` (option pick +
   cancel) - each asserts the real `args.onX` spy.
-- **Em-dashes (`—`) normalised** to standard hyphens across stories,
+- **Em-dashes (`U+2014`) normalised** to standard hyphens across stories,
   docs and config for consistency with the POLPROG terminal style.
 
 ---
@@ -119,9 +125,10 @@ and are removed at the next major.
 
 | Deprecated | Since | Replaced by | Removed in |
 |---|---|---|---|
-| `typography.amount` / `amountLarge` / `amountSmall` | 1.0.0 | `mono` / `monoLarge` / `monoSmall` | 2.0.0 |
+| `typography.amount` / `amountLarge` / `amountSmall` | 1.0.0 | `mono` / `monoLarge` / `monoSmall` | 2.0.0 (removed) |
+| `useThemeColors`, Button `destructive`, Card `longPressHint`, Select `selectedValue` / `onValueChange` | 1.x | `useColors`, `danger`, `accessibilityHint`, `value` / `onChange` | 2.0.0 (removed) |
 | `Button` `color` prop | 0.9.0 | `variant` | 1.0.0 (already removed) |
-| `useTheme().reduceMotion` | 1.1.0 | `useTheme().reduceAnimations` | 2.0.0 |
+| `useTheme().reduceMotion` | 1.1.0 | `useTheme().reduceAnimations` | 2.0.0 (removed) |
 
 ---
 
@@ -140,3 +147,161 @@ and are removed at the next major.
 - **Migration** - step-by-step playbook for upgrading between majors.
 - **Getting Started** - install + first-screen checklist.
 - **Accessibility** - what each release buys you for WCAG compliance.
+
+</Translated>
+
+<Translated lang="pl">
+
+# Historia zmian
+
+Wszystkie istotne zmiany w **`@polprog/native-ui`** są zapisywane tutaj i
+publikowane za pomocą
+[Changesets](https://github.com/changesets/changesets). Kanonicznym
+źródłem prawdy jest
+[`packages/native-ui/CHANGELOG.md`](https://github.com/POLPROG-TECH/Native-UI/blob/main/packages/native-ui/CHANGELOG.md) -
+ta strona powtarza najważniejsze ostatnie zmiany, żeby można je było
+przeczytać bez wychodzenia ze Storybooka.
+
+Stosujemy [**wersjonowanie semantyczne (Semantic Versioning)**](https://semver.org):
+
+- **Major** (`2.0.0`) - zmiany API łamiące zgodność. Przewodnik migracji jest obowiązkowy.
+- **Minor** (`1.2.0`) - nowe komponenty, nowe propsy, zmiany zachowujące zgodność.
+- **Patch** (`1.1.1`) - poprawki błędów, dokumentacja, drobne usprawnienia a11y, wewnętrzne refaktoryzacje.
+
+> **Jak zaktualizować.** Uruchom `npm install @polprog/native-ui@latest`, a
+> potem sprawdź na tej stronie przestarzałe API, a w dokumencie
+> **Upgrading to 2.0** przepisy na zmiany łamiące zgodność. Przestarzałe API
+> są oznaczone w typach jako `@deprecated`, więc edytory sygnalizują je,
+> zanim zostaną usunięte.
+
+---
+
+## Niewydane (2.0.0)
+
+Wydanie łamiące zgodność: usuwa przestarzałe API z 1.x, podnosi minimalne
+wersje zależności peer i zmienia część domyślnych ustawień wizualnych z
+myślą o dostępności. Zobacz **Upgrading to 2.0**.
+
+### Dodane
+
+- **Integracja z MSW** (`msw@2` + `msw-storybook-addon@2`). Stories z sekcji
+  Patterns działają teraz na zamockowanym backendzie `/entries`, `/categories`
+  i `/auth/login`, więc przepływy Loading / Empty / Error / Slow można
+  sprawdzać - także testami play - bez prawdziwego serwera. Zobacz
+  `Patterns/Network - Loading States` i `Patterns/Network - Forms`.
+- **Stories gęstości** dla `ListItem` i `SettingsRow` - zestawienie obok
+  siebie gęstości typografii `regular` i `compact` pokazuje odzyskanie
+  ok. 12 % miejsca w pionie na gęstych ekranach.
+- **Globalne paski narzędzi stories**: `locale` (EN · PL · ES · DE · AR z
+  odwracaniem RTL na żywo), `fontSize`, `highContrast`, `reduceMotion`. Każda
+  story dostaje macierz a11y bez dodatkowej pracy.
+- **Viewporty prawdziwych urządzeń**: iPhone 15 Pro, iPhone 16 Pro Max,
+  Pixel 8 Pro, Galaxy S24, iPad Pro 13", Pixel Tablet (oraz zachowane
+  starsze viewporty na potrzeby zrzutów regresyjnych).
+- **Wyciąganie wartości unii przez docgen** (`shouldExtractValuesFromUnion: true`) -
+  propsy będące uniami stringów są teraz automatycznie renderowane jako
+  kontrolki listy rozwijanej, co eliminuje ręczny boilerplate `argTypes`.
+- **Nowe stories**: `BottomTabBar`, `Countdown`, `StatTile` - każda z
+  wariantami Playground, AllStates / AllTones oraz wariantami zgodności
+  między platformami.
+- **Nowa dokumentacja**: `Tokens / Spacing & Radii`, `Patterns / AppShell` i
+  ten przepisany od nowa `Changelog`.
+- **Bramka rozmiaru paczki**: `scripts/check-bundle-size.mjs` pilnuje
+  budżetów 15 MB / 4 MB / 200 KB jako krok CI. Aktualny stan:
+  **9.41 MB / 15 MB**.
+
+### Zmienione
+
+- Masowa migracja `action('...')` -> `fn()` w 27 plikach stories, dzięki
+  której testy `play` mogą sprawdzać wywołania handlerów przez
+  `args.onX.mock.calls`.
+- `ThemeCanvas` w `preview.tsx` domyślnie dodaje teraz **20 px wewnętrznego
+  odstępu**, żeby kompaktowe stories nie przylegały do krawędzi canvasu.
+  W danej story można to wyłączyć przez `parameters.canvasPadding: 0`
+  (korzystają z tego `HeaderBar`, `BottomTabBar`, `ScreenContainer`).
+- **Rozszerzone testy play** dla `IconButton` (kliknięcie + stan wyłączony),
+  `SearchBar` (emisja z debounce + czyszczenie), `Select` (wybór opcji +
+  anulowanie) - każdy sprawdza prawdziwy spy `args.onX`.
+- **Długie myślniki (`U+2014`) znormalizowane** do zwykłych łączników w
+  stories, dokumentacji i konfiguracji, dla spójności ze stylem terminala
+  POLPROG.
+
+---
+
+## 1.1.0 - 2026-04-20
+
+### Dodane
+
+- Warstwa tokenów semantycznych (hook `useSemantic()` + `semantic.colors`,
+  `semantic.spacing`, `semantic.typography`), która oddziela intencję
+  projektanta od surowych wartości schematu kolorów.
+- Nowe komponenty: `BottomTabBar`, `Countdown`, `StatTile`.
+- Pipeline regresji wizualnej w Chromatic + wdrożenie na GitHub Pages przy
+  każdym pushu do `main`.
+
+### Zmienione
+
+- Tryb strict TypeScriptu włączony w całej bibliotece; żadnych `any` ani
+  wycieków niejawnych typów zwracanych.
+- Reguły a11y ESLint (`eslint-plugin-jsx-a11y`) przerywają teraz CI przy
+  `--max-warnings 0`.
+- Workflow Changesets zastępuje doraźnie pisane informacje o wydaniach.
+- Dopracowane powierzchnie `Chip`, `Toast`, `HeaderBar`, `Card` (ciaśniejsza
+  typografia, lepsze cienie w trybie ciemnym).
+
+### Naprawione
+
+- `PressableScale` nie animuje się już, gdy `reduceAnimations` ma wartość true.
+- Pułapka fokusu w `BottomSheet` na Androidzie przywraca teraz fokus do
+  elementu, który otworzył arkusz.
+
+---
+
+## 1.0.0 - 2026-04-18
+
+Pierwsze stabilne wydanie.
+
+### Dodane
+
+- 34 komponenty + 9 prymitywów, które obejmują każdą powierzchnię ekranu.
+- Siedem presetów kolorystycznych (`default`, `midnight`, `ocean`, `forest`,
+  `sunset`, `rose`, `amoled`) w wariantach jasnym i ciemnym.
+- Dwa presety gęstości typografii (`regular`, `compact`).
+- Wtyczka haptyki (`configureHaptics`).
+- 188 testów jednostkowych Jest, strict TypeScript, 100 % otypowanego
+  publicznego API.
+
+---
+
+## Przestarzałe API
+
+Oznaczenie API jako przestarzałego trafia do wydania minor, w trybie dev
+jednorazowo wyświetla ostrzeżenie, a samo API znika w kolejnym wydaniu major.
+
+| Przestarzałe | Od wersji | Zastąpione przez | Usunięte w |
+|---|---|---|---|
+| `typography.amount` / `amountLarge` / `amountSmall` | 1.0.0 | `mono` / `monoLarge` / `monoSmall` | 2.0.0 (usunięte) |
+| `useThemeColors`, Button `destructive`, Card `longPressHint`, Select `selectedValue` / `onValueChange` | 1.x | `useColors`, `danger`, `accessibilityHint`, `value` / `onChange` | 2.0.0 (usunięte) |
+| Prop `color` w `Button` | 0.9.0 | `variant` | 1.0.0 (już usunięty) |
+| `useTheme().reduceMotion` | 1.1.0 | `useTheme().reduceAnimations` | 2.0.0 (usunięte) |
+
+---
+
+## Harmonogram wydań
+
+- **Patch / Minor** - na żądanie, zwykle co 2-3 tygodnie, gdy zbierze się
+  wystarczająco dużo changesetów.
+- **Major** - mniej więcej dwa razy w roku, razem z przewodnikiem migracji
+  i codemodem, jeśli ma to zastosowanie.
+- **Poprawki bezpieczeństwa** - poza harmonogramem, w ciągu 48 h od
+  zgłoszenia.
+
+---
+
+## Co czytać dalej
+
+- **Migration** - instrukcja krok po kroku, jak przejść między wersjami major.
+- **Getting Started** - instalacja + lista kontrolna pierwszego ekranu.
+- **Accessibility** - co każde wydanie daje w zakresie zgodności z WCAG.
+
+</Translated>

@@ -1,0 +1,89 @@
+/*
+ * Hero-only screen layers: the live app, the outgoing theme that dissolves
+ * through a growing hole, and the tab-switch fade. Device hardware lives in
+ * apps/storybook/shared/device.
+ */
+
+/* Registered so the outgoing theme's mask radius can animate. */
+@property --nui-showcase-hole {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+.nui-showcase {
+  --showcase-reveal-duration: 900ms;
+}
+
+/* Positions and sizes the shared device inside the hero stage. */
+.nui-showcase .nui-device[data-device] {
+  --device-width: var(--showcase-device-width);
+  --device-height: var(--showcase-device-height);
+  --device-glow: color-mix(in srgb, var(--nui-showcase-accent) 55%, rgba(8, 6, 30, 0.85));
+
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 44px;
+  margin-left: calc(var(--showcase-device-width) / -2);
+}
+
+.nui-showcase-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.nui-showcase-layer > * {
+  flex: 1;
+}
+
+/* Previous theme on top, dissolving through a circle that grows from the middle. */
+.nui-showcase-layer--outgoing {
+  z-index: 1;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 55%,
+    transparent var(--nui-showcase-hole),
+    #000 calc(var(--nui-showcase-hole) + 1%)
+  );
+  mask-image: radial-gradient(
+    circle at 50% 55%,
+    transparent var(--nui-showcase-hole),
+    #000 calc(var(--nui-showcase-hole) + 1%)
+  );
+  animation: nui-showcase-hole var(--showcase-reveal-duration) cubic-bezier(0.7, 0, 0.2, 1) forwards;
+}
+
+/* Tab content eases in when the visitor switches tabs. */
+.nui-showcase-tabpane {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  animation: nui-showcase-pane-in 260ms ease-out both;
+}
+
+@keyframes nui-showcase-hole {
+  to {
+    --nui-showcase-hole: 100%;
+  }
+}
+
+@keyframes nui-showcase-pane-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nui-showcase-layer--outgoing,
+  .nui-showcase-tabpane {
+    animation: none;
+  }
+}

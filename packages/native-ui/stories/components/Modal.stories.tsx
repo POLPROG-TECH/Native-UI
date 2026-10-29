@@ -11,10 +11,12 @@ import type { ModalProps } from '../../src/components/Modal';
 const meta: Meta<ModalProps> = {
   title: 'Components/Modal',
   component: Modal,
-  // These stories own `visible` in local useState so each demo is
-  // self-contained. The autodocs page would mount all of them at once
-  // and stack portals - opt out and keep a single Docs block in the
-  // component description.
+  /**
+   * These stories own `visible` in local useState so each demo is
+   * self-contained. The autodocs page would mount all of them at once
+   * and stack portals - opt out and keep a single Docs block in the
+   * component description.
+   */
   tags: ['!autodocs'],
   parameters: {
     docs: {

@@ -1,10 +1,10 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { action as sbAction } from 'storybook/actions';
 import { Button } from '../../src/components/Button';
 import type { EmptyStateProps } from '../../src/components/EmptyState';
 import { EmptyState } from '../../src/components/EmptyState';
 import { VStack } from '../../src/primitives/Stack';
+import { SystemIcon } from '../../src/primitives/SystemIcon';
 
 const meta: Meta<EmptyStateProps> = {
   title: 'Components/EmptyState',
@@ -16,7 +16,7 @@ const meta: Meta<EmptyStateProps> = {
           'Full-screen zero-state placeholder for empty lists, error states, and onboarding.',
           '',
           '### Anatomy',
-          '- Optional icon (emoji, 48px)',
+          '- Optional icon: a render function `({ color, size }) => <SystemIcon ... />` (preferred; gets `textSecondary` and the size preset icon size), a node, or an emoji string (kept for compatibility)',
           '- Required title',
           '- Optional message',
           '- Optional action (ReactNode, typically a Button)',
@@ -36,7 +36,10 @@ const meta: Meta<EmptyStateProps> = {
     },
   },
   argTypes: {
-    icon: { control: 'text', description: 'Emoji or icon string (48px)' },
+    icon: {
+      control: 'text',
+      description: 'Render function (preferred), node, or emoji string sized by the size preset',
+    },
     title: { control: 'text' },
     message: { control: 'text' },
   },
@@ -65,7 +68,7 @@ export const NoSearchResults: Story = {
   name: 'No Search Results',
   render: () => (
     <EmptyState
-      icon="🔍"
+      icon={({ color, size }) => <SystemIcon name="search" color={color} size={size} />}
       title="No results found"
       message="Try adjusting your search or filters."
     />
@@ -76,7 +79,7 @@ export const ErrorState: Story = {
   name: 'Error State',
   render: () => (
     <EmptyState
-      icon="⚠️"
+      icon={({ color, size }) => <SystemIcon name="alert" color={color} size={size} />}
       title="Something went wrong"
       message="We couldn't load your data. Please check your connection and try again."
       action={<Button title="Try Again" variant="outline" onPress={sbAction('retry')} />}
@@ -106,7 +109,11 @@ export const AllVariations: Story = {
         message="Your expense list is empty."
         action={<Button title="Add Entry" size="sm" onPress={sbAction('add')} />}
       />
-      <EmptyState icon="🔍" title="No results" message="No items match your search." />
+      <EmptyState
+        icon={({ color, size }) => <SystemIcon name="search" color={color} size={size} />}
+        title="No results"
+        message="No items match your search."
+      />
       <EmptyState icon="✅" title="All done!" message="You've completed all tasks." />
       <EmptyState title="Nothing here" message="Minimal empty state without icon." />
     </VStack>

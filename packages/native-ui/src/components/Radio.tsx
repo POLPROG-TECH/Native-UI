@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
-import { StyleSheet, View, Text, Pressable, type ViewStyle } from 'react-native';
+import { StyleSheet, View, Pressable, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { getHaptics } from '../utils/haptics';
+import { SelectionLabel, useSelectionRow } from './selection/selectionRow';
 
 export interface RadioProps {
   /** Whether this radio option is selected */
@@ -11,91 +12,119 @@ export interface RadioProps {
   onPress?: () => void;
   accessibilityLabel?: string;
   disabled?: boolean;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
+  /** Test ID of the root; the circle receives `{testID}-indicator`. */
+  testID?: string;
 }
 
-/**
- * Radio button with optional label. Use within a group to allow single selection.
- */
-export const Radio = React.memo(function Radio({
-  selected,
-  label,
-  onPress,
-  accessibilityLabel: a11yLabel,
-  disabled = false,
-  style,
-}: RadioProps) {
+/** Square box with fully rounded corners, used for the outer circle and the dot. */
+function circle(diameter: number): ViewStyle {
+  return { width: diameter, height: diameter, borderRadius: diameter / 2 };
+}
+
+/** Outer circle; filled with a centred dot when selected, outlined otherwise. */
+function RadioIndicator({ selected, testID }: { selected: boolean; testID?: string }) {
   const theme = useTheme();
+  const tokens = theme.components.radio;
 
-  const handlePress = useCallback(() => {
-    if (!onPress) return;
-    getHaptics().light();
-    onPress();
-  }, [onPress]);
-
-  const indicator = selected ? (
-    <View style={[styles.checkmark, { backgroundColor: theme.colors.primary }]}>
-      <View style={[styles.checkmarkInner, { backgroundColor: theme.colors.textInverse }]} />
-    </View>
-  ) : (
-    <View style={[styles.radio, { borderColor: theme.colors.border }]} />
-  );
-
-  if (!onPress && !label) {
+  if (!selected) {
     return (
-      <View accessibilityRole="radio" accessibilityState={{ selected }} style={style}>
-        {indicator}
-      </View>
+      <View
+        testID={testID}
+        style={[
+          circle(tokens.size),
+          { borderWidth: tokens.borderWidth, borderColor: theme.colors.controlBorder },
+        ]}
+      />
     );
   }
 
   return (
+    <View
+      testID={testID}
+      style={[styles.center, circle(tokens.size), { backgroundColor: theme.colors.primary }]}
+    >
+      <View style={[circle(tokens.dotSize), { backgroundColor: theme.colors.onPrimary }]} />
+    </View>
+  );
+}
+
+function indicatorTestID(testID: string | undefined): string | undefined {
+  return testID ? `${testID}-indicator` : undefined;
+}
+
+/** Indicator-only radio for rows that own the press handling and the label. */
+function PassiveRadio({ selected, accessibilityLabel, style, testID }: RadioProps) {
+  return (
+    <View
+      testID={testID}
+      accessibilityRole="radio"
+      accessibilityState={{ selected }}
+      accessibilityLabel={accessibilityLabel}
+      style={style}
+    >
+      <RadioIndicator selected={selected} testID={indicatorTestID(testID)} />
+    </View>
+  );
+}
+
+function InteractiveRadio({
+  selected,
+  label,
+  onPress,
+  accessibilityLabel,
+  disabled = false,
+  style,
+  testID,
+}: RadioProps) {
+  const handlePress = useHapticPress(onPress);
+  const { focusProps, rowStyle } = useSelectionRow('radio', disabled, style);
+
+  return (
     <Pressable
+      testID={testID}
       onPress={handlePress}
+      {...focusProps}
       disabled={disabled}
-      style={({ pressed }) => [
-        styles.row,
-        pressed && { opacity: theme.opacity.pressed },
-        disabled && { opacity: theme.opacity.disabled },
-        style,
-      ]}
+      style={rowStyle}
       accessibilityRole="radio"
       accessibilityState={{ selected, disabled }}
-      accessibilityLabel={a11yLabel ?? label}
+      accessibilityLabel={accessibilityLabel ?? label}
     >
-      {indicator}
-      {label && (
-        <Text style={[theme.typography.body, { color: theme.colors.textPrimary, flex: 1 }]}>
-          {label}
-        </Text>
-      )}
+      <RadioIndicator selected={selected} testID={indicatorTestID(testID)} />
+      {label && <SelectionLabel label={label} />}
     </Pressable>
   );
+}
+
+/**
+ * Radio button with optional label. Use within a group to allow single selection.
+ * Without `onPress` and `label` it renders a non-interactive indicator, for
+ * rows that own the press handling themselves.
+ */
+export const Radio = React.memo(function Radio(props: RadioProps) {
+  if (!props.onPress && !props.label) {
+    return <PassiveRadio {...props} />;
+  }
+
+  return <InteractiveRadio {...props} />;
 });
 
+/** Light haptic tick followed by `onPress`; a no-op without a handler. */
+function useHapticPress(onPress: (() => void) | undefined): () => void {
+  return useCallback(() => {
+    if (!onPress) {
+      return;
+    }
+
+    getHaptics().light();
+    onPress();
+  }, [onPress]);
+}
+
 const styles = StyleSheet.create({
-  checkmark: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+  center: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  checkmarkInner: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  radio: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 1.5,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    minHeight: 44,
   },
 });

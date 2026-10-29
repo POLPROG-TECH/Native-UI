@@ -2,11 +2,7 @@ import React from 'react';
 import { View, type ViewStyle, type ViewProps, type StyleProp } from 'react-native';
 import { useTheme } from '../theme';
 import type { Spacing, BorderRadius, Elevation } from '../tokens/spacing';
-import type { ColorScheme } from '../tokens/colors';
-import type { Mutable } from '../utils/types';
-
-/** Color tokens usable as a background (excludes composite tokens like `chart`). */
-type ColorToken = Exclude<keyof ColorScheme, 'chart'>;
+import { buildSurfaceStyle, takeSurfaceTokens, type ColorToken } from './surfaceTokens';
 
 export interface BoxProps extends Omit<ViewProps, 'style'> {
   /** Content rendered inside the box. */
@@ -57,52 +53,18 @@ export interface BoxProps extends Omit<ViewProps, 'style'> {
  * </Box>
  * ```
  */
-export function Box({
-  children,
-  style,
-  p,
-  padding,
-  px,
-  py,
-  m,
-  mx,
-  my,
-  bg,
-  radius,
-  borderRadius,
-  elevation: elev,
-  flex,
-  ...rest
-}: BoxProps) {
+export function Box({ children, style, padding, borderRadius, elevation, ...props }: BoxProps) {
   const theme = useTheme();
-
-  const computedStyle: Mutable<ViewStyle> = {};
-
-  const resolvedP = p ?? padding;
-  const resolvedRadius = radius ?? borderRadius;
-
-  if (resolvedP !== undefined) computedStyle.padding = theme.spacing[resolvedP];
-
-  if (px !== undefined) computedStyle.paddingHorizontal = theme.spacing[px];
-
-  if (py !== undefined) computedStyle.paddingVertical = theme.spacing[py];
-
-  if (m !== undefined) computedStyle.margin = theme.spacing[m];
-
-  if (mx !== undefined) computedStyle.marginHorizontal = theme.spacing[mx];
-
-  if (my !== undefined) computedStyle.marginVertical = theme.spacing[my];
-
-  if (bg !== undefined) computedStyle.backgroundColor = theme.colors[bg];
-
-  if (resolvedRadius !== undefined) computedStyle.borderRadius = theme.borderRadius[resolvedRadius];
-
-  if (flex !== undefined) computedStyle.flex = flex;
-
-  const elevationStyle = elev ? theme.elevation[elev] : undefined;
+  const { tokens, rest } = takeSurfaceTokens(props);
+  const surfaceStyle = buildSurfaceStyle(theme, {
+    ...tokens,
+    p: tokens.p ?? padding,
+    radius: tokens.radius ?? borderRadius,
+  });
+  const elevationStyle = elevation ? theme.elevation[elevation] : undefined;
 
   return (
-    <View style={[computedStyle, elevationStyle, style]} {...rest}>
+    <View style={[surfaceStyle, elevationStyle, style]} {...rest}>
       {children}
     </View>
   );

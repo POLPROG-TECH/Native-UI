@@ -1,4 +1,3 @@
-import React from 'react';
 import { Text as RNText, View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
 import { HStack, VStack } from '../../src/primitives/Stack';
@@ -71,7 +70,7 @@ export const Playground: Story = {
         >
           <RNText
             style={{
-              color: theme.colors.primary,
+              color: theme.colors.primaryText,
               fontSize: 15,
               fontWeight: '600',
               textAlign: 'center',
@@ -102,7 +101,7 @@ export const ScaleValues: Story = {
                 borderRadius: 10,
               }}
             >
-              <RNText style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>
+              <RNText style={{ color: theme.colors.primaryText, fontSize: 13, fontWeight: '600' }}>
                 {scale}
               </RNText>
             </View>
@@ -123,7 +122,7 @@ export const CustomContent: Story = {
         <PressableScale onPress={() => {}}>
           <View
             style={{
-              backgroundColor: theme.colors.textInverse,
+              backgroundColor: theme.colors.surface,
               borderRadius: 14,
               padding: 16,
               borderWidth: 1,
@@ -182,7 +181,7 @@ export const RespectReduceAnimations: Story = {
           <View
             style={{ backgroundColor: theme.colors.primaryLight, padding: 14, borderRadius: 10 }}
           >
-            <RNText style={{ color: theme.colors.primary, fontWeight: '600' }}>
+            <RNText style={{ color: theme.colors.primaryText, fontWeight: '600' }}>
               Default (respects reduce-motion)
             </RNText>
           </View>
@@ -191,7 +190,7 @@ export const RespectReduceAnimations: Story = {
           <View
             style={{ backgroundColor: theme.colors.textPrimary, padding: 14, borderRadius: 10 }}
           >
-            <RNText style={{ color: theme.colors.textInverse, fontWeight: '600' }}>
+            <RNText style={{ color: theme.colors.background, fontWeight: '600' }}>
               Forced animation (ignores the setting)
             </RNText>
           </View>

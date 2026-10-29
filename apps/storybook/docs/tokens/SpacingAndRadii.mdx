@@ -1,6 +1,9 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { Translated } from '../components/i18n/Translated';
 
 <Meta title="Tokens/Spacing & Radii" />
+
+<Translated lang="en">
 
 # Spacing & Radii
 
@@ -23,6 +26,34 @@ A calm, 4-point grid. Consume via `theme.spacing.md`, the `p="md"` prop on
 | `2xl` | **40 px** | Landing-page sections |
 | `3xl` | **56 px** | Exceptional emphasis only |
 
+</Translated>
+
+<Translated lang="pl">
+
+# Odstępy i promienie
+
+Spokojna siatka 4-punktowa. Korzystaj z niej przez `theme.spacing.md`, prop
+`p="md"` na `Box` albo `gap="md"` na `Stack`.
+
+> **Nigdy nie wpisuj wartości na sztywno.** Jeśli łapiesz się na pisaniu
+> `marginTop: 12`, wychodzisz poza skalę. Użyj zamiast tego `spacing.md`
+> (= 16) albo `spacing.sm` (= 8).
+
+## Skala odstępów
+
+| Token | Wartość | Typowe zastosowanie |
+|---|---|---|
+| `2xs` | **2 px** | Cienkie separatory, drobne przesunięcia obramowań |
+| `xs`  | **4 px** | Odstęp ikona-etykieta, padding badge |
+| `sm`  | **8 px** | Pionowy rytm elementów listy, odstęp między chipami w linii |
+| `md`  | **16 px** | **Domyślny** - padding karty, odstęp między polami formularza |
+| `lg`  | **24 px** | Odstępy między sekcjami, boczny margines ekranu |
+| `xl`  | **32 px** | Padding sekcji hero, oddzielenie dużych bloków |
+| `2xl` | **40 px** | Sekcje stron typu landing page |
+| `3xl` | **56 px** | Tylko do wyjątkowego wyróżnienia |
+
+</Translated>
+
 <div className="nui-scale-row">
   {[
     { k: '2xs', v: 2 },
@@ -44,6 +75,8 @@ A calm, 4-point grid. Consume via `theme.spacing.md`, the `p="md"` prop on
   ))}
 </div>
 
+<Translated lang="en">
+
 ## Border radii
 
 | Token | Value | Common use |
@@ -55,6 +88,24 @@ A calm, 4-point grid. Consume via `theme.spacing.md`, the `p="md"` prop on
 | `xl`   | **24 px** | Hero cards, bottom sheets |
 | `2xl`  | **32 px** | Full-bleed result screens |
 | `full` | **9999 px** | Pills, avatars, circular icon buttons |
+
+</Translated>
+
+<Translated lang="pl">
+
+## Promienie zaokrągleń
+
+| Token | Wartość | Typowe zastosowanie |
+|---|---|---|
+| `xs`   | **6 px**  | Tagi, chipy, małe pola |
+| `sm`   | **10 px** | Kontrolki w linii, kompaktowe karty |
+| `md`   | **14 px** | **Domyślny** dla `Card`, `Input`, `Button` (md) |
+| `lg`   | **18 px** | Karta z uniesioną powierzchnią, nagłówki modali |
+| `xl`   | **24 px** | Karty hero, bottom sheety |
+| `2xl`  | **32 px** | Pełnoekranowe ekrany wyników |
+| `full` | **9999 px** | Pigułki, awatary, okrągłe przyciski z ikoną |
+
+</Translated>
 
 <div className="nui-radius-row">
   {[
@@ -75,6 +126,8 @@ A calm, 4-point grid. Consume via `theme.spacing.md`, the `p="md"` prop on
     </div>
   ))}
 </div>
+
+<Translated lang="en">
 
 ## Icon sizes
 
@@ -109,6 +162,47 @@ fonts re-render.
 
 ❌ **Don't** hardcode `borderRadius: 12`. Use `radii.sm` (10) or `radii.md`
 (14). Visual tolerance is 2 px; users notice anything larger.
+
+</Translated>
+
+<Translated lang="pl">
+
+## Rozmiary ikon
+
+| Token | Wartość | Zastosowanie |
+|---|---|---|
+| `sm` | **16 px** | Ikony w tekście, dodatki w polach input |
+| `md` | **20 px** | Domyślny przycisk z ikoną, element wiodący w liście |
+| `lg` | **24 px** | Pasek nagłówka, pasek kart |
+| `xl` | **32 px** | Stany puste, karty funkcji |
+
+## Obszary dotyku
+
+Minimalny obszar dotyku jest zgodny z wytycznymi platform:
+
+- **iOS**: hitSlop `8 px` → efektywny obszar 44×44
+- **Android**: hitSlop `10 px` → efektywny obszar 48×48
+
+`IconButton` i `Button` stosują to automatycznie; dzieci `Pressable`
+powinny ustawiać `hitSlop={theme.hitSlop.ios}` na interaktywnych ikonach
+mniejszych niż minimum platformy.
+
+## Co robić, a czego nie
+
+✅ **Sięgaj** po najbliższy poprawny token. Jeśli margines 12px wydaje się
+właściwy, wybierz `sm` (8) albo `md` (16) - nigdy nie wprowadzaj `12`.
+
+✅ **Skaluj** przez `theme.spacing[key]` w StyleSheet, gdy nie możesz użyć
+prymitywów `Box` / `Stack`.
+
+❌ **Nie mieszaj** `padding: 20` z `gap="md"` - siatka rozjedzie się, gdy
+tylko czcionki się przerenderują.
+
+❌ **Nie wpisuj** na sztywno `borderRadius: 12`. Użyj `radii.sm` (10) albo
+`radii.md` (14). Tolerancja wizualna to 2 px; użytkownicy zauważają
+większe różnice.
+
+</Translated>
 
 <style>{`
   .sbdocs-content { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Roboto, sans-serif; }

@@ -45,9 +45,11 @@ const AURORA_PRESETS: ThemePreset[] = [
   'amoled',
 ];
 
-// Every (preset x mode x contrast) combination as one flat list, so the
-// backward-compatibility check reads as a single-level it.each instead of a
-// triple-nested loop with the assertion buried three levels deep.
+/*
+ * Every (preset x mode x contrast) combination as one flat list, so the
+ * backward-compatibility check reads as a single-level it.each instead of a
+ * triple-nested loop with the assertion buried three levels deep.
+ */
 const AURORA_COLOR_MATRIX = AURORA_PRESETS.flatMap((preset) =>
   ([false, true] as const).flatMap((isDark) =>
     ([false, true] as const).map((highContrast) => ({ preset, isDark, highContrast })),
@@ -55,235 +57,278 @@ const AURORA_COLOR_MATRIX = AURORA_PRESETS.flatMap((preset) =>
 );
 
 describe('resolveThemeVariant', () => {
-  it('should default to the Aurora variant when nothing or "default" is passed', () => {
-    // GIVEN no theme or the explicit default name
-    // WHEN resolved
-    // THEN the Aurora singleton is returned both times
-    expect(resolveThemeVariant(undefined)).toBe(defaultThemeVariant);
-    expect(resolveThemeVariant('default')).toBe(defaultThemeVariant);
+  describe('GIVEN no theme or the explicit default name', () => {
+    describe('WHEN resolved', () => {
+      it('THEN the Aurora singleton is returned both times', () => {
+        expect(resolveThemeVariant(undefined)).toBe(defaultThemeVariant);
+        expect(resolveThemeVariant('default')).toBe(defaultThemeVariant);
+      });
+    });
   });
 
-  it('should resolve the "bloom" name to the shared Bloom singleton', () => {
-    // GIVEN the bloom name
-    // WHEN resolved
-    // THEN the same registry instance is returned
-    expect(resolveThemeVariant('bloom')).toBe(bloomThemeVariant);
-    expect(THEME_VARIANTS.bloom).toBe(bloomThemeVariant);
+  describe('GIVEN the bloom name', () => {
+    describe('WHEN resolved', () => {
+      it('THEN the same registry instance is returned', () => {
+        expect(resolveThemeVariant('bloom')).toBe(bloomThemeVariant);
+        expect(THEME_VARIANTS.bloom).toBe(bloomThemeVariant);
+      });
+    });
   });
 
-  it('should pass a full ThemeVariant object through unchanged', () => {
-    // GIVEN a concrete variant object
-    // WHEN resolved
-    // THEN the same reference is returned (stable for memoisation)
-    expect(resolveThemeVariant(bloomThemeVariant)).toBe(bloomThemeVariant);
+  describe('GIVEN a concrete variant object', () => {
+    describe('WHEN resolved', () => {
+      it('THEN the same reference is returned (stable for memoisation)', () => {
+        expect(resolveThemeVariant(bloomThemeVariant)).toBe(bloomThemeVariant);
+      });
+    });
   });
 
-  it('should expose readable variant metadata', () => {
-    // GIVEN the built-in variants
-    // THEN their ids and labels are stable
-    expect(defaultThemeVariant.id).toBe('default');
-    expect(defaultThemeVariant.name).toBe('Aurora');
-    expect(bloomThemeVariant.id).toBe('bloom');
-    expect(bloomThemeVariant.name).toBe('Bloom');
+  describe('GIVEN the built-in variants', () => {
+    describe('WHEN their metadata is read', () => {
+      it('THEN their ids and labels are stable', () => {
+        expect(defaultThemeVariant.id).toBe('default');
+        expect(defaultThemeVariant.name).toBe('Aurora');
+        expect(bloomThemeVariant.id).toBe('bloom');
+        expect(bloomThemeVariant.name).toBe('Bloom');
+      });
+    });
   });
 
-  it('should fall back to Aurora (and warn in dev) for an unrecognised variant name', () => {
-    // GIVEN a name not in the registry (typo / stale persisted / cross-version value)
-    withDev((warn) => {
-      // WHEN resolved THEN it degrades to Aurora and surfaces a dev warning
-      expect(resolveThemeVariant('nope' as ThemeVariantName)).toBe(defaultThemeVariant);
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown theme variant "nope"'));
+  describe('GIVEN a name not in the registry (typo / stale persisted / cross-version value)', () => {
+    describe('WHEN resolved', () => {
+      it('THEN it degrades to Aurora and surfaces a dev warning', () => {
+        withDev((warn) => {
+          expect(resolveThemeVariant('nope' as ThemeVariantName)).toBe(defaultThemeVariant);
+          expect(warn).toHaveBeenCalledWith(
+            expect.stringContaining('Unknown theme variant "nope"'),
+          );
+        });
+      });
     });
   });
 });
 
 describe('default variant backward compatibility', () => {
-  it.each(AURORA_COLOR_MATRIX)(
-    'resolves identically to the palette-less resolver (preset=$preset, dark=$isDark, highContrast=$highContrast)',
-    ({ preset, isDark, highContrast }) => {
-      // GIVEN one Aurora preset/mode/contrast combination
-      // WHEN resolved with the default variant palette vs. the default argument
-      // THEN the colour schemes are byte-identical
-      const options = {
-        isDark,
-        preset,
-        fontColor: 'default' as const,
-        highContrast,
-        customAccent: null,
-      };
+  describe('GIVEN one Aurora preset/mode/contrast combination', () => {
+    describe('WHEN resolved with the default variant palette vs. the default argument', () => {
+      it.each(AURORA_COLOR_MATRIX)(
+        'THEN the colour schemes are byte-identical ($preset, $isDark, $highContrast)',
+        ({ preset, isDark, highContrast }) => {
+          const options = {
+            isDark,
+            preset,
+            fontColor: 'default' as const,
+            highContrast,
+            customAccent: null,
+          };
 
-      expect(resolveColorScheme(options, defaultThemeVariant.colorPalette)).toEqual(
-        resolveColorScheme(options),
+          expect(resolveColorScheme(options, defaultThemeVariant.colorPalette)).toEqual(
+            resolveColorScheme(options),
+          );
+        },
       );
-    },
-  );
+    });
+  });
 
-  it('should keep the Aurora radius scale by reference (md 14, lg 18)', () => {
-    // GIVEN the default variant
-    // THEN it reuses the original radius object so the default render path is unchanged
-    expect(defaultThemeVariant.borderRadius).toBe(borderRadius);
-    expect(defaultThemeVariant.borderRadius.md).toBe(14);
-    expect(defaultThemeVariant.borderRadius.lg).toBe(18);
+  describe('GIVEN the default variant', () => {
+    describe('WHEN its radius scale is read', () => {
+      it('THEN it reuses the original radius object so the default render path is unchanged', () => {
+        expect(defaultThemeVariant.borderRadius).toBe(borderRadius);
+        expect(defaultThemeVariant.borderRadius.md).toBe(14);
+        expect(defaultThemeVariant.borderRadius.lg).toBe(18);
+      });
+    });
   });
 });
 
 describe('bloom color palette', () => {
   const base = { fontColor: 'default' as const, highContrast: false, customAccent: null };
 
-  it('should use the violet accent as primary by default', () => {
-    // GIVEN the bloom default preset in dark mode
-    const scheme = resolveColorScheme(
-      { ...base, isDark: true, preset: bloomColorPalette.defaultPreset },
-      bloomColorPalette,
-    );
+  describe('GIVEN the bloom default preset in dark mode', () => {
+    describe('WHEN the scheme is resolved', () => {
+      it('THEN the primary is the Bloom violet accent', () => {
+        const scheme = resolveColorScheme(
+          { ...base, isDark: true, preset: bloomColorPalette.defaultPreset },
+          bloomColorPalette,
+        );
 
-    // THEN the primary is the Bloom violet accent
-    expect(scheme.primary).toBe('#7c5cff');
+        expect(scheme.primary).toBe('#7658f3');
+      });
+    });
   });
 
-  it('should paint purple-tinted backgrounds per mode', () => {
-    // GIVEN the violet preset in each mode
-    const dark = resolveColorScheme({ ...base, isDark: true, preset: 'violet' }, bloomColorPalette);
-    const light = resolveColorScheme(
-      { ...base, isDark: false, preset: 'violet' },
-      bloomColorPalette,
-    );
+  describe('GIVEN the violet preset in each mode', () => {
+    describe('WHEN both schemes are resolved', () => {
+      it('THEN the backgrounds match the Bloom neutrals', () => {
+        const dark = resolveColorScheme(
+          { ...base, isDark: true, preset: 'violet' },
+          bloomColorPalette,
+        );
+        const light = resolveColorScheme(
+          { ...base, isDark: false, preset: 'violet' },
+          bloomColorPalette,
+        );
 
-    // THEN the backgrounds match the Bloom neutrals
-    expect(dark.background).toBe('#16111b');
-    expect(light.background).toBe('#fdf9fe');
+        expect(dark.background).toBe('#16111b');
+        expect(light.background).toBe('#fdf9fe');
+      });
+    });
   });
 
-  it('should keep light text on the accent in dark mode via the textInverse override', () => {
-    // GIVEN dark mode (where the default rule would use the near-black background)
-    const scheme = resolveColorScheme(
-      { ...base, isDark: true, preset: 'violet' },
-      bloomColorPalette,
-    );
+  describe('GIVEN dark mode (where the default rule would use the near-black background)', () => {
+    describe('WHEN the on-accent text is resolved', () => {
+      it('THEN on-accent text stays white so it reads on the violet fill', () => {
+        const scheme = resolveColorScheme(
+          { ...base, isDark: true, preset: 'violet' },
+          bloomColorPalette,
+        );
 
-    // THEN on-accent text stays white so it reads on the violet fill
-    expect(scheme.textInverse).toBe('#FFFFFF');
+        expect(scheme.textInverse).toBe('#FFFFFF');
+      });
+    });
   });
 
-  it('should derive on-accent text from a custom accent instead of the static white override', () => {
-    // GIVEN bloom dark with a LIGHT custom accent (static white would be unreadable on it)
-    const light = resolveColorScheme(
-      { ...base, isDark: true, preset: 'violet', customAccent: '#EADCFF' },
-      bloomColorPalette,
-    );
+  describe('GIVEN bloom dark with a LIGHT custom accent (static white would be unreadable on it)', () => {
+    describe('WHEN the scheme is resolved', () => {
+      it('THEN the accent drives primary and on-accent text flips to dark for contrast', () => {
+        const light = resolveColorScheme(
+          { ...base, isDark: true, preset: 'violet', customAccent: '#EADCFF' },
+          bloomColorPalette,
+        );
 
-    // THEN the accent drives primary and on-accent text flips to dark for contrast
-    expect(light.primary).toBe('#EADCFF');
-    expect(light.textInverse).toBe('#0C0C0F');
+        expect(light.primary).toBe('#EADCFF');
+        expect(light.textInverse).toBe('#0C0C0F');
 
-    // AND a dark custom accent yields light on-accent text
-    const dark = resolveColorScheme(
-      { ...base, isDark: true, preset: 'violet', customAccent: '#3B0A75' },
-      bloomColorPalette,
-    );
-    expect(dark.textInverse).toBe('#F5F5F7');
+        /* AND a dark custom accent yields light on-accent text */
+        const dark = resolveColorScheme(
+          { ...base, isDark: true, preset: 'violet', customAccent: '#3B0A75' },
+          bloomColorPalette,
+        );
+        expect(dark.textInverse).toBe('#F5F5F7');
+      });
+    });
   });
 
-  it('should warn and fall back to the default preset for an unknown preset id (dev)', () => {
-    withDev((warn) => {
-      // GIVEN an Aurora-only preset id passed to the Bloom palette
-      const scheme = resolveColorScheme(
-        { ...base, isDark: true, preset: 'midnight' },
-        bloomColorPalette,
-      );
+  describe('GIVEN an Aurora-only preset id passed to the Bloom palette', () => {
+    describe('WHEN the scheme is resolved', () => {
+      it("THEN it warns and falls back to Bloom's declared default (violet)", () => {
+        withDev((warn) => {
+          const scheme = resolveColorScheme(
+            { ...base, isDark: true, preset: 'midnight' },
+            bloomColorPalette,
+          );
 
-      // THEN it warns and falls back to Bloom's declared default (violet)
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown preset "midnight"'));
-      expect(scheme.primary).toBe('#7c5cff');
+          expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown preset "midnight"'));
+          expect(scheme.primary).toBe('#7658f3');
+        });
+      });
     });
   });
 });
 
 describe('bloom elevation', () => {
-  it('should ship distinct light and dark elevation maps with mode-specific shadow colours', () => {
-    // GIVEN bloom is the first variant whose elevation differs by colour mode
-    const { light, dark } = bloomThemeVariant.elevation;
+  describe('GIVEN bloom is the first variant whose elevation differs by colour mode', () => {
+    describe('WHEN the light and dark maps are compared', () => {
+      it('THEN the maps are separate, with a violet-tinted light shadow and a black dark shadow', () => {
+        const { light, dark } = bloomThemeVariant.elevation;
 
-    // THEN the maps are separate, with a violet-tinted light shadow and a black dark shadow
-    expect(light).not.toBe(dark);
-    expect((light.md as { shadowColor?: string }).shadowColor).toBe('#5028a0');
-    expect((dark.md as { shadowColor?: string }).shadowColor).toBe('#000000');
+        expect(light).not.toBe(dark);
+        expect((light.md as { shadowColor?: string }).shadowColor).toBe('#5028a0');
+        expect((dark.md as { shadowColor?: string }).shadowColor).toBe('#000000');
+      });
+    });
   });
 
-  it('should reuse the shared flat elevation.none rather than re-inlining it', () => {
-    expect(bloomThemeVariant.elevation.light.none).toBe(elevation.none);
-    expect(bloomThemeVariant.elevation.dark.none).toBe(elevation.none);
+  describe('GIVEN the bloom elevation maps', () => {
+    describe('WHEN their flat entries are compared to the shared scale', () => {
+      it('THEN both modes reuse the same elevation.none object', () => {
+        expect(bloomThemeVariant.elevation.light.none).toBe(elevation.none);
+        expect(bloomThemeVariant.elevation.dark.none).toBe(elevation.none);
+      });
+    });
   });
 });
 
 describe('NativeUIProvider with theme="bloom"', () => {
-  it('should apply the rounder bloom radius scale (md 16, lg 20)', () => {
-    // GIVEN a provider switched to the bloom variant
-    const { result } = renderHook(() => useTheme(), {
-      wrapper: wrapper({ theme: 'bloom', colorMode: 'dark' }),
-    });
+  describe('GIVEN a provider switched to the bloom variant', () => {
+    describe('WHEN the theme is read', () => {
+      it('THEN components read the bloom corner radii', () => {
+        const { result } = renderHook(() => useTheme(), {
+          wrapper: wrapper({ theme: 'bloom', colorMode: 'dark' }),
+        });
 
-    // THEN components read the bloom corner radii
-    expect(result.current.borderRadius.md).toBe(16);
-    expect(result.current.borderRadius.lg).toBe(20);
+        expect(result.current.borderRadius.md).toBe(16);
+        expect(result.current.borderRadius.lg).toBe(20);
+      });
+    });
   });
 
-  it('should resolve the violet accent and purple background', () => {
-    // GIVEN a dark bloom provider
-    const { result } = renderHook(() => useTheme(), {
-      wrapper: wrapper({ theme: 'bloom', colorMode: 'dark' }),
-    });
+  describe('GIVEN a dark bloom provider', () => {
+    describe('WHEN the theme is read', () => {
+      it('THEN the resolved colours are the bloom defaults', () => {
+        const { result } = renderHook(() => useTheme(), {
+          wrapper: wrapper({ theme: 'bloom', colorMode: 'dark' }),
+        });
 
-    // THEN the resolved colours are the bloom defaults
-    expect(result.current.colors.primary).toBe('#7c5cff');
-    expect(result.current.colors.background).toBe('#16111b');
+        expect(result.current.colors.primary).toBe('#7658f3');
+        expect(result.current.colors.background).toBe('#16111b');
+      });
+    });
   });
 
-  it('should still honour an explicit bloom preset', () => {
-    // GIVEN a bloom provider with the coral preset
-    const { result } = renderHook(() => useTheme(), {
-      wrapper: wrapper({ theme: 'bloom', colorMode: 'light', preset: 'coral' }),
-    });
+  describe('GIVEN a bloom provider with the coral preset', () => {
+    describe('WHEN the theme is read', () => {
+      it('THEN the coral accent wins', () => {
+        const { result } = renderHook(() => useTheme(), {
+          wrapper: wrapper({ theme: 'bloom', colorMode: 'light', preset: 'coral' }),
+        });
 
-    // THEN the coral accent wins
-    expect(result.current.colors.primary).toBe('#ff5d7d');
+        expect(result.current.colors.primary).toBe('#ff5d7d');
+      });
+    });
   });
 
-  it('should leave the Aurora default look unchanged', () => {
-    // GIVEN a default provider (green accent on near-black)
-    const { result } = renderHook(() => useTheme(), {
-      wrapper: wrapper({ colorMode: 'dark' }),
-    });
+  describe('GIVEN a default provider (green accent on near-black)', () => {
+    describe('WHEN the theme is read', () => {
+      it('THEN the original tokens still resolve', () => {
+        const { result } = renderHook(() => useTheme(), {
+          wrapper: wrapper({ colorMode: 'dark' }),
+        });
 
-    // THEN the original tokens still resolve
-    expect(result.current.colors.primary).toBe('#00E67A');
-    expect(result.current.borderRadius.md).toBe(14);
+        expect(result.current.colors.primary).toBe('#00E67A');
+        expect(result.current.borderRadius.md).toBe(14);
+      });
+    });
   });
 });
 
 describe('dual-font typography', () => {
-  it('should route display variants through Outfit and body through Plus Jakarta Sans', () => {
-    // GIVEN the bloom variant (Outfit display + Plus Jakarta Sans text)
-    const { result } = renderHook(() => useTheme(), {
-      wrapper: wrapper({ theme: 'bloom', colorMode: 'light' }),
-    });
+  describe('GIVEN the bloom variant (Outfit display + Plus Jakarta Sans text)', () => {
+    describe('WHEN the typography is read', () => {
+      it('THEN headings/numerals use Outfit and body/labels use Plus Jakarta Sans', () => {
+        const { result } = renderHook(() => useTheme(), {
+          wrapper: wrapper({ theme: 'bloom', colorMode: 'light' }),
+        });
 
-    // THEN headings/numerals use Outfit and body/labels use Plus Jakarta Sans
-    expect(result.current.typography.h1.fontFamily).toBe('Outfit_600SemiBold');
-    expect(result.current.typography.displayLarge.fontFamily).toBe('Outfit_700Bold');
-    expect(result.current.typography.mono.fontFamily).toBe('Outfit_700Bold');
-    expect(result.current.typography.body.fontFamily).toBe('PlusJakartaSans_400Regular');
-    expect(result.current.typography.label.fontFamily).toBe('PlusJakartaSans_600SemiBold');
+        expect(result.current.typography.h1.fontFamily).toBe('Outfit_600SemiBold');
+        expect(result.current.typography.displayLarge.fontFamily).toBe('Outfit_700Bold');
+        expect(result.current.typography.mono.fontFamily).toBe('Outfit_700Bold');
+        expect(result.current.typography.body.fontFamily).toBe('PlusJakartaSans_400Regular');
+        expect(result.current.typography.label.fontFamily).toBe('PlusJakartaSans_600SemiBold');
+      });
+    });
   });
 
-  it('should leave single-family scales unchanged (Aurora ships one family)', () => {
-    // GIVEN the default variant with no display family
-    const { result } = renderHook(() => useTheme(), {
-      wrapper: wrapper({ colorMode: 'light' }),
-    });
+  describe('GIVEN the default variant with no display family', () => {
+    describe('WHEN the typography is read', () => {
+      it('THEN every variant keeps its Space Grotesk weight family', () => {
+        const { result } = renderHook(() => useTheme(), {
+          wrapper: wrapper({ colorMode: 'light' }),
+        });
 
-    // THEN every variant keeps its Space Grotesk weight family
-    expect(result.current.typography.h1.fontFamily).toBe('SpaceGrotesk_600SemiBold');
-    expect(result.current.typography.body.fontFamily).toBe('SpaceGrotesk_400Regular');
+        expect(result.current.typography.h1.fontFamily).toBe('SpaceGrotesk_600SemiBold');
+        expect(result.current.typography.body.fontFamily).toBe('SpaceGrotesk_400Regular');
+      });
+    });
   });
 });

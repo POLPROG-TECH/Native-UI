@@ -1,0 +1,369 @@
+/*
+ * Hero device showcase. Sizes and timings live in custom properties on
+ * `.nui-showcase` so the whole piece can be retuned from one block. Motion
+ * only touches transform, opacity and clip-path (compositor friendly).
+ */
+
+/* Registered so the glow can transition between preset accents. */
+@property --nui-showcase-accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #818cf8;
+}
+
+.nui-showcase {
+  --showcase-stage-width: 340px;
+  --showcase-device-width: 296px;
+  --showcase-device-height: 610px;
+  --showcase-glass: rgba(15, 12, 41, 0.55);
+  --showcase-glass-border: rgba(255, 255, 255, 0.2);
+  --showcase-ink: #ffffff;
+  --showcase-ink-muted: rgba(255, 255, 255, 0.72);
+
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.nui-showcase *,
+.nui-showcase *::before,
+.nui-showcase *::after {
+  box-sizing: border-box;
+}
+
+.nui-showcase-stage {
+  position: relative;
+  width: var(--showcase-stage-width);
+  max-width: 100%;
+  height: calc(var(--showcase-device-height) + 96px);
+  transition: --nui-showcase-accent 900ms ease;
+}
+
+/* Accent aurora: a soft halo plus a slowly turning conic ring behind the device. */
+.nui-showcase-stage::before,
+.nui-showcase-stage::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.nui-showcase-stage::before {
+  width: 420px;
+  height: 420px;
+  margin: -210px 0 0 -210px;
+  background: radial-gradient(closest-side, var(--nui-showcase-accent), transparent);
+  opacity: 0.55;
+  filter: blur(36px);
+}
+
+.nui-showcase-stage::after {
+  width: 360px;
+  height: 360px;
+  margin: -180px 0 0 -180px;
+  background: conic-gradient(
+    from 0deg,
+    var(--nui-showcase-accent),
+    transparent 28%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 72%,
+    var(--nui-showcase-accent)
+  );
+  opacity: 0.35;
+  filter: blur(22px);
+  animation: nui-showcase-spin 14s linear infinite;
+}
+
+/* ── Floating token chips (above and below the device, never over the app) ── */
+.nui-showcase-chip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: var(--showcase-glass);
+  border: 1px solid var(--showcase-glass-border);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: 0 16px 32px -16px rgba(0, 0, 0, 0.55);
+  color: var(--showcase-ink) !important;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  animation: nui-showcase-chip-in 600ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+.nui-showcase-chip code,
+.nui-showcase-chip strong {
+  color: var(--showcase-ink) !important;
+  font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+  background: none !important;
+  border: 0 !important;
+  padding: 0 !important;
+  font-size: 11.5px;
+}
+
+.nui-showcase-chip em {
+  font-style: normal;
+  color: var(--nui-showcase-accent) !important;
+  filter: brightness(1.35);
+}
+
+.nui-showcase-chip-key {
+  color: var(--showcase-ink-muted) !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 9.5px;
+}
+
+.nui-showcase-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.nui-showcase-grade {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(16, 185, 129, 0.22);
+  border: 1px solid rgba(110, 231, 183, 0.45);
+  color: #d1fae5 !important;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.nui-showcase-chip--accent {
+  top: 0;
+  left: -24px;
+}
+
+.nui-showcase-chip--contrast {
+  top: 0;
+  right: -24px;
+  animation-delay: 90ms;
+}
+
+.nui-showcase-chip--code {
+  bottom: 14px;
+  left: 50%;
+  translate: -50% 0;
+  animation-delay: 180ms;
+}
+
+/* ── Component inspector ── */
+.nui-showcase-inspectable {
+  display: flex;
+  flex-direction: column;
+}
+
+.nui-showcase-inspector {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  border-radius: 8px;
+  outline: 1.5px solid var(--nui-showcase-accent);
+  outline-offset: 2px;
+  background: color-mix(in srgb, var(--nui-showcase-accent) 14%, transparent);
+  transition:
+    top 160ms ease,
+    left 160ms ease,
+    width 160ms ease,
+    height 160ms ease;
+}
+
+.nui-showcase-inspector-tag {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  translate: -50% 0;
+  padding: 5px 9px;
+  border-radius: 8px;
+  background: #0f0c29;
+  border: 1px solid var(--showcase-glass-border);
+  box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.6);
+  font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+  font-size: 11px;
+  line-height: 1.3;
+  white-space: nowrap;
+  animation: nui-showcase-chip-in 180ms ease-out both;
+}
+
+.nui-showcase-inspector-tag.is-below {
+  top: calc(100% + 8px);
+  bottom: auto;
+}
+
+.nui-showcase-inspector-name {
+  color: #c4b5fd !important;
+  font-weight: 700;
+}
+
+.nui-showcase-inspector-props {
+  color: #e2e8f0 !important;
+}
+
+/* ── Controls ── */
+.nui-showcase-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nui-showcase-dots {
+  display: flex;
+  gap: 10px;
+  margin: 0;
+  padding: 7px 12px;
+  border: 1px solid var(--showcase-glass-border);
+  border-radius: 999px;
+  background: var(--showcase-glass);
+}
+
+.nui-showcase-dot {
+  position: relative;
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: currentColor;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+/* Dark scenes show the accent as a ring around a dark core. */
+.nui-showcase-dot[data-mode='dark'] {
+  background: radial-gradient(circle, #0b0b10 38%, currentColor 42%);
+}
+
+.nui-showcase-dot input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.nui-showcase-dot:has(input:checked) {
+  transform: scale(1.3);
+  box-shadow: 0 0 0 2px var(--showcase-ink);
+}
+
+.nui-showcase-dot:has(input:focus-visible),
+.nui-showcase-play:focus-visible {
+  outline: 2px solid var(--showcase-ink);
+  outline-offset: 3px;
+}
+
+.nui-showcase-play {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--showcase-glass-border);
+  background: var(--showcase-glass);
+  cursor: pointer;
+}
+
+.nui-showcase-play .is-pause {
+  width: 9px;
+  height: 10px;
+  border-left: 3px solid var(--showcase-ink);
+  border-right: 3px solid var(--showcase-ink);
+}
+
+.nui-showcase-play .is-play {
+  width: 0;
+  height: 0;
+  margin-left: 2px;
+  border-left: 9px solid var(--showcase-ink);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
+.nui-showcase-hint {
+  margin: -6px 0 0;
+  color: var(--showcase-ink-muted) !important;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.nui-showcase-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes nui-showcase-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes nui-showcase-chip-in {
+  from {
+    opacity: 0;
+    scale: 0.85;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+/* Narrow hero (phones): smaller device, wrapping code chip. Queries the `.nui-hero` container. */
+@container (max-width: 420px) {
+  .nui-showcase {
+    --showcase-device-width: 248px;
+    --showcase-device-height: 520px;
+  }
+
+  .nui-showcase-chip--code {
+    bottom: 0;
+    width: calc(100% + 32px);
+    justify-content: center;
+    white-space: normal;
+    text-align: center;
+  }
+
+  /* One chip fits above a narrow device; the contrast ratio is the one worth keeping. */
+  .nui-showcase-chip--accent {
+    display: none;
+  }
+
+  .nui-showcase-chip--contrast {
+    right: auto;
+    left: 50%;
+    translate: -50% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nui-showcase-stage,
+  .nui-showcase-stage::after,
+  .nui-showcase-chip,
+  .nui-showcase-inspector,
+  .nui-showcase-inspector-tag {
+    animation: none;
+    transition: none;
+  }
+}

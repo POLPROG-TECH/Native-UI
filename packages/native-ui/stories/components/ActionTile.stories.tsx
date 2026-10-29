@@ -1,10 +1,10 @@
-import React from 'react';
 import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ActionTile } from '../../src/components/ActionTile';
 import type { ActionTileProps } from '../../src/components/ActionTile';
 import { HStack } from '../../src/primitives/Stack';
 import { Text } from '../../src/primitives/Text';
+import { SystemIcon } from '../../src/primitives/SystemIcon';
 
 const meta: Meta<ActionTileProps> = {
   title: 'Components/ActionTile',
@@ -27,6 +27,9 @@ const meta: Meta<ActionTileProps> = {
           '| `warning` | `warningLight` |',
           '| `error`   | `errorLight` |',
           '| `neutral` | `surfaceSecondary` |',
+          '',
+          '### Icons',
+          'Prefer a render function: `icon={({ color, size }) => <SystemIcon name="plus" color={color} size={size} />}` receives the tone foreground (`primaryText`, `successText`, ...) and `theme.iconSize.lg`. Nodes and emoji strings still work for backwards compatibility.',
           '',
           '### Import',
           '```tsx',
@@ -51,7 +54,7 @@ type Story = StoryObj<ActionTileProps>;
 
 export const Playground: Story = {
   args: {
-    icon: <Text variant="h3">＋</Text>,
+    icon: ({ color, size }) => <SystemIcon name="plus" color={color} size={size} />,
     label: 'Add entry',
     tone: 'primary',
     disabled: false,
@@ -62,7 +65,18 @@ export const QuickActions: Story = {
   name: 'Quick actions grid',
   render: (args) => (
     <HStack gap="md" style={{ width: 360 }}>
-      <ActionTile {...args} icon={<Text variant="h3">＋</Text>} label="Add" tone="primary" />
+      <ActionTile
+        {...args}
+        icon={({ color, size }) => <SystemIcon name="plus" color={color} size={size} />}
+        label="Add"
+        tone="primary"
+      />
+      <ActionTile
+        {...args}
+        icon={({ color, size }) => <SystemIcon name="search" color={color} size={size} />}
+        label="Search"
+        tone="neutral"
+      />
       <ActionTile {...args} icon={<Text variant="h3">◎</Text>} label="Budgets" tone="success" />
       <ActionTile {...args} icon={<Text variant="h3">◔</Text>} label="Analytics" tone="warning" />
     </HStack>
@@ -71,7 +85,7 @@ export const QuickActions: Story = {
 
 export const Disabled: Story = {
   args: {
-    icon: <Text variant="h3">＋</Text>,
+    icon: ({ color, size }) => <SystemIcon name="plus" color={color} size={size} />,
     label: 'Disabled',
     disabled: true,
   },

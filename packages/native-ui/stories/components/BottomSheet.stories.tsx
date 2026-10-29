@@ -24,6 +24,7 @@ const meta: Meta<BottomSheetProps> = {
           '- Slide-up animation from bottom',
           '- Backdrop press to dismiss (configurable)',
           '- Drag handle for visual affordance',
+          '- Full width on phones; capped at `bottomSheet.maxWidth` (640) and centered on tablets and web',
           '- Uses react-native-reanimated for smooth animation',
           '',
           '### When to use',

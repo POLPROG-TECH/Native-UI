@@ -51,7 +51,6 @@ NativeUIProvider (config)
                 │
                 ├── useTheme()        → full theme object
                 ├── useColors()       → color scheme only
-                ├── useThemeColors()  → alias for useColors()
                 └── useSemantic()     → semantic tokens only
 ```
 

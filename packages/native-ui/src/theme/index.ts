@@ -1,10 +1,6 @@
-export {
-  NativeUIProvider,
-  useTheme,
-  useColors,
-  useThemeColors,
-  useSemantic,
-} from './ThemeProvider';
+export { NativeUIProvider, useTheme, useColors, useSemantic, useLabels } from './ThemeProvider';
+export { defaultLabels, resolveLabels, DEFAULT_LOCALE } from './labels';
+export type { NativeUILabels } from './labels';
 export {
   THEME_VARIANTS,
   defaultThemeVariant,

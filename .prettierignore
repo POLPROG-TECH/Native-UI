@@ -13,3 +13,6 @@ apps/storybook/docs/**/*.mdx
 # Vendored files - not authored by hand.
 apps/storybook/public/mockServiceWorker.js
 **/CHANGELOG.md
+
+# Generated public API report (scripts/api-report.mjs owns its format).
+packages/native-ui/api/*.api.md

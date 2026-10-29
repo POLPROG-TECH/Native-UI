@@ -1,87 +1,85 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { ListHeader } from '../../src/components/ListHeader';
-import { NativeUIProvider } from '../../src/theme';
-
-function renderWithTheme(ui: React.ReactElement) {
-  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
-}
+import { renderWithTheme } from '../test-utils';
 
 describe('ListHeader', () => {
-  it('should be exported as a function component', () => {
-    // GIVEN the ListHeader export from the components module
+  describe('GIVEN the ListHeader export from the components module', () => {
+    describe('WHEN its runtime type is inspected', () => {
+      it('THEN it is a function component', () => {
+        const actualType = typeof ListHeader;
 
-    // WHEN its runtime type is inspected
-    const actualType = typeof ListHeader;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
-  });
-
-  it('should render the title as a heading when rendered', () => {
-    // GIVEN a ListHeader with a "Settings" title
-
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<ListHeader title="Settings" />);
-
-    // THEN the heading is present in the document
-    expect(screen.getByRole('header')).toHaveTextContent('Settings');
-  });
-
-  it('should render the subtitle when provided', () => {
-    // GIVEN a ListHeader with a subtitle
-
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<ListHeader title="Home" subtitle="Welcome back" />);
-
-    // THEN the subtitle text is present
-    expect(screen.getByText('Welcome back')).toBeInTheDocument();
-  });
-
-  it('should pass the title verbatim when a text transform string is provided', () => {
-    // GIVEN a ListHeader configured with an uppercase transform
-
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<ListHeader title="hello" transform="uppercase" />);
-
-    // THEN the visible text matches the original (transform is a CSS style)
-    expect(screen.getByText('hello')).toBeInTheDocument();
-  });
-
-  it('should apply a function transform to the title when one is provided', () => {
-    // GIVEN a ListHeader whose transform function reverses the title
-
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<ListHeader title="abc" transform={(s) => s.split('').reverse().join('')} />);
-
-    // THEN the displayed title is the transformed value
-    expect(screen.getByText('cba')).toBeInTheDocument();
-  });
-
-  it('should render the title unchanged when transform is set to none', () => {
-    // GIVEN a ListHeader with transform="none"
-
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<ListHeader title="Plain" transform="none" />);
-
-    // THEN the title appears unchanged
-    expect(screen.getByText('Plain')).toBeInTheDocument();
-  });
-
-  it('should render every string transform without crashing', () => {
-    // GIVEN the full list of string-based transforms
-    const transforms = ['uppercase', 'lowercase', 'capitalize', 'none'] as const;
-
-    // WHEN each transform is rendered with a matching title
-    const renderAll = () => {
-      transforms.forEach((t) => {
-        const { unmount } = renderWithTheme(<ListHeader title={`t-${t}`} transform={t} />);
-        expect(screen.getByText(`t-${t}`)).toBeInTheDocument();
-        unmount();
+        expect(actualType).toBe('function');
       });
-    };
+    });
+  });
 
-    // THEN every transform renders without crashing
-    expect(renderAll).not.toThrow();
+  describe('GIVEN a ListHeader with a "Settings" title', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the heading is present in the document', () => {
+        renderWithTheme(<ListHeader title="Settings" />);
+
+        expect(screen.getByRole('header')).toHaveTextContent('Settings');
+      });
+    });
+  });
+
+  describe('GIVEN a ListHeader with a subtitle', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the subtitle text is present', () => {
+        renderWithTheme(<ListHeader title="Home" subtitle="Welcome back" />);
+
+        expect(screen.getByText('Welcome back')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('GIVEN a ListHeader configured with an uppercase transform', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the visible text matches the original (transform is a CSS style)', () => {
+        renderWithTheme(<ListHeader title="hello" transform="uppercase" />);
+
+        expect(screen.getByText('hello')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('GIVEN a ListHeader whose transform function reverses the title', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the displayed title is the transformed value', () => {
+        renderWithTheme(
+          <ListHeader title="abc" transform={(s) => s.split('').reverse().join('')} />,
+        );
+
+        expect(screen.getByText('cba')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('GIVEN a ListHeader with transform="none"', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the title appears unchanged', () => {
+        renderWithTheme(<ListHeader title="Plain" transform="none" />);
+
+        expect(screen.getByText('Plain')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('GIVEN the full list of string-based transforms', () => {
+    describe('WHEN each transform is rendered with a matching title', () => {
+      it('THEN every transform renders without crashing', () => {
+        const transforms = ['uppercase', 'lowercase', 'capitalize', 'none'] as const;
+
+        const renderAll = () => {
+          transforms.forEach((t) => {
+            const { unmount } = renderWithTheme(<ListHeader title={`t-${t}`} transform={t} />);
+            expect(screen.getByText(`t-${t}`)).toBeInTheDocument();
+            unmount();
+          });
+        };
+
+        expect(renderAll).not.toThrow();
+      });
+    });
   });
 });

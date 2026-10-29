@@ -4,49 +4,109 @@
  * with CSS-transition-based fallbacks for web rendering.
  */
 
-import { useRef, useCallback, useMemo } from 'react';
+import { useReducer, useRef, useState } from 'react';
+import { View, Text, ScrollView, Image, FlatList } from 'react-native';
+import type {
+  AnimationCallback,
+  WithSpringConfig,
+  WithTimingConfig,
+} from 'react-native-reanimated';
 
-// ─── Shared Values ──────────────────────────────────────────────
-export function useSharedValue<T>(initialValue: T) {
-  const ref = useRef({ value: initialValue });
-  return ref.current;
+interface SharedValue<T> {
+  value: T;
 }
 
-// ─── Animated Style ─────────────────────────────────────────────
-export function useAnimatedStyle(updater: () => any, deps?: any[]) {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(() => updater(), deps ?? []);
+function createSharedValue<T>(initialValue: T, onChange: () => void): SharedValue<T> {
+  let current = initialValue;
+
+  return {
+    get value() {
+      return current;
+    },
+    set value(next: T) {
+      if (Object.is(next, current)) {
+        return;
+      }
+
+      current = next;
+      onChange();
+    },
+  };
 }
 
-// ─── Timing / Spring ────────────────────────────────────────────
-export function withTiming(toValue: number, config?: any, callback?: any) {
-  if (callback) callback(true);
+/**
+ * Assigning `.value` re-renders the owner, so `useAnimatedStyle` (computed on
+ * every render) reflects the new value. Animations jump to their end value:
+ * the preview shows end states (active tab pill, dragged sheet) correctly
+ * without simulating timing.
+ */
+export function useSharedValue<T>(initialValue: T): SharedValue<T> {
+  const [, rerender] = useReducer((count: number) => count + 1, 0);
+  const [sharedValue] = useState(() => createSharedValue(initialValue, rerender));
+
+  return sharedValue;
+}
+
+export function useAnimatedStyle<T>(updater: () => T): T {
+  return updater();
+}
+
+export function withTiming<T>(
+  toValue: T,
+  _config?: WithTimingConfig,
+  callback?: AnimationCallback,
+): T {
+  if (callback) {
+    callback(true);
+  }
+
   return toValue;
 }
 
-export function withSpring(toValue: number, config?: any, callback?: any) {
-  if (callback) callback(true);
+export function withSpring<T>(
+  toValue: T,
+  _config?: WithSpringConfig,
+  callback?: AnimationCallback,
+): T {
+  if (callback) {
+    callback(true);
+  }
+
   return toValue;
 }
 
-export function withDelay(delay: number, animation: any) {
+export function withDelay<T>(_delay: number, animation: T): T {
   return animation;
 }
 
-export function withSequence(...animations: any[]) {
-  return animations[animations.length - 1];
+export function withSequence<T>(first: T, ...rest: T[]): T {
+  return rest[rest.length - 1] ?? first;
 }
 
-export function withRepeat(animation: any, _count?: number, _reverse?: boolean) {
+export function withRepeat<T>(animation: T, _count?: number, _reverse?: boolean): T {
   return animation;
 }
 
-// ─── Interpolation ──────────────────────────────────────────────
+/** First and last entries of a range, or null when it cannot span two points. */
+function rangeEnds(range: number[]): [number, number] | null {
+  const first = range[0];
+  const last = range[range.length - 1];
+
+  return range.length < 2 || first === undefined || last === undefined ? null : [first, last];
+}
+
 export function interpolate(value: number, inputRange: number[], outputRange: number[]) {
-  if (inputRange.length < 2 || outputRange.length < 2) return outputRange[0] ?? 0;
-  const ratio = (value - inputRange[0]) / (inputRange[inputRange.length - 1] - inputRange[0]);
+  const input = rangeEnds(inputRange);
+  const output = rangeEnds(outputRange);
+
+  if (input === null || output === null) {
+    return outputRange[0] ?? 0;
+  }
+
+  const ratio = (value - input[0]) / (input[1] - input[0]);
   const clamped = Math.max(0, Math.min(1, ratio));
-  return outputRange[0] + clamped * (outputRange[outputRange.length - 1] - outputRange[0]);
+
+  return output[0] + clamped * (output[1] - output[0]);
 }
 
 export const Extrapolation = {
@@ -55,7 +115,6 @@ export const Extrapolation = {
   IDENTITY: 'identity',
 } as const;
 
-// ─── Easing ─────────────────────────────────────────────────────
 export const Easing = {
   linear: (t: number) => t,
   ease: (t: number) => t,
@@ -68,22 +127,17 @@ export const Easing = {
   inOut: (fn: (t: number) => number) => fn,
 };
 
-// ─── Animated Components ────────────────────────────────────────
-// For web, just use regular HTML/RN-web elements
-import { View, Text, ScrollView, Image, FlatList } from 'react-native';
-
 const Animated = {
   View,
   Text,
   ScrollView,
   Image,
   FlatList,
-  createAnimatedComponent: (component: any) => component,
+  createAnimatedComponent: <C>(component: C): C => component,
 };
 
 export default Animated;
 
-// ─── Layout Animations ──────────────────────────────────────────
 export class FadeIn {
   static duration() {
     return new FadeIn();
@@ -163,25 +217,24 @@ export class Layout {
   }
 }
 
-// ─── Gesture Callbacks ──────────────────────────────────────────
-export function runOnJS(fn: Function) {
+export function runOnJS<F extends (...args: never[]) => unknown>(fn: F): F {
   return fn;
 }
 
-export function runOnUI(fn: Function) {
+export function runOnUI<F extends (...args: never[]) => unknown>(fn: F): F {
   return fn;
 }
 
-// ─── Misc ───────────────────────────────────────────────────────
-export function cancelAnimation(_sv: any) {}
-export function makeMutable<T>(value: T) {
+export function cancelAnimation<T>(_sharedValue: SharedValue<T>): void {}
+
+export function makeMutable<T>(value: T): SharedValue<T> {
   return { value };
 }
+
 export const useAnimatedRef = () => useRef(null);
 export const useAnimatedScrollHandler = () => ({});
 export const useAnimatedGestureHandler = () => ({});
-export const useDerivedValue = (fn: () => any, deps?: any[]) => {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const val = useMemo(() => fn(), deps ?? []);
-  return { value: val };
-};
+/* Recomputed every render, like `useAnimatedStyle` above. */
+export function useDerivedValue<T>(fn: () => T): SharedValue<T> {
+  return { value: fn() };
+}

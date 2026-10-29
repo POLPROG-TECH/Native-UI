@@ -1,5 +1,3 @@
-import React from 'react';
-import { View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Badge } from '../../src/components/Badge';
 import { Box } from '../../src/primitives/Box';
@@ -47,12 +45,12 @@ type Story = StoryObj;
 const SectionLabel = ({ children }: { children: string }) => (
   <Text
     variant="caption"
+    color="textSecondary"
     style={{
       fontSize: 11,
       fontWeight: '700',
       textTransform: 'uppercase',
       letterSpacing: 1,
-      opacity: 0.5,
       marginTop: 24,
       marginBottom: 8,
     }}
@@ -140,8 +138,8 @@ export const FormComponents: Story = {
           { label: 'Option A', value: 'a' },
           { label: 'Option B', value: 'b' },
         ]}
-        selectedValue="a"
-        onValueChange={() => {}}
+        value="a"
+        onChange={() => {}}
       />
 
       <SectionLabel>Checkbox</SectionLabel>

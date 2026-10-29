@@ -1,11 +1,10 @@
 import React from 'react';
 import { View, type ViewProps, type ViewStyle, type StyleProp } from 'react-native';
 import { useTheme } from '../theme';
+import type { Theme } from '../theme/types';
 import type { Spacing, BorderRadius, Elevation } from '../tokens/spacing';
-import type { ColorScheme } from '../tokens/colors';
 import type { Mutable } from '../utils/types';
-
-type ColorToken = Exclude<keyof ColorScheme, 'chart'>;
+import { buildSurfaceStyle, takeSurfaceTokens, type ColorToken } from './surfaceTokens';
 
 export interface StackBaseProps extends Omit<ViewProps, 'style'> {
   children?: React.ReactNode;
@@ -47,145 +46,62 @@ export interface StackBaseProps extends Omit<ViewProps, 'style'> {
 export type VStackProps = StackBaseProps;
 export type HStackProps = StackBaseProps;
 
-function useStackStyle({
-  gap,
-  spacing,
-  align,
-  justify,
-  flex,
-  wrap,
-  p,
-  px,
-  py,
-  m,
-  mx,
-  my,
-  bg,
-  radius,
-  elevation: elev,
-}: Omit<StackBaseProps, 'children' | 'style'>): ViewStyle {
+type StackFlexProps = Pick<StackBaseProps, 'gap' | 'spacing' | 'align' | 'justify' | 'wrap'>;
+
+function buildStackFlexStyle(theme: Theme, props: StackFlexProps): Mutable<ViewStyle> {
+  const style: Mutable<ViewStyle> = {};
+  const resolvedGap = props.gap ?? props.spacing;
+
+  if (resolvedGap) {
+    style.gap = theme.spacing[resolvedGap];
+  }
+
+  if (props.align) {
+    style.alignItems = props.align;
+  }
+
+  if (props.justify) {
+    style.justifyContent = props.justify;
+  }
+
+  if (props.wrap) {
+    style.flexWrap = 'wrap';
+  }
+
+  return style;
+}
+
+/** Resolves the stack's token props to one style and returns the View props left over. */
+function useStackLayout(props: Omit<StackBaseProps, 'children' | 'style'>) {
   const theme = useTheme();
-  const s: Mutable<ViewStyle> = {};
+  const { gap, spacing, align, justify, wrap, elevation, ...others } = props;
+  const { tokens, rest } = takeSurfaceTokens(others);
+  const layoutStyle: ViewStyle = {
+    ...buildSurfaceStyle(theme, tokens),
+    ...buildStackFlexStyle(theme, { gap, spacing, align, justify, wrap }),
+    ...(elevation ? theme.elevation[elevation] : undefined),
+  };
 
-  const resolvedGap = gap ?? spacing;
-  if (resolvedGap) s.gap = theme.spacing[resolvedGap];
-
-  if (align) s.alignItems = align;
-
-  if (justify) s.justifyContent = justify;
-
-  if (flex !== undefined) s.flex = flex;
-
-  if (wrap) s.flexWrap = 'wrap';
-
-  if (p !== undefined) s.padding = theme.spacing[p];
-
-  if (px !== undefined) s.paddingHorizontal = theme.spacing[px];
-
-  if (py !== undefined) s.paddingVertical = theme.spacing[py];
-
-  if (m !== undefined) s.margin = theme.spacing[m];
-
-  if (mx !== undefined) s.marginHorizontal = theme.spacing[mx];
-
-  if (my !== undefined) s.marginVertical = theme.spacing[my];
-
-  if (bg !== undefined) s.backgroundColor = theme.colors[bg];
-
-  if (radius !== undefined) s.borderRadius = theme.borderRadius[radius];
-
-  if (elev) Object.assign(s, theme.elevation[elev]);
-
-  return s;
+  return { layoutStyle, rest };
 }
 
 /** Vertical stack - lays children out top to bottom */
-export function VStack({
-  children,
-  style,
-  gap,
-  spacing,
-  align,
-  justify,
-  flex,
-  wrap,
-  p,
-  px,
-  py,
-  m,
-  mx,
-  my,
-  bg,
-  radius,
-  elevation,
-  ...rest
-}: VStackProps) {
-  const computed = useStackStyle({
-    gap,
-    spacing,
-    align,
-    justify,
-    flex,
-    wrap,
-    p,
-    px,
-    py,
-    m,
-    mx,
-    my,
-    bg,
-    radius,
-    elevation,
-  });
+export function VStack({ children, style, ...props }: VStackProps) {
+  const { layoutStyle, rest } = useStackLayout(props);
 
   return (
-    <View style={[{ flexDirection: 'column' }, computed, style]} {...rest}>
+    <View style={[{ flexDirection: 'column' }, layoutStyle, style]} {...rest}>
       {children}
     </View>
   );
 }
 
 /** Horizontal stack - lays children out left to right */
-export function HStack({
-  children,
-  style,
-  gap,
-  spacing,
-  align = 'center',
-  justify,
-  flex,
-  wrap,
-  p,
-  px,
-  py,
-  m,
-  mx,
-  my,
-  bg,
-  radius,
-  elevation,
-  ...rest
-}: HStackProps) {
-  const computed = useStackStyle({
-    gap,
-    spacing,
-    align,
-    justify,
-    flex,
-    wrap,
-    p,
-    px,
-    py,
-    m,
-    mx,
-    my,
-    bg,
-    radius,
-    elevation,
-  });
+export function HStack({ children, style, align = 'center', ...props }: HStackProps) {
+  const { layoutStyle, rest } = useStackLayout({ ...props, align });
 
   return (
-    <View style={[{ flexDirection: 'row' }, computed, style]} {...rest}>
+    <View style={[{ flexDirection: 'row' }, layoutStyle, style]} {...rest}>
       {children}
     </View>
   );

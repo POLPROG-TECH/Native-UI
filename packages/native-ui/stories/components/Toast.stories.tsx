@@ -34,8 +34,10 @@ const ToastStage = ({ children }: { children: React.ReactNode }) => (
 
 const meta: Meta = {
   title: 'Components/Toast',
-  // Imperative demo - the default autodocs page would mount several Toast
-  // roots on a single page and cross-contaminate state. Opt out explicitly.
+  /**
+   * Imperative demo - the default autodocs page would mount several Toast
+   * roots on a single page and cross-contaminate state. Opt out explicitly.
+   */
   tags: ['!autodocs'],
   decorators: [
     (Story) => (

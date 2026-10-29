@@ -1,8 +1,10 @@
 #!/usr/bin/env node
-// scripts/generate-stories.mjs
-// Usage: node scripts/generate-stories.mjs [--check] [--fix]
-//   --check: Only report missing stories (exit 1 if any found) - for CI
-//   --fix:   Generate stub stories for missing components (default)
+/*
+ * scripts/generate-stories.mjs
+ * Usage: node scripts/generate-stories.mjs [--check] [--fix]
+ *   --check: Only report missing stories (exit 1 if any found) - for CI
+ *   --fix:   Generate stub stories for missing components (default)
+ */
 
 import fs from 'fs';
 import path from 'path';
@@ -18,57 +20,45 @@ const SCAN_DIRS = [
 
 const SKIP_FILES = new Set(['index.ts', 'index.tsx']);
 
-// ---------------------------------------------------------------------------
-// Source file parsing
-// ---------------------------------------------------------------------------
+/**
+ * Find the props body of `interface FooProps {}` or `type FooProps = {}`.
+ */
+function matchPropsBody(source, propsName) {
+  const name = escapeRegex(propsName);
+  const ifaceRe = new RegExp(
+    `(?:export\\s+)?interface\\s+${name}\\s*(?:extends\\s+[^{]+)?\\{([^}]*)\\}`,
+    's',
+  );
+  const typeRe = new RegExp(`(?:export\\s+)?type\\s+${name}\\s*=\\s*\\{([^}]*)\\}`, 's');
+  const match = source.match(ifaceRe) ?? source.match(typeRe);
+
+  return match ? match[1] : null;
+}
+
+/* Parse each prop line:  name?: Type; */
+function parsePropLines(body) {
+  return [...body.matchAll(/(\w+)(\?)?:\s*([^;\n]+)/g)].map((m) => ({
+    name: m[1],
+    optional: m[2] === '?',
+    type: m[3].trim(),
+  }));
+}
 
 function parseSourceFile(filePath) {
   const source = fs.readFileSync(filePath, 'utf-8');
 
-  // Extract exported component name(s)
-  // Matches: export function Foo, export const Foo, export default function Foo
+  /*
+   * Extract exported component name(s)
+   * Matches: export function Foo, export const Foo, export default function Foo
+   */
   const exportMatches = [
     ...source.matchAll(/export\s+(?:default\s+)?function\s+(\w+)/g),
     ...source.matchAll(/export\s+const\s+(\w+)\s*[=:]/g),
   ];
   const componentName = exportMatches.length > 0 ? exportMatches[0][1] : null;
-
-  // Extract Props interface/type
-  // Matches: interface FooProps { ... } or type FooProps = { ... }
   const propsName = componentName ? `${componentName}Props` : null;
-  const props = [];
-
-  if (propsName) {
-    // Try interface first
-    const ifaceRe = new RegExp(
-      `(?:export\\s+)?interface\\s+${escapeRegex(propsName)}\\s*(?:extends\\s+[^{]+)?\\{([^}]*)\\}`,
-      's',
-    );
-    let match = source.match(ifaceRe);
-
-    // Try type alias
-    if (!match) {
-      const typeRe = new RegExp(
-        `(?:export\\s+)?type\\s+${escapeRegex(propsName)}\\s*=\\s*\\{([^}]*)\\}`,
-        's',
-      );
-      match = source.match(typeRe);
-    }
-
-    if (match) {
-      const body = match[1];
-      // Parse each prop line:  name?: Type;
-      const propRe = /(\w+)(\?)?:\s*([^;\n]+)/g;
-      let propMatch;
-      while ((propMatch = propRe.exec(body)) !== null) {
-        props.push({
-          name: propMatch[1],
-          optional: propMatch[2] === '?',
-          type: propMatch[3].trim(),
-        });
-      }
-    }
-  }
+  const body = propsName ? matchPropsBody(source, propsName) : null;
+  const props = body === null ? [] : parsePropLines(body);
 
   return { componentName, propsName, props };
 }
@@ -77,67 +67,78 @@ function escapeRegex(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// ---------------------------------------------------------------------------
-// Story stub generation
-// ---------------------------------------------------------------------------
+/* Union of string literals becomes a select; anything unparseable falls back to text. */
+function selectControl(type) {
+  const options = [...type.matchAll(/'([^']+)'/g)].map((m) => `'${m[1]}'`);
 
-function generateArgTypes(props) {
-  const lines = [];
-  for (const prop of props) {
-    const t = prop.type.replace(/\s+/g, ' ');
-    // Determine control type
-    let control;
-    if (t === 'boolean') {
-      control = `{ control: 'boolean' }`;
-    } else if (t === 'string') {
-      control = `{ control: 'text' }`;
-    } else if (t === 'number') {
-      control = `{ control: 'number' }`;
-    } else if (t.includes("'") && t.includes('|')) {
-      // Union of string literals → select
-      const options = [...t.matchAll(/'([^']+)'/g)].map((m) => `'${m[1]}'`);
-      if (options.length > 0) {
-        control = `{ control: 'select', options: [${options.join(', ')}] }`;
-      } else {
-        control = `{ control: 'text' }`;
-      }
-    } else if (t.startsWith('(') || t.includes('=>')) {
-      control = `{ action: '${prop.name}' }`;
-    } else {
-      continue; // skip complex types (ReactNode, ViewStyle, etc.)
-    }
-    lines.push(`    ${prop.name}: ${control},`);
+  if (options.length === 0) {
+    return `{ control: 'text' }`;
   }
-  return lines.join('\n');
+
+  return `{ control: 'select', options: [${options.join(', ')}] }`;
 }
 
+/* Returns null for complex types (ReactNode, ViewStyle, etc.) that get no control. */
+function controlFor(prop) {
+  const t = prop.type.replace(/\s+/g, ' ');
+
+  if (t === 'boolean') {
+    return `{ control: 'boolean' }`;
+  }
+
+  if (t === 'string') {
+    return `{ control: 'text' }`;
+  }
+
+  if (t === 'number') {
+    return `{ control: 'number' }`;
+  }
+
+  if (t.includes("'") && t.includes('|')) {
+    return selectControl(t);
+  }
+
+  if (t.startsWith('(') || t.includes('=>')) {
+    return `{ action: '${prop.name}' }`;
+  }
+
+  return null;
+}
+
+function generateArgTypes(props) {
+  return props
+    .map((prop) => ({ prop, control: controlFor(prop) }))
+    .filter(({ control }) => control !== null)
+    .map(({ prop, control }) => `    ${prop.name}: ${control},`)
+    .join('\n');
+}
+
+/*
+ * Matches the hand-written stories: automatic JSX runtime (no React import),
+ * props-typed meta, and action args declared in argTypes so no import is needed.
+ */
 function generateStub({ componentName, propsName, props, storyPrefix, relativeSrcPath }) {
-  const hasActions = props.some((p) => p.type.startsWith('(') || p.type.includes('=>'));
   const argTypesBlock = generateArgTypes(props);
+  const metaType = propsName ?? `React.ComponentProps<typeof ${componentName}>`;
 
   const imports = [
-    `import React from 'react';`,
+    propsName ? null : `import type React from 'react';`,
     `import type { Meta, StoryObj } from '@storybook/react';`,
-    hasActions ? `import { action } from '@storybook/addon-actions';` : null,
     `import { ${componentName} } from '${relativeSrcPath}';`,
     propsName ? `import type { ${propsName} } from '${relativeSrcPath}';` : null,
   ]
     .filter(Boolean)
     .join('\n');
 
-  const typeAnnotation = propsName ? `<${propsName}>` : '<any>';
-  const storyType = propsName ? `StoryObj<${propsName}>` : 'StoryObj<any>';
+  return `${imports}
 
-  return `// TODO: Flesh out this auto-generated story with more variants and examples.
-${imports}
-
-const meta: Meta${typeAnnotation} = {
+const meta: Meta<${metaType}> = {
   title: '${storyPrefix}/${componentName}',
   component: ${componentName},
   parameters: {
     docs: {
       description: {
-        component: '## ${componentName}\\n\\nAuto-generated story stub. Add a description and more stories.',
+        component: '## ${componentName}\\n\\nGenerated story stub. Add a description and real variants.',
       },
     },
   },
@@ -147,7 +148,7 @@ ${argTypesBlock}
 };
 
 export default meta;
-type Story = ${storyType};
+type Story = StoryObj<${metaType}>;
 
 export const Default: Story = {
   args: {},
@@ -155,94 +156,95 @@ export const Default: Story = {
 `;
 }
 
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
+/**
+ * Components in one scan dir whose `<Name>.stories.tsx` does not exist yet.
+ */
+function missingStoriesIn(dir) {
+  const srcDir = path.join(ROOT, dir.src);
+  const storiesDir = path.join(ROOT, dir.stories);
 
-function findMissingStories() {
-  const missing = [];
-
-  for (const dir of SCAN_DIRS) {
-    const srcDir = path.join(ROOT, dir.src);
-    const storiesDir = path.join(ROOT, dir.stories);
-
-    if (!fs.existsSync(srcDir)) continue;
-
-    const srcFiles = fs.readdirSync(srcDir).filter((f) => f.endsWith('.tsx') && !SKIP_FILES.has(f));
-
-    for (const file of srcFiles) {
-      const baseName = file.replace(/\.tsx$/, '');
-      const storyFile = `${baseName}.stories.tsx`;
-      const storyPath = path.join(storiesDir, storyFile);
-
-      if (!fs.existsSync(storyPath)) {
-        const srcPath = path.join(srcDir, file);
-        const relativeSrcPath = `../../${dir.src}/${baseName}`;
-        missing.push({
-          component: baseName,
-          srcPath,
-          storyPath,
-          storyFile,
-          storyPrefix: dir.storyPrefix,
-          relativeSrcPath,
-        });
-      }
-    }
+  if (!fs.existsSync(srcDir)) {
+    return [];
   }
 
-  return missing;
+  return fs
+    .readdirSync(srcDir)
+    .filter((f) => f.endsWith('.tsx') && !SKIP_FILES.has(f))
+    .map((file) => {
+      const baseName = file.replace(/\.tsx$/, '');
+      const storyFile = `${baseName}.stories.tsx`;
+
+      return {
+        component: baseName,
+        srcPath: path.join(srcDir, file),
+        storyPath: path.join(storiesDir, storyFile),
+        storyFile,
+        storyPrefix: dir.storyPrefix,
+        relativeSrcPath: `../../${dir.src}/${baseName}`,
+      };
+    })
+    .filter((entry) => !fs.existsSync(entry.storyPath));
+}
+
+function findMissingStories() {
+  return SCAN_DIRS.flatMap(missingStoriesIn);
+}
+
+function reportMissing(missing) {
+  console.log(`${missing.length} component(s) missing stories:\n`);
+
+  for (const m of missing) {
+    console.log(`   • ${m.component}  (expected: ${path.relative(ROOT, m.storyPath)})`);
+  }
+
+  console.log('\nRun "node scripts/generate-stories.mjs --fix" to generate stubs.');
+}
+
+/* Writes one stub and returns whether it was generated (false when the component name is unknown). */
+function writeStub(m) {
+  const parsed = parseSourceFile(m.srcPath);
+
+  if (!parsed.componentName) {
+    console.log(`Skipping ${m.component}: could not detect exported component name.`);
+
+    return false;
+  }
+
+  const stub = generateStub({
+    componentName: parsed.componentName,
+    propsName: parsed.propsName,
+    props: parsed.props,
+    storyPrefix: m.storyPrefix,
+    relativeSrcPath: m.relativeSrcPath,
+  });
+
+  fs.mkdirSync(path.dirname(m.storyPath), { recursive: true });
+  fs.writeFileSync(m.storyPath, stub, 'utf-8');
+  console.log(`Generated: ${path.relative(ROOT, m.storyPath)}`);
+
+  return true;
 }
 
 function main() {
-  const args = process.argv.slice(2);
-  const checkOnly = args.includes('--check');
-
+  const checkOnly = process.argv.slice(2).includes('--check');
   const missing = findMissingStories();
 
   if (missing.length === 0) {
-    console.log('✅ All components have stories.');
+    console.log('All components have stories.');
     process.exit(0);
   }
 
   if (checkOnly) {
-    console.log(`❌ ${missing.length} component(s) missing stories:\n`);
-    for (const m of missing) {
-      console.log(`   • ${m.component}  (expected: ${path.relative(ROOT, m.storyPath)})`);
-    }
-    console.log('\nRun "node scripts/generate-stories.mjs --fix" to generate stubs.');
+    reportMissing(missing);
     process.exit(1);
   }
 
-  // --fix (default): generate stubs
-  let generated = 0;
-  for (const m of missing) {
-    const parsed = parseSourceFile(m.srcPath);
+  /* --fix (default): generate stubs */
+  const generated = missing.filter(writeStub).length;
 
-    if (!parsed.componentName) {
-      console.log(`⚠️  Skipping ${m.component} - could not detect exported component name.`);
-      continue;
-    }
-
-    const stub = generateStub({
-      componentName: parsed.componentName,
-      propsName: parsed.propsName,
-      props: parsed.props,
-      storyPrefix: m.storyPrefix,
-      relativeSrcPath: m.relativeSrcPath,
-    });
-
-    // Ensure stories directory exists
-    const dir = path.dirname(m.storyPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    fs.writeFileSync(m.storyPath, stub, 'utf-8');
-    console.log(`📝 Generated: ${path.relative(ROOT, m.storyPath)}`);
-    generated++;
-  }
-
-  console.log(`\n✅ Generated ${generated} story stub(s). Review and flesh them out!`);
+  console.log(
+    `\nGenerated ${generated} story stub(s). Add a description and real variants before committing.`,
+  );
 }
 
 main();

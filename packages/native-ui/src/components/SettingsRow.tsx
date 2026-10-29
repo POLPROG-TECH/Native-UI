@@ -1,91 +1,9 @@
-import React, { useMemo } from 'react';
-import type { ViewStyle } from 'react-native';
-import { Box } from '../primitives/Box';
-import { Text } from '../primitives/Text';
-import { useTheme } from '../theme';
+import type React from 'react';
+import type { StyleProp, ViewStyle } from 'react-native';
 import { ListItem } from './ListItem';
 import { ListSwitchItem } from './ListSwitchItem';
-
-/**
- * Default mapping from emoji icon to a background tint color.
- * Each value is an opaque hex color; the component appends `'18'` (≈ 9 % alpha)
- * at render time for a subtle tinted background.
- */
-const DEFAULT_ICON_COLORS: Record<string, string> = {
-  '📁': '#3B82F6',
-  '💰': '#10B981',
-  '🎨': '#8B5CF6',
-  '🌙': '#6366F1',
-  '☀️': '#F59E0B',
-  '📱': '#64748B',
-  '🌐': '#06B6D4',
-  '💱': '#F59E0B',
-  '📤': '#3B82F6',
-  '📥': '#10B981',
-  '📄': '#3B82F6',
-  '📊': '#8B5CF6',
-  ℹ️: '#64748B',
-  '🔒': '#10B981',
-  '⚠️': '#EF4444',
-  '🗑️': '#EF4444',
-  '❤️': '#EF4444',
-  '📅': '#F59E0B',
-};
-
-const FALLBACK_ICON_COLOR = '#64748B';
-
-import { normaliseHex } from '../tokens/colors';
-
-function getIconBg(icon: string | undefined, colorMap: Record<string, string>): string {
-  if (!icon) return FALLBACK_ICON_COLOR;
-
-  return colorMap[icon] ?? FALLBACK_ICON_COLOR;
-}
-
-/** Returns `color` tinted with the given alpha (0-1), falling back to the color
- *  itself if the input is not a valid hex string. */
-function tintColor(color: string, alpha: number): string {
-  const hex = normaliseHex(color);
-  if (!hex) return color;
-
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-
-  return `rgba(${r},${g},${b},${alpha})`;
-}
-
-/** Renders an emoji inside a tinted rounded square. */
-function EmojiIcon({
-  icon,
-  destructive,
-  colorMap,
-}: {
-  icon: string;
-  destructive?: boolean;
-  colorMap: Record<string, string>;
-}) {
-  const theme = useTheme();
-
-  return (
-    <Box
-      radius="sm"
-      style={{
-        width: 32,
-        height: 32,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: destructive
-          ? theme.colors.errorLight
-          : tintColor(getIconBg(icon, colorMap), 0.094),
-      }}
-    >
-      <Text style={{ fontSize: 17 }}>{icon}</Text>
-    </Box>
-  );
-}
-
-// ─── SettingsRow ────────────────────────────────────────────────
+import type { IconSlot } from '../primitives/iconSlot';
+import { SettingsIcon } from './settingsRow/SettingsIcon';
 
 export interface SettingsRowProps {
   /** Primary label displayed in the row. */
@@ -94,8 +12,15 @@ export interface SettingsRowProps {
   subtitle?: string;
   /** Tertiary value string shown on the right side (e.g. a count or date). */
   value?: string;
-  /** Emoji string rendered inside a tinted icon square. */
-  icon?: string;
+  /**
+   * Icon rendered inside a rounded square. Prefer a render function: it
+   * receives `onPrimary` (drawn on a solid `primary` square, or `errorText`
+   * on `errorLight` when destructive) and `settingsRow.iconSize`:
+   * `icon={({ color, size }) => <SystemIcon name="search" color={color} size={size} />}`.
+   * Emoji strings are kept for backwards compatibility and keep their tint
+   * from the emoji color map.
+   */
+  icon?: IconSlot;
   /** Tap handler. */
   onPress?: () => void;
   /** Custom trailing element (replaces the default chevron). */
@@ -109,10 +34,13 @@ export interface SettingsRowProps {
   /** Hides the bottom divider (use on the last row in a section). */
   isLast?: boolean;
   /** Additional styles applied to the row container. */
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
+  /** Test ID forwarded to the row's outermost element. */
+  testID?: string;
   /**
-   * Custom emoji → background-color mapping merged on top of the built-in
-   * defaults. Values should be opaque hex colors (e.g. `'#3B82F6'`).
+   * Custom emoji → background-color mapping merged on top of
+   * `theme.components.settingsRow.iconColors`. Values should be opaque hex
+   * colors (e.g. `'#3B82F6'`).
    */
   iconColorMap?: Record<string, string>;
   /**
@@ -126,67 +54,60 @@ export interface SettingsRowProps {
 }
 
 /**
- * High-level settings list row that wraps {@link ListItem} with an emoji icon system.
+ * High-level settings list row that wraps {@link ListItem} with a squared icon.
  *
  * @example
  * ```tsx
+ * <SettingsRow
+ *   label="Search"
+ *   icon={({ color, size }) => <SystemIcon name="search" color={color} size={size} />}
+ *   onPress={openSearch}
+ * />
  * <SettingsRow label="Categories" icon="📁" onPress={openCategories} />
  * <SettingsRow label="Delete" icon="🗑️" destructive onPress={confirmDelete} />
  * ```
  */
 export function SettingsRow({
   label,
-  subtitle,
-  value,
   icon,
-  onPress,
   rightElement,
-  showChevron,
   destructive,
-  disabled,
   isLast,
-  style,
   iconColorMap,
   renderIcon,
-  renderChevron,
+  ...rowProps
 }: SettingsRowProps) {
-  const mergedColorMap = useMemo(
-    () => (iconColorMap ? { ...DEFAULT_ICON_COLORS, ...iconColorMap } : DEFAULT_ICON_COLORS),
-    [iconColorMap],
-  );
-
   return (
     <ListItem
+      {...rowProps}
       title={label}
-      subtitle={subtitle}
-      value={value}
       icon={
         renderIcon ? undefined : icon ? (
-          <EmojiIcon icon={icon} destructive={destructive} colorMap={mergedColorMap} />
+          <SettingsIcon icon={icon} destructive={destructive} iconColorMap={iconColorMap} />
         ) : undefined
       }
       renderIcon={renderIcon}
-      onPress={onPress}
       trailing={rightElement}
-      showChevron={showChevron}
       destructive={destructive}
-      disabled={disabled}
       omitSpacing={isLast}
-      renderChevron={renderChevron}
-      style={style}
     />
   );
 }
-
-// ─── SettingsSwitchRow ──────────────────────────────────────────
 
 export interface SettingsSwitchRowProps {
   /** Primary label displayed in the row. */
   label: string;
   /** Secondary descriptive text displayed below the label. */
   subtitle?: string;
-  /** Emoji string rendered inside a tinted icon square. */
-  icon?: string;
+  /**
+   * Icon rendered inside a rounded square. Prefer a render function: it
+   * receives `onPrimary` (drawn on a solid `primary` square, or `errorText`
+   * on `errorLight` when destructive) and `settingsRow.iconSize`:
+   * `icon={({ color, size }) => <SystemIcon name="search" color={color} size={size} />}`.
+   * Emoji strings are kept for backwards compatibility and keep their tint
+   * from the emoji color map.
+   */
+  icon?: IconSlot;
   /** Current toggle value. */
   value: boolean;
   /** Called when the switch is toggled. */
@@ -194,17 +115,22 @@ export interface SettingsSwitchRowProps {
   /** Hides the bottom divider (use on the last row in a section). */
   isLast?: boolean;
   /**
-   * Custom emoji → background-color mapping merged on top of the built-in
-   * defaults. Values should be opaque hex colors (e.g. `'#3B82F6'`).
+   * Custom emoji → background-color mapping merged on top of
+   * `theme.components.settingsRow.iconColors`. Values should be opaque hex
+   * colors (e.g. `'#3B82F6'`).
    */
   iconColorMap?: Record<string, string>;
   /** Render prop for a vector icon (replaces the emoji tint box). */
   renderIcon?: () => React.ReactNode;
+  /** Additional styles applied to the row container. */
+  style?: StyleProp<ViewStyle>;
+  /** Test ID forwarded to the row's outermost element. */
+  testID?: string;
 }
 
 /**
  * High-level settings row with an integrated switch toggle.
- * Wraps {@link ListSwitchItem} with the emoji icon system.
+ * Wraps {@link ListSwitchItem} with the same squared icon as {@link SettingsRow}.
  *
  * @example
  * ```tsx
@@ -217,33 +143,22 @@ export interface SettingsSwitchRowProps {
  * ```
  */
 export function SettingsSwitchRow({
-  label,
-  subtitle,
   icon,
-  value,
-  onValueChange,
   isLast,
   iconColorMap,
   renderIcon,
+  ...switchProps
 }: SettingsSwitchRowProps) {
-  const mergedColorMap = useMemo(
-    () => (iconColorMap ? { ...DEFAULT_ICON_COLORS, ...iconColorMap } : DEFAULT_ICON_COLORS),
-    [iconColorMap],
-  );
-
   return (
     <ListSwitchItem
-      label={label}
-      subtitle={subtitle}
+      {...switchProps}
       icon={
         renderIcon ? (
           renderIcon()
         ) : icon ? (
-          <EmojiIcon icon={icon} colorMap={mergedColorMap} />
+          <SettingsIcon icon={icon} iconColorMap={iconColorMap} />
         ) : undefined
       }
-      value={value}
-      onValueChange={onValueChange}
       omitSpacing={isLast}
     />
   );

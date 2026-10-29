@@ -1,5 +1,6 @@
 import React from 'react';
 import { renderHook } from '@testing-library/react';
+import { withSpring } from 'react-native-reanimated';
 import { usePressableScale } from '../../src/primitives/PressableScale';
 import { NativeUIProvider } from '../../src/theme';
 
@@ -8,38 +9,43 @@ function wrapper({ children }: { children: React.ReactNode }) {
 }
 
 describe('usePressableScale', () => {
-  it('should expose onPressIn and onPressOut handlers when mounted with a custom scale', () => {
-    // GIVEN the hook mounted inside a theme provider with a custom scale factor
+  describe('GIVEN the hook mounted inside a theme provider with a custom scale factor', () => {
+    describe('WHEN the hook is rendered with 0.95 as scale factor', () => {
+      it('THEN both onPressIn and onPressOut handlers are exposed as functions', () => {
+        const { result } = renderHook(() => usePressableScale(0.95), { wrapper });
 
-    // WHEN the hook is rendered with 0.95 as scale factor
-    const { result } = renderHook(() => usePressableScale(0.95), { wrapper });
-
-    // THEN both onPressIn and onPressOut handlers are exposed as functions
-    expect(result.current.handlers.onPressIn).toBeInstanceOf(Function);
-    expect(result.current.handlers.onPressOut).toBeInstanceOf(Function);
+        expect(result.current.handlers.onPressIn).toBeInstanceOf(Function);
+        expect(result.current.handlers.onPressOut).toBeInstanceOf(Function);
+      });
+    });
   });
 
-  it('should invoke press handlers without throwing when called directly', () => {
-    // GIVEN a mounted hook using its default scale
-    const { result } = renderHook(() => usePressableScale(), { wrapper });
+  describe('GIVEN a mounted hook using its default scale', () => {
+    describe('WHEN onPressIn and onPressOut are invoked directly', () => {
+      it('THEN neither handler throws', () => {
+        const { result } = renderHook(() => usePressableScale(), { wrapper });
 
-    // WHEN onPressIn and onPressOut are invoked directly
-    const invokeHandlers = () => {
-      result.current.handlers.onPressIn();
-      result.current.handlers.onPressOut();
-    };
+        const invokeHandlers = () => {
+          result.current.handlers.onPressIn();
+          result.current.handlers.onPressOut();
+        };
 
-    // THEN neither handler throws
-    expect(invokeHandlers).not.toThrow();
+        expect(invokeHandlers).not.toThrow();
+      });
+    });
   });
 
-  it('should expose isReanimated as a boolean reflecting runtime detection', () => {
-    // GIVEN a mounted hook
+  describe('GIVEN a mounted hook with a custom scale', () => {
+    describe('WHEN the press-in handler runs', () => {
+      it('THEN a spring toward that scale is started', () => {
+        const spring = jest.mocked(withSpring);
+        spring.mockClear();
+        const { result } = renderHook(() => usePressableScale(0.9), { wrapper });
 
-    // WHEN isReanimated is inspected
-    const { result } = renderHook(() => usePressableScale(), { wrapper });
+        result.current.handlers.onPressIn();
 
-    // THEN the flag is a boolean
-    expect(typeof result.current.isReanimated).toBe('boolean');
+        expect(spring).toHaveBeenCalledWith(0.9, expect.objectContaining({ damping: 15 }));
+      });
+    });
   });
 });

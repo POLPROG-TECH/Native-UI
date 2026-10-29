@@ -31,8 +31,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', 'storybook-static');
 
 const BUDGETS = {
-  // Total output dir. Headroom above current ~9 MB to absorb a few new
-  // pattern stories / assets before the gate trips.
+  /**
+   * Total output dir. Headroom above current ~9 MB to absorb a few new
+   * pattern stories / assets before the gate trips.
+   */
   total: 15 * 1024 * 1024,
   singleJs: 4 * 1024 * 1024,
   singleCss: 200 * 1024,
@@ -42,6 +44,7 @@ async function walk(dir, acc = []) {
   const entries = await readdir(dir, { withFileTypes: true });
   for (const entry of entries) {
     const full = path.join(dir, entry.name);
+
     if (entry.isDirectory()) {
       await walk(full, acc);
     } else if (entry.isFile()) {
@@ -49,12 +52,19 @@ async function walk(dir, acc = []) {
       acc.push({ path: path.relative(ROOT, full), size });
     }
   }
+
   return acc;
 }
 
 function fmt(bytes) {
-  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-  if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} kB`;
+  if (bytes >= 1024 * 1024) {
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  }
+
+  if (bytes >= 1024) {
+    return `${(bytes / 1024).toFixed(1)} kB`;
+  }
+
   return `${bytes} B`;
 }
 
@@ -64,9 +74,10 @@ async function main() {
     files = await walk(ROOT);
   } catch (err) {
     if (err.code === 'ENOENT') {
-      console.error('✗ storybook-static/ not found. Run "npm run build-storybook" first.');
+      console.error('storybook-static/ not found. Run "npm run build-storybook" first.');
       process.exit(1);
     }
+
     throw err;
   }
 
@@ -81,13 +92,14 @@ async function main() {
     if (f.path.endsWith('.js') && f.size > BUDGETS.singleJs) {
       violations.push(`JS chunk "${f.path}": ${fmt(f.size)} > budget ${fmt(BUDGETS.singleJs)}`);
     }
+
     if (f.path.endsWith('.css') && f.size > BUDGETS.singleCss) {
       violations.push(`CSS "${f.path}": ${fmt(f.size)} > budget ${fmt(BUDGETS.singleCss)}`);
     }
   }
 
   const heaviest = [...files].sort((a, b) => b.size - a.size).slice(0, 10);
-  console.log('\n📦 Storybook bundle report');
+  console.log('\nStorybook bundle report');
   console.log(`   Total: ${fmt(total)}  (budget: ${fmt(BUDGETS.total)})`);
   console.log(`   Files: ${files.length}`);
   console.log('\n   Top 10 heaviest:');
@@ -96,14 +108,17 @@ async function main() {
   }
 
   if (violations.length > 0) {
-    console.error('\n✗ Bundle size budget exceeded:');
-    for (const v of violations) console.error(`   - ${v}`);
+    console.error('\nBundle size budget exceeded:');
+    for (const v of violations) {
+      console.error(`   - ${v}`);
+    }
+
     console.error('\n   Budgets live in apps/storybook/scripts/check-bundle-size.mjs; bump them');
     console.error('   explicitly in a PR if growth is intentional.');
     process.exit(1);
   }
 
-  console.log('\n✓ All bundle-size budgets respected.');
+  console.log('\nAll bundle-size budgets respected.');
 }
 
 main().catch((err) => {

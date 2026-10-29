@@ -5,9 +5,9 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/@polprog/native-ui"><img src="https://img.shields.io/npm/v/@polprog/native-ui.svg?style=flat-square&color=0A84FF" alt="npm version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-6366f1?style=flat-square" alt="License: MIT"></a>
-  <img src="https://img.shields.io/badge/tests-188%20passed-22c55e?style=flat-square&logo=jest&logoColor=white" alt="Tests: 188 passed">
+  <img src="https://img.shields.io/badge/tests-1021%20passed-22c55e?style=flat-square&logo=jest&logoColor=white" alt="Tests: 1021 passed">
   <a href="https://github.com/polprog-tech/native-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/polprog-tech/native-ui/ci.yml?branch=master&style=flat-square" alt="CI"></a>
-  <a href="https://polprog-tech.github.io/native-ui"><img src="https://img.shields.io/badge/Storybook-ff4785?style=flat-square&logo=storybook&logoColor=white" alt="Storybook"></a>
+  <a href="https://polprog-tech.github.io/Native-UI"><img src="https://img.shields.io/badge/Storybook-ff4785?style=flat-square&logo=storybook&logoColor=white" alt="Storybook"></a>
   <img src="https://img.shields.io/badge/React%20Native-0.74%2B-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React Native 0.74+">
 </p>
 
@@ -71,7 +71,7 @@ export default function App() {
 ## Components
 
 Browse the full catalogue with live examples, accessibility notes, and code
-snippets in [**Storybook**](https://polprog-tech.github.io/native-ui).
+snippets in [**Storybook**](https://polprog-tech.github.io/Native-UI).
 
 ## Theming
 
@@ -103,7 +103,7 @@ const semantic = useSemantic(); // { background, surface, primary, ... }
 Storybook hosts the full component gallery, interactive controls, and design
 token documentation. It auto-deploys to GitHub Pages on every push to `master`.
 
-Live: **<https://polprog-tech.github.io/native-ui>**
+Live: **<https://polprog-tech.github.io/Native-UI>**
 
 Run locally:
 
@@ -119,7 +119,7 @@ Libraries/Native-UI/
 ├── packages/
 │   └── native-ui/              The published library (@polprog/native-ui)
 │       ├── src/                Tokens, primitives, components, theme
-│       ├── __tests__/          Jest + @testing-library/react-native (188 tests)
+│       ├── __tests__/          Jest + @testing-library/react-native
 │       ├── stories/            Storybook stories (source of truth for docs)
 │       └── docs/               ARCHITECTURE.md, CONTRIBUTING.md
 ├── apps/
@@ -134,7 +134,7 @@ Common tasks:
 npm install                                              # Bootstrap workspace
 npm run typecheck --workspace=@polprog/native-ui         # TypeScript strict
 npm run lint      --workspace=@polprog/native-ui         # ESLint
-npm run test      --workspace=@polprog/native-ui         # Jest (188 tests)
+npm run test      --workspace=@polprog/native-ui         # Jest
 npm run build     --workspace=@polprog/native-ui         # tsup - ESM + CJS + d.ts
 npm run storybook                                        # Dev Storybook on :6006
 npm run build-storybook                                  # Static build

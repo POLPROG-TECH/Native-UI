@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from '../../src/primitives/Box';
 import { Button } from '../../src/components/Button';
@@ -50,9 +50,11 @@ const Demo = ({
   forceAnimation,
   colors,
 }: Partial<ConfettiOverlayProps>) => {
-  // The container is intentionally taller so the burst has room to spread
-  // and the clipping border doesn't cut off the first few cycles. Kept
-  // `overflow: 'hidden'` so the demo visually contains the effect to its card.
+  /*
+   * The container is intentionally taller so the burst has room to spread
+   * and the clipping border doesn't cut off the first few cycles. Kept
+   * `overflow: 'hidden'` so the demo visually contains the effect to its card.
+   */
   return (
     <Box
       p="lg"

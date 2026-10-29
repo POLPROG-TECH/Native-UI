@@ -1,0 +1,85 @@
+/* Story canvas chrome rendered by withNativeUI (theme panes, labels, device stage). */
+.nui-theme-panes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.nui-theme-panes > * {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.nui-theme-canvas {
+  width: 100%;
+  min-height: 100%;
+  border-radius: 8px;
+}
+
+.nui-theme-canvas-label {
+  padding: 12px 16px 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nui-device-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 24px 0;
+}
+
+.nui-device-stage-label {
+  font:
+    600 11px/1 -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7280;
+}
+
+/* Inside a device the canvas fills the screen and scrolls like an app screen. */
+.nui-device-content {
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.nui-device-content::-webkit-scrollbar {
+  display: none;
+}
+
+/* The themed background runs edge to edge; safe-area insets pad its content. */
+.nui-device-content > .nui-theme-canvas {
+  box-sizing: border-box;
+  min-height: 100%;
+  padding-top: var(--device-safe-top, 0px);
+  padding-bottom: var(--device-safe-bottom, 0px);
+  border-radius: 0;
+}
+
+/*
+ * Phone-width stories (`maxWidth` around 420) sit centred on a tablet screen,
+ * as an app would lay them out; full-width stories are unaffected.
+ */
+.nui-device-content > .nui-theme-canvas > div > * {
+  margin-inline: auto;
+}
+
+/*
+ * The preview iframe follows the OS scheme like the manager, so a dark
+ * manager never frames a white canvas. Values mirror BRAND in brand.ts.
+ */
+:root[data-nui-scheme='dark'] body.sb-show-main {
+  background: #0f1424;
+}
+
+:root[data-nui-scheme='dark'] .nui-device-stage-label {
+  color: #94a3b8;
+}

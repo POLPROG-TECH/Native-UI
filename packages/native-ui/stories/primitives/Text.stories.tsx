@@ -1,4 +1,3 @@
-import React from 'react';
 import { View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Text } from '../../src/primitives/Text';
@@ -80,10 +79,12 @@ export const Playground: Story = {
     align: 'left',
     children: 'The quick brown fox jumps over the lazy dog',
   },
-  // Wrap in a full-width block so `align` is visibly applied and the
-  // component reflects every control change. Without this wrapper the
-  // Text element shrinks to its intrinsic content width on web and
-  // `textAlign` has no visible effect.
+  /**
+   * Wrap in a full-width block so `align` is visibly applied and the
+   * component reflects every control change. Without this wrapper the
+   * Text element shrinks to its intrinsic content width on web and
+   * `textAlign` has no visible effect.
+   */
   render: (args) => (
     <View style={{ width: '100%', maxWidth: 640 }}>
       <Text {...args} />

@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { HStack, VStack } from '../../src/primitives/Stack';
 import { ProgressBar } from '../../src/components/ProgressBar';

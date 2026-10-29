@@ -1,6 +1,9 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { Translated } from '../components/i18n/Translated';
 
 <Meta title="Patterns/AppShell" />
+
+<Translated lang="en">
 
 # App shell pattern
 
@@ -12,24 +15,50 @@ your app.
 
 ## Anatomy
 
+</Translated>
+
+<Translated lang="pl">
+
+# Wzorzec szkieletu aplikacji
+
+Produkcyjna aplikacja React Native zwykle ma ten sam szkielet strukturalny:
+pełnoekranowy kontener, pasek nagłówka, przewijaną treść i opcjonalnie
+dolny pasek kart. Ta strona pokazuje jeden **kanoniczny sposób**
+składania tych prymitywów, dzięki któremu ekrany pozostają wizualnie
+spójne w całej aplikacji.
+
+## Anatomia
+
+</Translated>
+
 <div style={{ margin: '16px 0', padding: 16, background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 12 }}>
-  <div style={{ padding: '6px 10px', background: '#E5E7EB', color: '#4B5563', fontSize: 11, fontWeight: 600, textAlign: 'center', borderRadius: 6, textTransform: 'uppercase', letterSpacing: 1 }}>SafeArea top</div>
+  <div style={{ padding: '6px 10px', background: '#E5E7EB', color: '#4B5563', fontSize: 11, fontWeight: 600, textAlign: 'center', borderRadius: 6, textTransform: 'uppercase', letterSpacing: 1 }}>SafeArea <Translated lang="en">top</Translated><Translated lang="pl">góra</Translated></div>
   <div style={{ marginTop: 10, border: '1px solid #C7D2FE', borderRadius: 10, overflow: 'hidden', background: '#FFFFFF' }}>
-    <div style={{ padding: 12, background: '#EEF2FF', fontWeight: 600, color: '#3730A3', fontSize: 13 }}>HeaderBar (title · actions)</div>
+    <div style={{ padding: 12, background: '#EEF2FF', fontWeight: 600, color: '#3730A3', fontSize: 13 }}>HeaderBar (<Translated lang="en">title · actions</Translated><Translated lang="pl">tytuł · akcje</Translated>)</div>
     <div style={{ padding: 16, fontSize: 13, color: '#1F2937', background: '#FFFFFF', minHeight: 140 }}>
-      <div style={{ fontWeight: 600, marginBottom: 8, color: '#6B7280', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>ScreenContainer (scrollable body)</div>
+      <div style={{ fontWeight: 600, marginBottom: 8, color: '#6B7280', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>ScreenContainer (<Translated lang="en">scrollable body</Translated><Translated lang="pl">przewijana treść</Translated>)</div>
       <div style={{ display: 'grid', gap: 6 }}>
         <div style={{ padding: '8px 10px', background: '#F3F4F6', borderRadius: 6 }}>• Section</div>
         <div style={{ padding: '8px 10px', background: '#F3F4F6', borderRadius: 6 }}>• Section</div>
         <div style={{ padding: '8px 10px', background: '#F3F4F6', borderRadius: 6, opacity: 0.6 }}>• ...</div>
       </div>
     </div>
-    <div style={{ padding: 12, background: '#ECFDF5', fontWeight: 600, color: '#047857', fontSize: 13, borderTop: '1px solid #E5E7EB' }}>BottomTabBar (optional)</div>
+    <div style={{ padding: 12, background: '#ECFDF5', fontWeight: 600, color: '#047857', fontSize: 13, borderTop: '1px solid #E5E7EB' }}>BottomTabBar (<Translated lang="en">optional</Translated><Translated lang="pl">opcjonalnie</Translated>)</div>
   </div>
-  <div style={{ marginTop: 10, padding: '6px 10px', background: '#E5E7EB', color: '#4B5563', fontSize: 11, fontWeight: 600, textAlign: 'center', borderRadius: 6, textTransform: 'uppercase', letterSpacing: 1 }}>SafeArea bottom</div>
+  <div style={{ marginTop: 10, padding: '6px 10px', background: '#E5E7EB', color: '#4B5563', fontSize: 11, fontWeight: 600, textAlign: 'center', borderRadius: 6, textTransform: 'uppercase', letterSpacing: 1 }}>SafeArea <Translated lang="en">bottom</Translated><Translated lang="pl">dół</Translated></div>
 </div>
 
+<Translated lang="en">
+
 ## Canonical composition
+
+</Translated>
+
+<Translated lang="pl">
+
+## Kanoniczna kompozycja
+
+</Translated>
 
 ```tsx
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -65,6 +94,8 @@ export function HomeScreen() {
   );
 }
 ```
+
+<Translated lang="en">
 
 ## Rules
 
@@ -110,3 +141,59 @@ Use the footer slot; `ScreenContainer` computes content inset automatically.
 
 See the **BottomTabBar**, **HeaderBar** and **ScreenContainer** stories
 for interactive examples of each primitive used in this pattern.
+
+</Translated>
+
+<Translated lang="pl">
+
+## Zasady
+
+1. **`ScreenContainer` odpowiada za górny safe area.** Nigdy nie dodawaj
+   ręcznie `paddingTop: insets.top` - jest to obsługiwane wewnętrznie przez
+   `<SafeAreaView edges={['top']}>`.
+2. **`BottomTabBar` odpowiada za dolny safe area.** Przekaż jawnie
+   `safeBottomInset`, żeby pasek sięgał poza wskaźnik ekranu głównego.
+   `ScreenContainer` NIE może dodawać dolnego paddingu, gdy jest obecna
+   stopka.
+3. **Nagłówek i stopka nigdy się nie przewijają.** Są umieszczone w
+   slotach poza widokiem przewijania. Przewijana treść jest ograniczona
+   między nimi.
+4. **Używaj `Section` do grupowania treści.** Sekcje definiują własny
+   padding i rytm - nie zagnieżdżaj `Card` w `Section`, chyba że jest to
+   wyraźnie potrzebne.
+5. **Ekrany są niezależne od języka.** Tytuły i akcje przechodzą przez i18n
+   w miejscu wywołania. Komponenty biblioteki nigdy nie mają tekstów
+   wpisanych na sztywno.
+6. **Używaj `VStack gap="lg"` jako separatora treści.** Nie `<Divider>`, nie
+   `paddingBottom: 24` - jeden `gap` utrzymuje spójny rytm.
+
+## Zgodność między platformami
+
+| Powierzchnia | Zachowanie na iOS | Zachowanie na Androidzie |
+|---|---|---|
+| Pasek stanu | przezroczysty; `ScreenContainer` renderuje się pod nim | przezroczysty; dziedziczy kolor z Material |
+| Nagłówek | 44 pt wysokości (zwykły) / 96 pt wysokości (tryb dużego tytułu) | 56 dp wysokości |
+| Dolny pasek | 4 pt u góry + 4 pt u dołu + inset safe area (≈ 34 pt) | 4 pt u góry + 8 pt u dołu + inset gestów (≈ 24 pt) |
+| Klawiatura | `KeyboardAvoidingView` behaviour=`padding` | behaviour=`height` |
+
+## Antywzorce
+
+❌ **Nie** opakowuj `ScreenContainer` w zewnętrzny `SafeAreaView`. Podwójne
+insety safe area tworzą widoczne odstępy nad nagłówkiem.
+
+❌ **Nie** układaj dwóch `HeaderBar` jeden na drugim (np. „app bar” +
+„section bar”). Do tytułów podsekcji używaj `Section title="…"`;
+`HeaderBar` zostaw na tytuł całego ekranu.
+
+❌ **Nie** umieszczaj dolnego paska kart w widoku przewijania. Musi pozostać
+statycznie przypięty do dołu ekranu.
+
+❌ **Nie** wpisuj na sztywno `paddingBottom: 90`, żeby „zrobić miejsce na
+pasek kart”. Użyj slotu stopki; `ScreenContainer` sam wylicza inset treści.
+
+## Materiały
+
+Zobacz story **BottomTabBar**, **HeaderBar** i **ScreenContainer**, aby
+poznać interaktywne przykłady każdego prymitywu użytego w tym wzorcu.
+
+</Translated>

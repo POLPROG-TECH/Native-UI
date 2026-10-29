@@ -1,37 +1,22 @@
-import React, { useState, useCallback } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Modal,
-  FlatList,
-  Pressable,
-  useWindowDimensions,
-  type ViewStyle,
-  type TextStyle,
-  type StyleProp,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import type React from 'react';
+import { useMemo } from 'react';
+import { Pressable, type ViewStyle, type StyleProp } from 'react-native';
 import { useTheme } from '../theme';
-import { FieldLabel } from './FieldLabel';
-import { FieldError } from './FieldError';
-
-export interface SelectOption<T extends string = string> {
-  /** Human-readable label shown in the dropdown list. */
-  label: string;
-  /** Unique value representing this option. */
-  value: T;
-  /** Optional leading emoji or icon string displayed beside the label. */
-  icon?: string;
-}
-
-// ─── Compound sub-component props ──────────────────────────────
+import { FieldFrame } from './field/FieldFrame';
+import { SelectTriggerButton } from './select/SelectTriggerButton';
+import { SelectOptionSheet } from './select/SelectOptionSheet';
+import { useSelectState } from './select/useSelectState';
+import { buildSelectRowStyles, selectStyles } from './select/selectStyles';
+import { useSelectFocusRing } from './select/useSelectFocusRing';
+import type { SelectProps } from './select/types';
+export type { SelectOption, SelectProps } from './select/types';
 
 export interface SelectTriggerProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   onPress?: () => void;
   disabled?: boolean;
+  testID?: string;
 }
 
 export interface SelectOptionItemProps {
@@ -39,61 +24,95 @@ export interface SelectOptionItemProps {
   style?: StyleProp<ViewStyle>;
   selected?: boolean;
   onPress?: () => void;
+  testID?: string;
 }
 
-// ─── Main select props ─────────────────────────────────────────
+function SelectComponent<T extends string = string>(props: SelectProps<T>) {
+  const { label, error, required, disabled = false, containerStyle, testID } = props;
+  const theme = useTheme();
+  const state = useSelectState({ ...props, disabled });
 
-export interface SelectProps<T extends string = string> {
-  /** Label displayed above the trigger in uppercase. */
-  label?: string;
-  /** The currently selected value, or `null` when nothing is selected. */
-  value?: T | null;
-  /**
-   * Alias for `value`. Ignored when `value` is also provided.
-   * @deprecated Prefer `value` for a single source of truth.
-   */
-  selectedValue?: T | null;
-  /** Array of options displayed in the dropdown list. */
-  options: SelectOption<T>[];
-  /** Callback fired when the user picks an option. Receives the selected `value`. */
-  onChange?: (value: T) => void;
-  /**
-   * Alias for `onChange`. Invoked *in addition to* `onChange` when both are
-   * provided - pass only one to avoid duplicate handling.
-   * @deprecated Prefer `onChange`.
-   */
-  onValueChange?: (value: T) => void;
-  /**
-   * Placeholder text shown when no value is selected.
-   * @default 'Select...'
-   */
-  placeholder?: string;
-  /** Error message displayed below the trigger in the theme's error color. */
-  error?: string;
-  /**
-   * Marks the field as required by appending a red asterisk to the label.
-   * @default false
-   */
-  required?: boolean;
-  /**
-   * When `true`, dims the trigger and prevents opening the dropdown.
-   * @default false
-   */
-  disabled?: boolean;
-  /** Additional styles applied to the outer wrapper `View`. */
-  containerStyle?: ViewStyle;
+  return (
+    <FieldFrame
+      label={label}
+      required={required}
+      error={error}
+      style={[{ marginBottom: theme.components.select.containerMarginBottom }, containerStyle]}
+      testID={testID}
+      overlay={
+        <SelectOptionSheet
+          {...props}
+          state={state}
+          testID={testID ? `${testID}-sheet` : undefined}
+        />
+      }
+    >
+      <SelectTriggerButton
+        state={state}
+        label={label}
+        placeholder={props.placeholder}
+        error={error}
+        disabled={disabled}
+      />
+    </FieldFrame>
+  );
 }
+
+/** Standalone trigger element for Select compound pattern. */
+function SelectTrigger({ children, style, onPress, disabled, testID }: SelectTriggerProps) {
+  const { select } = useTheme().components;
+  const rowStyles = useMemo(() => buildSelectRowStyles(select), [select]);
+  const { focusProps, focusRingStyle } = useSelectFocusRing('outside');
+
+  return (
+    <Pressable
+      testID={testID}
+      onPress={disabled ? undefined : onPress}
+      {...focusProps}
+      style={[selectStyles.trigger, rowStyles.trigger, style, focusRingStyle]}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !!disabled }}
+    >
+      {children}
+    </Pressable>
+  );
+}
+
+SelectTrigger.displayName = 'Select.Trigger';
+
+/** Standalone option row for Select compound pattern. */
+function SelectOptionItem({ children, style, selected, onPress, testID }: SelectOptionItemProps) {
+  const { select } = useTheme().components;
+  const rowStyles = useMemo(() => buildSelectRowStyles(select), [select]);
+  const { focusProps, focusRingStyle } = useSelectFocusRing('inset');
+
+  return (
+    <Pressable
+      testID={testID}
+      onPress={onPress}
+      {...focusProps}
+      style={[selectStyles.option, rowStyles.option, style, focusRingStyle]}
+      accessibilityRole="radio"
+      accessibilityState={{ selected: !!selected }}
+    >
+      {children}
+    </Pressable>
+  );
+}
+
+SelectOptionItem.displayName = 'Select.Option';
 
 /**
- * Modal-based select/picker. Opens a scrollable option list in a bottom sheet modal.
- * No native picker dependencies required - works on both iOS and Android.
+ * Modal-based select/picker. Opens a scrollable option list in a `BottomSheet`
+ * (drag handle, swipe and escape-gesture dismissal, width cap on tablets and
+ * web) with a full-width Cancel action. No native picker dependencies.
  *
  * Supports both the monolithic API and a compound component pattern:
  *
  * @example Monolithic
  * ```tsx
  * const options = [
- *   { label: 'USD', value: 'usd', icon: '💵' },
+ *   { label: 'USD', value: 'usd', icon: (p) => <CashIcon {...p} /> },
  *   { label: 'EUR', value: 'eur', icon: '💶' },
  * ];
  * <Select label="Currency" value={currency} options={options} onChange={setCurrency} />
@@ -105,319 +124,7 @@ export interface SelectProps<T extends string = string> {
  * <Select.Option selected={v === 'a'} onPress={() => pick('a')}><Text>A</Text></Select.Option>
  * ```
  */
-interface SelectRowRenderProps {
-  label: string;
-  icon?: string;
-  isSelected: boolean;
-  value: string;
-  onSelect: (value: string) => void;
-  primaryColor: string;
-  primaryLightColor: string;
-  textPrimaryColor: string;
-  bodyStyle: TextStyle;
-}
-
-const SelectRow = React.memo(function SelectRow({
-  label,
-  icon,
-  isSelected,
-  value,
-  onSelect,
-  primaryColor,
-  primaryLightColor,
-  textPrimaryColor,
-  bodyStyle,
-}: SelectRowRenderProps) {
-  const handlePress = useCallback(() => onSelect(value), [onSelect, value]);
-
-  return (
-    <Pressable
-      onPress={handlePress}
-      style={[styles.option, isSelected && { backgroundColor: primaryLightColor }]}
-      accessibilityRole="radio"
-      accessibilityState={{ selected: isSelected }}
-      accessibilityLabel={label}
-    >
-      {icon && (
-        <Text style={styles.optionIcon} importantForAccessibility="no" accessibilityElementsHidden>
-          {icon}
-        </Text>
-      )}
-      <Text
-        style={[
-          bodyStyle,
-          {
-            color: isSelected ? primaryColor : textPrimaryColor,
-            flex: 1,
-          },
-        ]}
-      >
-        {label}
-      </Text>
-      {isSelected && (
-        <Text
-          style={{ color: primaryColor }}
-          importantForAccessibility="no"
-          accessibilityElementsHidden
-        >
-          ✓
-        </Text>
-      )}
-    </Pressable>
-  );
-});
-
-function SelectComponent<T extends string = string>({
-  label,
-  value,
-  selectedValue,
-  options,
-  onChange,
-  onValueChange,
-  placeholder = 'Select...',
-  error,
-  required,
-  disabled = false,
-  containerStyle,
-}: SelectProps<T>) {
-  const theme = useTheme();
-  const insets = useSafeAreaInsets();
-  const { height: windowHeight } = useWindowDimensions();
-  const [isOpen, setIsOpen] = useState(false);
-
-  const resolvedValue = value !== undefined ? value : (selectedValue ?? null);
-  const selectedOption = options.find((o) => o.value === resolvedValue);
-
-  const handleSelect = useCallback(
-    (optionValue: T) => {
-      onChange?.(optionValue);
-      onValueChange?.(optionValue);
-      setIsOpen(false);
-    },
-    [onChange, onValueChange],
-  );
-
-  // FlatList keys/values are surfaced as `string`; option values are a `T`
-  // subtype of `string`, so this single boundary cast is sound and keeps the
-  // memoized, non-generic `SelectRow` simple.
-  const handleSelectString = useCallback(
-    (optionValue: string) => handleSelect(optionValue as T),
-    [handleSelect],
-  );
-
-  const open = useCallback(() => {
-    if (!disabled) setIsOpen(true);
-  }, [disabled]);
-
-  const close = useCallback(() => setIsOpen(false), []);
-
-  const renderOption = useCallback(
-    ({ item }: { item: SelectOption<T> }) => (
-      <SelectRow
-        label={item.label}
-        icon={item.icon}
-        isSelected={item.value === resolvedValue}
-        value={item.value}
-        onSelect={handleSelectString}
-        primaryColor={theme.colors.primary}
-        primaryLightColor={theme.colors.primaryLight}
-        textPrimaryColor={theme.colors.textPrimary}
-        bodyStyle={theme.typography.body}
-      />
-    ),
-    [
-      resolvedValue,
-      handleSelectString,
-      theme.colors.primary,
-      theme.colors.primaryLight,
-      theme.colors.textPrimary,
-      theme.typography.body,
-    ],
-  );
-
-  return (
-    <View style={[styles.container, containerStyle]}>
-      {label && <FieldLabel label={label} required={required} />}
-
-      <Pressable
-        onPress={open}
-        style={[
-          styles.trigger,
-          {
-            backgroundColor: theme.colors.surfaceSecondary,
-            borderColor: error ? theme.colors.error : theme.colors.border,
-            borderRadius: theme.borderRadius.lg,
-          },
-          disabled && { opacity: theme.opacity.disabled },
-        ]}
-        accessibilityRole="button"
-        accessibilityLabel={label ?? placeholder}
-        accessibilityValue={selectedOption ? { text: selectedOption.label } : undefined}
-        accessibilityState={{ disabled, expanded: isOpen }}
-      >
-        <Text
-          style={[
-            theme.typography.body,
-            {
-              color: selectedOption ? theme.colors.textPrimary : theme.colors.textTertiary,
-              flex: 1,
-            },
-          ]}
-          numberOfLines={1}
-        >
-          {selectedOption?.label ?? placeholder}
-        </Text>
-        <Text
-          style={{ color: theme.colors.textTertiary, fontSize: 12 }}
-          importantForAccessibility="no"
-          accessibilityElementsHidden
-        >
-          ▼
-        </Text>
-      </Pressable>
-
-      {error && <FieldError error={error} />}
-
-      <Modal visible={isOpen} transparent animationType="slide" onRequestClose={close}>
-        {/*
-         * Layout:
-         *   - Absolute-fill Pressable backdrop: catches taps outside the sheet.
-         *   - Sheet View: catches its own taps via onStartShouldSetResponder
-         *     so taps on the header/padding inside the sheet do NOT bubble
-         *     up to the backdrop and close the modal.
-         */}
-        <View style={styles.overlay}>
-          <Pressable
-            style={[StyleSheet.absoluteFill, { backgroundColor: theme.colors.overlay }]}
-            onPress={close}
-            accessibilityRole="button"
-            accessibilityLabel="Close"
-          />
-          <View
-            onStartShouldSetResponder={() => true}
-            style={[
-              styles.sheet,
-              {
-                backgroundColor: theme.colors.surface,
-                borderTopLeftRadius: theme.borderRadius.xl,
-                borderTopRightRadius: theme.borderRadius.xl,
-                paddingBottom: Math.max(insets.bottom, 16),
-              },
-            ]}
-          >
-            {label && (
-              <Text
-                style={[
-                  theme.typography.h3,
-                  {
-                    color: theme.colors.textPrimary,
-                    paddingHorizontal: 20,
-                    paddingTop: 20,
-                    paddingBottom: 12,
-                  },
-                ]}
-              >
-                {label}
-              </Text>
-            )}
-            <FlatList
-              data={options}
-              keyExtractor={(item) => item.value}
-              style={{ maxHeight: windowHeight * 0.4 }}
-              accessibilityRole="radiogroup"
-              renderItem={renderOption}
-            />
-            <Pressable
-              onPress={close}
-              style={[styles.cancelButton, { borderTopColor: theme.colors.divider }]}
-              accessibilityRole="button"
-              accessibilityLabel="Cancel"
-            >
-              <Text style={[theme.typography.label, { color: theme.colors.textSecondary }]}>
-                Cancel
-              </Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-    </View>
-  );
-}
-
-// ─── Compound sub-components ───────────────────────────────────
-
-/** Standalone trigger element for Select compound pattern. */
-function SelectTrigger({ children, style, onPress, disabled }: SelectTriggerProps) {
-  return (
-    <Pressable
-      onPress={disabled ? undefined : onPress}
-      style={[styles.trigger, style]}
-      accessibilityRole="button"
-      accessibilityState={{ disabled: !!disabled }}
-    >
-      {children}
-    </Pressable>
-  );
-}
-SelectTrigger.displayName = 'Select.Trigger';
-
-/** Standalone option row for Select compound pattern. */
-function SelectOptionItem({ children, style, selected, onPress }: SelectOptionItemProps) {
-  return (
-    <Pressable
-      onPress={onPress}
-      style={[styles.option, style]}
-      accessibilityRole="radio"
-      accessibilityState={{ selected: !!selected }}
-    >
-      {children}
-    </Pressable>
-  );
-}
-SelectOptionItem.displayName = 'Select.Option';
-
-// ─── Assemble compound component ──────────────────────────────
-
 export const Select = Object.assign(SelectComponent, {
   Trigger: SelectTrigger,
   Option: SelectOptionItem,
-});
-
-// ─── Styles ───────────────────────────────────────────────────
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-  },
-  trigger: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    minHeight: 44,
-    gap: 8,
-  },
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  sheet: {},
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-    gap: 10,
-    minHeight: 48,
-  },
-  optionIcon: {
-    fontSize: 16,
-  },
-  cancelButton: {
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    marginTop: 8,
-  },
 });

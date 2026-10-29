@@ -1,15 +1,19 @@
-import React from 'react';
-import { Switch } from 'react-native';
-import { useTheme } from '../theme';
+import type { StyleProp, ViewStyle } from 'react-native';
+import type { IconSlot } from '../primitives/iconSlot';
 import { ListItem } from './ListItem';
+import { ListRowSwitch } from './listItem/ListRowSwitch';
 
 export interface ListSwitchItemProps {
   /** Primary label */
   label: string;
   /** Secondary text below the label */
   subtitle?: string;
-  /** Leading icon (emoji or rendered element) */
-  icon?: React.ReactNode;
+  /**
+   * Leading icon, rendered like `ListItem`'s `icon`: prefer a render function
+   * (`({ color, size }) => <SystemIcon ... />`); emoji strings are kept for
+   * backwards compatibility.
+   */
+  icon?: IconSlot;
   /** Current toggle value */
   value: boolean;
   /** Called when the switch is toggled */
@@ -18,43 +22,24 @@ export interface ListSwitchItemProps {
   omitSpacing?: boolean;
   /** When `true` and rendered inside a grouped `ListSection`, suppresses the hairline divider after this row. */
   hideDivider?: boolean;
+  /** Additional styles applied to the row container. */
+  style?: StyleProp<ViewStyle>;
+  /** Test ID forwarded to the row's outermost element. */
+  testID?: string;
 }
 
 /**
  * List row with an integrated Switch toggle.
- * Composed from ListItem + React Native Switch.
+ * Composed from ListItem + React Native Switch, so its geometry follows
+ * `theme.components.listItem`.
  */
-export function ListSwitchItem({
-  label,
-  subtitle,
-  icon,
-  value,
-  onValueChange,
-  omitSpacing,
-  hideDivider,
-}: ListSwitchItemProps) {
-  const theme = useTheme();
-
+export function ListSwitchItem({ label, value, onValueChange, ...rowProps }: ListSwitchItemProps) {
   return (
     <ListItem
+      {...rowProps}
       title={label}
-      subtitle={subtitle}
-      icon={icon}
       showChevron={false}
-      omitSpacing={omitSpacing}
-      hideDivider={hideDivider}
-      trailing={
-        <Switch
-          value={value}
-          onValueChange={onValueChange}
-          trackColor={{
-            false: theme.colors.surfaceSecondary,
-            true: theme.colors.primary,
-          }}
-          thumbColor={theme.colors.surface}
-          ios_backgroundColor={theme.colors.surfaceSecondary}
-        />
-      }
+      trailing={<ListRowSwitch value={value} onValueChange={onValueChange} />}
     />
   );
 }

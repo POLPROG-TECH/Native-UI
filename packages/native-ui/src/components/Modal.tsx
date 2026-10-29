@@ -2,34 +2,32 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   Modal as RNModal,
-  Pressable,
   KeyboardAvoidingView,
   Platform,
   type ViewStyle,
   type StyleProp,
 } from 'react-native';
 import { useTheme } from '../theme';
-
-// ─── Compound sub-component props ──────────────────────────────
+import { ModalBackdrop, ModalTitle, buildDialogStyle } from './modal/ModalDialogParts';
 
 export interface ModalHeaderProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
 export interface ModalBodyProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
 export interface ModalFooterProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
-
-// ─── Main modal props ──────────────────────────────────────────
 
 export interface ModalProps {
   /** Controls whether the modal is displayed. */
@@ -47,8 +45,21 @@ export interface ModalProps {
    * @default true
    */
   dismissable?: boolean;
+  /**
+   * Accessible name of the dismissing backdrop.
+   * @default labels.close from `NativeUIConfig.labels`
+   */
+  closeAccessibilityLabel?: string;
+  /**
+   * Lift the dialog above the software keyboard on iOS.
+   * @default true
+   */
+  avoidKeyboard?: boolean;
+  /** Dialog fill. @default theme.components.modal.backgroundColor ?? colors.surface */
+  backgroundColor?: string;
   /** Additional styles applied to the modal content container. */
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
 /**
@@ -73,87 +84,81 @@ export interface ModalProps {
  * </Modal>
  * ```
  */
-function ModalComponent({
-  visible,
-  onClose,
-  title,
-  children,
-  footer,
-  dismissable = true,
-  style,
-}: ModalProps) {
+function ModalComponent(props: ModalProps) {
+  const { visible, onClose, title, footer, dismissable = true, avoidKeyboard = true } = props;
   const theme = useTheme();
 
   return (
     <RNModal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={avoidKeyboard && Platform.OS === 'ios' ? 'padding' : undefined}
+        enabled={avoidKeyboard}
         style={styles.wrapper}
       >
-        <Pressable
-          style={[styles.overlay, { backgroundColor: theme.colors.overlay }]}
-          onPress={dismissable ? onClose : undefined}
-          accessibilityElementsHidden={!dismissable}
-          importantForAccessibility={dismissable ? 'yes' : 'no-hide-descendants'}
-          {...(dismissable
-            ? { accessibilityRole: 'button' as const, accessibilityLabel: 'Close' }
-            : {})}
+        <ModalBackdrop
+          onDismiss={dismissable ? onClose : undefined}
+          accessibilityLabel={props.closeAccessibilityLabel ?? theme.labels.close}
         />
         <View
-          style={[
-            styles.content,
-            {
-              backgroundColor: theme.colors.surface,
-              borderRadius: theme.borderRadius.xl,
-            },
-            theme.elevation.xl,
-            style,
-          ]}
+          testID={props.testID}
+          style={[buildDialogStyle(theme, props.backgroundColor), theme.elevation.xl, props.style]}
           accessibilityViewIsModal={true}
+          /*
+           * The backdrop sits outside this modal view, so VoiceOver cannot
+           * focus it; the two-finger "escape" gesture closes instead.
+           */
+          onAccessibilityEscape={dismissable ? onClose : undefined}
         >
-          {title && (
-            <Text
-              style={[
-                theme.typography.h2,
-                {
-                  color: theme.colors.textPrimary,
-                  marginBottom: 12,
-                },
-              ]}
-              accessibilityRole="header"
-            >
-              {title}
-            </Text>
-          )}
-          {children}
-          {footer && <View style={styles.footer}>{footer}</View>}
+          {title && <ModalTitle title={title} />}
+          {props.children}
+          {footer && <ModalFooter>{footer}</ModalFooter>}
         </View>
       </KeyboardAvoidingView>
     </RNModal>
   );
 }
 
-// ─── Compound sub-components ───────────────────────────────────
-
 /** Header section for Modal compound pattern. */
-function ModalHeader({ children, style }: ModalHeaderProps) {
-  return <View style={[styles.header, style]}>{children}</View>;
+function ModalHeader({ children, style, testID }: ModalHeaderProps) {
+  const { modal } = useTheme().components;
+
+  return (
+    <View testID={testID} style={[{ marginBottom: modal.headerMarginBottom }, style]}>
+      {children}
+    </View>
+  );
 }
+
 ModalHeader.displayName = 'Modal.Header';
 
 /** Body / content section for Modal compound pattern. */
-function ModalBody({ children, style }: ModalBodyProps) {
-  return <View style={[styles.body, style]}>{children}</View>;
+function ModalBody({ children, style, testID }: ModalBodyProps) {
+  const { modal } = useTheme().components;
+
+  return (
+    <View testID={testID} style={[{ marginVertical: modal.bodyMarginVertical }, style]}>
+      {children}
+    </View>
+  );
 }
+
 ModalBody.displayName = 'Modal.Body';
 
 /** Footer / action section for Modal compound pattern. */
-function ModalFooter({ children, style }: ModalFooterProps) {
-  return <View style={[styles.footer, style]}>{children}</View>;
-}
-ModalFooter.displayName = 'Modal.Footer';
+function ModalFooter({ children, style, testID }: ModalFooterProps) {
+  const { modal } = useTheme().components;
 
-// ─── Assemble compound component ──────────────────────────────
+  return (
+    <View
+      testID={testID}
+      style={[styles.footer, { gap: modal.footerGap, marginTop: modal.footerMarginTop }, style]}
+    >
+      {children}
+    </View>
+  );
+}
+
+ModalFooter.displayName = 'Modal.Footer';
 
 export const Modal = Object.assign(ModalComponent, {
   Header: ModalHeader,
@@ -161,36 +166,14 @@ export const Modal = Object.assign(ModalComponent, {
   Footer: ModalFooter,
 });
 
-// ─── Styles ───────────────────────────────────────────────────
-
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  content: {
-    width: '85%',
-    maxWidth: 400,
-    padding: 24,
-  },
-  header: {
-    marginBottom: 12,
-  },
-  body: {
-    marginVertical: 4,
-  },
   footer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    gap: 12,
-    marginTop: 20,
   },
 });

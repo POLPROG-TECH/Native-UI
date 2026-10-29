@@ -6,6 +6,11 @@
     "jsx": "react-jsx",
     "moduleResolution": "bundler",
     "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -23,8 +28,10 @@
   },
   "include": [
     ".storybook/**/*",
+    "vitest.config.ts",
     "docs/**/*",
     "stories/**/*",
+    "shared/**/*",
     "../../packages/native-ui/src",
     "../../packages/native-ui/stories"
   ],

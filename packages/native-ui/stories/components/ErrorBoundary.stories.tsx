@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from '../../src/primitives/Box';
 import { Button } from '../../src/components/Button';
 import { ErrorBoundary, withErrorBoundary } from '../../src/components/ErrorBoundary';
 import { Text } from '../../src/primitives/Text';
+import { SystemIcon } from '../../src/primitives/SystemIcon';
 import { VStack } from '../../src/primitives/Stack';
 import type { ErrorBoundaryProps } from '../../src/components/ErrorBoundary';
 
@@ -49,6 +50,7 @@ export const Playground: Story = {
 
 function Crasher({ label = 'Crash the subtree' }: { label?: string }) {
   const [boom, setBoom] = useState(false);
+
   if (boom) {
     throw new Error('Boom - this subtree crashed on purpose.');
   }
@@ -69,6 +71,17 @@ export const DefaultFallback: Story = {
           <Crasher />
         </VStack>
       </Box>
+    </ErrorBoundary>
+  ),
+};
+
+export const CustomFallbackIcon: Story = {
+  name: 'Custom `fallbackIcon` render function',
+  render: () => (
+    <ErrorBoundary
+      fallbackIcon={({ color, size }) => <SystemIcon name="info" color={color} size={size} />}
+    >
+      <Crasher label="Crash → fallback with info icon" />
     </ErrorBoundary>
   ),
 };

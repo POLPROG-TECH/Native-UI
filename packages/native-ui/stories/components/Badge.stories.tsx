@@ -1,4 +1,3 @@
-import React from 'react';
 import { fn } from 'storybook/test';
 import { View, Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';

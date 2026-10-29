@@ -1,6 +1,9 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { Translated } from './components/i18n/Translated';
 
 <Meta title="Migration" />
+
+<Translated lang="en">
 
 # Migration Guide
 
@@ -187,9 +190,8 @@ The library uses generic naming instead of domain-specific variants:
 | `amountLarge` | `monoLarge` | Large tabular display (32 px) |
 | `amountSmall` | `monoSmall` | Small tabular display (15 px) |
 
-> **Deprecated aliases.** The old names (`amount`, `amountLarge`,
-> `amountSmall`) are still exported and log a one-time deprecation
-> warning in dev. Safe to migrate incrementally.
+> **Removed in 2.0.** The old names (`amount`, `amountLarge`,
+> `amountSmall`) are no longer exported; use the `mono*` variants.
 
 ---
 
@@ -275,3 +277,288 @@ second app using it as-is, it belongs to the app.
 - **Theming** - how the new provider composes app state + OS prefs.
 - **Accessibility** - what the migration buys you for free.
 - **Patterns / AppShell** - the canonical layout you should converge on.
+
+</Translated>
+
+<Translated lang="pl">
+
+# Przewodnik migracji
+
+Jak przejść z warstwy UI specyficznej dla aplikacji na `@polprog/native-ui`
+bez psucia istniejących ekranów. Ten przewodnik to plan stopniowego
+zastępowania własnych folderów UI wspólną biblioteką - bez przestojów
+produktu, ze stopniowym wdrażaniem i łatwym wycofaniem zmian.
+
+> **Filozofia.** Traktuj migrację jak długotrwały refaktor, który można
+> wstrzymać, wycofać albo podzielić między gałęzie przy dowolnym commicie.
+> Nigdy nie merguj PR-a, który wymienia wszystko naraz („big bang”).
+
+---
+
+## 1. Strategia migracji: re-eksporty przez barrel
+
+Zachowaj istniejący katalog `shared/ui/` aplikacji. Zastąp plik każdego
+komponentu dwulinijkowym re-eksportem z biblioteki.
+
+```tsx
+// shared/ui/Button.tsx  (przed: 180 linii, po: 2 linie)
+export { Button, type ButtonProps } from '@polprog/native-ui';
+```
+
+Korzyści:
+
+| | Zamiana na bezpośrednie importy | Barrel z re-eksportami (zalecane) |
+|---|---|---|
+| Zmienione pliki ekranów | **Wiele** - zmienia się każdy import | **Żadne** - ścieżki importów bez zmian |
+| Granulacja wycofania | Per ekran (dużo szumu) | Per komponent (jeden plik) |
+| Rozmiar PR-a | Często 2k+ linii | 20-50 linii na komponent |
+| Konflikty przy merge | Częste (wspólne pliki) | Rzadkie (odizolowane zmiany) |
+| Sterowanie feature flagą | Trudne - importów nie da się przełączać | Łatwe - re-eksport za flagą |
+
+> **Efekt po fazie 1.** Każdy ekran działa dalej bez żadnych zmian w
+> importach. Możesz teraz migrować komponenty pojedynczo, mergować każdy
+> w osobnym PR-ze i wycofać dowolny z nich, przywracając oryginalny plik.
+
+---
+
+## 2. Migracja motywu
+
+### Przed (rozwiązanie specyficzne dla aplikacji)
+
+```tsx
+// shared/theme/ThemeContext.tsx
+export const ThemeProvider = ({ children }) => {
+  const [mode, setMode] = useState('light');
+  const theme = useMemo(() => buildTheme(mode), [mode]);
+  return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>;
+};
+
+export const useTheme = () => useContext(ThemeContext);
+```
+
+### Po (cienki wrapper na `NativeUIProvider`)
+
+```tsx
+// shared/theme/ThemeContext.tsx - pozostaje punktem styku aplikacji
+import { NativeUIProvider, useTheme as useNativeTheme } from '@polprog/native-ui';
+
+export function ThemeProvider({ children }: PropsWithChildren) {
+  const config = useAppStore((s) => ({
+    colorMode: s.colorMode,
+    preset: s.themePreset,
+    fontSize: s.fontSize,
+    highContrast: s.highContrast,
+    reduceAnimations: s.reduceAnimations,
+  }));
+
+  return <NativeUIProvider config={config}>{children}</NativeUIProvider>;
+}
+
+export const useTheme = useNativeTheme;  // identyczny kształt
+```
+
+> **Po co zostawiać wrapper?** Żeby przyszłe zmiany w bibliotece (np. gdy
+> biblioteka zmieni nazwę `colorMode` -> `appearance`) wymagały zmiany
+> jednego pliku w aplikacji, a nie „znajdź i zamień” w całym repozytorium.
+
+`useTheme()` zwraca ten sam kształt (`colors`, `typography`, `spacing`,
+`borderRadius`, `elevation`, ...), więc każdy ekran działa bez zmian.
+
+---
+
+## 3. Mapowanie komponentów
+
+Kandydaci do bezpośredniej zamiany - API biblioteki jest nadzbiorem API
+specyficznego dla aplikacji, więc istniejące wywołania kompilują się i
+działają identycznie.
+
+| Komponent aplikacji | Zamiennik w native-ui | Dodatkowe propsy |
+|---|---|---|
+| `Button` | `Button` | `icon`, `fullWidth`, `size` o wartościach `sm` / `md` / `lg` |
+| `Card` | `Card` | `padded`, `elevation`, `pressable` |
+| `Input` | `Input` | `required`, `helperText`, pełne przekazywanie `TextInputProps` |
+| `EmptyState` | `EmptyState` | `renderIcon`, slot `action` |
+| `ScreenContainer` | `ScreenContainer` | `edges`, `scrollable`, `maxWidth` |
+| `Chip` / `ChipGroup` | `Chip` / `ChipGroup` | `variant`, `selected`, `onClose` |
+| `ProgressBar` | `ProgressBar` | `indeterminate`, `height` |
+| `Skeleton` | `Skeleton` | preset `Skeleton.Card` |
+| `SearchBar` | `SearchBar` | `debounceMs` (domyślnie 300) |
+| `Divider` | `Divider` | `inset`, `vertical` |
+| `Section` | `Section` | `footer`, `insetDividers` |
+| `Badge` | `Badge` | tryb `dot`, `variant` |
+| `PressableScale` | `PressableScale` | Automatycznie respektuje `reduceAnimations` |
+| `Toast` | `Toast` + `useToast` | Imperatywne API bez zmian |
+| `LoadingScreen` | `Spinner` | Zmieniona nazwa; ten sam wygląd |
+| `RadioIndicator` | `Radio` | Zmieniona nazwa; dodane semantyczne `accessibilityRole="radio"` |
+
+---
+
+## 4. Migracja ekranu ustawień (ta trudniejsza)
+
+Specyficzny dla aplikacji `SettingsRow` często łączył tła ikon z emoji z
+semantyką listy. Biblioteka je rozdziela: `ListItem` to prymityw, a
+`SettingsRow` to zbudowany na nim preset z tłem pod emoji.
+
+### Przed
+
+```tsx
+import { SettingsRow, SettingsSection, SettingsHeader } from '@shared/ui';
+
+<SettingsSection title="Preferences">
+  <SettingsRow icon="🌙" label="Dark Mode" rightElement={<Switch />} />
+  <SettingsRow icon="🔔" label="Notifications" onPress={goToNotifs} />
+  <SettingsRow icon="🗑️" label="Delete Account" destructive isLast />
+</SettingsSection>
+```
+
+### Po (opcja A - zostajesz przy presecie z emoji)
+
+```tsx
+import { SettingsRow, SettingsSwitchRow, ListSection } from '@polprog/native-ui';
+
+<ListSection title="Preferences">
+  <SettingsSwitchRow icon="🌙" label="Dark Mode" value={isDark} onValueChange={toggle} />
+  <SettingsRow icon="🔔" label="Notifications" onPress={goToNotifs} />
+  <SettingsRow icon="🗑️" label="Delete Account" destructive isLast />
+</ListSection>
+```
+
+### Po (opcja B - przejście na `ListItem` dla pełnej kontroli)
+
+```tsx
+import { ListSection, ListItem, ListSwitchItem } from '@polprog/native-ui';
+
+<ListSection title="Preferences">
+  <ListSwitchItem
+    icon={<EmojiIcon>🌙</EmojiIcon>}
+    label="Dark Mode"
+    value={isDark}
+    onValueChange={toggle}
+  />
+  <ListItem icon={<EmojiIcon>🔔</EmojiIcon>} title="Notifications" onPress={goToNotifs} />
+  <ListItem
+    icon={<EmojiIcon>🗑️</EmojiIcon>}
+    title="Delete Account"
+    destructive
+    hideDivider
+  />
+</ListSection>
+```
+
+### Mapowanie propsów (SettingsRow -> ListItem)
+
+| Stary prop | Nowy prop | Uwagi |
+|---|---|---|
+| `label` | `title` | Zmiana nazwy dla spójności z `ListItem` |
+| `isLast` | `hideDivider` | Jaśniej mówi, co robi |
+| `rightElement` | `trailing` | Przyjmuje dowolny `ReactNode` |
+| `icon` (string z emoji) | `icon` (`ReactNode`) | Teraz węzeł, więc możesz użyć `<Icon />` |
+| `showChevron` | wykrywany automatycznie | Widoczny, gdy podano `onPress` i nie ma `trailing` |
+
+---
+
+## 5. Migracja typografii
+
+Biblioteka używa ogólnych nazw zamiast wariantów związanych z domeną:
+
+| Wariant aplikacji | Wariant biblioteki | Opis |
+|---|---|---|
+| `amount` | `mono` | Wyświetlanie cyfr tabelarycznych (20 px, pogrubione, `fontVariant: ['tabular-nums']`) |
+| `amountLarge` | `monoLarge` | Duże cyfry tabelaryczne (32 px) |
+| `amountSmall` | `monoSmall` | Małe cyfry tabelaryczne (15 px) |
+
+> **Usunięte w 2.0.** Stare nazwy (`amount`, `amountLarge`,
+> `amountSmall`) nie są już eksportowane; używaj wariantów `mono*`.
+
+---
+
+## 6. Migracja haptyki
+
+### Przed (wywołania w każdym komponencie)
+
+```tsx
+import haptics from 'react-native-haptic-feedback';
+
+<Pressable onPress={() => { haptics.trigger('impactMedium'); submit(); }}>
+```
+
+### Po (podłączone raz, używane niejawnie)
+
+```tsx
+// App.tsx - zrób to raz przy starcie aplikacji
+import { configureHaptics } from '@polprog/native-ui';
+configureHaptics({
+  light: () => haptics.trigger('impactLight'),
+  medium: () => haptics.trigger('impactMedium'),
+  success: () => haptics.trigger('notificationSuccess'),
+  warning: () => haptics.trigger('notificationWarning'),
+  error: () => haptics.trigger('notificationError'),
+});
+
+// Screen.tsx - koniec z jawnym wywoływaniem haptyki
+<Button title="Save" onPress={submit} />
+```
+
+Wszystkie klikalne elementy biblioteki same wywołują właściwą haptykę
+(light przy `ghost`, medium przy `primary`, success przy `Toast.success`
+itd.).
+
+---
+
+## 7. Co zostaje w Twojej aplikacji
+
+Te komponenty zawierają logikę domenową i **nie** powinny trafić do
+wspólnej biblioteki:
+
+- **`ErrorBoundary`** - raportowanie błędów specyficzne dla aplikacji
+  (Sentry, Datadog).
+- **`DatePickerInput`** - zależy od
+  `@react-native-community/datetimepicker` i formatowania walut / dat
+  przez i18n.
+- **`BrandIcon` / `BrandWordmark`** - branding SVG specyficzny dla
+  aplikacji.
+- **Szablony ekranów specyficzne dla aplikacji** (Dashboard, Onboarding,
+  Paywall).
+
+Trzymaj je w `shared/ui/` obok re-eksportów. Granica między „wspólną
+biblioteką” a „kodem aplikacji” jest jasna: jeśli nie wyobrażasz sobie,
+że druga aplikacja użyje komponentu bez zmian, należy on do aplikacji.
+
+---
+
+## 8. Zalecana kolejność wdrażania
+
+1. **Tydzień 1:** faza 1 (re-eksporty przez barrel) dla każdego prymitywu:
+   `Box`, `Stack`, `Text`, `Heading`, `Divider`.
+2. **Tydzień 2:** zastąp `ThemeContext` wrapperem na `NativeUIProvider`
+   z **§2**. Wydaj za feature flagą na 24 h.
+3. **Tydzień 3:** wymień komponenty-liście: `Button`, `Card`, `Input`,
+   `Chip`, `Badge`. Każdy w małym PR-ze.
+4. **Tydzień 4:** listy + ustawienia. To największy obszar zmian.
+5. **Tydzień 5+:** wzorce - `HeaderBar`, `BottomTabBar`,
+   `ScreenContainer`, `Modal`, `BottomSheet`.
+6. **Tydzień N:** usuń pliki `shared/ui/`, które są wyłącznie
+   re-eksportami; poproś zespoły o importowanie bezpośrednio z
+   `@polprog/native-ui`.
+
+---
+
+## 9. Lista kontrolna przed merge (dla każdego komponentu)
+
+- [ ] `shared/ui/<X>.tsx` jest teraz barrelem z re-eksportem (albo został usunięty, jeśli wstawiono go bezpośrednio).
+- [ ] Przestarzałe propsy są mapowane z ostrzeżeniem w runtime, a nie usuwane na twardo.
+- [ ] Zaktualizowane testy snapshotów (identyczny wygląd przy znanych breakpointach).
+- [ ] Przegląd z VoiceOver / TalkBack przechodzi - przejdź listę kontrolną z dokumentu **Accessibility**.
+- [ ] Ustawienie ograniczenia ruchu jest respektowane - sprawdź, czy `PressableScale` pomija animację.
+- [ ] Bramka feature flagi usunięta po 48 h stabilnego działania na produkcji.
+
+---
+
+## Co czytać dalej
+
+- **Theming** - jak nowy provider łączy stan aplikacji z preferencjami
+  systemu.
+- **Accessibility** - co migracja daje Ci od razu.
+- **Patterns / AppShell** - kanoniczny układ, do którego warto dążyć.
+
+</Translated>

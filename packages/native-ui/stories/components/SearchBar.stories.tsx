@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { within, userEvent, expect, fn, waitFor } from 'storybook/test';
 import { SearchBar } from '../../src/components/SearchBar';
@@ -76,7 +76,7 @@ export const Playground: Story = {
     await expect(input).toBeInTheDocument();
     await userEvent.type(input, 'office');
     await expect(input).toHaveValue('office');
-    // Debounced `onChangeText` must eventually be called with the final value.
+    /* Debounced `onChangeText` must eventually be called with the final value. */
     await waitFor(
       async () => {
         const calls = (args.onChangeText as ReturnType<typeof fn>).mock.calls;

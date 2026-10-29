@@ -1,6 +1,9 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { Translated } from './components/i18n/Translated';
 
 <Meta title="Accessibility" />
+
+<Translated lang="en">
 
 # Accessibility
 
@@ -97,8 +100,12 @@ import { hitSlop } from '@polprog/native-ui';
 ### Verifying contrast in stories
 
 The **a11y** addon panel at the bottom of every story runs axe-core
-live. Violations appear as red items you can click to expand. The CI
-`test-storybook` run fails on new violations.
+live. Violations appear as red items you can click to expand. Every
+story also runs as a Vitest browser test (`npm run test --workspace=@polprog/storybook`,
+or the testing widget in the Storybook sidebar), and CI fails on any
+violation in stories whose `parameters.a11y.test` is `'error'`, the
+project default. Stories with known, tracked issues use `'todo'`, which
+reports violations as warnings.
 
 ---
 
@@ -186,7 +193,7 @@ ship an unlabelled icon button even by accident.
 
 Native-UI uses `I18nManager.isRTL` where layout direction matters
 (`HStack`, `PressableScale` pressed highlights, `HeaderBar` back
-button). Stories expose the `Locale` toolbar with an **AR** option that
+button). Stories expose **Locale** in the **Appearance** menu with an **AR** option that
 flips the storybook canvas to `direction: 'rtl'` live.
 
 ---
@@ -248,3 +255,268 @@ Run this before every release tag.
 - **Components / Button**, **Components / Input** - the "Do / Don't" and
   "HighContrastPreview" stories show every a11y rule in action.
 - **Patterns / Forms** - live-region error announcement patterns.
+
+</Translated>
+
+<Translated lang="pl">
+
+# Dostępność
+
+Native-UI celuje w **WCAG 2.2 poziom AA** na iOS i Androidzie. Każdy
+interaktywny komponent ma semantyczne role, opisane stany, minimalny obszar
+dotyku 44 × 44 pt i respektuje preferencje użytkownika z poziomu systemu
+(Reduce Motion, Dynamic Type, Bold Text, High Contrast, Reduce
+Transparency).
+
+> **Zasada.** Dostępność to nie lista rzeczy, o których trzeba pamiętać
+> przy korzystaniu z biblioteki - to zestaw ustawień domyślnych, które
+> każdy komponent ma od razu i których Twój kod nie może przypadkiem
+> wyłączyć.
+
+---
+
+## 1. Co dostajesz od razu
+
+### 1.1 Role semantyczne
+
+Każdy interaktywny prymityw ustawia właściwe `accessibilityRole`:
+
+| Komponent | Rola | Uwagi |
+|---|---|---|
+| `Button` | `button` | `busy` podczas `loading`, `disabled`, gdy jest wyłączony |
+| `IconButton` | `button` | `accessibilityLabel` jest **wymagany** (bez niego błąd kompilacji) |
+| `Checkbox` | `checkbox` | Udostępnia `checked` jako `true`, `false` lub `'mixed'` |
+| `Radio` | `radio` | Zagnieżdżony w kontenerze `radiogroup` dla nawigacji strzałkami |
+| `Switch` | `switch` | Natywna rola przez `<Switch>` z React Native |
+| `Input` / `TextArea` | dziedziczona | Komunikaty błędów używają `accessibilityLiveRegion="polite"` |
+| `SearchBar` | `search` | Ogłasza zmiany liczby wyników, gdy jest połączony z wynikami |
+| `ProgressBar` | `progressbar` | `accessibilityValue.now/min/max` wypełniane automatycznie |
+| `Modal` / `BottomSheet` | okno modalne | Fokus uwięziony po otwarciu, przywracany po zamknięciu |
+| `Heading` | `header` | Czytniki ekranu ogłaszają poziom nagłówka |
+| `ListItem` | `button` (klikalny) / `text` | Rola zależy od tego, czy podano `onPress` |
+| `Toast` | `alert` | Ogłaszany przez czytniki ekranu po pojawieniu się |
+
+### 1.2 Ogłaszanie stanów
+
+Interaktywne komponenty udostępniają pełne obiekty `accessibilityState`:
+
+- `disabled` - ogłaszany jako „dimmed” / „disabled”.
+- `checked` - trójstanowy dla nieokreślonego stanu `Checkbox`.
+- `selected` - dla `Radio` i zaznaczonego `Chip`.
+- `busy` - dla `Button` podczas `loading`, dla `SearchBar` w trakcie
+  debounce.
+- `expanded` - dla `BottomSheet` i zwijanego `Section`.
+
+### 1.3 Regiony live
+
+Błędy walidacji (`Input`, `TextArea`, `Select`) używają
+`accessibilityLiveRegion="polite"`. Gdy komunikat błędu zmienia się z
+pustego na wypełniony, czytnik ekranu ogłasza go bez przerywania bieżącego
+kontekstu fokusu.
+
+Toasty używają roli `alert` (`aria-live="assertive"` w wersji web), więc
+krytyczne komunikaty są ogłaszane natychmiast.
+
+---
+
+## 2. Obszary dotyku
+
+Każdy klikalny element spełnia minimalne wymagania platformy:
+
+| Platforma | Minimum | Jak egzekwuje to biblioteka |
+|---|---|---|
+| iOS | 44 × 44 pt (HIG) | `hitSlop.ios = { top: 8, bottom: 8, left: 8, right: 8 }` wokół każdego mniejszego elementu |
+| Android | 48 × 48 dp (Material) | `hitSlop.android = { top: 10, bottom: 10, left: 10, right: 10 }` |
+
+```tsx
+// Wbudowany token (eksportowany na potrzeby własnych komponentów)
+import { hitSlop } from '@polprog/native-ui';
+
+<Pressable hitSlop={hitSlop.ios} /* lub wybór zależny od platformy */>
+```
+
+> **Nie** nadpisuj `hitSlop`, żeby zmniejszyć obszar dotyku. Jeśli element
+> jest mniejszy niż 44 pt, zostaw domyślny slop - dodatkowy niewidoczny
+> obszar sprawia, że przycisk da się trafić osobom z drżeniem rąk albo z
+> wilgotnymi palcami lub w rękawiczkach.
+
+---
+
+## 3. Kontrast kolorów (WCAG 2.2 AA)
+
+- Każdy token `textOn<Background>` jest dobierany przez `getContrastText()`
+  tak, by zagwarantować współczynnik kontrastu **≥ 4.5 : 1** dla tekstu
+  podstawowego i **≥ 3 : 1** dla dużego tekstu (≥ 18 pt / 14 pt pogrubiony).
+- Semantyczne kolory `success` / `warning` / `error` są dostrajane względem
+  tokenów powierzchni, a nie tylko bieli - dzięki temu błędy w trybie
+  ciemnym pozostają czytelne.
+- `highContrast: true` przybliża `textSecondary` i `textTertiary` do
+  `textPrimary` z myślą o osobach słabowidzących, bez zmiany układu.
+
+### Sprawdzanie kontrastu w story
+
+Panel dodatku **a11y** na dole każdej story uruchamia axe-core na żywo.
+Naruszenia pojawiają się jako czerwone pozycje, które można rozwinąć
+kliknięciem. Każda story działa też jako test przeglądarkowy Vitest
+(`npm run test --workspace=@polprog/storybook` lub widżet testów w pasku
+bocznym Storybooka), a CI kończy się błędem przy każdym naruszeniu w
+story, których `parameters.a11y.test` ma wartość `'error'`, czyli domyślną
+dla projektu. Story ze znanymi, śledzonymi problemami używają `'todo'`,
+które zgłasza naruszenia jako ostrzeżenia.
+
+---
+
+## 4. Ruch i animacje
+
+Przełącznik konfiguracji `reduceAnimations` (albo udostępnione przez niego
+systemowe ustawienie „Reduce Motion”) przełącza całą bibliotekę w tryb bez
+animacji:
+
+| Komponent | Domyślnie | `reduceAnimations: true` |
+|---|---|---|
+| `PressableScale` | Sprężynowe skalowanie do 0.97 przy naciśnięciu | Brak efektu (natychmiast) |
+| `Skeleton` | Liniowy shimmer | Statyczny kolor bazowy |
+| `Toast` | Wsunięcie + zanikanie 300 ms | Natychmiastowe pojawienie / zniknięcie |
+| `BottomSheet` | Sprężynowe wsunięcie 250 ms | Natychmiastowe otwarcie / zamknięcie |
+| `Modal` | Zanikanie 200 ms | Natychmiast |
+| `ConfettiOverlay` | Wybuch cząsteczek w 60 fps | Brak efektu (element widoczny, bez ruchu) |
+
+```tsx
+import { AccessibilityInfo } from 'react-native';
+// podłączenie w prawdziwej aplikacji:
+const [reduce, setReduce] = useState(false);
+useEffect(() => {
+  AccessibilityInfo.isReduceMotionEnabled().then(setReduce);
+  const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduce);
+  return () => sub.remove();
+}, []);
+
+<NativeUIProvider config={{ reduceAnimations: reduce }}>
+```
+
+---
+
+## 5. Skalowanie czcionek (Dynamic Type)
+
+Trzy poziomy skali na poziomie biblioteki, które **nakładają się na**
+systemową skalę czcionek z ustawień dostępności systemu:
+
+| Poziom | Korekta biblioteki | Przy systemowej skali tekstu „XL” |
+|---|---|---|
+| `default` | ±0 px | nadal respektuje skalę systemu |
+| `medium` | +2 px | +2 + system |
+| `large` | +4 px | +4 + system |
+
+Każdy wariant typografii jest zdefiniowany przez tokeny `fontSize` +
+`lineHeight`, które skalują się razem, więc żaden akapit nie zostanie
+przycięty w pionie przy Dynamic Type.
+
+> **Wskazówka.** Aby dokładnie odwzorować iOS „Large Text”, użyj
+> `PixelRatio.getFontScale()` i mapuj > 1.2 -> `'large'`, > 1.0 ->
+> `'medium'`, w pozostałych przypadkach `'default'`.
+
+---
+
+## 6. Przyciski z samą ikoną
+
+`IconButton` **wymaga** `accessibilityLabel` na poziomie TypeScriptu:
+
+```tsx
+// ❌ błąd kompilacji - brak accessibilityLabel
+<IconButton icon={<SearchIcon />} onPress={open} />
+
+// ✅
+<IconButton icon={<SearchIcon />} accessibilityLabel="Search" onPress={open} />
+```
+
+To celowe usunięcie furtki na poziomie biblioteki: nie da się wydać
+przycisku z ikoną bez etykiety, nawet przez przypadek.
+
+---
+
+## 7. Zarządzanie fokusem
+
+- `Modal` i `BottomSheet` po otwarciu więżą fokus w swoim wnętrzu, a po
+  zamknięciu przywracają go do elementu, który je otworzył.
+- `Input` udostępnia przez ref API `focus()` / `blur()`, dzięki czemu
+  formularze mogą jawnie sterować fokusem.
+- `BottomTabBar` ustawia `accessibilityRole="tablist"`, a każdą kartę jako
+  `tab` + `accessibilityState.selected`, więc VoiceOver ogłasza „Tab 1
+  of 4, selected”.
+
+---
+
+## 8. Obsługa RTL
+
+Native-UI korzysta z `I18nManager.isRTL` tam, gdzie kierunek układu ma
+znaczenie (`HStack`, podświetlenia po naciśnięciu w `PressableScale`,
+przycisk powrotu w `HeaderBar`). Story udostępniają **Locale** w menu
+**Appearance** z opcją **AR**, która na żywo przełącza kanwę Storybooka
+na `direction: 'rtl'`.
+
+---
+
+## 9. Dobre praktyki dla aplikacji korzystających z biblioteki
+
+### Rób tak ✅
+
+- Podawaj `accessibilityLabel` **każdemu** przyciskowi z samą ikoną.
+- Używaj semantycznych wariantów `Text` (`h1`, `h2`, `body`, `caption`),
+  żeby zachować poprawną hierarchię nagłówków - czytniki ekranu ją
+  analizują.
+- Używaj `<Heading level={n}>` do nagłówków sekcji
+  (`accessibilityRole="header"` + `aria-level={n}` w wersji web).
+- Uruchamiaj VoiceOver (iOS: trzykrotne naciśnięcie przycisku bocznego) i
+  TalkBack (Android: Ustawienia > Ułatwienia dostępu > TalkBack) na każdym
+  nowym ekranie **przed** code review.
+- Respektuj `reduceAnimations` we wszystkich własnych animacjach.
+- Testuj z **Larger Accessibility Sizes** na iOS, żeby wychwycić obcięty
+  tekst.
+- Przekazując stan, łącz kolor z ikoną lub tekstem - kolor jest
+  wskazówką, nigdy jedynym sygnałem.
+
+### Nie rób tak ❌
+
+- Nie pomijaj `accessibilityLabel`, żeby zaoszczędzić kilka znaków.
+- Nie polegaj wyłącznie na kolorze (czerwony = błąd) - zawsze dodaj ikonę
+  lub słowo.
+- Nie używaj `<Text variant="h2">` jako stylu wizualnego dla czegoś, co
+  semantycznie jest podtytułem - użyj właściwego wariantu i w razie
+  potrzeby dostosuj go tokenami `semantic`.
+- Nie nadpisuj `hitSlop`, żeby zmniejszyć obszar dotyku.
+- Nie dodawaj własnych animacji, które ignorują `reduceAnimations`.
+- Nie przerywaj zadania użytkownika `Toast` w wariancie `error`, gdy
+  wystarczyłby błąd walidacji wewnątrz formularza.
+
+---
+
+## 10. Lista kontrolna a11y przed wydaniem
+
+Przejdź ją przed każdym tagiem wydania.
+
+- [ ] Panel **Axe** czysty w każdej story (0 naruszeń w `build-storybook`).
+- [ ] Przegląd z **VoiceOver** każdego kluczowego ekranu - tytuły,
+      przyciski i błędy formularzy są poprawnie ogłaszane.
+- [ ] Przegląd z **TalkBack** - kolejność fokusu zgadza się z kolejnością
+      wizualną.
+- [ ] Dynamic Type w rozmiarze **XL** na iOS - bez przyciętego tekstu i
+      nakładania się elementów.
+- [ ] **Reduce Motion** na iOS - bez paralaksy i sprężystych przejść.
+- [ ] **High Contrast** na iOS / **High Contrast Text** na Androidzie -
+      wszystkie semantyczne kolory stanów nadal czytelne.
+- [ ] **RTL** (`I18nManager.forceRTL(true)`) - przycisk powrotu w
+      `HeaderBar` jest odwrócony, listy wyrównane do prawej.
+- [ ] Kontrola pod kątem daltonizmu (`protanopia` / `deuteranopia` /
+      `tritanopia`) - żaden stan nie jest przekazywany wyłącznie kolorem.
+
+---
+
+## Co czytać dalej
+
+- **Theming** - jak `highContrast` / `fontSize` / `reduceAnimations`
+  współdziałają z systemem presetów.
+- **Components / Button**, **Components / Input** - story „Do / Don't” i
+  „HighContrastPreview” pokazują każdą regułę a11y w działaniu.
+- **Patterns / Forms** - wzorce ogłaszania błędów przez regiony live.
+
+</Translated>

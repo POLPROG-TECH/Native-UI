@@ -72,7 +72,7 @@ export const Playground: Story = {
 const ThemedButtonText = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
 
-  return <Text style={{ color: theme.colors.primary, fontSize: 17 }}>{children}</Text>;
+  return <Text style={{ color: theme.colors.primaryText, fontSize: 17 }}>{children}</Text>;
 };
 
 const BrandWordmark = () => {
@@ -83,7 +83,9 @@ const BrandWordmark = () => {
       <Text style={{ fontSize: 22, fontWeight: '700', color: theme.colors.textPrimary }}>
         Daily
       </Text>
-      <Text style={{ fontSize: 22, fontWeight: '700', color: theme.colors.primary }}>Forma</Text>
+      <Text style={{ fontSize: 22, fontWeight: '700', color: theme.colors.primaryText }}>
+        Forma
+      </Text>
     </View>
   );
 };

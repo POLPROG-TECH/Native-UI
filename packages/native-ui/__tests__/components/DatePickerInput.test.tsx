@@ -1,295 +1,300 @@
-import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import { DatePickerInput } from '../../src/components/DatePickerInput';
 import { renderWithTheme } from '../test-utils';
 
 describe('DatePickerInput', () => {
-  it('should be exported as a function component', () => {
-    // GIVEN the DatePickerInput export from the components module
+  describe('GIVEN the DatePickerInput export from the components module', () => {
+    describe('WHEN its runtime type is inspected', () => {
+      it('THEN it is a function component', () => {
+        const actualType = typeof DatePickerInput;
 
-    // WHEN its runtime type is inspected
-    const actualType = typeof DatePickerInput;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
+        expect(actualType).toBe('function');
+      });
+    });
   });
 
-  it('should render the label when a label prop is provided', () => {
-    // GIVEN a DatePickerInput configured with a "Start date" label
+  describe('GIVEN a DatePickerInput configured with a "Start date" label', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the label text is present in the document', () => {
+        renderWithTheme(
+          <DatePickerInput label="Start date" value="2025-01-15" onChange={() => {}} />,
+        );
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<DatePickerInput label="Start date" value="2025-01-15" onChange={() => {}} />);
-
-    // THEN the label text is present in the document
-    expect(screen.getByText('Start date')).toBeInTheDocument();
+        expect(screen.getByText('Start date')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render a required asterisk next to the label when required', () => {
-    // GIVEN a DatePickerInput marked as required
+  describe('GIVEN a DatePickerInput marked as required', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the asterisk is present', () => {
+        renderWithTheme(
+          <DatePickerInput label="Due date" value="2025-01-15" onChange={() => {}} required />,
+        );
 
-    // WHEN the component is rendered
-    renderWithTheme(
-      <DatePickerInput label="Due date" value="2025-01-15" onChange={() => {}} required />,
-    );
-
-    // THEN the asterisk is present
-    expect(screen.getByText('*')).toBeInTheDocument();
+        expect(screen.getByText('*')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render the error message with the alert role when error is set', () => {
-    // GIVEN a DatePickerInput that has a validation error
+  describe('GIVEN a DatePickerInput that has a validation error', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the error is exposed via the alert role', () => {
+        renderWithTheme(
+          <DatePickerInput
+            label="Date"
+            value="2025-01-15"
+            onChange={() => {}}
+            error="Date is required"
+          />,
+        );
 
-    // WHEN the component is rendered
-    renderWithTheme(
-      <DatePickerInput
-        label="Date"
-        value="2025-01-15"
-        onChange={() => {}}
-        error="Date is required"
-      />,
-    );
+        const alert = screen.getByRole('alert');
 
-    // THEN the error is exposed via the alert role
-    const alert = screen.getByRole('alert');
-
-    expect(alert).toHaveTextContent('Date is required');
+        expect(alert).toHaveTextContent('Date is required');
+      });
+    });
   });
 
-  it('should display the formatted date value in date mode', () => {
-    // GIVEN a DatePickerInput with a date value
+  describe('GIVEN a DatePickerInput with a date value', () => {
+    describe('WHEN the component is rendered with en-US locale', () => {
+      it('THEN the formatted month abbreviation is visible', () => {
+        renderWithTheme(<DatePickerInput value="2025-06-20" onChange={() => {}} locale="en-US" />);
 
-    // WHEN the component is rendered with en-US locale
-    renderWithTheme(<DatePickerInput value="2025-06-20" onChange={() => {}} locale="en-US" />);
-
-    // THEN the formatted month abbreviation is visible
-    expect(screen.getByText(/Jun/)).toBeInTheDocument();
+        expect(screen.getByText(/Jun/)).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render a pressable button with the label as accessibility label', () => {
-    // GIVEN a DatePickerInput with a "Start" label
+  describe('GIVEN a DatePickerInput with a "Start" label', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the button is accessible by its label', () => {
+        renderWithTheme(<DatePickerInput label="Start" value="2025-01-15" onChange={() => {}} />);
 
-    // WHEN the component is rendered
-    renderWithTheme(<DatePickerInput label="Start" value="2025-01-15" onChange={() => {}} />);
-
-    // THEN the button is accessible by its label
-    expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Start' })).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render placeholder text when value is empty and placeholder is set', () => {
-    // GIVEN a DatePickerInput with an empty value and a placeholder
+  describe('GIVEN a DatePickerInput with an empty value and a placeholder', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the placeholder text is visible', () => {
+        renderWithTheme(<DatePickerInput value="" onChange={() => {}} placeholder="Pick a date" />);
 
-    // WHEN the component is rendered
-    renderWithTheme(<DatePickerInput value="" onChange={() => {}} placeholder="Pick a date" />);
-
-    // THEN the placeholder text is visible
-    expect(screen.getByText('Pick a date')).toBeInTheDocument();
+        expect(screen.getByText('Pick a date')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render the formatted date instead of placeholder when value is set', () => {
-    // GIVEN a DatePickerInput with a value AND a placeholder
+  describe('GIVEN a DatePickerInput with a value AND a placeholder', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the placeholder is hidden and the formatted date is shown', () => {
+        renderWithTheme(
+          <DatePickerInput
+            value="2025-03-10"
+            onChange={() => {}}
+            placeholder="Pick a date"
+            locale="en-US"
+          />,
+        );
 
-    // WHEN the component is rendered
-    renderWithTheme(
-      <DatePickerInput
-        value="2025-03-10"
-        onChange={() => {}}
-        placeholder="Pick a date"
-        locale="en-US"
-      />,
-    );
-
-    // THEN the placeholder is hidden and the formatted date is shown
-    expect(screen.queryByText('Pick a date')).not.toBeInTheDocument();
-    expect(screen.getByText(/Mar/)).toBeInTheDocument();
+        expect(screen.queryByText('Pick a date')).not.toBeInTheDocument();
+        expect(screen.getByText(/Mar/)).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should forward testID to the outermost View', () => {
-    // GIVEN a DatePickerInput with a testID prop
+  describe('GIVEN a DatePickerInput with a testID prop', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the testID attribute is present on a DOM element', () => {
+        const { container } = renderWithTheme(
+          <DatePickerInput value="2025-01-15" onChange={() => {}} testID="my-picker" />,
+        );
 
-    // WHEN the component is rendered
-    const { container } = renderWithTheme(
-      <DatePickerInput value="2025-01-15" onChange={() => {}} testID="my-picker" />,
-    );
-
-    // THEN the testID attribute is present on a DOM element
-    expect(container.querySelector('[testid="my-picker"]')).toBeTruthy();
+        expect(container.querySelector('[data-testid="my-picker"]')).toBeTruthy();
+      });
+    });
   });
 
-  it('should apply reduced opacity when disabled', () => {
-    // GIVEN a disabled DatePickerInput with a testID for querying
+  describe('GIVEN a disabled DatePickerInput with a testID for querying', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the outer container has opacity 0.5', () => {
+        const { container } = renderWithTheme(
+          <DatePickerInput
+            label="Date"
+            value="2025-01-15"
+            onChange={() => {}}
+            disabled
+            testID="disabled-picker"
+          />,
+        );
 
-    // WHEN the component is rendered
-    const { container } = renderWithTheme(
-      <DatePickerInput
-        label="Date"
-        value="2025-01-15"
-        onChange={() => {}}
-        disabled
-        testID="disabled-picker"
-      />,
-    );
+        const outerView = container.querySelector('[data-testid="disabled-picker"]') as HTMLElement;
 
-    // THEN the outer container has opacity 0.5
-    const outerView = container.querySelector('[testid="disabled-picker"]') as HTMLElement;
-
-    expect(outerView).toBeTruthy();
-    expect(outerView.style.opacity).toBe('0.5');
+        expect(outerView).toBeTruthy();
+        expect(outerView.style.opacity).toBe('0.5');
+      });
+    });
   });
 
-  it('should set aria-disabled on the pressable when disabled', () => {
-    // GIVEN a disabled DatePickerInput
+  describe('GIVEN a disabled DatePickerInput', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the button exposes aria-disabled', () => {
+        renderWithTheme(
+          <DatePickerInput label="Date" value="2025-01-15" onChange={() => {}} disabled />,
+        );
 
-    // WHEN the component is rendered
-    renderWithTheme(
-      <DatePickerInput label="Date" value="2025-01-15" onChange={() => {}} disabled />,
-    );
+        const button = screen.getByRole('button');
 
-    // THEN the button exposes aria-disabled
-    const button = screen.getByRole('button');
-
-    expect(button).toHaveAttribute('aria-disabled', 'true');
+        expect(button).toHaveAttribute('aria-disabled', 'true');
+      });
+    });
   });
 
-  it('should render a time value in time mode', () => {
-    // GIVEN a DatePickerInput in time mode with an HH:MM value
+  describe('GIVEN a DatePickerInput in time mode with an HH:MM value', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the button is present (time is rendered as text)', () => {
+        renderWithTheme(
+          <DatePickerInput mode="time" value="14:30" onChange={() => {}} locale="en-US" />,
+        );
 
-    // WHEN the component is rendered
-    renderWithTheme(
-      <DatePickerInput mode="time" value="14:30" onChange={() => {}} locale="en-US" />,
-    );
-
-    // THEN the button is present (time is rendered as text)
-    expect(screen.getByRole('button')).toBeInTheDocument();
+        expect(screen.getByRole('button')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render a datetime value in datetime mode', () => {
-    // GIVEN a DatePickerInput in datetime mode
+  describe('GIVEN a DatePickerInput in datetime mode', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the formatted month appears in the output', () => {
+        renderWithTheme(
+          <DatePickerInput
+            mode="datetime"
+            value="2025-06-15T14:00"
+            onChange={() => {}}
+            locale="en-US"
+          />,
+        );
 
-    // WHEN the component is rendered
-    renderWithTheme(
-      <DatePickerInput
-        mode="datetime"
-        value="2025-06-15T14:00"
-        onChange={() => {}}
-        locale="en-US"
-      />,
-    );
-
-    // THEN the formatted month appears in the output
-    expect(screen.getByText(/Jun/)).toBeInTheDocument();
+        expect(screen.getByText(/Jun/)).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should default mode to date when not specified', () => {
-    // GIVEN a DatePickerInput without an explicit mode
+  describe('GIVEN a DatePickerInput without an explicit mode', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN it renders in date mode (showing month abbreviation)', () => {
+        renderWithTheme(<DatePickerInput value="2025-01-15" onChange={() => {}} locale="en-US" />);
 
-    // WHEN the component is rendered
-    renderWithTheme(<DatePickerInput value="2025-01-15" onChange={() => {}} locale="en-US" />);
-
-    // THEN it renders in date mode (showing month abbreviation)
-    expect(screen.getByText(/Jan/)).toBeInTheDocument();
+        expect(screen.getByText(/Jan/)).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render a clear button when clearable is true and value is set', () => {
-    // GIVEN a clearable DatePickerInput with a value
+  describe('GIVEN a clearable DatePickerInput with a value', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN a clear button with the drawn close icon is present', () => {
+        renderWithTheme(
+          <DatePickerInput value="2025-01-15" onChange={() => {}} clearable testID="date" />,
+        );
 
-    // WHEN the component is rendered
-    renderWithTheme(<DatePickerInput value="2025-01-15" onChange={() => {}} clearable />);
-
-    // THEN a clear button with the ✕ icon is present
-    expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
-    expect(screen.getByText('✕')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
+        expect(screen.getByTestId('date-clear-icon')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should NOT render a clear button when value is empty', () => {
-    // GIVEN a clearable DatePickerInput without a value
+  describe('GIVEN a clearable DatePickerInput without a value', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN no clear button is shown', () => {
+        renderWithTheme(
+          <DatePickerInput value="" onChange={() => {}} clearable placeholder="Select" />,
+        );
 
-    // WHEN the component is rendered
-    renderWithTheme(
-      <DatePickerInput value="" onChange={() => {}} clearable placeholder="Select" />,
-    );
-
-    // THEN no clear button is shown
-    expect(screen.queryByRole('button', { name: 'Clear' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Clear' })).not.toBeInTheDocument();
+      });
+    });
   });
 
-  it('should NOT render a clear button when disabled', () => {
-    // GIVEN a clearable but disabled DatePickerInput with a value
+  describe('GIVEN a clearable but disabled DatePickerInput with a value', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN no clear button is shown', () => {
+        renderWithTheme(
+          <DatePickerInput value="2025-01-15" onChange={() => {}} clearable disabled />,
+        );
 
-    // WHEN the component is rendered
-    renderWithTheme(<DatePickerInput value="2025-01-15" onChange={() => {}} clearable disabled />);
-
-    // THEN no clear button is shown
-    expect(screen.queryByRole('button', { name: 'Clear' })).not.toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Clear' })).not.toBeInTheDocument();
+      });
+    });
   });
 
-  it('should call onChange with empty string when clear button is pressed', () => {
-    // GIVEN a clearable DatePickerInput with an onChange spy
-    const onChange = jest.fn();
+  describe('GIVEN a clearable DatePickerInput with an onChange spy', () => {
+    describe('WHEN the clear button is clicked', () => {
+      it('THEN onChange is called with an empty string', () => {
+        const onChange = jest.fn();
 
-    // WHEN the clear button is clicked
-    renderWithTheme(<DatePickerInput value="2025-01-15" onChange={onChange} clearable />);
-    fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+        renderWithTheme(<DatePickerInput value="2025-01-15" onChange={onChange} clearable />);
+        fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
 
-    // THEN onChange is called with an empty string
-    expect(onChange).toHaveBeenCalledWith('');
+        expect(onChange).toHaveBeenCalledWith('');
+      });
+    });
   });
 
-  it('should call onClear instead of onChange when onClear is provided', () => {
-    // GIVEN a clearable DatePickerInput with both onChange and onClear
-    const onChange = jest.fn();
-    const onClear = jest.fn();
+  describe('GIVEN a clearable DatePickerInput with both onChange and onClear', () => {
+    describe('WHEN the clear button is clicked', () => {
+      it('THEN onClear is called and onChange is not', () => {
+        const onChange = jest.fn();
+        const onClear = jest.fn();
 
-    // WHEN the clear button is clicked
-    renderWithTheme(
-      <DatePickerInput value="2025-01-15" onChange={onChange} clearable onClear={onClear} />,
-    );
-    fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+        renderWithTheme(
+          <DatePickerInput value="2025-01-15" onChange={onChange} clearable onClear={onClear} />,
+        );
+        fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
 
-    // THEN onClear is called and onChange is not
-    expect(onClear).toHaveBeenCalledTimes(1);
-    expect(onChange).not.toHaveBeenCalled();
+        expect(onClear).toHaveBeenCalledTimes(1);
+        expect(onChange).not.toHaveBeenCalled();
+      });
+    });
   });
 
-  it('should accept onOpen and onClose without crashing', () => {
-    // GIVEN a DatePickerInput with onOpen and onClose callbacks
-    // (native picker is not available in this test environment, so callbacks
-    // won't fire - this test verifies the props are accepted gracefully)
+  describe("GIVEN a DatePickerInput with onOpen and onClose callbacks (native picker is not available in this test environment, so callbacks won't fire - this test verifies the props are accepted gracefully)", () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN it renders without throwing', () => {
+        const onOpen = jest.fn();
+        const onClose = jest.fn();
+        const renderFn = () =>
+          renderWithTheme(
+            <DatePickerInput
+              label="Date"
+              value="2025-01-15"
+              onChange={() => {}}
+              onOpen={onOpen}
+              onClose={onClose}
+            />,
+          );
 
-    // WHEN the component is rendered
-    const onOpen = jest.fn();
-    const onClose = jest.fn();
-    const renderFn = () =>
-      renderWithTheme(
-        <DatePickerInput
-          label="Date"
-          value="2025-01-15"
-          onChange={() => {}}
-          onOpen={onOpen}
-          onClose={onClose}
-        />,
-      );
-
-    // THEN it renders without throwing
-    expect(renderFn).not.toThrow();
+        expect(renderFn).not.toThrow();
+      });
+    });
   });
 
-  it('should accept isOpen controlled prop without crashing', () => {
-    // GIVEN a DatePickerInput with controlled isOpen state
+  describe('GIVEN a DatePickerInput with controlled isOpen state', () => {
+    describe('WHEN the component is rendered with isOpen=true', () => {
+      it('THEN it renders without throwing', () => {
+        const renderFn = () =>
+          renderWithTheme(
+            <DatePickerInput
+              label="Date"
+              value="2025-01-15"
+              onChange={() => {}}
+              isOpen={true}
+              onOpen={() => {}}
+              onClose={() => {}}
+            />,
+          );
 
-    // WHEN the component is rendered with isOpen=true
-    const renderFn = () =>
-      renderWithTheme(
-        <DatePickerInput
-          label="Date"
-          value="2025-01-15"
-          onChange={() => {}}
-          isOpen={true}
-          onOpen={() => {}}
-          onClose={() => {}}
-        />,
-      );
-
-    // THEN it renders without throwing
-    expect(renderFn).not.toThrow();
+        expect(renderFn).not.toThrow();
+      });
+    });
   });
 });

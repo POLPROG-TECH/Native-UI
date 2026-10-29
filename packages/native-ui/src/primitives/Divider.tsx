@@ -1,34 +1,34 @@
-import { StyleSheet, View, type ViewStyle } from 'react-native';
+import { View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 
 export interface DividerProps {
   /** Left/right inset for the divider line */
   inset?: number;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
+  /** Test ID forwarded to the divider line. */
+  testID?: string;
 }
 
-/** A thin horizontal divider line using the theme divider color. */
-export function Divider({ inset = 0, style }: DividerProps) {
+/**
+ * A thin horizontal divider line using the theme divider color. Its thickness
+ * comes from `theme.components.divider.thickness` (a hairline by default).
+ */
+export function Divider({ inset = 0, style, testID }: DividerProps) {
   const theme = useTheme();
 
   return (
     <View
       style={[
-        styles.divider,
         {
+          height: theme.components.divider.thickness,
           backgroundColor: theme.colors.divider,
           marginLeft: inset,
           marginRight: inset,
         },
         style,
       ]}
+      testID={testID}
       accessibilityElementsHidden
     />
   );
 }
-
-const styles = StyleSheet.create({
-  divider: {
-    height: StyleSheet.hairlineWidth,
-  },
-});

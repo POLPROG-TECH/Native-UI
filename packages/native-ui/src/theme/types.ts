@@ -2,7 +2,7 @@ import type { ColorScheme } from '../tokens/colors';
 import type { Typography, TypographyDensity } from '../tokens/typography';
 import type { FontFamilies } from '../tokens/fonts';
 import type {
-  spacing,
+  SpacingScale,
   iconSize,
   hitSlop,
   elevation,
@@ -18,13 +18,15 @@ import type { ThemePreset, BloomPreset, FontColor } from '../tokens/colors';
 import type { FontSize } from '../tokens/typography';
 import type { SemanticTokens } from '../tokens/semantic';
 import type { ThemeVariant, ThemeVariantName } from './variants';
+import type { NativeUILabels } from './labels';
+import type { ComponentTokens, ComponentTokenOverrides } from '../tokens/components';
 
 export interface Theme {
   colors: ColorScheme;
   typography: Typography;
   /** Resolved font-family map (regular/medium/semiBold/bold). */
   fontFamilies: FontFamilies;
-  spacing: typeof spacing;
+  spacing: SpacingScale;
   borderRadius: BorderRadiusScale;
   iconSize: typeof iconSize;
   hitSlop: typeof hitSlop;
@@ -39,6 +41,12 @@ export interface Theme {
   isDark: boolean;
   reduceAnimations: boolean;
   fontScale: number;
+  /** Resolved library strings (defaults merged with `config.labels`). */
+  labels: NativeUILabels;
+  /** BCP 47 locale for date and number formatting. */
+  locale: string;
+  /** Resolved per-component tokens (defaults merged with `config.components`). */
+  components: ComponentTokens;
 }
 
 /** Configuration accepted by NativeUIProvider */
@@ -69,6 +77,11 @@ export interface NativeUIConfig {
   /** Custom accent color override (hex, e.g. '#FF5733') */
   customAccent?: string | null;
   /**
+   * Minimum contrast ratio enforced for text on solid fills (`colors.on*`).
+   * Pass `7` for WCAG AAA. (default: `WCAG_AA_TEXT_CONTRAST`, 4.5)
+   */
+  minTextContrast?: number;
+  /**
    * Font family overrides. Defaults to the platform system font.
    * Consumers that ship Space Grotesk can pass
    * `spaceGroteskFontFamilies` from `@polprog/native-ui`.
@@ -93,6 +106,33 @@ export interface NativeUIConfig {
    * ```
    */
   typography?: TypographyDensity | Typography | ((families: FontFamilies) => Typography);
+  /**
+   * Overrides for strings the library renders itself (accessibility labels,
+   * default captions, placeholders). Unset keys fall back to English.
+   * @example
+   * ```tsx
+   * <NativeUIProvider config={{ labels: { close: 'Zamknij', cancel: 'Anuluj' } }}>
+   * ```
+   */
+  labels?: Partial<NativeUILabels>;
+  /** BCP 47 locale for date formatting, e.g. `'pl-PL'`. (default: `'en-US'`) */
+  locale?: string;
+  /** Overrides for individual spacing steps, merged over the default scale. */
+  spacing?: Partial<SpacingScale>;
+  /**
+   * Overrides for individual corner radii, merged over the active variant's
+   * scale (e.g. `{ xl: 28 }` for rounder sheets).
+   */
+  borderRadius?: Partial<BorderRadiusScale>;
+  /**
+   * Per-component design tokens (paddings, sizes, durations, colors), merged
+   * over the defaults one component at a time.
+   * @example
+   * ```tsx
+   * <NativeUIProvider config={{ components: { bottomSheet: { radius: 28 } } }}>
+   * ```
+   */
+  components?: ComponentTokenOverrides;
   /** Semantic token overrides - partial overrides merged with defaults */
   semanticTokens?: Partial<{
     colors: Partial<SemanticTokens['colors']>;

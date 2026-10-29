@@ -1,40 +1,36 @@
 import React from 'react';
-import { render } from '@testing-library/react';
 import { ErrorBoundary, withErrorBoundary } from '../../src/components/ErrorBoundary';
 import { NativeUIProvider } from '../../src/theme';
-
-function renderWithTheme(ui: React.ReactElement) {
-  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
-}
+import { renderWithTheme } from '../test-utils';
 
 describe('ErrorBoundary', () => {
-  it('should be exported as a class component', () => {
-    // GIVEN the ErrorBoundary export from the components module
+  describe('GIVEN the ErrorBoundary export from the components module', () => {
+    describe('WHEN its runtime type is inspected', () => {
+      it('THEN it is a function constructor (class)', () => {
+        const actualType = typeof ErrorBoundary;
 
-    // WHEN its runtime type is inspected
-    const actualType = typeof ErrorBoundary;
-
-    // THEN it is a function constructor (class)
-    expect(actualType).toBe('function');
+        expect(actualType).toBe('function');
+      });
+    });
   });
 
-  it('should render its children when no error is thrown', () => {
-    // GIVEN an ErrorBoundary wrapping a benign child
+  describe('GIVEN an ErrorBoundary wrapping a benign child', () => {
+    describe('WHEN the tree is rendered inside a theme provider', () => {
+      it('THEN the child content is present in the document', () => {
+        const { getByText } = renderWithTheme(
+          <ErrorBoundary>
+            <span>Safe content</span>
+          </ErrorBoundary>,
+        );
 
-    // WHEN the tree is rendered inside a theme provider
-    const { getByText } = renderWithTheme(
-      <ErrorBoundary>
-        <span>Safe content</span>
-      </ErrorBoundary>,
-    );
-
-    // THEN the child content is present in the document
-    expect(getByText('Safe content')).toBeInTheDocument();
+        expect(getByText('Safe content')).toBeInTheDocument();
+      });
+    });
   });
 });
 
 describe('ErrorBoundary resetKeys', () => {
-  // Silence React's error logging during intentional render-error tests.
+  /* Silence React's error logging during intentional render-error tests. */
   let errorSpy: jest.SpyInstance;
   beforeEach(() => {
     errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -44,69 +40,84 @@ describe('ErrorBoundary resetKeys', () => {
   });
 
   function Thrower({ shouldThrow }: { shouldThrow: boolean }) {
-    if (shouldThrow) throw new Error('boom');
+    if (shouldThrow) {
+      throw new Error('boom');
+    }
 
     return <span>OK</span>;
   }
 
-  it('should reset when resetKeys contents change', () => {
-    // GIVEN a boundary rendering a thrower with initial resetKeys=[1]
-    const { rerender, queryByText, getByText } = renderWithTheme(
-      <ErrorBoundary resetKeys={[1]}>
-        <Thrower shouldThrow />
-      </ErrorBoundary>,
-    );
-    expect(getByText('Try again')).toBeInTheDocument();
+  describe('GIVEN a boundary rendering a thrower with initial resetKeys=[1]', () => {
+    describe('WHEN the resetKeys array changes and the throw condition clears', () => {
+      it('THEN the fallback is cleared and children re-render', () => {
+        const { rerender, queryByText, getByText } = renderWithTheme(
+          <ErrorBoundary resetKeys={[1]}>
+            <Thrower shouldThrow />
+          </ErrorBoundary>,
+        );
+        expect(getByText('Try again')).toBeInTheDocument();
 
-    // WHEN the resetKeys array changes and the throw condition clears
-    rerender(
-      <NativeUIProvider config={{ colorMode: 'light' }}>
-        <ErrorBoundary resetKeys={[2]}>
-          <Thrower shouldThrow={false} />
-        </ErrorBoundary>
-      </NativeUIProvider>,
-    );
+        rerender(
+          <NativeUIProvider config={{ colorMode: 'light' }}>
+            <ErrorBoundary resetKeys={[2]}>
+              <Thrower shouldThrow={false} />
+            </ErrorBoundary>
+          </NativeUIProvider>,
+        );
 
-    // THEN the fallback is cleared and children re-render
-    expect(queryByText('Try again')).not.toBeInTheDocument();
-    expect(getByText('OK')).toBeInTheDocument();
+        expect(queryByText('Try again')).not.toBeInTheDocument();
+        expect(getByText('OK')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should reset when resetKeys presence changes from undefined to defined', () => {
-    // GIVEN a boundary rendering a thrower with no resetKeys
-    const { rerender, queryByText, getByText } = renderWithTheme(
-      <ErrorBoundary>
-        <Thrower shouldThrow />
-      </ErrorBoundary>,
-    );
-    expect(getByText('Try again')).toBeInTheDocument();
+  describe('GIVEN a boundary rendering a thrower with no resetKeys', () => {
+    describe('WHEN resetKeys is introduced (undefined → [1]) and the throw clears', () => {
+      it('THEN the boundary treats presence change as a key change and resets', () => {
+        const { rerender, queryByText, getByText } = renderWithTheme(
+          <ErrorBoundary>
+            <Thrower shouldThrow />
+          </ErrorBoundary>,
+        );
+        expect(getByText('Try again')).toBeInTheDocument();
 
-    // WHEN resetKeys is introduced (undefined → [1]) and the throw clears
-    rerender(
-      <NativeUIProvider config={{ colorMode: 'light' }}>
-        <ErrorBoundary resetKeys={[1]}>
-          <Thrower shouldThrow={false} />
-        </ErrorBoundary>
-      </NativeUIProvider>,
-    );
+        rerender(
+          <NativeUIProvider config={{ colorMode: 'light' }}>
+            <ErrorBoundary resetKeys={[1]}>
+              <Thrower shouldThrow={false} />
+            </ErrorBoundary>
+          </NativeUIProvider>,
+        );
 
-    // THEN the boundary treats presence change as a key change and resets
-    expect(queryByText('Try again')).not.toBeInTheDocument();
-    expect(getByText('OK')).toBeInTheDocument();
+        expect(queryByText('Try again')).not.toBeInTheDocument();
+        expect(getByText('OK')).toBeInTheDocument();
+      });
+    });
   });
 });
 
 describe('withErrorBoundary', () => {
-  it('should return a function component that renders the wrapped component', () => {
-    // GIVEN a simple wrapped component
-    const Base: React.FC<{ msg: string }> = ({ msg }) => <span>{msg}</span>;
-    const Wrapped = withErrorBoundary(Base, { fallbackMessage: 'Boom' });
+  describe('GIVEN a simple wrapped component', () => {
+    describe('WHEN the wrapped component is rendered', () => {
+      it("THEN the wrapped component's output is present and the HOC preserves a display name", () => {
+        const Base: React.FC<{ msg: string }> = ({ msg }) => <span>{msg}</span>;
+        const Wrapped = withErrorBoundary(Base, { fallbackMessage: 'Boom' });
 
-    // WHEN the wrapped component is rendered
-    const { getByText } = renderWithTheme(<Wrapped msg="Hello" />);
+        const { getByText } = renderWithTheme(<Wrapped msg="Hello" />);
 
-    // THEN the wrapped component's output is present and the HOC preserves a display name
-    expect(getByText('Hello')).toBeInTheDocument();
-    expect(Wrapped.displayName).toBe('withErrorBoundary(Base)');
+        expect(getByText('Hello')).toBeInTheDocument();
+        expect(Wrapped.displayName).toBe('withErrorBoundary(Base)');
+      });
+    });
+  });
+
+  describe('GIVEN an anonymous component with no display name', () => {
+    describe('WHEN it is wrapped', () => {
+      it('THEN the HOC falls back to a generic component name', () => {
+        const Wrapped = withErrorBoundary(() => <span>Hi</span>);
+
+        expect(Wrapped.displayName).toBe('withErrorBoundary(Component)');
+      });
+    });
   });
 });

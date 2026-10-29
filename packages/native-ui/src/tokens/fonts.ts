@@ -26,10 +26,10 @@ export interface FontFamilies {
 
 /** Platform system font fallback (safe default - no asset loading required). */
 export const systemFontFamilies: FontFamilies = {
-  regular: Platform.select({ ios: 'System', android: 'Roboto', default: 'System' }) as string,
-  medium: Platform.select({ ios: 'System', android: 'Roboto', default: 'System' }) as string,
-  semiBold: Platform.select({ ios: 'System', android: 'Roboto', default: 'System' }) as string,
-  bold: Platform.select({ ios: 'System', android: 'Roboto', default: 'System' }) as string,
+  regular: Platform.select<string>({ ios: 'System', android: 'Roboto', default: 'System' }),
+  medium: Platform.select<string>({ ios: 'System', android: 'Roboto', default: 'System' }),
+  semiBold: Platform.select<string>({ ios: 'System', android: 'Roboto', default: 'System' }),
+  bold: Platform.select<string>({ ios: 'System', android: 'Roboto', default: 'System' }),
 };
 
 /** Space Grotesk preset - requires the Space Grotesk family to be loaded by the consumer. */
@@ -77,7 +77,7 @@ export function familyForWeight(
       return group.semiBold;
     case '500':
       return group.medium;
-    default:
+    case '400':
       return group.regular;
   }
 }
@@ -123,10 +123,13 @@ export function familiesForLocale(
   locale: string | undefined,
   preferred: FontFamilies = spaceGroteskFontFamilies,
 ): FontFamilies {
-  if (!locale) return preferred;
+  if (!locale) {
+    return preferred;
+  }
 
   const lower = locale.toLowerCase();
   const primary = lower.split('-')[0] ?? lower;
+
   if (NON_LATIN_LOCALES.has(primary) || NON_LATIN_LOCALES.has(lower)) {
     return systemFontFamilies;
   }

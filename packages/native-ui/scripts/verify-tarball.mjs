@@ -26,15 +26,19 @@ const manifest = JSON.parse(raw)[0];
 const present = new Set(manifest.files.map((f) => f.path));
 
 const missing = REQUIRED_FILES.filter((p) => !present.has(p));
+
 if (missing.length > 0) {
-  console.error('❌ Tarball is missing required files:');
-  for (const p of missing) console.error('   - ' + p);
+  console.error('Tarball is missing required files:');
+  for (const p of missing) {
+    console.error('   - ' + p);
+  }
+
   process.exit(1);
 }
 
 if (manifest.size > MAX_PACKED_BYTES) {
   console.error(
-    `❌ Tarball exceeds ${(MAX_PACKED_BYTES / 1024 / 1024).toFixed(1)} MB budget: ${(
+    `Tarball exceeds ${(MAX_PACKED_BYTES / 1024 / 1024).toFixed(1)} MB budget: ${(
       manifest.size /
       1024 /
       1024
@@ -44,7 +48,7 @@ if (manifest.size > MAX_PACKED_BYTES) {
 }
 
 console.log(
-  `✅ Tarball OK - ${manifest.files.length} files, ${(manifest.size / 1024).toFixed(
+  `Tarball OK: ${manifest.files.length} files, ${(manifest.size / 1024).toFixed(
     1,
   )} KB packed / ${(manifest.unpackedSize / 1024).toFixed(1)} KB unpacked`,
 );

@@ -1,4 +1,5 @@
 import { Platform, type ViewStyle } from 'react-native';
+import { devWarn } from '../utils/devWarn';
 import { defaultColorPalette, type ColorPalette } from '../tokens/colors';
 import { bloomColorPalette } from '../tokens/bloomPalette';
 import {
@@ -37,9 +38,10 @@ export interface ThemeVariant {
   fontFamilies: FontFamilies;
 }
 
-// ── Aurora (default) ────────────────────────────────────────────
-// Wraps the library's original tokens by reference, so the default render path
-// is referentially identical to before this variant system existed.
+/*
+ * Wraps the library's original tokens by reference, so the default render path
+ * is referentially identical to before this variant system existed.
+ */
 export const defaultThemeVariant: ThemeVariant = {
   id: 'default',
   name: 'Aurora',
@@ -74,7 +76,7 @@ function bloomElevation(
       },
       android: { elevation: androidElevation },
       default: {},
-    })!;
+    });
 
   return {
     none: elevation.none,
@@ -124,20 +126,32 @@ export const THEME_VARIANTS: Record<ThemeVariantName, ThemeVariant> = {
 export function resolveThemeVariant(
   theme: ThemeVariantName | ThemeVariant | undefined,
 ): ThemeVariant {
-  if (theme == null) return defaultThemeVariant;
-  if (typeof theme === 'string') {
-    const variant = THEME_VARIANTS[theme as ThemeVariantName];
-
-    if (variant) return variant;
-    if (__DEV__) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[native-ui] Unknown theme variant "${theme}" - falling back to "${defaultThemeVariant.name}".`,
-      );
-    }
-
+  if (theme == null) {
     return defaultThemeVariant;
   }
 
+  if (typeof theme === 'string') {
+    return resolveNamedVariant(theme);
+  }
+
   return theme;
+}
+
+/**
+ * Looks a variant up by name. Names can come from persisted settings written
+ * by another app version, so an unknown one degrades to Aurora instead of
+ * throwing, with a warning in development.
+ */
+function resolveNamedVariant(name: ThemeVariantName): ThemeVariant {
+  /* Typed as possibly missing: the name is only trusted at compile time. */
+  const variants: Partial<Record<string, ThemeVariant>> = THEME_VARIANTS;
+  const variant = variants[name];
+
+  if (variant) {
+    return variant;
+  }
+
+  devWarn(`Unknown theme variant "${name}" - falling back to "${defaultThemeVariant.name}".`);
+
+  return defaultThemeVariant;
 }

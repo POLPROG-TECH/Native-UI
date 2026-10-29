@@ -1,23 +1,70 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { HeroShowcase } from './components/heroShowcase/HeroShowcase';
+import { ShowcaseProvider } from './components/heroShowcase/ShowcaseProvider';
+import { ScreenAnatomy } from './components/heroShowcase/anatomy/ScreenAnatomy';
+import { ProductionApps } from './components/productionApps/ProductionApps';
+import { Translated } from './components/i18n/Translated';
+import { CoverageLines, DocumentedExports, StatCount, TestsPassed } from './components/stats/StatText';
 
 <Meta title="Introduction" />
 
 <style>{`
   /* ── Reset: override Storybook Docs theme completely ── */
-  .sbdocs-wrapper:has(.nui-page) { background: #fff !important; }
+  .sbdocs-wrapper:has(.nui-page) { background: var(--nui-bg) !important; }
   .sbdocs-content:has(.nui-page) { max-width: 980px !important; }
+
+  /*
+   * Page palette: light by default, dark when the OS asks for it. The hero,
+   * code blocks and dark CTA keep their own fixed dark styling.
+   */
+  .sbdocs-wrapper:has(.nui-page),
+  .nui-page {
+    --nui-bg: #FFFFFF;
+    --nui-surface: #FFFFFF;
+    --nui-surface-alt: #F8FAFC;
+    --nui-border: #E2E8F0;
+    --nui-border-soft: #F1F5F9;
+    --nui-ink: #1E293B;
+    --nui-strong: #0F172A;
+    --nui-body: #475569;
+    --nui-muted: #64748B;
+    --nui-accent: #4F46E5;
+    --nui-accent-soft: #C7D2FE;
+  }
+  :root[data-nui-scheme='dark'] .sbdocs-wrapper:has(.nui-page),
+  :root[data-nui-scheme='dark'] .nui-page {
+    --nui-bg: #0F1424;
+    --nui-surface: #131A2E;
+    --nui-surface-alt: #182038;
+    --nui-border: #26304A;
+    --nui-border-soft: #1E2740;
+    --nui-ink: #E2E8F0;
+    --nui-strong: #F8FAFC;
+    --nui-body: #CBD5E1;
+    --nui-muted: #94A3B8;
+    --nui-accent: #A5B4FC;
+    --nui-accent-soft: #4F46E5;
+  }
 
   .nui-page {
     all: initial;
     display: block;
+    container-type: inline-size;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    color: #1E293B !important;
+    color: var(--nui-ink) !important;
     font-size: 15px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  .nui-page *, .nui-page *::before, .nui-page *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /*
+   * Components marked .sb-unstyled (hero device, app cards) bring their own
+   * CSS, and react-native-web's atomic classes would lose to this reset;
+   * :where() keeps the reset's specificity unchanged.
+   */
+  .nui-page *:where(:not(.sb-unstyled, .sb-unstyled *)),
+  .nui-page *:where(:not(.sb-unstyled, .sb-unstyled *))::before,
+  .nui-page *:where(:not(.sb-unstyled, .sb-unstyled *))::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   /* ── Hero ── */
   .nui-hero {
@@ -48,6 +95,18 @@ import { Meta } from '@storybook/addon-docs/blocks';
     pointer-events: none;
   }
 
+  /* Copy left, live device right; stacks when the hero itself gets narrow. */
+  .nui-hero { container-type: inline-size; }
+  .nui-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    align-items: center;
+  }
+  @container (min-width: 800px) {
+    .nui-hero-grid { grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+    .nui-hero .nui-hero-copy h1 { font-size: 38px; }
+  }
   .nui-logo-row {
     display: flex;
     align-items: center;
@@ -78,7 +137,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
   }
   .nui-logo-text span { opacity: 0.5; font-weight: 400; }
 
-  .nui-hero h1 {
+  .nui-hero-copy h1 {
     font-size: 44px;
     font-weight: 800;
     color: #fff !important;
@@ -137,8 +196,8 @@ import { Meta } from '@storybook/addon-docs/blocks';
   }
   @media (max-width: 760px) { .nui-stats { grid-template-columns: repeat(2, 1fr); } }
   .nui-stat-card {
-    background: #fff;
-    border: 1px solid #E2E8F0;
+    background: var(--nui-surface);
+    border: 1px solid var(--nui-border);
     border-radius: 16px;
     padding: 22px 20px;
     transition: box-shadow 0.2s;
@@ -148,7 +207,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
     display: block;
     font-size: 32px;
     font-weight: 800;
-    color: #4F46E5 !important;
+    color: var(--nui-accent) !important;
     letter-spacing: -0.03em;
     line-height: 1;
     margin-bottom: 6px;
@@ -156,7 +215,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
   .nui-stat-label {
     font-size: 12px;
     font-weight: 700;
-    color: #64748B !important;
+    color: var(--nui-muted) !important;
     text-transform: uppercase;
     letter-spacing: 0.08em;
   }
@@ -167,10 +226,10 @@ import { Meta } from '@storybook/addon-docs/blocks';
     font-weight: 800;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #94A3B8 !important;
+    color: var(--nui-muted) !important;
     margin: 48px 0 18px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #F1F5F9;
+    border-bottom: 2px solid var(--nui-border-soft);
   }
 
   /* ── Feature grid ── */
@@ -183,8 +242,8 @@ import { Meta } from '@storybook/addon-docs/blocks';
   @media (max-width: 880px) { .nui-features { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 540px) { .nui-features { grid-template-columns: 1fr; } }
   .nui-feat {
-    background: #fff;
-    border: 1px solid #E2E8F0;
+    background: var(--nui-surface);
+    border: 1px solid var(--nui-border);
     border-radius: 16px;
     padding: 24px;
     transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
@@ -192,7 +251,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
   .nui-feat:hover {
     transform: translateY(-3px);
     box-shadow: 0 16px 32px -12px rgba(0,0,0,0.1);
-    border-color: #C7D2FE !important;
+    border-color: var(--nui-accent-soft) !important;
   }
   .nui-feat-ico {
     width: 44px;
@@ -207,14 +266,14 @@ import { Meta } from '@storybook/addon-docs/blocks';
   .nui-feat h3 {
     font-size: 16px;
     font-weight: 700;
-    color: #0F172A !important;
+    color: var(--nui-strong) !important;
     margin-bottom: 6px;
     line-height: 1.3;
   }
   .nui-feat p {
     font-size: 13.5px;
     line-height: 1.55;
-    color: #475569 !important;
+    color: var(--nui-body) !important;
   }
 
   /* ── Principles ── */
@@ -224,29 +283,29 @@ import { Meta } from '@storybook/addon-docs/blocks';
     border-spacing: 0;
     border-radius: 16px;
     overflow: hidden;
-    border: 1px solid #E2E8F0;
-    background: #fff;
+    border: 1px solid var(--nui-border);
+    background: var(--nui-surface);
   }
   .nui-table th {
     text-align: left;
     padding: 14px 20px;
     font-size: 11px;
     font-weight: 800;
-    color: #64748B !important;
+    color: var(--nui-muted) !important;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    background: #F8FAFC;
-    border-bottom: 1px solid #E2E8F0;
+    background: var(--nui-surface-alt);
+    border-bottom: 1px solid var(--nui-border);
   }
   .nui-table td {
     padding: 14px 20px;
     font-size: 14px;
-    border-top: 1px solid #F1F5F9;
-    color: #334155 !important;
+    border-top: 1px solid var(--nui-border-soft);
+    color: var(--nui-body) !important;
   }
   .nui-table td:first-child {
     font-weight: 700;
-    color: #0F172A !important;
+    color: var(--nui-strong) !important;
     width: 210px;
     white-space: nowrap;
   }
@@ -299,20 +358,20 @@ import { Meta } from '@storybook/addon-docs/blocks';
     line-height: 1.6;
   }
   .nui-cta-light {
-    background: #F8FAFC;
-    border: 1px solid #E2E8F0;
+    background: var(--nui-surface-alt);
+    border: 1px solid var(--nui-border);
   }
-  .nui-cta-light h3 { color: #0F172A !important; }
-  .nui-cta-light p { color: #475569 !important; }
+  .nui-cta-light h3 { color: var(--nui-strong) !important; }
+  .nui-cta-light p { color: var(--nui-body) !important; }
   .nui-cta-light ul {
     list-style: none;
     padding: 0;
     font-size: 14px;
     line-height: 2;
-    color: #334155 !important;
+    color: var(--nui-body) !important;
   }
-  .nui-cta-light li::before { content: '→ '; color: #4F46E5 !important; font-weight: 700; }
-  .nui-cta-light li strong { color: #0F172A !important; }
+  .nui-cta-light li::before { content: '→ '; color: var(--nui-accent) !important; font-weight: 700; }
+  .nui-cta-light li strong { color: var(--nui-strong) !important; }
   .nui-cta-dark {
     background: #0F172A;
     border: 1px solid #1E293B;
@@ -342,7 +401,10 @@ import { Meta } from '@storybook/addon-docs/blocks';
 <div className="nui-page">
 
 {/* ━━ Hero ━━ */}
+<ShowcaseProvider>
 <div className="nui-hero">
+<div className="nui-hero-grid">
+<div className="nui-hero-copy">
   <div className="nui-logo-row">
     <div className="nui-logo-icon">
       <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -353,83 +415,124 @@ import { Meta } from '@storybook/addon-docs/blocks';
     </div>
     <div className="nui-logo-text">native<span>-</span>ui</div>
   </div>
-  <h1>A React Native design system<br/>that feels 1 : 1 with native.</h1>
-  <p className="nui-hero-desc" style={{ color: '#ffffff', fontSize: '18px', lineHeight: '1.6', maxWidth: '600px', marginBottom: '28px', position: 'relative', zIndex: 1 }}>
-    <code>@polprog/native-ui</code> ships 24 + battle-tested components, a complete
-    token system, and seven theme presets - so product teams build screens
-    indistinguishable from hand-built native iOS / Android apps, faster.
-  </p>
+  <h1>
+    <Translated lang="en">A React Native design system<br/>that feels 1 : 1 with native.</Translated>
+    <Translated lang="pl">System projektowy React Native,<br/>który działa 1 : 1 jak natywny.</Translated>
+  </h1>
+  <div className="nui-hero-desc" style={{ color: '#ffffff', fontSize: '18px', lineHeight: '1.6', maxWidth: '600px', marginBottom: '28px', position: 'relative', zIndex: 1 }}>
+<Translated lang="en">
+
+<code>@polprog/native-ui</code> ships <StatCount of="components" /> battle-tested components, a complete
+token system, and <StatCount of="presets" /> theme presets - so product teams build screens
+indistinguishable from hand-built native iOS / Android apps, faster.
+
+</Translated>
+<Translated lang="pl">
+
+<code>@polprog/native-ui</code> dostarcza <StatCount of="components" /> sprawdzonych w praktyce komponentów,
+kompletny system tokenów i <StatCount of="presets" /> presetów motywów - dzięki temu zespoły produktowe
+szybciej budują ekrany nieodróżnialne od ręcznie pisanych natywnych aplikacji iOS / Android.
+
+</Translated>
+  </div>
   <div className="nui-pills">
-    <span className="nui-pill">● Production-ready</span>
-    <span className="nui-pill">TypeScript first</span>
+    <span className="nui-pill"><Translated lang="en">● Production-ready</Translated><Translated lang="pl">● Gotowe do produkcji</Translated></span>
+    <span className="nui-pill"><Translated lang="en">TypeScript first</Translated><Translated lang="pl">TypeScript na pierwszym miejscu</Translated></span>
     <span className="nui-pill">iOS · Android · Web</span>
     <span className="nui-pill">WCAG AA</span>
   </div>
 </div>
+<HeroShowcase />
+</div>
+</div>
+<ScreenAnatomy />
+</ShowcaseProvider>
+
+<ProductionApps />
 
 {/* ━━ Stats ━━ */}
 <div className="nui-stats">
-  <div className="nui-stat-card"><span className="nui-stat-num">24+</span><span className="nui-stat-label">Components</span></div>
-  <div className="nui-stat-card"><span className="nui-stat-num">17</span><span className="nui-stat-label">Type variants</span></div>
-  <div className="nui-stat-card"><span className="nui-stat-num">7</span><span className="nui-stat-label">Theme presets</span></div>
-  <div className="nui-stat-card"><span className="nui-stat-num">188</span><span className="nui-stat-label">Tests passing</span></div>
+  <div className="nui-stat-card"><span className="nui-stat-num"><StatCount of="components" /></span><span className="nui-stat-label"><Translated lang="en">Components</Translated><Translated lang="pl">Komponenty</Translated></span></div>
+  <div className="nui-stat-card"><span className="nui-stat-num"><StatCount of="typeVariants" /></span><span className="nui-stat-label"><Translated lang="en">Type variants</Translated><Translated lang="pl">Warianty typografii</Translated></span></div>
+  <div className="nui-stat-card"><span className="nui-stat-num"><StatCount of="presets" /></span><span className="nui-stat-label"><Translated lang="en">Theme presets</Translated><Translated lang="pl">Presety motywów</Translated></span></div>
+  <div className="nui-stat-card"><span className="nui-stat-num"><TestsPassed /></span><span className="nui-stat-label"><Translated lang="en">Tests passing</Translated><Translated lang="pl">Zaliczone testy</Translated></span></div>
 </div>
 
 {/* ━━ Features ━━ */}
-<div className="nui-sec">What's in the box</div>
+<div className="nui-sec"><Translated lang="en">What's in the box</Translated><Translated lang="pl">Co jest w pakiecie</Translated></div>
 
 <div className="nui-features">
   <div className="nui-feat">
     <div className="nui-feat-ico" style={{ background: '#EEF2FF' }}>🎨</div>
-    <h3>Design Tokens</h3>
-    <p>Colors, typography (iOS-native 17-variant scale), spacing, radii, elevation, motion - centralized, type-safe, tree-shakeable.</p>
+    <h3><Translated lang="en">Design Tokens</Translated><Translated lang="pl">Tokeny projektowe</Translated></h3>
+    <p><Translated lang="en">Colors, typography (iOS-native 17-variant scale), spacing, radii, elevation, motion - centralized, type-safe, tree-shakeable.</Translated>
+      <Translated lang="pl">Kolory, typografia (natywna dla iOS skala 17 wariantów), odstępy, promienie, cienie, animacje - w jednym miejscu, z pełnym typowaniem i z obsługą tree-shakingu.</Translated></p>
   </div>
   <div className="nui-feat">
     <div className="nui-feat-ico" style={{ background: '#FEF3C7' }}>🧱</div>
-    <h3>Primitives</h3>
-    <p>Low-level building blocks - Box, VStack, HStack, Text, Heading, Divider, PressableScale - with token-based props.</p>
+    <h3><Translated lang="en">Primitives</Translated><Translated lang="pl">Prymitywy</Translated></h3>
+    <p><Translated lang="en">Low-level building blocks - Box, VStack, HStack, Text, Heading, Divider, PressableScale - with token-based props.</Translated>
+      <Translated lang="pl">Niskopoziomowe klocki - Box, VStack, HStack, Text, Heading, Divider, PressableScale - z propsami opartymi na tokenach.</Translated></p>
   </div>
   <div className="nui-feat">
     <div className="nui-feat-ico" style={{ background: '#DBEAFE' }}>🧩</div>
-    <h3>Components</h3>
-    <p>Buttons, inputs, selection, overlays, lists, feedback. Variants, states, and a11y are covered out of the box.</p>
+    <h3><Translated lang="en">Components</Translated><Translated lang="pl">Komponenty</Translated></h3>
+    <p><Translated lang="en">Buttons, inputs, selection, overlays, lists, feedback. Variants, states, and a11y are covered out of the box.</Translated>
+      <Translated lang="pl">Przyciski, pola formularzy, kontrolki wyboru, nakładki, listy, informacja zwrotna. Warianty, stany i a11y działają od razu.</Translated></p>
   </div>
   <div className="nui-feat">
     <div className="nui-feat-ico" style={{ background: '#D1FAE5' }}>♿</div>
-    <h3>Accessibility</h3>
-    <p>Proper roles, labels, states, and 44 × 44 minimum hit targets. Full screen-reader and keyboard support.</p>
+    <h3><Translated lang="en">Accessibility</Translated><Translated lang="pl">Dostępność</Translated></h3>
+    <p><Translated lang="en">Proper roles, labels, states, and 44 × 44 minimum hit targets. Full screen-reader and keyboard support.</Translated>
+      <Translated lang="pl">Poprawne role, etykiety i stany oraz obszary dotyku o wymiarach co najmniej 44 × 44. Pełna obsługa czytników ekranu i klawiatury.</Translated></p>
   </div>
   <div className="nui-feat">
     <div className="nui-feat-ico" style={{ background: '#F3E8FF' }}>🎭</div>
-    <h3>Theming</h3>
-    <p>Light / dark / system, 7 presets (Default, Midnight, Ocean, Forest, Sunset, Rose, AMOLED), custom accents, font-scale tiers.</p>
+    <h3><Translated lang="en">Theming</Translated><Translated lang="pl">Motywy</Translated></h3>
+    <p><Translated lang="en">Light / dark / system, <StatCount of="presets" /> presets across Aurora (Default, Midnight, Ocean, Forest, Sunset, Rose, AMOLED) and Bloom (Violet, Grape, Coral, Ocean), custom accents, font-scale tiers.</Translated>
+      <Translated lang="pl">Tryb jasny / ciemny / systemowy, <StatCount of="presets" /> presetów w rodzinach Aurora (Default, Midnight, Ocean, Forest, Sunset, Rose, AMOLED) i Bloom (Violet, Grape, Coral, Ocean), własne kolory akcentu, poziomy skalowania czcionki.</Translated></p>
   </div>
   <div className="nui-feat">
     <div className="nui-feat-ico" style={{ background: '#FFE4E6' }}>⚡</div>
-    <h3>Performance</h3>
-    <p>Reanimated-powered transitions, memoized tokens, minimal runtime - no CSS-in-JS bloat, no style churn.</p>
+    <h3><Translated lang="en">Performance</Translated><Translated lang="pl">Wydajność</Translated></h3>
+    <p><Translated lang="en">Reanimated-powered transitions, memoized tokens, minimal runtime - no CSS-in-JS bloat, no style churn.</Translated>
+      <Translated lang="pl">Przejścia oparte na Reanimated, memoizowane tokeny, minimalny narzut w czasie działania - bez balastu CSS-in-JS i bez ciągłego przeliczania stylów.</Translated></p>
   </div>
 </div>
 
 {/* ━━ Principles ━━ */}
-<div className="nui-sec">Design principles</div>
+<div className="nui-sec"><Translated lang="en">Design principles</Translated><Translated lang="pl">Zasady projektowe</Translated></div>
 
 <table className="nui-table">
-  <thead><tr><th>Principle</th><th>What it means in practice</th></tr></thead>
+  <thead><tr>
+    <th><Translated lang="en">Principle</Translated><Translated lang="pl">Zasada</Translated></th>
+    <th><Translated lang="en">What it means in practice</Translated><Translated lang="pl">Co to oznacza w praktyce</Translated></th>
+  </tr></thead>
   <tbody>
+<Translated lang="en">
     <tr><td>Token-driven</td><td>Every visual property derives from a centralized design token - nothing is hardcoded.</td></tr>
     <tr><td>Composable</td><td>Primitives snap together into complex UIs without forcing a rigid page shape.</td></tr>
     <tr><td>Accessible by default</td><td>WCAG-compliant roles, labels, touch targets and reduce-motion support - on day one.</td></tr>
     <tr><td>Type-safe</td><td>Full TypeScript coverage; discriminated unions for variants catch misuse at compile time.</td></tr>
     <tr><td>Platform-native</td><td>Feels native on iOS and Android; no generic "web-ish" feel on mobile.</td></tr>
     <tr><td>Pluggable</td><td>Haptics, theming, fonts and animations are configurable - not baked-in decisions.</td></tr>
+</Translated>
+<Translated lang="pl">
+    <tr><td>Oparty na tokenach</td><td>Każda właściwość wizualna wynika z centralnie zdefiniowanego tokena projektowego - nic nie jest wpisane na sztywno.</td></tr>
+    <tr><td>Kompozycyjny</td><td>Prymitywy łączą się w złożone interfejsy bez narzucania sztywnego układu strony.</td></tr>
+    <tr><td>Dostępny domyślnie</td><td>Role zgodne z WCAG, etykiety, obszary dotyku i obsługa ograniczenia ruchu (reduce motion) - od pierwszego dnia.</td></tr>
+    <tr><td>Bezpieczny typowo</td><td>Pełne pokrycie TypeScriptem; unie dyskryminowane dla wariantów wychwytują błędne użycie już podczas kompilacji.</td></tr>
+    <tr><td>Natywny dla platformy</td><td>Działa natywnie na iOS i Androidzie; żadnego generycznego, „webowego” wrażenia na urządzeniach mobilnych.</td></tr>
+    <tr><td>Konfigurowalny</td><td>Haptyka, motywy, czcionki i animacje są konfigurowalne - to nie decyzje zaszyte na stałe.</td></tr>
+</Translated>
   </tbody>
 </table>
 
 {/* ━━ Quick start ━━ */}
-<div className="nui-sec">Quick start</div>
+<div className="nui-sec"><Translated lang="en">Quick start</Translated><Translated lang="pl">Szybki start</Translated></div>
 
-<div className="nui-pre"><code>{`// 1. Install
+<Translated lang="en">
+<div className="nui-pre" tabIndex={0} role="region" aria-label="Quick start code"><code>{`// 1. Install
 npm install @polprog/native-ui
 
 // 2. Wrap your app once
@@ -445,30 +548,55 @@ export default function App() {
     </NativeUIProvider>
   );
 }`}</code></div>
+</Translated>
+<Translated lang="pl">
+<div className="nui-pre" tabIndex={0} role="region" aria-label="Kod szybkiego startu"><code>{`// 1. Instalacja
+npm install @polprog/native-ui
+
+// 2. Opakuj aplikację jeden raz
+import { NativeUIProvider, Button, Card, Text } from '@polprog/native-ui';
+
+export default function App() {
+  return (
+    <NativeUIProvider config={{ colorMode: 'system', preset: 'default' }}>
+      <Card>
+        <Text variant="h2">Welcome</Text>
+        <Button title="Get started" onPress={() => {}} />
+      </Card>
+    </NativeUIProvider>
+  );
+}`}</code></div>
+</Translated>
 
 {/* ━━ CTA ━━ */}
 <div className="nui-cta-grid">
   <div className="nui-cta-box nui-cta-light">
     <div>
-      <h3>Navigate the docs</h3>
-      <p>Every primitive, component and pattern has an interactive playground with live controls. Dark mode, a11y roles, and presets are switchable from the toolbar.</p>
+      <h3><Translated lang="en">Navigate the docs</Translated><Translated lang="pl">Jak poruszać się po dokumentacji</Translated></h3>
+      <p><Translated lang="en">Every primitive, component and pattern has an interactive playground with live controls. Dark mode, presets, device frames, language and a11y settings are switchable from the Appearance menu.</Translated>
+        <Translated lang="pl">Każdy prymityw, komponent i wzorzec ma interaktywny playground z kontrolkami na żywo. Tryb ciemny, presety, ramki urządzeń, język i ustawienia a11y przełączysz w menu Appearance.</Translated></p>
     </div>
     <ul>
-      <li><strong>Tokens</strong> - color palette, typography, spacing, radii, elevation</li>
-      <li><strong>Primitives</strong> - low-level layout &amp; text components</li>
-      <li><strong>Components</strong> - full library with interactive controls</li>
-      <li><strong>Patterns</strong> - real-world compositions &amp; recipes</li>
+      <li><Translated lang="en"><strong>Tokens</strong> - color palette, typography, spacing, radii, elevation</Translated>
+        <Translated lang="pl"><strong>Tokens</strong> - paleta kolorów, typografia, odstępy, promienie, cienie</Translated></li>
+      <li><Translated lang="en"><strong>Primitives</strong> - low-level layout &amp; text components</Translated>
+        <Translated lang="pl"><strong>Primitives</strong> - niskopoziomowe komponenty układu i tekstu</Translated></li>
+      <li><Translated lang="en"><strong>Components</strong> - full library with interactive controls</Translated>
+        <Translated lang="pl"><strong>Components</strong> - pełna biblioteka z interaktywnymi kontrolkami</Translated></li>
+      <li><Translated lang="en"><strong>Patterns</strong> - real-world compositions &amp; recipes</Translated>
+        <Translated lang="pl"><strong>Patterns</strong> - kompozycje i przepisy z prawdziwych aplikacji</Translated></li>
     </ul>
   </div>
   <div className="nui-cta-box nui-cta-dark">
     <div>
-      <h3>Start building</h3>
-      <p>Pick a component, flip into dark mode, switch presets, ship. Every story supports live controls and copy-ready source.</p>
+      <h3><Translated lang="en">Start building</Translated><Translated lang="pl">Zacznij budować</Translated></h3>
+      <p><Translated lang="en">Pick a component, flip into dark mode, switch presets, ship. Every story supports live controls and copy-ready source.</Translated>
+        <Translated lang="pl">Wybierz komponent, przełącz na tryb ciemny, zmień preset i wdrażaj. Każda story ma kontrolki na żywo i kod źródłowy gotowy do skopiowania.</Translated></p>
     </div>
     <div className="nui-cta-btns">
-      <a href="./?path=/docs/primitives-text--docs" className="nui-btn nui-btn-primary">Text primitive →</a>
+      <a href="./?path=/docs/primitives-text--docs" className="nui-btn nui-btn-primary"><Translated lang="en">Text primitive →</Translated><Translated lang="pl">Prymityw Text →</Translated></a>
       <a href="./?path=/docs/components-button--docs" className="nui-btn nui-btn-ghost">Button →</a>
-      <a href="./?path=/docs/tokens-colors--docs" className="nui-btn nui-btn-ghost">Colors →</a>
+      <a href="./?path=/docs/tokens-colors--docs" className="nui-btn nui-btn-ghost"><Translated lang="en">Colors →</Translated><Translated lang="pl">Kolory →</Translated></a>
     </div>
   </div>
 </div>

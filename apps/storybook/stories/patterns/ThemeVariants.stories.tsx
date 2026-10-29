@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import preview from '../../.storybook/preview';
+import { useState } from 'react';
 import { View } from 'react-native';
-import type { Meta, StoryObj } from '@storybook/react';
 import {
   NativeUIProvider,
   Heading,
@@ -82,7 +82,7 @@ function Comparison({ colorMode }: { colorMode: 'light' | 'dark' }) {
   );
 }
 
-const meta: Meta = {
+const meta = preview.meta({
   title: 'Patterns/Theme variants',
   parameters: {
     canvasPadding: 0,
@@ -93,17 +93,14 @@ const meta: Meta = {
       },
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj;
-
-export const Light: Story = {
+export const Light = meta.story({
   name: 'Aurora vs Bloom · light',
   render: () => <Comparison colorMode="light" />,
-};
+});
 
-export const Dark: Story = {
+export const Dark = meta.story({
   name: 'Aurora vs Bloom · dark',
   render: () => <Comparison colorMode="dark" />,
-};
+});

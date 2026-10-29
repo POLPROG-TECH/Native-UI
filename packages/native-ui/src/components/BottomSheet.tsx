@@ -1,40 +1,77 @@
 import React from 'react';
-import { StyleSheet, View, Modal, Pressable, type ViewStyle, type StyleProp } from 'react-native';
-import Animated, { FadeIn, SlideInDown, SlideOutDown } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  StyleSheet,
+  View,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import { useTheme } from '../theme';
-
-// ─── Compound sub-component props ──────────────────────────────
+import type { SheetFooterLayout } from '../tokens/components';
+import { SheetBackdrop } from './bottomSheet/SheetBackdrop';
+import { SheetPanel } from './bottomSheet/SheetPanel';
+import { useSheetTokens } from './bottomSheet/sheetTokens';
 
 export interface BottomSheetHeaderProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
 export interface BottomSheetBodyProps {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
 export interface BottomSheetFooterProps {
   children: React.ReactNode;
+  /**
+   * `row`: actions right-aligned in a row; `fill`: each action takes an equal
+   * share of the width; `stacked`: full-width actions in a column.
+   * @default theme.components.bottomSheet.footerLayout ('row')
+   */
+  layout?: SheetFooterLayout;
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
-// ─── Main bottom sheet props ───────────────────────────────────
+export type { SheetFooterLayout };
 
 export interface BottomSheetProps {
   visible: boolean;
   onClose: () => void;
   children: React.ReactNode;
-  /** Close on backdrop press (default: true) */
+  /** Close on backdrop press and handle swipe (default: true) */
   dismissable?: boolean;
-  style?: ViewStyle;
+  /**
+   * Dismiss by dragging the handle down. Ignored when `dismissable` is false.
+   * @default true
+   */
+  swipeToDismiss?: boolean;
+  /**
+   * Lift the sheet above the software keyboard (iOS padding behaviour;
+   * Android resizes the window natively).
+   * @default true
+   */
+  avoidKeyboard?: boolean;
+  /**
+   * Accessible name of the dismissing backdrop.
+   * @default labels.close from `NativeUIConfig.labels`
+   */
+  closeAccessibilityLabel?: string;
+  /** Sheet fill. @default theme.components.bottomSheet.backgroundColor ?? colors.surface */
+  backgroundColor?: string;
+  style?: StyleProp<ViewStyle>;
+  testID?: string;
 }
 
 /**
- * A basic bottom sheet that slides up from the bottom of the screen.
- * Uses React Native Modal + Reanimated for animation.
+ * Bottom sheet that slides up from the bottom of the screen, built on React
+ * Native `Modal` + Reanimated. Every dimension and duration comes from
+ * `theme.components.bottomSheet`, overridable via `NativeUIConfig.components`.
  *
  * Supports both the monolithic API and a compound component pattern:
  *
@@ -48,87 +85,129 @@ export interface BottomSheetProps {
  * @example Compound
  * ```tsx
  * <BottomSheet visible={show} onClose={close}>
- *   <BottomSheet.Header><Heading level={2}>Title</Heading></BottomSheet.Header>
- *   <BottomSheet.Body><Text>Content</Text></BottomSheet.Body>
- *   <BottomSheet.Footer><Button title="Done" onPress={close} /></BottomSheet.Footer>
+ *   <BottomSheet.Header><Heading level={3}>Options</Heading></BottomSheet.Header>
+ *   <BottomSheet.Body><Text>Content here</Text></BottomSheet.Body>
+ *   <BottomSheet.Footer layout="fill"><Button title="Done" onPress={close} /></BottomSheet.Footer>
  * </BottomSheet>
  * ```
  */
-function BottomSheetComponent({
-  visible,
-  onClose,
-  children,
-  dismissable = true,
-  style,
-}: BottomSheetProps) {
+function BottomSheetComponent(props: BottomSheetProps) {
+  const { visible, onClose, dismissable = true, swipeToDismiss = true } = props;
+  const { avoidKeyboard = true } = props;
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
-  const enterDuration = theme.reduceAnimations ? 0 : 300;
-  const exitDuration = theme.reduceAnimations ? 0 : 200;
 
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
-      <View style={styles.wrapper}>
-        <Animated.View
-          entering={FadeIn.duration(enterDuration)}
-          style={[styles.backdrop, { backgroundColor: theme.colors.overlay }]}
+      <KeyboardAvoidingView
+        style={styles.wrapper}
+        behavior={avoidKeyboard && Platform.OS === 'ios' ? 'padding' : undefined}
+        enabled={avoidKeyboard}
+      >
+        <SheetBackdrop
+          onDismiss={dismissable ? onClose : undefined}
+          accessibilityLabel={props.closeAccessibilityLabel ?? theme.labels.close}
+        />
+        <SheetPanel
+          testID={props.testID}
+          onClose={onClose}
+          dismissable={dismissable}
+          swipeToDismiss={swipeToDismiss}
+          backgroundColor={props.backgroundColor}
+          style={props.style}
         >
-          <Pressable
-            style={StyleSheet.absoluteFill}
-            onPress={dismissable ? onClose : undefined}
-            {...(dismissable
-              ? { accessibilityRole: 'button' as const, accessibilityLabel: 'Close' }
-              : { importantForAccessibility: 'no-hide-descendants' as const })}
-          />
-        </Animated.View>
-
-        <Animated.View
-          entering={SlideInDown.duration(enterDuration)}
-          exiting={SlideOutDown.duration(exitDuration)}
-          style={[
-            styles.sheet,
-            {
-              backgroundColor: theme.colors.surface,
-              borderTopLeftRadius: theme.borderRadius.xl,
-              borderTopRightRadius: theme.borderRadius.xl,
-              paddingBottom: Math.max(insets.bottom, 16),
-            },
-            theme.elevation.xl,
-            style,
-          ]}
-          accessibilityViewIsModal
-        >
-          <View style={styles.handle} importantForAccessibility="no" accessibilityElementsHidden>
-            <View style={[styles.handleBar, { backgroundColor: theme.colors.border }]} />
-          </View>
-          {children}
-        </Animated.View>
-      </View>
+          {props.children}
+        </SheetPanel>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
 
-// ─── Compound sub-components ───────────────────────────────────
-
 /** Header section for BottomSheet compound pattern. */
-function BottomSheetHeader({ children, style }: BottomSheetHeaderProps) {
-  return <View style={[styles.header, style]}>{children}</View>;
+function BottomSheetHeader({ children, style, testID }: BottomSheetHeaderProps) {
+  const tokens = useSheetTokens();
+
+  return (
+    <View
+      testID={testID}
+      style={[
+        {
+          paddingHorizontal: tokens.paddingHorizontal,
+          paddingTop: tokens.headerPaddingTop,
+          paddingBottom: tokens.headerPaddingBottom,
+        },
+        style,
+      ]}
+    >
+      {children}
+    </View>
+  );
 }
+
 BottomSheetHeader.displayName = 'BottomSheet.Header';
 
 /** Body / scrollable content area for BottomSheet compound pattern. */
-function BottomSheetBody({ children, style }: BottomSheetBodyProps) {
-  return <View style={[styles.body, style]}>{children}</View>;
+function BottomSheetBody({ children, style, testID }: BottomSheetBodyProps) {
+  const tokens = useSheetTokens();
+
+  return (
+    <View
+      testID={testID}
+      style={[
+        {
+          paddingHorizontal: tokens.paddingHorizontal,
+          paddingVertical: tokens.bodyPaddingVertical,
+        },
+        style,
+      ]}
+    >
+      {children}
+    </View>
+  );
 }
+
 BottomSheetBody.displayName = 'BottomSheet.Body';
 
-/** Footer / action bar for BottomSheet compound pattern. */
-function BottomSheetFooter({ children, style }: BottomSheetFooterProps) {
-  return <View style={[styles.footer, style]}>{children}</View>;
-}
-BottomSheetFooter.displayName = 'BottomSheet.Footer';
+const FOOTER_LAYOUT_STYLE: Record<SheetFooterLayout, ViewStyle> = {
+  row: { flexDirection: 'row', justifyContent: 'flex-end' },
+  fill: { flexDirection: 'row' },
+  stacked: { flexDirection: 'column', alignItems: 'stretch' },
+};
 
-// ─── Assemble compound component ──────────────────────────────
+/** Footer / action bar for BottomSheet compound pattern. */
+function BottomSheetFooter({ children, layout, style, testID }: BottomSheetFooterProps) {
+  const tokens = useSheetTokens();
+  const resolvedLayout = layout ?? tokens.footerLayout;
+  /*
+   * `fill` gives every action an equal share; wrapping keeps the actions'
+   * own styles untouched.
+   */
+  const content =
+    resolvedLayout === 'fill'
+      ? React.Children.map(children, (child) =>
+          child == null ? null : <View style={styles.fillItem}>{child}</View>,
+        )
+      : children;
+
+  return (
+    <View
+      testID={testID}
+      style={[
+        FOOTER_LAYOUT_STYLE[resolvedLayout],
+        {
+          gap: tokens.footerGap,
+          paddingHorizontal: tokens.paddingHorizontal,
+          paddingTop: tokens.footerPaddingTop,
+          paddingBottom: tokens.footerPaddingBottom,
+        },
+        style,
+      ]}
+    >
+      {content}
+    </View>
+  );
+}
+
+BottomSheetFooter.displayName = 'BottomSheet.Footer';
 
 export const BottomSheet = Object.assign(BottomSheetComponent, {
   Header: BottomSheetHeader,
@@ -136,47 +215,12 @@ export const BottomSheet = Object.assign(BottomSheetComponent, {
   Footer: BottomSheetFooter,
 });
 
-// ─── Styles ───────────────────────────────────────────────────
-
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     justifyContent: 'flex-end',
   },
-  backdrop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  sheet: {
-    maxHeight: '80%',
-  },
-  handle: {
-    alignItems: 'center',
-    paddingVertical: 10,
-  },
-  handleBar: {
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingTop: 4,
-    paddingBottom: 8,
-  },
-  body: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 12,
-    paddingHorizontal: 20,
-    paddingTop: 12,
-    paddingBottom: 8,
+  fillItem: {
+    flex: 1,
   },
 });

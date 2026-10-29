@@ -9,12 +9,7 @@ import {
 import { resolveColorScheme } from '../../src/tokens/colors';
 import { spacing } from '../../src/tokens/spacing';
 import { typography } from '../../src/tokens/typography';
-import { useTheme, useSemantic } from '../../src/theme/ThemeProvider';
-import type {
-  SemanticColorTokens,
-  SemanticSpacingTokens,
-  SemanticTypographyTokens,
-} from '../../src/tokens/semantic';
+import { useTheme } from '../../src/theme/ThemeProvider';
 
 const scheme = resolveColorScheme({
   isDark: false,
@@ -24,7 +19,6 @@ const scheme = resolveColorScheme({
   customAccent: null,
 });
 
-// ─── Color Mapping Table ───────────────────────────────────────
 const ColorRow = ({ semantic, primitive }: { semantic: string; primitive: string }) => {
   const theme = useTheme();
   const value = scheme[primitive as keyof typeof scheme];
@@ -77,7 +71,6 @@ const ColorRow = ({ semantic, primitive }: { semantic: string; primitive: string
   );
 };
 
-// ─── Spacing Mapping Table ─────────────────────────────────────
 const SpacingRow = ({ semantic, primitive }: { semantic: string; primitive: string }) => {
   const theme = useTheme();
   const px = spacing[primitive as keyof typeof spacing];
@@ -124,7 +117,6 @@ const SpacingRow = ({ semantic, primitive }: { semantic: string; primitive: stri
   );
 };
 
-// ─── Typography Mapping Table ──────────────────────────────────
 const TypographyRow = ({ semantic, primitive }: { semantic: string; primitive: string }) => {
   const theme = useTheme();
   const style = typography[primitive as keyof typeof typography];
@@ -161,7 +153,6 @@ const TypographyRow = ({ semantic, primitive }: { semantic: string; primitive: s
   );
 };
 
-// ─── Section Helper ────────────────────────────────────────────
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => {
   const theme = useTheme();
 
@@ -182,9 +173,9 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
   );
 };
 
-const entries = (obj: Record<string, string>) => Object.entries(obj) as [string, string][];
+const entries = (obj: object): Array<[string, string]> =>
+  Object.entries(obj).map(([key, value]) => [key, String(value)]);
 
-// ─── Story Component ───────────────────────────────────────────
 const SemanticTokensStory = () => {
   const theme = useTheme();
 
@@ -208,27 +199,21 @@ const SemanticTokensStory = () => {
       </RNText>
 
       <Section title="Colors">
-        {entries(defaultSemanticColors as unknown as Record<string, string>).map(
-          ([semantic, primitive]) => (
-            <ColorRow key={semantic} semantic={semantic} primitive={primitive} />
-          ),
-        )}
+        {entries(defaultSemanticColors).map(([semantic, primitive]) => (
+          <ColorRow key={semantic} semantic={semantic} primitive={primitive} />
+        ))}
       </Section>
 
       <Section title="Spacing">
-        {entries(defaultSemanticSpacing as unknown as Record<string, string>).map(
-          ([semantic, primitive]) => (
-            <SpacingRow key={semantic} semantic={semantic} primitive={primitive} />
-          ),
-        )}
+        {entries(defaultSemanticSpacing).map(([semantic, primitive]) => (
+          <SpacingRow key={semantic} semantic={semantic} primitive={primitive} />
+        ))}
       </Section>
 
       <Section title="Typography">
-        {entries(defaultSemanticTypography as unknown as Record<string, string>).map(
-          ([semantic, primitive]) => (
-            <TypographyRow key={semantic} semantic={semantic} primitive={primitive} />
-          ),
-        )}
+        {entries(defaultSemanticTypography).map(([semantic, primitive]) => (
+          <TypographyRow key={semantic} semantic={semantic} primitive={primitive} />
+        ))}
       </Section>
     </View>
   );

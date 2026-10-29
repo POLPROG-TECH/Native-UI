@@ -1,4 +1,3 @@
-import React from 'react';
 import { View, Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
 import {
@@ -10,8 +9,6 @@ import {
   zIndex,
 } from '../../src/tokens/spacing';
 import { useTheme } from '../../src/theme/ThemeProvider';
-import { Box } from '../../src/primitives/Box';
-import { VStack } from '../../src/primitives/Stack';
 
 const SpacingBar = ({ name, value }: { name: string; value: number }) => {
   const theme = useTheme();

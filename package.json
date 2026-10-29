@@ -25,10 +25,11 @@
   "scripts": {
     "build": "npm run build --workspace=@polprog/native-ui",
     "typecheck": "npm run typecheck --workspace=@polprog/native-ui",
-    "lint": "npm run lint --workspace=@polprog/native-ui",
+    "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspace=@polprog/native-ui",
     "storybook": "npm run storybook --workspace=@polprog/storybook",
     "build-storybook": "npm run build --workspace=@polprog/storybook",
+    "test:storybook": "npm run test --workspace=@polprog/storybook",
     "stories:check": "npm run stories:check --workspace=@polprog/native-ui",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -38,8 +39,15 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "packages/native-ui/src/**/*.{ts,tsx}": [
+    "packages/native-ui/**/*.{ts,tsx,js,mjs}": [
       "bash -c 'cd packages/native-ui && npx eslint --max-warnings 0'"
+    ],
+    "apps/storybook/**/*.{ts,tsx,mjs}": [
+      "bash -c 'cd apps/storybook && npx eslint --max-warnings 0'"
+    ],
+    "eslint/**/*.mjs": [
+      "bash -c 'cd packages/native-ui && npx eslint --max-warnings 0'",
+      "bash -c 'cd apps/storybook && npx eslint --max-warnings 0'"
     ],
     "**/*.{ts,tsx,js,mjs,json,md}": [
       "prettier --write"
@@ -47,7 +55,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
-    "@storybook/react-vite": "^10.6.2",
+    "@storybook/react-vite": "^10.6.5",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
     "prettier": "^3.9.10"

@@ -1,11 +1,11 @@
 export { Button } from './Button';
-export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';
+export type { ButtonProps, ButtonVariant, ButtonSize, ButtonHaptic } from './Button';
 
 export { IconButton } from './IconButton';
 export type { IconButtonProps, IconButtonVariant, IconButtonSize } from './IconButton';
 
 export { HeaderBar } from './HeaderBar';
-export type { HeaderBarProps } from './HeaderBar';
+export type { HeaderBarProps, HeaderTitleAlign } from './HeaderBar';
 
 export { BottomTabBar } from './BottomTabBar';
 export type { BottomTabBarProps, BottomTabBarItem } from './BottomTabBar';
@@ -60,6 +60,7 @@ export type {
   BottomSheetHeaderProps,
   BottomSheetBodyProps,
   BottomSheetFooterProps,
+  SheetFooterLayout,
 } from './BottomSheet';
 
 export { Toast, useToast, toast } from './Toast';
@@ -75,7 +76,13 @@ export { SearchBar } from './SearchBar';
 export type { SearchBarProps } from './SearchBar';
 
 export { EmptyState } from './EmptyState';
-export type { EmptyStateProps } from './EmptyState';
+export type { EmptyStateProps, EmptyStateSize } from './EmptyState';
+
+export { SegmentedControl } from './SegmentedControl';
+export type { SegmentedControlProps, SegmentedControlOption } from './SegmentedControl';
+
+export { KeyboardLiftedFooter } from './KeyboardLiftedFooter';
+export type { KeyboardLiftedFooterProps } from './KeyboardLiftedFooter';
 
 export { Spinner } from './Spinner';
 export type { SpinnerProps } from './Spinner';
@@ -117,7 +124,7 @@ export { ActionTile } from './ActionTile';
 export type { ActionTileProps, ActionTileTone } from './ActionTile';
 
 export { Countdown } from './Countdown';
-export type { CountdownProps, CountdownFormat } from './Countdown';
+export type { CountdownProps, CountdownFormat, CountdownUnits } from './Countdown';
 
 export { DatePickerInput } from './DatePickerInput';
 export type { DatePickerInputProps, DatePickerMode } from './DatePickerInput';

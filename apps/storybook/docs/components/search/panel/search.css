@@ -1,0 +1,331 @@
+/*
+ * Token and component search page. Every color is a custom property on the
+ * root, redefined for dark mode, so no rule below names a raw color. Rules on
+ * headings and paragraphs carry `.nui-search.sb-unstyled` to outrank the
+ * docs-wide `.sbdocs-content` typography from preview-head.html.
+ */
+.nui-search {
+  --search-ink: #0f172a;
+  --search-ink-muted: #475569;
+  --search-ink-subtle: #5b6b80;
+  --search-surface: #ffffff;
+  --search-surface-sunken: #f6f7fb;
+  --search-surface-hover: #f3f4fa;
+  --search-border: #e3e6ee;
+  --search-border-strong: #c7cdda;
+  --search-accent: #4f46e5;
+  --search-accent-ink: #4338ca;
+  --search-accent-soft: rgba(79, 70, 229, 0.09);
+  --search-accent-ring: rgba(79, 70, 229, 0.32);
+  --search-monogram-from: #4f46e5;
+  --search-monogram-to: #9333ea;
+  --search-on-accent: #ffffff;
+  --search-success: #15803d;
+  --search-danger: #b91c1c;
+  --search-danger-soft: rgba(185, 28, 28, 0.08);
+  --search-checker: #dfe3ec;
+  --search-swatch-edge: rgba(15, 23, 42, 0.12);
+  --search-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 32px -18px rgba(15, 23, 42, 0.22);
+  --search-field-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.05), 0 18px 40px -28px rgba(79, 70, 229, 0.45);
+  --search-font:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+  --search-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --search-radius-lg: 18px;
+  --search-radius-md: 12px;
+  --search-radius-sm: 8px;
+  --search-preview-width: 56px;
+  --search-preview-height: 48px;
+  --search-motion: 160ms ease;
+
+  margin: 0 0 48px;
+  color: var(--search-ink);
+  font-family: var(--search-font);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+:root[data-nui-scheme='dark'] .nui-search {
+  --search-ink: #e8eaf0;
+  --search-ink-muted: #b2b9c8;
+  --search-ink-subtle: #949db0;
+  --search-surface: #161922;
+  --search-surface-sunken: #10131a;
+  --search-surface-hover: #1d212c;
+  --search-border: #272c39;
+  --search-border-strong: #3a4152;
+  --search-accent: #818cf8;
+  --search-accent-ink: #a5b4fc;
+  --search-accent-soft: rgba(129, 140, 248, 0.13);
+  --search-accent-ring: rgba(129, 140, 248, 0.45);
+  --search-monogram-from: #6366f1;
+  --search-monogram-to: #a855f7;
+  --search-success: #4ade80;
+  --search-danger: #fca5a5;
+  --search-danger-soft: rgba(252, 165, 165, 0.1);
+  --search-checker: #2a2f3c;
+  --search-swatch-edge: rgba(255, 255, 255, 0.14);
+  --search-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 16px 36px -20px rgba(0, 0, 0, 0.7);
+  --search-field-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 44px -28px rgba(99, 102, 241, 0.6);
+}
+
+.nui-search *,
+.nui-search *::before,
+.nui-search *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.nui-search ul {
+  list-style: none;
+}
+
+.nui-search-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.nui-search-head {
+  margin-bottom: 24px;
+}
+
+.nui-search-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--search-accent-ink);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nui-search-eyebrow::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--search-accent);
+  box-shadow: 0 0 0 4px var(--search-accent-soft);
+}
+
+.nui-search.sb-unstyled .nui-search-title {
+  margin: 10px 0 0;
+  padding: 0;
+  border: 0;
+  color: var(--search-ink);
+  font-size: clamp(26px, 4vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+}
+
+.nui-search.sb-unstyled .nui-search-lead {
+  margin-top: 10px;
+  max-width: 660px;
+  color: var(--search-ink-muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.nui-search.sb-unstyled .nui-search-hint {
+  margin-top: 6px;
+  color: var(--search-ink-subtle);
+  font-size: 13px;
+}
+
+.nui-search-field {
+  position: sticky;
+  top: 12px;
+  z-index: 2;
+}
+
+.nui-search-field input {
+  width: 100%;
+  height: 58px;
+  padding: 0 64px 0 52px;
+  border: 1px solid var(--search-border);
+  border-radius: var(--search-radius-lg);
+  background: var(--search-surface);
+  box-shadow: var(--search-field-shadow);
+  color: var(--search-ink);
+  font: inherit;
+  font-size: 17px;
+  outline: none;
+  transition:
+    border-color var(--search-motion),
+    box-shadow var(--search-motion);
+  appearance: none;
+}
+
+.nui-search-field input::placeholder {
+  color: var(--search-ink-subtle);
+}
+
+.nui-search-field input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.nui-search-field input:focus-visible {
+  border-color: var(--search-accent);
+  box-shadow:
+    0 0 0 4px var(--search-accent-ring),
+    var(--search-field-shadow);
+}
+
+.nui-search-field-icon {
+  position: absolute;
+  top: 50%;
+  left: 18px;
+  display: flex;
+  width: 22px;
+  height: 22px;
+  color: var(--search-ink-subtle);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.nui-search svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nui-search-kbd {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  padding: 3px 8px;
+  border: 1px solid var(--search-border);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  background: var(--search-surface-sunken);
+  color: var(--search-ink-subtle);
+  font-family: var(--search-mono);
+  font-size: 11px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.nui-search-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 16px;
+  min-height: 24px;
+  margin: 14px 2px 18px;
+}
+
+.nui-search.sb-unstyled .nui-search-summary {
+  color: var(--search-ink-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.nui-search.sb-unstyled .nui-search-note {
+  color: var(--search-ink-subtle);
+  font-size: 13px;
+}
+
+.nui-search.sb-unstyled .nui-search-note[data-tone='error'] {
+  color: var(--search-danger);
+}
+
+.nui-search-state {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 44px 24px;
+  border: 1px dashed var(--search-border-strong);
+  border-radius: var(--search-radius-lg);
+  background: var(--search-surface-sunken);
+  text-align: center;
+}
+
+.nui-search-state-icon {
+  display: flex;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 4px;
+  padding: 13px;
+  border-radius: 16px;
+  background: var(--search-accent-soft);
+  color: var(--search-accent-ink);
+}
+
+.nui-search.sb-unstyled .nui-search-state-title {
+  color: var(--search-ink);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.nui-search.sb-unstyled .nui-search-state-body {
+  max-width: 440px;
+  color: var(--search-ink-muted);
+  font-size: 14px;
+}
+
+.nui-search-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.nui-search-suggestions button {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--search-border);
+  border-radius: 999px;
+  background: var(--search-surface);
+  color: var(--search-ink);
+  font-family: var(--search-mono);
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    border-color var(--search-motion),
+    color var(--search-motion);
+}
+
+.nui-search-suggestions button:hover {
+  border-color: var(--search-accent);
+  color: var(--search-accent-ink);
+}
+
+.nui-search-suggestions button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--search-accent-ring);
+}
+
+@media (max-width: 640px) {
+  .nui-search {
+    --search-preview-width: 44px;
+    --search-preview-height: 44px;
+  }
+
+  .nui-search-kbd {
+    display: none;
+  }
+
+  .nui-search-field input {
+    padding-right: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nui-search * {
+    transition: none !important;
+  }
+}

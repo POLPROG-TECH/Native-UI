@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { fn } from 'storybook/test';
 import { View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
@@ -13,8 +13,10 @@ import type { SelectOption } from '../../src/components/Select';
 
 const meta: Meta = {
   title: 'Patterns/Dialogs & Sheets',
-  // Imperative demos: each variant mounts its own Modal root, so the Docs
-  // page would stack them on top of each other.
+  /**
+   * Imperative demos: each variant mounts its own Modal root, so the Docs
+   * page would stack them on top of each other.
+   */
   tags: ['!autodocs'],
   parameters: {
     docs: {
@@ -40,7 +42,7 @@ const DeleteConfirmation = () => {
 
   return (
     <View>
-      <Button title="Delete Entry" variant="destructive" onPress={() => setVisible(true)} />
+      <Button title="Delete Entry" variant="danger" onPress={() => setVisible(true)} />
       <Modal visible={visible} onClose={() => setVisible(false)} title="Delete Entry?">
         <VStack gap="md">
           <Text variant="body" color="textSecondary">
@@ -61,7 +63,7 @@ const DeleteConfirmation = () => {
             <Box style={{ flex: 1 }}>
               <Button
                 title="Delete"
-                variant="destructive"
+                variant="danger"
                 onPress={() => {
                   setVisible(false);
                   fn()();

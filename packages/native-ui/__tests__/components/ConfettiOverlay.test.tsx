@@ -1,5 +1,4 @@
-import React from 'react';
-import { act, screen } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { ConfettiOverlay } from '../../src/components/ConfettiOverlay';
 import { renderWithTheme } from '../test-utils';
 
@@ -11,94 +10,100 @@ describe('ConfettiOverlay', () => {
     jest.useRealTimers();
   });
 
-  it('should be exported as a function component', () => {
-    // GIVEN the ConfettiOverlay export
+  describe('GIVEN the ConfettiOverlay export', () => {
+    describe('WHEN its runtime type is inspected', () => {
+      it('THEN it is a function component', () => {
+        const actualType = typeof ConfettiOverlay;
 
-    // WHEN its runtime type is inspected
-    const actualType = typeof ConfettiOverlay;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
-  });
-
-  it('should render nothing when `visible` is false', () => {
-    // GIVEN a ConfettiOverlay configured with visible={false}
-    // WHEN the component is rendered
-    const { container } = renderWithTheme(<ConfettiOverlay visible={false} />);
-
-    // THEN no confetti wrapper is mounted
-    expect(container.firstChild).toBeNull();
-  });
-
-  it('should render the overlay wrapper when `visible` is true', () => {
-    // GIVEN a visible ConfettiOverlay
-    // WHEN the component is rendered
-    const { container } = renderWithTheme(
-      <ConfettiOverlay visible forceAnimation particleCount={5} />,
-    );
-
-    // THEN the overlay wrapper element is mounted
-    expect(container.firstChild).not.toBeNull();
-  });
-
-  it('should invoke `onComplete` after the configured duration elapses', () => {
-    // GIVEN a visible ConfettiOverlay with an onComplete spy and a known duration
-    const onComplete = jest.fn();
-    renderWithTheme(
-      <ConfettiOverlay
-        visible
-        forceAnimation
-        particleCount={3}
-        duration={1000}
-        onComplete={onComplete}
-      />,
-    );
-
-    // WHEN the full duration elapses
-    act(() => {
-      jest.advanceTimersByTime(1001);
+        expect(actualType).toBe('function');
+      });
     });
-
-    // THEN onComplete is called exactly once
-    expect(onComplete).toHaveBeenCalledTimes(1);
   });
 
-  it('should render without crashing for a zero particle count', () => {
-    // GIVEN a ConfettiOverlay with particleCount=0
-    // WHEN the component is rendered
-    const render = () =>
-      renderWithTheme(<ConfettiOverlay visible forceAnimation particleCount={0} />);
+  describe('GIVEN a ConfettiOverlay configured with visible={false}', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN no confetti wrapper is mounted', () => {
+        const { container } = renderWithTheme(<ConfettiOverlay visible={false} />);
 
-    // THEN no error is thrown
-    expect(render).not.toThrow();
+        expect(container.firstChild).toBeNull();
+      });
+    });
   });
 
-  it('should render without crashing when a custom color palette is provided', () => {
-    // GIVEN a custom color palette
-    // WHEN the overlay is rendered using that palette
-    const render = () =>
-      renderWithTheme(
-        <ConfettiOverlay
-          visible
-          forceAnimation
-          particleCount={2}
-          colors={['#ff0000', '#00ff00']}
-        />,
-      );
+  describe('GIVEN a visible ConfettiOverlay', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the overlay wrapper element is mounted', () => {
+        const { container } = renderWithTheme(
+          <ConfettiOverlay visible forceAnimation particleCount={5} />,
+        );
 
-    // THEN no error is thrown
-    expect(render).not.toThrow();
+        expect(container.firstChild).not.toBeNull();
+      });
+    });
   });
 
-  it('should not render confetti when reduceAnimations is on and `forceAnimation` is false', () => {
-    // GIVEN a visible overlay without forceAnimation, in reduce-motion mode
-    // WHEN the component is mounted under a reduceAnimations provider
-    const { container } = renderWithTheme(
-      <ConfettiOverlay visible particleCount={4} forceAnimation={false} />,
-      { config: { reduceAnimations: true } },
-    );
+  describe('GIVEN a visible ConfettiOverlay with an onComplete spy and a known duration', () => {
+    describe('WHEN the full duration elapses', () => {
+      it('THEN onComplete is called exactly once', () => {
+        const onComplete = jest.fn();
+        renderWithTheme(
+          <ConfettiOverlay
+            visible
+            forceAnimation
+            particleCount={3}
+            duration={1000}
+            onComplete={onComplete}
+          />,
+        );
 
-    // THEN no confetti pieces are mounted
-    expect(container.firstChild).toBeNull();
+        act(() => {
+          jest.advanceTimersByTime(1001);
+        });
+
+        expect(onComplete).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  describe('GIVEN a ConfettiOverlay with particleCount=0', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN no error is thrown', () => {
+        const render = () =>
+          renderWithTheme(<ConfettiOverlay visible forceAnimation particleCount={0} />);
+
+        expect(render).not.toThrow();
+      });
+    });
+  });
+
+  describe('GIVEN a custom color palette', () => {
+    describe('WHEN the overlay is rendered using that palette', () => {
+      it('THEN no error is thrown', () => {
+        const render = () =>
+          renderWithTheme(
+            <ConfettiOverlay
+              visible
+              forceAnimation
+              particleCount={2}
+              colors={['#ff0000', '#00ff00']}
+            />,
+          );
+
+        expect(render).not.toThrow();
+      });
+    });
+  });
+
+  describe('GIVEN a visible overlay without forceAnimation, in reduce-motion mode', () => {
+    describe('WHEN the component is mounted under a reduceAnimations provider', () => {
+      it('THEN no confetti pieces are mounted', () => {
+        const { container } = renderWithTheme(
+          <ConfettiOverlay visible particleCount={4} forceAnimation={false} />,
+          { config: { reduceAnimations: true } },
+        );
+
+        expect(container.firstChild).toBeNull();
+      });
+    });
   });
 });

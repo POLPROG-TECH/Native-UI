@@ -13,11 +13,7 @@
  */
 
 import { readdir, readFile, stat } from 'node:fs/promises';
-import { join, relative, basename, extname } from 'node:path';
-
-// ---------------------------------------------------------------------------
-// Config
-// ---------------------------------------------------------------------------
+import { join, relative, basename } from 'node:path';
 
 const RN_PRIMITIVE_REGEX = /import\s+\{([^}]*)\}\s+from\s+['"]react-native['"]/g;
 const NATIVE_UI_IMPORT_REGEX =
@@ -35,8 +31,6 @@ const RAW_RN_PRIMITIVES = [
   'Pressable',
 ];
 
-const RAW_RN_STYLING = ['StyleSheet'];
-
 const HARDCODED_SPACING_REGEX =
   /(?:padding|margin|gap|top|bottom|left|right|paddingHorizontal|paddingVertical|marginHorizontal|marginVertical)\s*:\s*(\d+)/g;
 const HARDCODED_COLOR_HEX_REGEX =
@@ -47,7 +41,7 @@ const HARDCODED_FONT_SIZE_REGEX = /fontSize\s*:\s*(\d+)/g;
 const HARDCODED_FONT_WEIGHT_REGEX = /fontWeight\s*:\s*['"][^'"]+['"]/g;
 const HARDCODED_BORDER_RADIUS_REGEX = /borderRadius\s*:\s*(\d+)/g;
 
-// Files to skip (non-UI concerns)
+/* Files to skip (non-UI concerns) */
 const SKIP_PATTERNS = [
   /\.test\.[tj]sx?$/,
   /\.spec\.[tj]sx?$/,
@@ -69,7 +63,7 @@ const SKIP_PATTERNS = [
   /\/selectors?\//,
 ];
 
-// Files to skip for hardcoded-value scanning but NOT for import scanning
+/* Files to skip for hardcoded-value scanning but NOT for import scanning */
 const SKIP_HARDCODED_PATTERNS = [
   /\/services?\//,
   /\/api\//,
@@ -86,10 +80,6 @@ const SKIP_HARDCODED_PATTERNS = [
   /\/selectors?\//,
 ];
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 /**
  * Recursively collect all .ts/.tsx files under a directory.
  */
@@ -98,17 +88,24 @@ async function collectFiles(dir) {
   const files = [];
 
   for (const entry of entries) {
-    const fullPath = join(dir, entry.name);
-
-    if (entry.isDirectory()) {
-      if (entry.name === 'node_modules' || entry.name.startsWith('.')) continue;
-      files.push(...(await collectFiles(fullPath)));
-    } else if (/\.[tj]sx?$/.test(entry.name)) {
-      files.push(fullPath);
-    }
+    files.push(...(await collectEntryFiles(dir, entry)));
   }
 
   return files;
+}
+
+function isIgnoredDirectory(name) {
+  return name === 'node_modules' || name.startsWith('.');
+}
+
+async function collectEntryFiles(dir, entry) {
+  const fullPath = join(dir, entry.name);
+
+  if (entry.isDirectory()) {
+    return isIgnoredDirectory(entry.name) ? [] : collectFiles(fullPath);
+  }
+
+  return /\.[tj]sx?$/.test(entry.name) ? [fullPath] : [];
 }
 
 function shouldSkipFile(filePath) {
@@ -121,6 +118,7 @@ function shouldSkipHardcoded(filePath) {
 
 function countMatches(content, regex) {
   const matches = content.match(new RegExp(regex.source, regex.flags));
+
   return matches ? matches.length : 0;
 }
 
@@ -137,265 +135,293 @@ function extractImportNames(content, regex) {
     );
     names.push(...imports.filter(Boolean));
   }
+
   return names;
 }
 
-// ---------------------------------------------------------------------------
-// Scanning
-// ---------------------------------------------------------------------------
+/**
+ * JSX usage count per imported raw RN primitive (only primitives actually used).
+ */
+function countRawPrimitives(content, importedNames) {
+  const usage = {};
+
+  for (const prim of RAW_RN_PRIMITIVES) {
+    if (!importedNames.includes(prim)) {
+      continue;
+    }
+
+    const count = countMatches(content, new RegExp(`<${prim}[\\s/>]`, 'g'));
+
+    if (count > 0) {
+      usage[prim] = count;
+    }
+  }
+
+  return usage;
+}
+
+function emptyHardcoded() {
+  return { spacing: 0, colors: 0, fontSize: 0, fontWeight: 0, borderRadius: 0 };
+}
+
+function countHardcoded(content) {
+  return {
+    spacing: countMatches(content, HARDCODED_SPACING_REGEX),
+    colors:
+      countMatches(content, HARDCODED_COLOR_HEX_REGEX) +
+      countMatches(content, HARDCODED_COLOR_RGB_REGEX),
+    fontSize: countMatches(content, HARDCODED_FONT_SIZE_REGEX),
+    fontWeight: countMatches(content, HARDCODED_FONT_WEIGHT_REGEX),
+    borderRadius: countMatches(content, HARDCODED_BORDER_RADIUS_REGEX),
+  };
+}
 
 async function scanFile(filePath, rootDir) {
   const content = await readFile(filePath, 'utf-8');
   const relPath = relative(rootDir, filePath);
+  const rnImports = extractImportNames(content, RN_PRIMITIVE_REGEX);
 
-  const result = {
+  return {
     path: relPath,
-    rnImports: [],
-    nativeUiImports: [],
-    rawPrimitiveUsage: {},
-    stylesheetCreate: 0,
-    hardcoded: {
-      spacing: 0,
-      colors: 0,
-      fontSize: 0,
-      fontWeight: 0,
-      borderRadius: 0,
-    },
+    rnImports,
+    nativeUiImports: extractImportNames(content, NATIVE_UI_IMPORT_REGEX),
+    rawPrimitiveUsage: countRawPrimitives(content, rnImports),
+    stylesheetCreate: rnImports.includes('StyleSheet')
+      ? countMatches(content, /StyleSheet\.create/g)
+      : 0,
+    /* Non-UI files (services, hooks, ...) legitimately hold raw values. */
+    hardcoded: shouldSkipHardcoded(relPath) ? emptyHardcoded() : countHardcoded(content),
+    /* Numeric spacing access: theme.spacing[16] instead of theme.spacing.lg */
     tokenCompliance: {
-      numericSpacingAccess: 0,
+      numericSpacingAccess: countMatches(content, /theme\.spacing\[\d+\]/g),
     },
   };
-
-  // --- Import analysis (always) ---
-  const rnImportNames = extractImportNames(content, RN_PRIMITIVE_REGEX);
-  result.rnImports = rnImportNames;
-
-  const nativeUiImportNames = extractImportNames(content, NATIVE_UI_IMPORT_REGEX);
-  result.nativeUiImports = nativeUiImportNames;
-
-  // Count raw RN primitive JSX usage
-  for (const prim of RAW_RN_PRIMITIVES) {
-    if (rnImportNames.includes(prim)) {
-      const jsxOpen = new RegExp(`<${prim}[\\s/>]`, 'g');
-      const count = countMatches(content, jsxOpen);
-      if (count > 0) {
-        result.rawPrimitiveUsage[prim] = count;
-      }
-    }
-  }
-
-  // StyleSheet.create
-  if (rnImportNames.includes('StyleSheet')) {
-    const ssCount = countMatches(content, /StyleSheet\.create/g);
-    result.stylesheetCreate = ssCount;
-  }
-
-  // --- Hardcoded values (skip non-UI files) ---
-  if (!shouldSkipHardcoded(relPath)) {
-    result.hardcoded.spacing = countMatches(content, HARDCODED_SPACING_REGEX);
-    result.hardcoded.colors =
-      countMatches(content, HARDCODED_COLOR_HEX_REGEX) +
-      countMatches(content, HARDCODED_COLOR_RGB_REGEX);
-    result.hardcoded.fontSize = countMatches(content, HARDCODED_FONT_SIZE_REGEX);
-    result.hardcoded.fontWeight = countMatches(content, HARDCODED_FONT_WEIGHT_REGEX);
-    result.hardcoded.borderRadius = countMatches(content, HARDCODED_BORDER_RADIUS_REGEX);
-  }
-
-  // --- Token compliance ---
-  // Numeric spacing access: theme.spacing[16] instead of theme.spacing.lg
-  const numericAccess = countMatches(content, /theme\.spacing\[\d+\]/g);
-  result.tokenCompliance.numericSpacingAccess = numericAccess;
-
-  return result;
 }
 
-// ---------------------------------------------------------------------------
-// Reporting
-// ---------------------------------------------------------------------------
-
 function grade(pct) {
-  if (pct >= 90) return 'A';
-  if (pct >= 70) return 'B';
-  if (pct >= 50) return 'C';
+  if (pct >= 90) {
+    return 'A';
+  }
+
+  if (pct >= 70) {
+    return 'B';
+  }
+
+  if (pct >= 50) {
+    return 'C';
+  }
+
   return 'D';
 }
 
-function printReport(results, rootDir) {
-  // Aggregate
-  let totalNativeUiImports = 0;
-  let totalRnImports = 0;
-  let totalHardcodedSpacing = 0;
-  let totalHardcodedColors = 0;
-  let totalHardcodedFontSize = 0;
-  let totalHardcodedFontWeight = 0;
-  let totalHardcodedBorderRadius = 0;
-  let totalStyleSheetCreate = 0;
-  let totalNumericSpacingAccess = 0;
-  let totalStyleValues = 0;
+function sumValues(counts) {
+  return Object.values(counts).reduce((a, b) => a + b, 0);
+}
 
+function rawUsageScore(result) {
+  return sumValues(result.rawPrimitiveUsage) + result.stylesheetCreate;
+}
+
+function addCounts(target, source) {
+  for (const key of Object.keys(target)) {
+    target[key] += source[key];
+  }
+}
+
+/**
+ * Fold per-file results into project totals and the per-section file lists.
+ */
+function aggregate(results) {
+  const totals = {
+    nativeUiImports: 0,
+    rnImports: 0,
+    styleSheetCreate: 0,
+    numericSpacingAccess: 0,
+    hardcoded: emptyHardcoded(),
+  };
   const rawUsageFiles = [];
   const hardcodedFiles = [];
   const tokenIssueFiles = [];
 
   for (const r of results) {
-    totalNativeUiImports += r.nativeUiImports.length;
-    totalRnImports += r.rnImports.length;
+    totals.nativeUiImports += r.nativeUiImports.length;
+    totals.rnImports += r.rnImports.length;
+    totals.styleSheetCreate += r.stylesheetCreate;
+    totals.numericSpacingAccess += r.tokenCompliance.numericSpacingAccess;
+    addCounts(totals.hardcoded, r.hardcoded);
 
-    const rawCount = Object.values(r.rawPrimitiveUsage).reduce((a, b) => a + b, 0);
-    if (rawCount > 0 || r.stylesheetCreate > 0) {
+    if (rawUsageScore(r) > 0) {
       rawUsageFiles.push(r);
     }
 
-    const hTotal =
-      r.hardcoded.spacing +
-      r.hardcoded.colors +
-      r.hardcoded.fontSize +
-      r.hardcoded.fontWeight +
-      r.hardcoded.borderRadius;
-    if (hTotal > 0) {
-      hardcodedFiles.push({ ...r, hardcodedTotal: hTotal });
+    if (sumValues(r.hardcoded) > 0) {
+      hardcodedFiles.push({ ...r, hardcodedTotal: sumValues(r.hardcoded) });
     }
-    totalHardcodedSpacing += r.hardcoded.spacing;
-    totalHardcodedColors += r.hardcoded.colors;
-    totalHardcodedFontSize += r.hardcoded.fontSize;
-    totalHardcodedFontWeight += r.hardcoded.fontWeight;
-    totalHardcodedBorderRadius += r.hardcoded.borderRadius;
-    totalStyleSheetCreate += r.stylesheetCreate;
 
     if (r.tokenCompliance.numericSpacingAccess > 0) {
       tokenIssueFiles.push(r);
     }
-    totalNumericSpacingAccess += r.tokenCompliance.numericSpacingAccess;
-
-    totalStyleValues += r.hardcoded.spacing + r.hardcoded.fontSize + r.hardcoded.borderRadius;
   }
 
-  const totalImports = totalNativeUiImports + totalRnImports;
-  const adoptionPct =
-    totalImports > 0 ? ((totalNativeUiImports / totalImports) * 100).toFixed(1) : '0.0';
-  const adoptionGrade = grade(parseFloat(adoptionPct));
+  return { totals, rawUsageFiles, hardcodedFiles, tokenIssueFiles };
+}
 
-  const appName = basename(rootDir) === 'src' ? basename(join(rootDir, '..')) : basename(rootDir);
-
-  const totalHardcoded =
-    totalHardcodedSpacing +
-    totalHardcodedColors +
-    totalHardcodedFontSize +
-    totalHardcodedFontWeight +
-    totalHardcodedBorderRadius;
-
-  // Token compliance: percentage of style values using tokens vs hardcoded
-  // Simple heuristic: count native-ui imports as "compliant" style values
-  const complianceBase = totalNativeUiImports + totalHardcoded;
-  const compliancePct =
-    complianceBase > 0 ? ((totalNativeUiImports / complianceBase) * 100).toFixed(1) : '100.0';
-
-  // --- Print ---
+function printHeader(appName, adoptionGrade, adoptionPct) {
   console.log('');
-  console.log('╔══════════════════════════════════════════════════════════╗');
-  console.log('║     native-ui Consumer Audit Report                      ║');
-  console.log('╠══════════════════════════════════════════════════════════╣');
-  console.log(`║ App: ${appName.padEnd(35)}                               ║`);
-  console.log(`║ Score: ${adoptionGrade} (${adoptionPct}%)`.padEnd(43) + '║');
-  console.log('╚══════════════════════════════════════════════════════════╝');
-  console.log('');
-
-  // --- Adoption Metrics ---
-  console.log('📊 Adoption Metrics:');
-  console.log(`  native-ui imports: ${totalNativeUiImports}`);
-  console.log(`  Raw RN imports: ${totalRnImports}`);
-  console.log(`  Adoption rate: ${adoptionPct}%`);
-  console.log(`  StyleSheet.create calls: ${totalStyleSheetCreate}`);
-  console.log('');
-
-  // --- Raw RN Usage ---
-  if (rawUsageFiles.length > 0) {
-    console.log('🔍 Raw RN Usage (should migrate):');
-    const sorted = rawUsageFiles.sort((a, b) => {
-      const aCount =
-        Object.values(a.rawPrimitiveUsage).reduce((x, y) => x + y, 0) + a.stylesheetCreate;
-      const bCount =
-        Object.values(b.rawPrimitiveUsage).reduce((x, y) => x + y, 0) + b.stylesheetCreate;
-      return bCount - aCount;
-    });
-
-    for (const file of sorted.slice(0, 20)) {
-      const parts = [];
-      for (const [prim, count] of Object.entries(file.rawPrimitiveUsage)) {
-        parts.push(`${count} <${prim}>`);
-      }
-      if (file.stylesheetCreate > 0) {
-        parts.push(`${file.stylesheetCreate} StyleSheet.create`);
-      }
-      console.log(`  ${file.path}: ${parts.join(', ')}`);
-    }
-    if (sorted.length > 20) {
-      console.log(`  ... and ${sorted.length - 20} more files`);
-    }
-  } else {
-    console.log('🔍 Raw RN Usage: None found! 🎉');
-  }
-  console.log('');
-
-  // --- Hardcoded Values ---
-  if (hardcodedFiles.length > 0) {
-    console.log('⚠️  Hardcoded Values Found:');
-    console.log(`  Spacing (padding/margin/gap): ${totalHardcodedSpacing} occurrences`);
-    console.log(`  Colors (hex/rgb): ${totalHardcodedColors} occurrences`);
-    console.log(`  Font sizes: ${totalHardcodedFontSize} occurrences`);
-    console.log(`  Font weights: ${totalHardcodedFontWeight} occurrences`);
-    console.log(`  Border radii: ${totalHardcodedBorderRadius} occurrences`);
-    console.log('');
-    console.log('  Top offenders:');
-
-    const sortedHardcoded = hardcodedFiles.sort((a, b) => b.hardcodedTotal - a.hardcodedTotal);
-    for (const file of sortedHardcoded.slice(0, 15)) {
-      const details = [];
-      if (file.hardcoded.spacing > 0) details.push(`spacing: ${file.hardcoded.spacing}`);
-      if (file.hardcoded.colors > 0) details.push(`colors: ${file.hardcoded.colors}`);
-      if (file.hardcoded.fontSize > 0) details.push(`fontSize: ${file.hardcoded.fontSize}`);
-      if (file.hardcoded.fontWeight > 0) details.push(`fontWeight: ${file.hardcoded.fontWeight}`);
-      if (file.hardcoded.borderRadius > 0)
-        details.push(`borderRadius: ${file.hardcoded.borderRadius}`);
-      console.log(`    ${file.path} (${details.join(', ')})`);
-    }
-    if (sortedHardcoded.length > 15) {
-      console.log(`    ... and ${sortedHardcoded.length - 15} more files`);
-    }
-  } else {
-    console.log('⚠️  Hardcoded Values: None found! 🎉');
-  }
-  console.log('');
-
-  // --- Token Compliance ---
-  console.log(`✅ Token Compliance: ${compliancePct}%`);
-  if (totalNumericSpacingAccess > 0) {
-    console.log(
-      `  ⚠ ${totalNumericSpacingAccess} numeric spacing accesses (use theme.spacing.md, not theme.spacing[16])`,
-    );
-    for (const file of tokenIssueFiles.slice(0, 10)) {
-      console.log(`    ${file.path}: ${file.tokenCompliance.numericSpacingAccess} occurrences`);
-    }
-  }
-  if (totalHardcodedColors > 0) {
-    console.log(`  ⚠ ${totalHardcodedColors} direct color hex/rgb values in style objects`);
-  }
-  console.log('');
-
-  // --- Summary ---
-  console.log('─'.repeat(44));
-  console.log(`Files scanned: ${results.length}`);
-  console.log(
-    `Total issues: ${
-      Object.values(rawUsageFiles).length + hardcodedFiles.length + tokenIssueFiles.length
-    } files with findings`,
-  );
+  console.log('native-ui consumer audit');
+  console.log(`  App: ${appName}`);
+  console.log(`  Score: ${adoptionGrade} (${adoptionPct}%)`);
   console.log('');
 }
 
-// ---------------------------------------------------------------------------
-// Main
-// ---------------------------------------------------------------------------
+function printAdoptionMetrics(totals, adoptionPct) {
+  console.log('Adoption metrics:');
+  console.log(`  native-ui imports: ${totals.nativeUiImports}`);
+  console.log(`  Raw RN imports: ${totals.rnImports}`);
+  console.log(`  Adoption rate: ${adoptionPct}%`);
+  console.log(`  StyleSheet.create calls: ${totals.styleSheetCreate}`);
+  console.log('');
+}
+
+function printMoreFiles(total, limit, indent) {
+  if (total <= limit) {
+    return;
+  }
+
+  console.log(`${indent}... and ${total - limit} more files`);
+}
+
+function describeRawUsage(file) {
+  const parts = Object.entries(file.rawPrimitiveUsage).map(([prim, count]) => `${count} <${prim}>`);
+
+  if (file.stylesheetCreate > 0) {
+    parts.push(`${file.stylesheetCreate} StyleSheet.create`);
+  }
+
+  return parts.join(', ');
+}
+
+function printRawUsageSection(files) {
+  if (files.length === 0) {
+    console.log('Raw React Native usage: none found.');
+
+    return;
+  }
+
+  console.log('Raw React Native usage (should migrate):');
+  const sorted = files.sort((a, b) => rawUsageScore(b) - rawUsageScore(a));
+
+  for (const file of sorted.slice(0, 20)) {
+    console.log(`  ${file.path}: ${describeRawUsage(file)}`);
+  }
+
+  printMoreFiles(sorted.length, 20, '  ');
+}
+
+function describeHardcoded(file) {
+  return Object.keys(file.hardcoded)
+    .filter((key) => file.hardcoded[key] > 0)
+    .map((key) => `${key}: ${file.hardcoded[key]}`)
+    .join(', ');
+}
+
+function printHardcodedSection(files, hardcoded) {
+  if (files.length === 0) {
+    console.log('Hardcoded values: none found.');
+
+    return;
+  }
+
+  console.log('Hardcoded values found:');
+  console.log(`  Spacing (padding/margin/gap): ${hardcoded.spacing} occurrences`);
+  console.log(`  Colors (hex/rgb): ${hardcoded.colors} occurrences`);
+  console.log(`  Font sizes: ${hardcoded.fontSize} occurrences`);
+  console.log(`  Font weights: ${hardcoded.fontWeight} occurrences`);
+  console.log(`  Border radii: ${hardcoded.borderRadius} occurrences`);
+  console.log('');
+  console.log('  Top offenders:');
+  const sorted = files.sort((a, b) => b.hardcodedTotal - a.hardcodedTotal);
+
+  for (const file of sorted.slice(0, 15)) {
+    console.log(`    ${file.path} (${describeHardcoded(file)})`);
+  }
+
+  printMoreFiles(sorted.length, 15, '    ');
+}
+
+function printNumericSpacingIssues(count, files) {
+  if (count === 0) {
+    return;
+  }
+
+  console.log(`  ${count} numeric spacing accesses (use theme.spacing.md, not theme.spacing[16])`);
+
+  for (const file of files.slice(0, 10)) {
+    console.log(`    ${file.path}: ${file.tokenCompliance.numericSpacingAccess} occurrences`);
+  }
+}
+
+function printTokenCompliance(compliancePct, totals, tokenIssueFiles) {
+  console.log(`Token compliance: ${compliancePct}%`);
+  printNumericSpacingIssues(totals.numericSpacingAccess, tokenIssueFiles);
+
+  if (totals.hardcoded.colors > 0) {
+    console.log(`  ${totals.hardcoded.colors} direct color hex/rgb values in style objects`);
+  }
+
+  console.log('');
+}
+
+function printSummary(fileCount, issueFileCount) {
+  console.log('─'.repeat(44));
+  console.log(`Files scanned: ${fileCount}`);
+  console.log(`Total issues: ${issueFileCount} files with findings`);
+  console.log('');
+}
+
+function printReport(results, rootDir) {
+  const { totals, rawUsageFiles, hardcodedFiles, tokenIssueFiles } = aggregate(results);
+  const totalImports = totals.nativeUiImports + totals.rnImports;
+  const adoptionPct =
+    totalImports > 0 ? ((totals.nativeUiImports / totalImports) * 100).toFixed(1) : '0.0';
+  const appName = basename(rootDir) === 'src' ? basename(join(rootDir, '..')) : basename(rootDir);
+
+  /*
+   * Token compliance heuristic: native-ui imports count as "compliant" style
+   * values against the hardcoded ones.
+   */
+  const complianceBase = totals.nativeUiImports + sumValues(totals.hardcoded);
+  const compliancePct =
+    complianceBase > 0 ? ((totals.nativeUiImports / complianceBase) * 100).toFixed(1) : '100.0';
+
+  printHeader(appName, grade(parseFloat(adoptionPct)), adoptionPct);
+  printAdoptionMetrics(totals, adoptionPct);
+  printRawUsageSection(rawUsageFiles);
+  console.log('');
+  printHardcodedSection(hardcodedFiles, totals.hardcoded);
+  console.log('');
+  printTokenCompliance(compliancePct, totals, tokenIssueFiles);
+  printSummary(
+    results.length,
+    rawUsageFiles.length + hardcodedFiles.length + tokenIssueFiles.length,
+  );
+}
+
+async function assertDirectory(targetDir) {
+  let info;
+
+  try {
+    info = await stat(targetDir);
+  } catch {
+    console.error(`Error: ${targetDir} does not exist`);
+    process.exit(1);
+  }
+
+  if (!info.isDirectory()) {
+    console.error(`Error: ${targetDir} is not a directory`);
+    process.exit(1);
+  }
+}
 
 async function main() {
   const targetDir = process.argv[2];
@@ -406,17 +432,7 @@ async function main() {
     process.exit(1);
   }
 
-  // Validate the directory exists
-  try {
-    const s = await stat(targetDir);
-    if (!s.isDirectory()) {
-      console.error(`Error: ${targetDir} is not a directory`);
-      process.exit(1);
-    }
-  } catch {
-    console.error(`Error: ${targetDir} does not exist`);
-    process.exit(1);
-  }
+  await assertDirectory(targetDir);
 
   const allFiles = await collectFiles(targetDir);
   const uiFiles = allFiles.filter((f) => !shouldSkipFile(f));

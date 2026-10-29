@@ -1,152 +1,156 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { Text } from 'react-native';
 import { SettingsRow, SettingsSwitchRow } from '../../src/components/SettingsRow';
-import { NativeUIProvider } from '../../src/theme';
-
-function renderWithTheme(ui: React.ReactElement) {
-  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
-}
+import { renderWithTheme } from '../test-utils';
 
 describe('SettingsRow', () => {
-  it('should be exported as a function component', () => {
-    // GIVEN the SettingsRow export from the components module
+  describe('GIVEN the SettingsRow export from the components module', () => {
+    describe('WHEN its runtime type is inspected', () => {
+      it('THEN it is a function component', () => {
+        const actualType = typeof SettingsRow;
 
-    // WHEN its runtime type is inspected
-    const actualType = typeof SettingsRow;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
+        expect(actualType).toBe('function');
+      });
+    });
   });
 
-  it('should render the label when provided', () => {
-    // GIVEN a SettingsRow with a "Categories" label
+  describe('GIVEN a SettingsRow with a "Categories" label', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the label text is present', () => {
+        renderWithTheme(<SettingsRow label="Categories" icon="📁" />);
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<SettingsRow label="Categories" icon="📁" />);
-
-    // THEN the label text is present
-    expect(screen.getByText('Categories')).toBeInTheDocument();
+        expect(screen.getByText('Categories')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render the emoji icon when the icon prop is provided', () => {
-    // GIVEN a SettingsRow with a "📁" emoji icon
+  describe('GIVEN a SettingsRow with a "📁" emoji icon', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the emoji is present in the document', () => {
+        renderWithTheme(<SettingsRow label="Categories" icon="📁" />);
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<SettingsRow label="Categories" icon="📁" />);
-
-    // THEN the emoji is present in the document
-    expect(screen.getByText('📁')).toBeInTheDocument();
+        expect(screen.getByText('📁')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should invoke onPress when the row is clicked', () => {
-    // GIVEN a SettingsRow with a mocked onPress
-    const onPress = jest.fn();
-    renderWithTheme(<SettingsRow label="Open" icon="📁" onPress={onPress} />);
+  describe('GIVEN a SettingsRow with a mocked onPress', () => {
+    describe('WHEN the row is clicked', () => {
+      it('THEN onPress is invoked exactly once', () => {
+        const onPress = jest.fn();
+        renderWithTheme(<SettingsRow label="Open" icon="📁" onPress={onPress} />);
 
-    // WHEN the row is clicked
-    fireEvent.click(screen.getByLabelText('Open'));
+        fireEvent.click(screen.getByLabelText('Open'));
 
-    // THEN onPress is invoked exactly once
-    expect(onPress).toHaveBeenCalledTimes(1);
+        expect(onPress).toHaveBeenCalledTimes(1);
+      });
+    });
   });
 
-  it('should prefer renderIcon over the emoji icon when both are provided', () => {
-    // GIVEN a SettingsRow supplying both an emoji icon and a renderIcon render prop
+  describe('GIVEN a SettingsRow supplying both an emoji icon and a renderIcon render prop', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN only the render prop output is present', () => {
+        renderWithTheme(
+          <SettingsRow label="Lang" icon="📁" renderIcon={() => <Text>RENDERED</Text>} />,
+        );
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(
-      <SettingsRow label="Lang" icon="📁" renderIcon={() => <Text>RENDERED</Text>} />,
-    );
-
-    // THEN only the render prop output is present
-    expect(screen.getByText('RENDERED')).toBeInTheDocument();
-    expect(screen.queryByText('📁')).not.toBeInTheDocument();
+        expect(screen.getByText('RENDERED')).toBeInTheDocument();
+        expect(screen.queryByText('📁')).not.toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render the fallback icon background when the emoji is not in the default color map', () => {
-    // GIVEN a SettingsRow with an emoji outside the default colour map
+  describe('GIVEN a SettingsRow with an emoji outside the default colour map', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the emoji is still rendered', () => {
+        renderWithTheme(<SettingsRow label="Mystery" icon="🦄" />);
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<SettingsRow label="Mystery" icon="🦄" />);
-
-    // THEN the emoji is still rendered
-    expect(screen.getByText('🦄')).toBeInTheDocument();
+        expect(screen.getByText('🦄')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should merge iconColorMap on top of the default map without crashing', () => {
-    // GIVEN a SettingsRow with a custom color map entry
+  describe('GIVEN a SettingsRow with a custom color map entry', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the emoji is still rendered', () => {
+        renderWithTheme(
+          <SettingsRow label="Mystery" icon="🦄" iconColorMap={{ '🦄': '#123456' }} />,
+        );
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<SettingsRow label="Mystery" icon="🦄" iconColorMap={{ '🦄': '#123456' }} />);
-
-    // THEN the emoji is still rendered
-    expect(screen.getByText('🦄')).toBeInTheDocument();
+        expect(screen.getByText('🦄')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render the destructive row without crashing', () => {
-    // GIVEN a destructive SettingsRow
+  describe('GIVEN a destructive SettingsRow', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the label text is present', () => {
+        renderWithTheme(<SettingsRow label="Delete" icon="🗑️" destructive onPress={() => {}} />);
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<SettingsRow label="Delete" icon="🗑️" destructive onPress={() => {}} />);
-
-    // THEN the label text is present
-    expect(screen.getByText('Delete')).toBeInTheDocument();
+        expect(screen.getByText('Delete')).toBeInTheDocument();
+      });
+    });
   });
 });
 
 describe('SettingsSwitchRow', () => {
-  it('should be exported as a function component', () => {
-    // GIVEN the SettingsSwitchRow export from the components module
+  describe('GIVEN the SettingsSwitchRow export from the components module', () => {
+    describe('WHEN its runtime type is inspected', () => {
+      it('THEN it is a function component', () => {
+        const actualType = typeof SettingsSwitchRow;
 
-    // WHEN its runtime type is inspected
-    const actualType = typeof SettingsSwitchRow;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
+        expect(actualType).toBe('function');
+      });
+    });
   });
 
-  it('should render the label and toggle when provided', () => {
-    // GIVEN a SettingsSwitchRow with an emoji icon and value={true}
+  describe('GIVEN a SettingsSwitchRow with an emoji icon and value={true}', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the label is present and the toggle is checked', () => {
+        renderWithTheme(
+          <SettingsSwitchRow label="Dark Mode" icon="🌙" value onValueChange={() => {}} />,
+        );
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(
-      <SettingsSwitchRow label="Dark Mode" icon="🌙" value onValueChange={() => {}} />,
-    );
-
-    // THEN the label is present and the toggle is checked
-    expect(screen.getByText('Dark Mode')).toBeInTheDocument();
-    expect(screen.getByRole('switch')).toBeChecked();
+        expect(screen.getByText('Dark Mode')).toBeInTheDocument();
+        expect(screen.getByRole('switch')).toBeChecked();
+      });
+    });
   });
 
-  it('should invoke onValueChange with the opposite value when the switch is clicked', () => {
-    // GIVEN a SettingsSwitchRow with value={false} and a mocked onValueChange
-    const onValueChange = jest.fn();
-    renderWithTheme(
-      <SettingsSwitchRow label="Dark Mode" icon="🌙" value={false} onValueChange={onValueChange} />,
-    );
+  describe('GIVEN a SettingsSwitchRow with value={false} and a mocked onValueChange', () => {
+    describe('WHEN the toggle is clicked', () => {
+      it('THEN onValueChange is invoked with true', () => {
+        const onValueChange = jest.fn();
+        renderWithTheme(
+          <SettingsSwitchRow
+            label="Dark Mode"
+            icon="🌙"
+            value={false}
+            onValueChange={onValueChange}
+          />,
+        );
 
-    // WHEN the toggle is clicked
-    fireEvent.click(screen.getByRole('switch'));
+        fireEvent.click(screen.getByRole('switch'));
 
-    // THEN onValueChange is invoked with true
-    expect(onValueChange).toHaveBeenCalledWith(true);
+        expect(onValueChange).toHaveBeenCalledWith(true);
+      });
+    });
   });
 
-  it('should render a custom renderIcon when provided', () => {
-    // GIVEN a SettingsSwitchRow with a custom icon render prop
+  describe('GIVEN a SettingsSwitchRow with a custom icon render prop', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the custom icon is present', () => {
+        renderWithTheme(
+          <SettingsSwitchRow
+            label="Dark Mode"
+            renderIcon={() => <Text>CUSTOM</Text>}
+            value
+            onValueChange={() => {}}
+          />,
+        );
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(
-      <SettingsSwitchRow
-        label="Dark Mode"
-        renderIcon={() => <Text>CUSTOM</Text>}
-        value
-        onValueChange={() => {}}
-      />,
-    );
-
-    // THEN the custom icon is present
-    expect(screen.getByText('CUSTOM')).toBeInTheDocument();
+        expect(screen.getByText('CUSTOM')).toBeInTheDocument();
+      });
+    });
   });
 });

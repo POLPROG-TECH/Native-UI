@@ -1,10 +1,9 @@
-import { View, Text } from 'react-native';
+import { View, Text, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
-
-export type ListHeaderTransform =
-  'uppercase' | 'lowercase' | 'capitalize' | 'none' | ((input: string) => string);
-
-export type ListHeaderSize = 'lg' | 'md' | 'sm' | 'xs';
+import { ListHeaderSubtitle } from './listHeader/ListHeaderSubtitle';
+import { buildHeaderTitleStyle, resolveHeaderTitle } from './listHeader/listHeaderTitle';
+import type { ListHeaderTransform, ListHeaderSize } from './listHeader/types';
+export type { ListHeaderTransform, ListHeaderSize } from './listHeader/types';
 
 export interface ListHeaderProps {
   /** Main heading text */
@@ -29,51 +28,17 @@ export interface ListHeaderProps {
    * - `'xs'` - Overline label (11px, uppercase, muted). iOS-style section
    *   divider for settings/list screens. Matches Apple HIG grouped list pattern.
    *
+   * Margins and letter spacing per size come from
+   * `theme.components.listHeader[size]`.
+   *
    * @default 'lg'
    */
   size?: ListHeaderSize;
+  /** Additional styles applied to the header container. */
+  style?: StyleProp<ViewStyle>;
+  /** Test ID forwarded to the header container. */
+  testID?: string;
 }
-
-interface SizeConfig {
-  typographyKey: 'h1' | 'h3' | 'title' | 'overline';
-  marginTop: number;
-  marginBottom: number;
-  useMutedColor: boolean;
-  defaultTransform: ListHeaderTransform;
-  letterSpacing?: number;
-}
-
-const SIZE_CONFIG: Record<ListHeaderSize, SizeConfig> = {
-  lg: {
-    typographyKey: 'h1',
-    marginTop: 0,
-    marginBottom: 28,
-    useMutedColor: false,
-    defaultTransform: 'none',
-  },
-  md: {
-    typographyKey: 'h3',
-    marginTop: 0,
-    marginBottom: 20,
-    useMutedColor: false,
-    defaultTransform: 'none',
-  },
-  sm: {
-    typographyKey: 'title',
-    marginTop: 0,
-    marginBottom: 12,
-    useMutedColor: false,
-    defaultTransform: 'none',
-  },
-  xs: {
-    typographyKey: 'overline',
-    marginTop: 24,
-    marginBottom: 8,
-    useMutedColor: true,
-    defaultTransform: 'uppercase',
-    letterSpacing: 0.8,
-  },
-};
 
 /**
  * Versatile list/settings header with four size variants.
@@ -81,47 +46,27 @@ const SIZE_CONFIG: Record<ListHeaderSize, SizeConfig> = {
  * Use `size="xs"` for iOS-style uppercase section labels in settings screens.
  * Use `size="lg"` (default) for prominent page-level headings.
  */
-export function ListHeader({ title, subtitle, transform, size = 'lg' }: ListHeaderProps) {
+export function ListHeader({
+  title,
+  subtitle,
+  transform,
+  size = 'lg',
+  style,
+  testID,
+}: ListHeaderProps) {
   const theme = useTheme();
-  const config = SIZE_CONFIG[size];
-
-  const resolvedTransform = transform ?? config.defaultTransform;
-  const { displayTitle, textTransform } = applyTransform(title, resolvedTransform);
+  const sizeTokens = theme.components.listHeader[size];
+  const { displayTitle, textTransform } = resolveHeaderTitle(title, size, transform);
 
   return (
-    <View style={{ marginTop: config.marginTop, marginBottom: config.marginBottom }}>
-      <Text
-        style={[
-          theme.typography[config.typographyKey],
-          { color: config.useMutedColor ? theme.colors.textTertiary : theme.colors.textPrimary },
-          textTransform ? { textTransform } : null,
-          config.letterSpacing != null ? { letterSpacing: config.letterSpacing } : null,
-        ]}
-        accessibilityRole="header"
-      >
+    <View
+      style={[{ marginTop: sizeTokens.marginTop, marginBottom: sizeTokens.marginBottom }, style]}
+      testID={testID}
+    >
+      <Text style={buildHeaderTitleStyle(theme, size, textTransform)} accessibilityRole="header">
         {displayTitle}
       </Text>
-      {subtitle && (
-        <Text
-          style={[theme.typography.bodySmall, { color: theme.colors.textSecondary, marginTop: 2 }]}
-        >
-          {subtitle}
-        </Text>
-      )}
+      {subtitle && <ListHeaderSubtitle subtitle={subtitle} />}
     </View>
   );
-}
-
-function applyTransform(
-  title: string,
-  transform: ListHeaderTransform,
-): { displayTitle: string; textTransform?: 'uppercase' | 'lowercase' | 'capitalize' } {
-  if (typeof transform === 'function') {
-    return { displayTitle: transform(title) };
-  }
-  if (transform === 'uppercase' || transform === 'lowercase' || transform === 'capitalize') {
-    return { displayTitle: title, textTransform: transform };
-  }
-
-  return { displayTitle: title };
 }

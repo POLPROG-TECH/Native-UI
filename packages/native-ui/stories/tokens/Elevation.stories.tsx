@@ -1,4 +1,3 @@
-import React from 'react';
 import { View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Text } from '../../src/primitives/Text';
@@ -98,7 +97,7 @@ export const ElevationOnDark: Story = {
     docs: {
       description: {
         story:
-          'Toggle the theme toolbar to Dark to preview the same scale against a dark surface. Shadows become visually weaker in dark mode; prefer surface-color stepping (e.g. `surface` vs `surfaceSecondary`) to communicate elevation.',
+          'Set **Mode** in the **Appearance** menu to Dark to preview the same scale against a dark surface. Shadows become visually weaker in dark mode; prefer surface-color stepping (e.g. `surface` vs `surfaceSecondary`) to communicate elevation.',
       },
     },
   },

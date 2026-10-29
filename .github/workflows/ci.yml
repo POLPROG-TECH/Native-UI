@@ -34,6 +34,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck --workspace=@polprog/native-ui
+      - name: Tests and stories type-check too
+        run: npm run typecheck:all --workspace=@polprog/native-ui
+      - name: Storybook app type-check
+        run: npm run typecheck --workspace=@polprog/storybook
+      - name: Public API report is up to date
+        run: npm run api:check --workspace=@polprog/native-ui
 
   lint:
     name: Lint
@@ -46,7 +52,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npm run lint --workspace=@polprog/native-ui
+      - run: npm run lint
 
   format:
     name: Format
@@ -92,6 +98,19 @@ jobs:
       - run: npm ci
       - run: npm run stories:check --workspace=@polprog/native-ui
 
+  import-cycles:
+    name: Architecture (import cycles)
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run check:cycles --workspace=@polprog/native-ui
+
   build:
     name: Build Library
     runs-on: ubuntu-latest
@@ -127,7 +146,8 @@ jobs:
   build-storybook:
     name: Build Storybook
     runs-on: ubuntu-latest
-    needs: install
+    # Reuses the Jest report from `test` for the docs stats instead of rerunning Jest.
+    needs: test
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -135,6 +155,11 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - name: Jest report for the docs stats (tests and coverage on Introduction / Dashboard)
+        uses: actions/download-artifact@v7
+        with:
+          name: coverage
+          path: packages/native-ui/coverage
       - run: npm run build-storybook
       - name: Enforce Storybook bundle-size budget
         run: npm run bundle-size --workspace=@polprog/storybook
@@ -143,10 +168,15 @@ jobs:
           name: storybook-static
           path: apps/storybook/storybook-static
 
-  a11y:
-    name: Accessibility (axe)
+  storybook-tests:
+    name: Storybook tests (${{ matrix.project }})
     runs-on: ubuntu-latest
-    needs: build-storybook
+    needs: install
+    strategy:
+      fail-fast: false
+      # Mirrors THEME_MATRIX in apps/storybook/.storybook/globals/themeMatrix.ts.
+      matrix:
+        project: [storybook, storybook-dark, storybook-rtl, storybook-large-contrast]
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -154,14 +184,10 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - uses: actions/download-artifact@v8
-        with:
-          name: storybook-static
-          path: apps/storybook/storybook-static
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-      - name: Run a11y test-runner against static Storybook
-        run: npm run test-runner:ci --workspace=@polprog/storybook
+      - name: Run every story as a Vitest browser test (render, play, axe)
+        run: npm run test:themes --workspace=@polprog/storybook -- --project=${{ matrix.project }}
 
   chromatic:
     name: Visual Regression
@@ -177,6 +203,11 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - name: Jest report for the docs stats, so snapshots match the published Storybook
+        uses: actions/download-artifact@v7
+        with:
+          name: coverage
+          path: packages/native-ui/coverage
       - uses: chromaui/action@latest
         if: env.CHROMATIC_PROJECT_TOKEN != ''
         env:

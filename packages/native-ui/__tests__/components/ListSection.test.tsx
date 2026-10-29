@@ -1,83 +1,78 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { ListSection } from '../../src/components/ListSection';
 import { ListItem } from '../../src/components/ListItem';
-import { NativeUIProvider } from '../../src/theme';
-
-function renderWithTheme(ui: React.ReactElement) {
-  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
-}
+import { renderWithTheme } from '../test-utils';
 
 describe('ListSection', () => {
-  it('should be exported as a function component', () => {
-    // GIVEN the ListSection export from the components module
+  describe('GIVEN the ListSection export from the components module', () => {
+    describe('WHEN its runtime type is inspected', () => {
+      it('THEN it is a function component', () => {
+        const actualType = typeof ListSection;
 
-    // WHEN its runtime type is inspected
-    const actualType = typeof ListSection;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
+        expect(actualType).toBe('function');
+      });
+    });
   });
 
-  it('should render the title when provided', () => {
-    // GIVEN a ListSection with a title
+  describe('GIVEN a ListSection with a title', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the title text is present', () => {
+        renderWithTheme(
+          <ListSection title="Account">
+            <ListItem title="Profile" />
+          </ListSection>,
+        );
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(
-      <ListSection title="Account">
-        <ListItem title="Profile" />
-      </ListSection>,
-    );
-
-    // THEN the title text is present
-    expect(screen.getByText('Account')).toBeInTheDocument();
+        expect(screen.getByText('Account')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render the footer when provided', () => {
-    // GIVEN a ListSection with a footer
+  describe('GIVEN a ListSection with a footer', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the footer text is present', () => {
+        renderWithTheme(
+          <ListSection footer="Need help? Contact support.">
+            <ListItem title="Profile" />
+          </ListSection>,
+        );
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(
-      <ListSection footer="Need help? Contact support.">
-        <ListItem title="Profile" />
-      </ListSection>,
-    );
-
-    // THEN the footer text is present
-    expect(screen.getByText('Need help? Contact support.')).toBeInTheDocument();
+        expect(screen.getByText('Need help? Contact support.')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render all children in default non grouped mode', () => {
-    // GIVEN a non-grouped ListSection wrapping two list items
+  describe('GIVEN a non-grouped ListSection wrapping two list items', () => {
+    describe('WHEN the section is rendered inside a theme provider', () => {
+      it('THEN both list items are present', () => {
+        renderWithTheme(
+          <ListSection>
+            <ListItem title="Alpha" />
+            <ListItem title="Beta" />
+          </ListSection>,
+        );
 
-    // WHEN the section is rendered inside a theme provider
-    renderWithTheme(
-      <ListSection>
-        <ListItem title="Alpha" />
-        <ListItem title="Beta" />
-      </ListSection>,
-    );
-
-    // THEN both list items are present
-    expect(screen.getByText('Alpha')).toBeInTheDocument();
-    expect(screen.getByText('Beta')).toBeInTheDocument();
+        expect(screen.getByText('Alpha')).toBeInTheDocument();
+        expect(screen.getByText('Beta')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render all children in grouped mode', () => {
-    // GIVEN a grouped ListSection wrapping three list items
+  describe('GIVEN a grouped ListSection wrapping three list items', () => {
+    describe('WHEN the section is rendered inside a theme provider', () => {
+      it('THEN every list item is present', () => {
+        renderWithTheme(
+          <ListSection grouped>
+            <ListItem title="Alpha" />
+            <ListItem title="Beta" />
+            <ListItem title="Gamma" />
+          </ListSection>,
+        );
 
-    // WHEN the section is rendered inside a theme provider
-    renderWithTheme(
-      <ListSection grouped>
-        <ListItem title="Alpha" />
-        <ListItem title="Beta" />
-        <ListItem title="Gamma" />
-      </ListSection>,
-    );
-
-    // THEN every list item is present
-    expect(screen.getByText('Alpha')).toBeInTheDocument();
-    expect(screen.getByText('Beta')).toBeInTheDocument();
-    expect(screen.getByText('Gamma')).toBeInTheDocument();
+        expect(screen.getByText('Alpha')).toBeInTheDocument();
+        expect(screen.getByText('Beta')).toBeInTheDocument();
+        expect(screen.getByText('Gamma')).toBeInTheDocument();
+      });
+    });
   });
 });

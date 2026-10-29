@@ -1,20 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { fn } from 'storybook/test';
 import { View, Text as RNText } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Avatar } from '../../src/components/Avatar';
-import { Badge } from '../../src/components/Badge';
-import { Box } from '../../src/primitives/Box';
-import { Button } from '../../src/components/Button';
-import { Chip } from '../../src/components/Chip';
 import { ListHeader } from '../../src/components/ListHeader';
 import { ListItem } from '../../src/components/ListItem';
 import { ListSection } from '../../src/components/ListSection';
 import { ListSwitchItem } from '../../src/components/ListSwitchItem';
 import { Radio } from '../../src/components/Radio';
-import { ScreenContainer } from '../../src/components/ScreenContainer';
-import { Select } from '../../src/components/Select';
-import { Text } from '../../src/primitives/Text';
 import { VStack } from '../../src/primitives/Stack';
 import { useTheme } from '../../src/theme/ThemeProvider';
 

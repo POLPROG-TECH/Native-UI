@@ -1,17 +1,23 @@
-import React, { useMemo } from 'react';
-import { StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import React from 'react';
+import type { StyleProp, ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
-import { Box } from '../primitives/Box';
-import { Text } from '../primitives/Text';
+import type { IconSlot } from '../primitives/iconSlot';
 import { PressableScale } from '../primitives/PressableScale';
-import { getHaptics } from '../utils/haptics';
-import { useDebouncedPress } from '../hooks/useDebouncedPress';
-
-export type ActionTileTone = 'primary' | 'success' | 'warning' | 'error' | 'neutral';
+import { ActionTileBody } from './actionTile/ActionTileBody';
+import { useActionTileStyles } from './actionTile/actionTileStyles';
+import { useLightHapticPress } from './press/useLightHapticPress';
+import type { ActionTileTone } from './actionTile/types';
+export type { ActionTileTone } from './actionTile/types';
 
 export interface ActionTileProps {
-  /** Icon element rendered inside the tinted chip. */
-  icon: React.ReactNode;
+  /**
+   * Icon rendered inside the tinted chip. Prefer a render function, which
+   * receives the tone's foreground color (e.g. `primaryText`) and
+   * `theme.iconSize.lg`:
+   * `icon={({ color, size }) => <SystemIcon name="plus" color={color} size={size} />}`.
+   * Nodes render as-is; emoji strings are kept for backwards compatibility.
+   */
+  icon: IconSlot;
   /** Short label rendered below the icon. */
   label: string;
   onPress: () => void;
@@ -28,16 +34,8 @@ export interface ActionTileProps {
   testID?: string;
 }
 
-const TONE_BG: Record<
-  ActionTileTone,
-  'primaryLight' | 'successLight' | 'warningLight' | 'errorLight' | 'surfaceSecondary'
-> = {
-  primary: 'primaryLight',
-  success: 'successLight',
-  warning: 'warningLight',
-  error: 'errorLight',
-  neutral: 'surfaceSecondary',
-};
+/* Disabled tiles give no press feedback. */
+const NO_PRESS_SCALE = 1;
 
 /**
  * Compact tappable tile with a tinted icon chip and a label below. Designed for
@@ -45,12 +43,17 @@ const TONE_BG: Record<
  * `HStack` with `flex: 1` each.
  *
  * Press handling is debounced and fires light haptics, matching the other
- * interactive components.
+ * interactive components. Geometry, press scale and debounce window come from
+ * `theme.components.actionTile`.
  *
  * @example
  * ```tsx
  * <HStack gap="md">
- *   <ActionTile icon={<Plus />} label="Add" onPress={add} />
+ *   <ActionTile
+ *     icon={({ color, size }) => <SystemIcon name="plus" color={color} size={size} />}
+ *     label="Add"
+ *     onPress={add}
+ *   />
  *   <ActionTile icon={<Wallet />} label="Budgets" tone="success" onPress={openBudgets} />
  * </HStack>
  * ```
@@ -65,55 +68,22 @@ export const ActionTile = React.memo(function ActionTile({
   style,
   testID,
 }: ActionTileProps) {
-  const theme = useTheme();
-
-  const handlePress = useDebouncedPress(() => {
-    getHaptics().light();
-    onPress();
-  }, 300);
-
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        tile: {
-          flex: 1,
-          alignItems: 'center',
-          gap: theme.spacing.sm,
-          paddingVertical: theme.spacing.lg,
-          paddingHorizontal: theme.spacing.sm,
-          borderRadius: theme.borderRadius.lg,
-          borderWidth: theme.borderWidth.thin,
-          borderColor: theme.colors.border,
-          backgroundColor: theme.colors.surface,
-          opacity: disabled ? theme.opacity.disabled : 1,
-        },
-        iconChip: {
-          width: 46,
-          height: 46,
-          borderRadius: 23,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: theme.colors[TONE_BG[tone]],
-        },
-      }),
-    [theme, tone, disabled],
-  );
+  const tokens = useTheme().components.actionTile;
+  const handlePress = useLightHapticPress(onPress, tokens.debounceMs);
+  const styles = useActionTileStyles(tone, disabled);
 
   return (
     <PressableScale
       onPress={handlePress}
       disabled={disabled}
-      scaleTo={disabled ? 1 : 0.97}
+      scaleTo={disabled ? NO_PRESS_SCALE : tokens.pressScale}
       style={[styles.tile, style]}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? label}
       accessibilityState={{ disabled }}
       {...(testID ? { testID } : {})}
     >
-      <Box style={styles.iconChip}>{icon}</Box>
-      <Text variant="labelSmall" color="textPrimary" align="center" numberOfLines={1}>
-        {label}
-      </Text>
+      <ActionTileBody icon={icon} tone={tone} label={label} iconChipStyle={styles.iconChip} />
     </PressableScale>
   );
 });

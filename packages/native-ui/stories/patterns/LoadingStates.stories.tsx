@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { fn } from 'storybook/test';
 import { View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Box } from '../../src/primitives/Box';
 import { Button } from '../../src/components/Button';
 import { Card } from '../../src/components/Card';
 import { EmptyState } from '../../src/components/EmptyState';

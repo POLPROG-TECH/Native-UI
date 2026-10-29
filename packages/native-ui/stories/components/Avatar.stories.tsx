@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Avatar } from '../../src/components/Avatar';
 import { HStack, VStack } from '../../src/primitives/Stack';
@@ -88,7 +87,7 @@ export const AvatarGroup: Story = {
         <Avatar initials="JD" color="#4F46E5" size="md" accessibilityLabel="John Doe" />
         <Avatar initials="AK" color="#10B981" size="md" accessibilityLabel="Anna K" />
         <Avatar initials="MR" color="#F59E0B" size="md" accessibilityLabel="Mark R" />
-        <Avatar initials="+3" color="#6B7280" size="md" accessibilityLabel="3 more members" />
+        <Avatar initials="+3" color="#4B5563" size="md" accessibilityLabel="3 more members" />
       </HStack>
     </VStack>
   ),

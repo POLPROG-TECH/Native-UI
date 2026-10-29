@@ -1,139 +1,157 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { Text } from 'react-native';
 import { ListItem } from '../../src/components/ListItem';
-import { NativeUIProvider } from '../../src/theme';
-
-function renderWithTheme(ui: React.ReactElement) {
-  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
-}
+import { renderWithTheme } from '../test-utils';
 
 describe('ListItem', () => {
-  it('should be exported as a valid React component', () => {
-    // GIVEN the ListItem export from the components module
+  describe('GIVEN the ListItem export from the components module', () => {
+    describe('WHEN its runtime type is inspected React.memo wraps a function component into an object with $$typeof', () => {
+      it('THEN it is a memoized component (object) or function component', () => {
+        const actualType = typeof ListItem;
 
-    // WHEN its runtime type is inspected
-    // React.memo wraps a function component into an object with $$typeof
-    const actualType = typeof ListItem;
-
-    // THEN it is a memoized component (object) or function component
-    expect(['function', 'object']).toContain(actualType);
-    expect(ListItem).toBeDefined();
+        expect(['function', 'object']).toContain(actualType);
+        expect(ListItem).toBeDefined();
+      });
+    });
   });
 
-  it('should render the title when a title is provided', () => {
-    // GIVEN a ListItem with a "Profile" title
+  describe('GIVEN a ListItem with a "Profile" title', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the title text is present', () => {
+        renderWithTheme(<ListItem title="Profile" />);
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<ListItem title="Profile" />);
-
-    // THEN the title text is present
-    expect(screen.getByText('Profile')).toBeInTheDocument();
+        expect(screen.getByText('Profile')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render the subtitle when provided', () => {
-    // GIVEN a ListItem with a subtitle
+  describe('GIVEN a ListItem with a subtitle', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the subtitle text is present', () => {
+        renderWithTheme(<ListItem title="Profile" subtitle="View and edit" />);
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<ListItem title="Profile" subtitle="View and edit" />);
-
-    // THEN the subtitle text is present
-    expect(screen.getByText('View and edit')).toBeInTheDocument();
+        expect(screen.getByText('View and edit')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render the value on the right when provided', () => {
-    // GIVEN a ListItem with a trailing value
+  describe('GIVEN a ListItem with a trailing value', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the value text is present', () => {
+        renderWithTheme(<ListItem title="Items" value="42" />);
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<ListItem title="Items" value="42" />);
-
-    // THEN the value text is present
-    expect(screen.getByText('42')).toBeInTheDocument();
+        expect(screen.getByText('42')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should become pressable and invoke onPress when onPress is provided', () => {
-    // GIVEN a ListItem with a mocked onPress callback
-    const onPress = jest.fn();
-    renderWithTheme(<ListItem title="Tap me" onPress={onPress} />);
+  describe('GIVEN a ListItem with a mocked onPress callback', () => {
+    describe('WHEN the row is clicked', () => {
+      it('THEN onPress is called exactly once', () => {
+        const onPress = jest.fn();
+        renderWithTheme(<ListItem title="Tap me" onPress={onPress} />);
 
-    // WHEN the row is clicked
-    fireEvent.click(screen.getByLabelText('Tap me'));
+        fireEvent.click(screen.getByLabelText('Tap me'));
 
-    // THEN onPress is called exactly once
-    expect(onPress).toHaveBeenCalledTimes(1);
+        expect(onPress).toHaveBeenCalledTimes(1);
+      });
+    });
   });
 
-  it('should render a default chevron when onPress is provided and no trailing element is given', () => {
-    // GIVEN a pressable ListItem without a trailing element
-    renderWithTheme(<ListItem title="Go" onPress={() => {}} />);
+  describe('GIVEN a pressable ListItem without a trailing element', () => {
+    describe('WHEN the drawn chevron icon is queried', () => {
+      it('THEN it is present in the document', () => {
+        renderWithTheme(<ListItem title="Go" onPress={() => {}} testID="row" />);
 
-    // WHEN the chevron glyph is queried THEN it is present in the document
-    expect(screen.getByText('›')).toBeInTheDocument();
+        expect(screen.getByTestId('row-chevron')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should not render the default chevron when a trailing element is provided', () => {
-    // GIVEN a pressable ListItem with a custom trailing element
-    renderWithTheme(<ListItem title="Go" onPress={() => {}} trailing={<Text>NEXT</Text>} />);
+  describe('GIVEN a pressable ListItem with a custom trailing element', () => {
+    describe('WHEN the trailing element is rendered', () => {
+      it('THEN only the trailing element is present and no default chevron', () => {
+        renderWithTheme(
+          <ListItem title="Go" onPress={() => {}} trailing={<Text>NEXT</Text>} testID="row" />,
+        );
 
-    // WHEN the trailing element is rendered THEN only the trailing element is present and no default chevron
-    expect(screen.getByText('NEXT')).toBeInTheDocument();
-    expect(screen.queryByText('›')).not.toBeInTheDocument();
+        expect(screen.getByText('NEXT')).toBeInTheDocument();
+        expect(screen.queryByTestId('row-chevron')).not.toBeInTheDocument();
+      });
+    });
   });
 
-  it('should use renderIcon when both icon and renderIcon are provided', () => {
-    // GIVEN a ListItem supplying both an icon node and a renderIcon render prop
-    renderWithTheme(
-      <ListItem title="Icons" icon={<Text>RAW</Text>} renderIcon={() => <Text>RENDERED</Text>} />,
-    );
+  describe('GIVEN a ListItem supplying both an icon node and a renderIcon render prop', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN only the render prop output is present', () => {
+        renderWithTheme(
+          <ListItem
+            title="Icons"
+            icon={<Text>RAW</Text>}
+            renderIcon={() => <Text>RENDERED</Text>}
+          />,
+        );
 
-    // WHEN the component is rendered THEN only the render prop output is present
-    expect(screen.getByText('RENDERED')).toBeInTheDocument();
-    expect(screen.queryByText('RAW')).not.toBeInTheDocument();
+        expect(screen.getByText('RENDERED')).toBeInTheDocument();
+        expect(screen.queryByText('RAW')).not.toBeInTheDocument();
+      });
+    });
   });
 
-  it('should use renderTrailing when both trailing and renderTrailing are provided', () => {
-    // GIVEN a ListItem supplying both a trailing node and a renderTrailing render prop
-    renderWithTheme(
-      <ListItem
-        title="Trail"
-        trailing={<Text>RAW</Text>}
-        renderTrailing={() => <Text>RENDERED</Text>}
-      />,
-    );
+  describe('GIVEN a ListItem supplying both a trailing node and a renderTrailing render prop', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN only the render prop output is present', () => {
+        renderWithTheme(
+          <ListItem
+            title="Trail"
+            trailing={<Text>RAW</Text>}
+            renderTrailing={() => <Text>RENDERED</Text>}
+          />,
+        );
 
-    // WHEN the component is rendered THEN only the render prop output is present
-    expect(screen.getByText('RENDERED')).toBeInTheDocument();
-    expect(screen.queryByText('RAW')).not.toBeInTheDocument();
+        expect(screen.getByText('RENDERED')).toBeInTheDocument();
+        expect(screen.queryByText('RAW')).not.toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render a custom chevron via renderChevron when onPress is provided', () => {
-    // GIVEN a pressable ListItem with a custom chevron renderer
-    renderWithTheme(
-      <ListItem title="Custom" onPress={() => {}} renderChevron={() => <Text>▶</Text>} />,
-    );
+  describe('GIVEN a pressable ListItem with a custom chevron renderer', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the custom chevron is present and the default icon is not', () => {
+        renderWithTheme(
+          <ListItem
+            title="Custom"
+            onPress={() => {}}
+            renderChevron={() => <Text>▶</Text>}
+            testID="row"
+          />,
+        );
 
-    // WHEN the component is rendered THEN the custom chevron is present and the default glyph is not
-    expect(screen.getByText('▶')).toBeInTheDocument();
-    expect(screen.queryByText('›')).not.toBeInTheDocument();
+        expect(screen.getByText('▶')).toBeInTheDocument();
+        expect(screen.queryByTestId('row-chevron')).not.toBeInTheDocument();
+      });
+    });
   });
 
-  it('should not be pressable when disabled is true even if onPress is provided', () => {
-    // GIVEN a disabled ListItem with a mocked onPress
-    const onPress = jest.fn();
-    renderWithTheme(<ListItem title="Nope" onPress={onPress} disabled />);
+  describe('GIVEN a disabled ListItem with a mocked onPress', () => {
+    describe('WHEN the list item is queried by its title', () => {
+      it('THEN no pressable role is attached to the row', () => {
+        const onPress = jest.fn();
+        renderWithTheme(<ListItem title="Nope" onPress={onPress} disabled />);
 
-    // WHEN the list item is queried by its title THEN no pressable role is attached to the row
-    expect(screen.queryByLabelText('Nope')).not.toBeInTheDocument();
-    expect(onPress).not.toHaveBeenCalled();
+        expect(screen.queryByLabelText('Nope')).not.toBeInTheDocument();
+        expect(onPress).not.toHaveBeenCalled();
+      });
+    });
   });
 
-  it('should render the destructive title color without crashing when destructive is true', () => {
-    // GIVEN a destructive ListItem
+  describe('GIVEN a destructive ListItem', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the title text is present', () => {
+        renderWithTheme(<ListItem title="Delete" destructive onPress={() => {}} />);
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<ListItem title="Delete" destructive onPress={() => {}} />);
-
-    // THEN the title text is present
-    expect(screen.getByText('Delete')).toBeInTheDocument();
+        expect(screen.getByText('Delete')).toBeInTheDocument();
+      });
+    });
   });
 });

@@ -2,6 +2,13 @@ export {
   colors,
   resolveColorScheme,
   getContrastText,
+  contrastRatio,
+  resolveOnColor,
+  ensureReadable,
+  withAlpha,
+  isValidHex,
+  normaliseHex,
+  WCAG_AA_TEXT_CONTRAST,
   THEME_PRESETS,
   defaultColorPalette,
 } from './colors';
@@ -20,6 +27,8 @@ export type {
   ResolveColorOptions,
 } from './colors';
 export { bloomColorPalette, BLOOM_PRESETS } from './bloomPalette';
+export { textColorOf } from './textTokens';
+export type { TextColorToken } from './textTokens';
 
 export {
   typography,
@@ -61,6 +70,7 @@ export {
 } from './spacing';
 export type {
   Spacing,
+  SpacingScale,
   BorderRadius,
   BorderRadiusScale,
   IconSize,

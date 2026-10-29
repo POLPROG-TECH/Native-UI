@@ -1,0 +1,243 @@
+/*
+ * "Screen anatomy" panel: summary on the left, an editor-style component
+ * tree on the right. Heading rules carry `.nui-anatomy.sb-unstyled` to
+ * outrank the docs-wide `.sbdocs-content h2/h3` spacing in preview-head.html.
+ */
+.nui-anatomy {
+  --anatomy-ink: #0f172a;
+  --anatomy-ink-muted: #475569;
+  --anatomy-ink-subtle: #64748b;
+  --anatomy-border: #e2e8f0;
+  --anatomy-accent: #4f46e5;
+  --anatomy-code-bg: #0f172a;
+  --anatomy-code-ink: #e2e8f0;
+  --anatomy-code-tag: #c4b5fd;
+  --anatomy-code-props: #94a3b8;
+  --anatomy-code-guide: #334155;
+  --anatomy-code-active: rgba(129, 140, 248, 0.22);
+  --anatomy-surface: #ffffff;
+  --anatomy-chip: #f8fafc;
+  --anatomy-chip-hover: #eef2ff;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0 0 40px;
+  overflow: hidden;
+  border: 1px solid var(--anatomy-border);
+  border-radius: 20px;
+  background: var(--anatomy-surface);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+}
+
+:root[data-nui-scheme='dark'] .nui-anatomy {
+  --anatomy-ink: #f8fafc;
+  --anatomy-ink-muted: #cbd5e1;
+  --anatomy-ink-subtle: #94a3b8;
+  --anatomy-border: #26304a;
+  --anatomy-accent: #a5b4fc;
+  --anatomy-code-bg: #0b0f1a;
+  --anatomy-surface: #131a2e;
+  --anatomy-chip: #1e2740;
+  --anatomy-chip-hover: #26304a;
+}
+
+.nui-anatomy *,
+.nui-anatomy *::before,
+.nui-anatomy *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Queries the `.nui-page` container, so the Storybook sidebar width is accounted for. */
+@container (min-width: 760px) {
+  .nui-anatomy {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+}
+
+.nui-anatomy-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 26px 26px 24px;
+}
+
+.nui-anatomy-eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--anatomy-accent);
+}
+
+.nui-anatomy.sb-unstyled h2 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--anatomy-ink);
+}
+
+.nui-anatomy.sb-unstyled h3 {
+  margin: 6px 0 0;
+  padding: 0;
+  border: 0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--anatomy-ink-subtle);
+}
+
+.nui-anatomy-summary p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--anatomy-ink-muted);
+}
+
+.nui-anatomy-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--anatomy-border);
+  border-radius: 14px;
+}
+
+.nui-anatomy-stat {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+  padding: 12px 14px;
+}
+
+.nui-anatomy-stat + .nui-anatomy-stat {
+  border-left: 1px solid var(--anatomy-border);
+}
+
+.nui-anatomy-stat dd {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--anatomy-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.nui-anatomy-stat dt {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--anatomy-ink-subtle);
+}
+
+.nui-anatomy-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+}
+
+.nui-anatomy-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--anatomy-border);
+  background: var(--anatomy-chip);
+  color: var(--anatomy-ink);
+  font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease;
+}
+
+.nui-anatomy-chip span {
+  color: var(--anatomy-accent);
+}
+
+.nui-anatomy-chip:hover,
+.nui-anatomy-chip:focus-visible {
+  border-color: var(--anatomy-accent);
+  background: var(--anatomy-chip-hover);
+}
+
+/* ── Tree ── */
+.nui-anatomy-code {
+  padding: 22px 18px;
+  background: var(--anatomy-code-bg);
+  overflow-x: auto;
+}
+
+.nui-anatomy-tree,
+.nui-anatomy-branch {
+  list-style: none;
+}
+
+.nui-anatomy-branch {
+  margin-left: 9px;
+  padding-left: 14px;
+  border-left: 1px solid var(--anatomy-code-guide);
+}
+
+/* Block, not flex: flex items would drop the space between a name and its props. */
+.nui-anatomy-node,
+.nui-anatomy-close {
+  display: block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: var(--anatomy-code-ink);
+  font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 120ms ease;
+}
+
+.nui-anatomy-node:hover,
+.nui-anatomy-node:focus-visible,
+.nui-anatomy-node.is-active {
+  background: var(--anatomy-code-active);
+}
+
+.nui-anatomy-node:focus-visible,
+.nui-anatomy-chip:focus-visible {
+  outline: 2px solid #818cf8;
+  outline-offset: 1px;
+}
+
+.nui-anatomy-close {
+  color: var(--anatomy-code-tag);
+  font-weight: 700;
+}
+
+.nui-anatomy-name {
+  color: var(--anatomy-code-tag);
+  font-weight: 700;
+}
+
+.nui-anatomy-props {
+  color: var(--anatomy-code-props);
+}
+
+.nui-anatomy-count {
+  margin-left: 8px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(196, 181, 253, 0.16);
+  color: var(--anatomy-code-tag);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.nui-anatomy-config {
+  display: block;
+  padding-left: 18px;
+  color: #7dd3fc;
+}

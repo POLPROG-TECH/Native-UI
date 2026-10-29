@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { fn } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from '../../src/primitives/Box';
@@ -70,7 +70,7 @@ const ExpenseEntryForm = () => {
           label="Category"
           placeholder="Select category"
           value={category}
-          onValueChange={(v) => {
+          onChange={(v) => {
             setCategory(v);
             fn()(v);
           }}
@@ -157,7 +157,7 @@ const FilterForm = () => {
           label="Category"
           placeholder="All categories"
           value=""
-          onValueChange={fn()}
+          onChange={fn()}
           options={[
             { label: 'Food & Drinks', value: 'food' },
             { label: 'Transport', value: 'transport' },

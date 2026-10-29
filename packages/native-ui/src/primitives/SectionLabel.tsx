@@ -22,6 +22,8 @@ export interface SectionLabelProps {
   style?: StyleProp<ViewStyle>;
   /** Text style override. */
   textStyle?: StyleProp<TextStyle>;
+  /** Test ID forwarded to the wrapper. */
+  testID?: string;
 }
 
 /**
@@ -30,41 +32,34 @@ export interface SectionLabelProps {
  * variant by default, which is tighter and tracks wider than `labelSmall`.
  *
  * Pair with `ListSection` (`<SectionLabel>Account</SectionLabel>` above the
- * section) for an iOS-style grouped settings layout.
+ * section) for an iOS-style grouped settings layout. Spacing comes from
+ * `theme.components.sectionLabel`.
  */
-export function SectionLabel({
-  children,
-  transform = 'uppercase',
-  color,
-  style,
-  textStyle,
-}: SectionLabelProps) {
+export function SectionLabel(props: SectionLabelProps) {
+  const { transform = 'uppercase', color } = props;
   const theme = useTheme();
+  const tokens = theme.components.sectionLabel;
+  const textAppearance: TextStyle = {
+    color: color ?? theme.colors.textTertiary,
+    textTransform: transform === 'none' ? undefined : transform,
+  };
 
   return (
     <View
       style={[
         styles.container,
         {
-          paddingHorizontal: theme.spacing.md,
-          marginTop: theme.spacing.lg,
-          marginBottom: theme.spacing.xs,
+          paddingHorizontal: tokens.paddingHorizontal,
+          marginTop: tokens.marginTop,
+          marginBottom: tokens.marginBottom,
         },
-        style,
+        props.style,
       ]}
+      testID={props.testID}
       accessibilityRole="header"
     >
-      <Text
-        style={[
-          theme.typography.overline,
-          {
-            color: color ?? theme.colors.textTertiary,
-            textTransform: transform === 'none' ? undefined : transform,
-          },
-          textStyle,
-        ]}
-      >
-        {children}
+      <Text style={[theme.typography.overline, textAppearance, props.textStyle]}>
+        {props.children}
       </Text>
     </View>
   );

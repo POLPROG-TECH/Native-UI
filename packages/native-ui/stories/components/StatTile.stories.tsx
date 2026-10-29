@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { StatTile } from '../../src/components/StatTile';
 import type { StatTileProps } from '../../src/components/StatTile';

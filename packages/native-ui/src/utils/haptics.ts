@@ -53,7 +53,10 @@ export function configureHaptics(impl: HapticsInterface): void {
     <K extends keyof HapticsInterface>(key: K) =>
     (): void => {
       const now = Date.now();
-      if (now - lastInvoked[key] < THROTTLE_MS) return;
+
+      if (now - lastInvoked[key] < THROTTLE_MS) {
+        return;
+      }
 
       lastInvoked[key] = now;
       impl[key]();

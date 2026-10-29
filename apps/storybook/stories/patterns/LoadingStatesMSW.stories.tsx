@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import preview from '../../.storybook/preview';
+import { useState, type FC } from 'react';
 import { within, expect, waitFor } from 'storybook/test';
 
 import { Box } from '@polprog/native-ui';
@@ -16,6 +16,7 @@ import {
 } from '@polprog/native-ui';
 
 import { useFetch } from '../../.storybook/msw/hooks';
+import { numberField, stringField } from '../../.storybook/msw/json';
 import { mockEndpoints } from '../../.storybook/msw/handlers';
 
 /**
@@ -35,11 +36,42 @@ type Entry = {
   category: string;
 };
 
-const EntryList: React.FC<{ refreshKey?: number; onRetry?: () => void }> = ({
+function parseEntry(value: unknown): Entry | null {
+  const id = stringField(value, 'id');
+  const title = stringField(value, 'title');
+  const amount = numberField(value, 'amount');
+  const date = stringField(value, 'date');
+  const category = stringField(value, 'category');
+
+  if (
+    id === undefined ||
+    title === undefined ||
+    amount === undefined ||
+    date === undefined ||
+    category === undefined
+  ) {
+    return null;
+  }
+
+  return { id, title, amount, date, category };
+}
+
+/** The `/entries` body, or null when any item is not an entry. */
+function parseEntries(value: unknown): Entry[] | null {
+  if (!Array.isArray(value)) {
+    return null;
+  }
+
+  const entries = value.map(parseEntry);
+
+  return entries.every((entry): entry is Entry => entry !== null) ? entries : null;
+}
+
+const EntryList: FC<{ refreshKey?: number; onRetry?: () => void }> = ({
   refreshKey = 0,
   onRetry,
 }) => {
-  const state = useFetch<Entry[]>('/entries', refreshKey);
+  const state = useFetch('/entries', parseEntries, refreshKey);
 
   if (state.status === 'loading' || state.status === 'idle') {
     return (
@@ -107,8 +139,9 @@ const EntryList: React.FC<{ refreshKey?: number; onRetry?: () => void }> = ({
   );
 };
 
-const RefreshableList: React.FC = () => {
+const RefreshableList: FC = () => {
   const [key, setKey] = useState(0);
+
   return (
     <VStack gap="md">
       <HStack gap="sm" justify="flex-end">
@@ -119,7 +152,7 @@ const RefreshableList: React.FC = () => {
   );
 };
 
-const meta: Meta = {
+const meta = preview.meta({
   title: 'Patterns/Network · Loading States',
   parameters: {
     docs: {
@@ -139,12 +172,9 @@ const meta: Meta = {
       },
     },
   },
-};
+});
 
-export default meta;
-type Story = StoryObj;
-
-export const Success: Story = {
+export const Success = meta.story({
   render: () => <RefreshableList />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -155,9 +185,9 @@ export const Success: Story = {
       { timeout: 5000 },
     );
   },
-};
+});
 
-export const Empty: Story = {
+export const Empty = meta.story({
   parameters: {
     msw: { handlers: [mockEndpoints.entriesEmpty()] },
   },
@@ -171,9 +201,9 @@ export const Empty: Story = {
       { timeout: 5000 },
     );
   },
-};
+});
 
-export const Error500: Story = {
+export const Error500 = meta.story({
   name: 'Error (500)',
   parameters: {
     msw: { handlers: [mockEndpoints.entriesError()] },
@@ -188,17 +218,17 @@ export const Error500: Story = {
       { timeout: 5000 },
     );
   },
-};
+});
 
-export const Slow: Story = {
+export const Slow = meta.story({
   name: 'Slow response (3 s)',
   parameters: {
     msw: { handlers: [mockEndpoints.entriesSlow(3000)] },
   },
   render: () => <RefreshableList />,
-};
+});
 
-export const PendingForever: Story = {
+export const PendingForever = meta.story({
   name: 'Pending (forever)',
   parameters: {
     msw: { handlers: [mockEndpoints.entriesPending()] },
@@ -215,4 +245,4 @@ export const PendingForever: Story = {
       <EntryList />
     </VStack>
   ),
-};
+});

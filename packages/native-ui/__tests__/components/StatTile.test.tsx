@@ -1,100 +1,99 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { StatTile } from '../../src/components/StatTile';
-import { NativeUIProvider } from '../../src/theme';
-
-function renderWithTheme(ui: React.ReactElement) {
-  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
-}
+import { renderWithTheme } from '../test-utils';
 
 describe('StatTile', () => {
-  it('should be exported as a function component', () => {
-    // GIVEN the StatTile export from the components module
+  describe('GIVEN the StatTile export from the components module', () => {
+    describe('WHEN its runtime type is inspected', () => {
+      it('THEN it is a function component', () => {
+        const actualType = typeof StatTile;
 
-    // WHEN its runtime type is inspected
-    const actualType = typeof StatTile;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
-  });
-
-  it('should render the label and value when rendered', () => {
-    // GIVEN a StatTile with a "TIME" label and a "01:24" value
-
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<StatTile label="TIME" value="01:24" />);
-
-    // THEN both the label and the value are present
-    expect(screen.getByText('TIME')).toBeInTheDocument();
-    expect(screen.getByText('01:24')).toBeInTheDocument();
-  });
-
-  it('should render the caption when provided', () => {
-    // GIVEN a StatTile with a caption
-
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<StatTile label="BEST" value="358" caption="new record" />);
-
-    // THEN the caption text is present
-    expect(screen.getByText('new record')).toBeInTheDocument();
-  });
-
-  it('should render every tone without crashing', () => {
-    // GIVEN the full list of StatTile tones
-    const tones = ['neutral', 'primary', 'success', 'warning', 'error'] as const;
-
-    // WHEN each tone is rendered with a matching label
-    const renderAll = () => {
-      tones.forEach((tone) => {
-        const { unmount } = renderWithTheme(
-          <StatTile label={`tone-${tone}`} value="1" tone={tone} />,
-        );
-        expect(screen.getByText(`tone-${tone}`)).toBeInTheDocument();
-        unmount();
+        expect(actualType).toBe('function');
       });
-    };
-
-    // THEN every tone renders without crashing
-    expect(renderAll).not.toThrow();
+    });
   });
 
-  it('should render every size in mono and non mono modes without crashing', () => {
-    // GIVEN the full list of sizes combined with the mono flag
-    const sizes = ['sm', 'md', 'lg'] as const;
+  describe('GIVEN a StatTile with a "TIME" label and a "01:24" value', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN both the label and the value are present', () => {
+        renderWithTheme(<StatTile label="TIME" value="01:24" />);
 
-    // WHEN each size is rendered for both mono=true and mono=false
-    const renderAll = () => {
-      sizes.forEach((size) => {
-        [true, false].forEach((mono) => {
-          const label = `${size}-${String(mono)}`;
-          const { unmount } = renderWithTheme(
-            <StatTile label={label} value="1" size={size} mono={mono} />,
-          );
-          expect(screen.getByText(label)).toBeInTheDocument();
-          unmount();
-        });
+        expect(screen.getByText('TIME')).toBeInTheDocument();
+        expect(screen.getByText('01:24')).toBeInTheDocument();
       });
-    };
-
-    // THEN every combination renders without crashing
-    expect(renderAll).not.toThrow();
+    });
   });
 
-  it('should render a left aligned variant without crashing', () => {
-    // GIVEN a StatTile configured with align="left"
+  describe('GIVEN a StatTile with a caption', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the caption text is present', () => {
+        renderWithTheme(<StatTile label="BEST" value="358" caption="new record" />);
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<StatTile label="L" value="1" align="left" />);
-
-    // THEN the label is present
-    expect(screen.getByText('L')).toBeInTheDocument();
+        expect(screen.getByText('new record')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render a long value on a single shrink-to-fit line without crashing', () => {
-    // GIVEN a StatTile with a long value that would otherwise overflow
-    renderWithTheme(<StatTile label="YEAR" value="1 234 567,89 zl" />);
+  describe('GIVEN the full list of StatTile tones', () => {
+    describe('WHEN each tone is rendered with a matching label', () => {
+      it('THEN every tone renders without crashing', () => {
+        const tones = ['neutral', 'primary', 'success', 'warning', 'error'] as const;
 
-    // WHEN the value is queried THEN it renders intact (single-line + shrink-to-fit)
-    expect(screen.getByText('1 234 567,89 zl')).toBeInTheDocument();
+        const renderAll = () => {
+          tones.forEach((tone) => {
+            const { unmount } = renderWithTheme(
+              <StatTile label={`tone-${tone}`} value="1" tone={tone} />,
+            );
+            expect(screen.getByText(`tone-${tone}`)).toBeInTheDocument();
+            unmount();
+          });
+        };
+
+        expect(renderAll).not.toThrow();
+      });
+    });
+  });
+
+  describe('GIVEN the full list of sizes combined with the mono flag', () => {
+    describe('WHEN each size is rendered for both mono=true and mono=false', () => {
+      it('THEN every combination renders without crashing', () => {
+        const sizes = ['sm', 'md', 'lg'] as const;
+
+        const renderAll = () => {
+          sizes.forEach((size) => {
+            [true, false].forEach((mono) => {
+              const label = `${size}-${String(mono)}`;
+              const { unmount } = renderWithTheme(
+                <StatTile label={label} value="1" size={size} mono={mono} />,
+              );
+              expect(screen.getByText(label)).toBeInTheDocument();
+              unmount();
+            });
+          });
+        };
+
+        expect(renderAll).not.toThrow();
+      });
+    });
+  });
+
+  describe('GIVEN a StatTile configured with align="left"', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the label is present', () => {
+        renderWithTheme(<StatTile label="L" value="1" align="left" />);
+
+        expect(screen.getByText('L')).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('GIVEN a StatTile with a long value that would otherwise overflow', () => {
+    describe('WHEN the value is queried', () => {
+      it('THEN it renders intact (single-line + shrink-to-fit)', () => {
+        renderWithTheme(<StatTile label="YEAR" value="1 234 567,89 zl" />);
+
+        expect(screen.getByText('1 234 567,89 zl')).toBeInTheDocument();
+      });
+    });
   });
 });

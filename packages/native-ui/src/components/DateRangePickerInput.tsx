@@ -1,9 +1,9 @@
 import React, { useCallback, useRef } from 'react';
-import { StyleSheet, View, Text, type ViewStyle } from 'react-native';
+import { StyleSheet, View, Text, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { FieldLabel } from './FieldLabel';
-import { DatePickerInput } from './DatePickerInput';
-import { parseValue } from './datePickerUtils';
+import { DatePickerInput, type DatePickerInputProps } from './DatePickerInput';
+import { resolveRangeBounds, type DateRangeBounds } from './datePicker/rangeBounds';
 
 /**
  * Value tuple for {@link DateRangePickerInput}.
@@ -26,7 +26,7 @@ export interface DateRangePickerInputProps {
   /** Latest selectable date for both pickers. */
   maximumDate?: Date;
   /** Additional styles applied to the outer wrapper. */
-  containerStyle?: ViewStyle;
+  containerStyle?: StyleProp<ViewStyle>;
   /** Error message for the start date picker. */
   startError?: string;
   /** Error message for the end date picker. */
@@ -35,7 +35,7 @@ export interface DateRangePickerInputProps {
   required?: boolean;
   /**
    * Locale string forwarded to both date pickers.
-   * @default 'en-US'
+   * @default `NativeUIConfig.locale`
    */
   locale?: string;
   /** Icon rendered inside the start date picker. */
@@ -44,12 +44,12 @@ export interface DateRangePickerInputProps {
   endIcon?: React.ReactNode;
   /**
    * Label for the start date picker.
-   * @default 'Start'
+   * @default labels.rangeStart
    */
   startLabel?: string;
   /**
    * Label for the end date picker.
-   * @default 'End'
+   * @default labels.rangeEnd
    */
   endLabel?: string;
   /** Placeholder for the start date picker when its value is empty. */
@@ -64,41 +64,128 @@ export interface DateRangePickerInputProps {
   /** Test ID - individual pickers receive `{testID}-start` and `{testID}-end`. */
   testID?: string;
   /**
-   * Shows a clear (✕) button on each picker when a value is present.
+   * Shows a clear button on each picker when a value is present.
    * @default false
    */
   clearable?: boolean;
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
+type RangeEndpoint = 'start' | 'end';
+type EndpointProps = Record<RangeEndpoint, DatePickerInputProps>;
 
-function parseDateSafe(str: string): Date | undefined {
-  if (!str) return undefined;
+/**
+ * Change handlers read the latest range from a ref so each keeps a stable
+ * identity while still merging into the current value of the other endpoint.
+ */
+function useEndpointChangeHandlers(
+  value: DateRangeValue,
+  onChange: (range: DateRangeValue) => void,
+): Record<RangeEndpoint, (date: string) => void> {
+  const valueRef = useRef(value);
+  valueRef.current = value;
 
-  const date = parseValue(str, 'date');
+  const start = useCallback(
+    (date: string) => onChange({ ...valueRef.current, start: date }),
+    [onChange],
+  );
+  const end = useCallback(
+    (date: string) => onChange({ ...valueRef.current, end: date }),
+    [onChange],
+  );
 
-  return isNaN(date.getTime()) ? undefined : date;
+  return { start, end };
 }
 
-function laterDate(a: Date | undefined, b: Date | undefined): Date | undefined {
-  if (!a) return b;
-  if (!b) return a;
-
-  return a > b ? a : b;
+function childTestID(testID: string | undefined, endpoint: RangeEndpoint): string | undefined {
+  return testID ? `${testID}-${endpoint}` : undefined;
 }
 
-function earlierDate(a: Date | undefined, b: Date | undefined): Date | undefined {
-  if (!a) return b;
-  if (!b) return a;
-
-  return a < b ? a : b;
+/** Props both endpoint pickers receive unchanged. */
+function sharedEndpointProps(props: DateRangePickerInputProps) {
+  return {
+    locale: props.locale,
+    disabled: props.disabled,
+    clearable: props.clearable,
+    containerStyle: styles.innerPicker,
+  };
 }
 
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
+/** Start picker: bounded above by the end date. */
+function startEndpointProps(
+  props: DateRangePickerInputProps,
+  bounds: DateRangeBounds,
+  label: string,
+) {
+  return {
+    label: props.startLabel ?? label,
+    value: props.value.start,
+    minimumDate: props.minimumDate,
+    maximumDate: bounds.startMax,
+    error: props.startError,
+    icon: props.startIcon,
+    placeholder: props.startPlaceholder,
+    testID: childTestID(props.testID, 'start'),
+  };
+}
+
+/** End picker: bounded below by the start date. */
+function endEndpointProps(
+  props: DateRangePickerInputProps,
+  bounds: DateRangeBounds,
+  label: string,
+) {
+  return {
+    label: props.endLabel ?? label,
+    value: props.value.end,
+    minimumDate: bounds.endMin,
+    maximumDate: props.maximumDate,
+    error: props.endError,
+    icon: props.endIcon,
+    placeholder: props.endPlaceholder,
+    testID: childTestID(props.testID, 'end'),
+  };
+}
+
+function useEndpointProps(props: DateRangePickerInputProps): EndpointProps {
+  const labels = useTheme().labels;
+  const handlers = useEndpointChangeHandlers(props.value, props.onChange);
+  const bounds = resolveRangeBounds(props.value, props.minimumDate, props.maximumDate);
+  const shared = sharedEndpointProps(props);
+
+  return {
+    start: {
+      ...shared,
+      ...startEndpointProps(props, bounds, labels.rangeStart),
+      onChange: handlers.start,
+    },
+    end: { ...shared, ...endEndpointProps(props, bounds, labels.rangeEnd), onChange: handlers.end },
+  };
+}
+
+function RangeSeparator() {
+  const theme = useTheme();
+  const tokens = theme.components.dateRangePicker;
+
+  return (
+    <View
+      style={[
+        styles.separator,
+        {
+          paddingHorizontal: tokens.separatorPaddingHorizontal,
+          paddingTop: tokens.separatorOffsetTop,
+        },
+      ]}
+    >
+      <Text
+        style={[theme.typography.body, { color: theme.colors.textTertiary }]}
+        accessibilityElementsHidden
+        importantForAccessibility="no"
+      >
+        {theme.labels.rangeSeparator}
+      </Text>
+    </View>
+  );
+}
 
 /**
  * A date-range input composed of two {@link DatePickerInput} pickers displayed
@@ -119,89 +206,27 @@ function earlierDate(a: Date | undefined, b: Date | undefined): Date | undefined
  * />
  * ```
  */
-export function DateRangePickerInput({
-  label,
-  value,
-  onChange,
-  minimumDate,
-  maximumDate,
-  containerStyle,
-  startError,
-  endError,
-  required,
-  locale,
-  startIcon,
-  endIcon,
-  startLabel = 'Start',
-  endLabel = 'End',
-  startPlaceholder,
-  endPlaceholder,
-  disabled,
-  testID,
-  clearable,
-}: DateRangePickerInputProps) {
+export function DateRangePickerInput(props: DateRangePickerInputProps) {
+  const { label, required, containerStyle, testID } = props;
   const theme = useTheme();
-
-  const valueRef = useRef(value);
-  valueRef.current = value;
-
-  const startDate = parseDateSafe(value.start);
-  const endDate = parseDateSafe(value.end);
-
-  // Cross-constraints clamped against the global bounds
-  const startMax = earlierDate(endDate, maximumDate);
-  const endMin = laterDate(startDate, minimumDate);
-
-  const handleStartChange = useCallback(
-    (start: string) => onChange({ ...valueRef.current, start }),
-    [onChange],
-  );
-
-  const handleEndChange = useCallback(
-    (end: string) => onChange({ ...valueRef.current, end }),
-    [onChange],
-  );
+  const endpoints = useEndpointProps(props);
 
   return (
-    <View style={[styles.container, containerStyle]} testID={testID}>
+    <View
+      style={[
+        { marginBottom: theme.components.dateRangePicker.containerMarginBottom },
+        containerStyle,
+      ]}
+      testID={testID}
+    >
       {label && <FieldLabel label={label} required={required} />}
       <View style={styles.row}>
         <View style={styles.half}>
-          <DatePickerInput
-            label={startLabel}
-            value={value.start}
-            onChange={handleStartChange}
-            minimumDate={minimumDate}
-            maximumDate={startMax}
-            error={startError}
-            locale={locale}
-            icon={startIcon}
-            placeholder={startPlaceholder}
-            disabled={disabled}
-            clearable={clearable}
-            containerStyle={styles.innerPicker}
-            testID={testID ? `${testID}-start` : undefined}
-          />
+          <DatePickerInput {...endpoints.start} />
         </View>
-        <View style={styles.separator}>
-          <Text style={[theme.typography.body, { color: theme.colors.textTertiary }]}>-</Text>
-        </View>
+        <RangeSeparator />
         <View style={styles.half}>
-          <DatePickerInput
-            label={endLabel}
-            value={value.end}
-            onChange={handleEndChange}
-            minimumDate={endMin}
-            maximumDate={maximumDate}
-            error={endError}
-            locale={locale}
-            icon={endIcon}
-            placeholder={endPlaceholder}
-            disabled={disabled}
-            clearable={clearable}
-            containerStyle={styles.innerPicker}
-            testID={testID ? `${testID}-end` : undefined}
-          />
+          <DatePickerInput {...endpoints.end} />
         </View>
       </View>
     </View>
@@ -209,9 +234,6 @@ export function DateRangePickerInput({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-  },
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -220,9 +242,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   separator: {
-    paddingHorizontal: 8,
-    // Offset aligns the dash with picker inputs (below their labels)
-    paddingTop: 22,
     justifyContent: 'center',
   },
   innerPicker: {

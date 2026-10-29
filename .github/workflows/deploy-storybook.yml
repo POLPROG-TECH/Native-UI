@@ -25,7 +25,13 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # The published Introduction / Dashboard show real test and coverage numbers.
+      - name: Jest report for the docs stats
+        run: npm run test:report --workspace=@polprog/native-ui
       - run: npm run build-storybook
+        env:
+          # "View source" links on component pages open the exact deployed commit.
+          STORYBOOK_SOURCE_REF: ${{ github.sha }}
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

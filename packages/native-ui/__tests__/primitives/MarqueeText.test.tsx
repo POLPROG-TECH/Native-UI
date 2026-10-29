@@ -1,61 +1,92 @@
-import React from 'react';
 import { screen } from '@testing-library/react';
 import { MarqueeText } from '../../src/primitives/MarqueeText';
-import { renderWithTheme } from '../test-utils';
+import { captureTheme, renderWithTheme } from '../test-utils';
 
 describe('MarqueeText', () => {
-  it('should be exported as a function component', () => {
-    // GIVEN the MarqueeText export
+  describe('GIVEN the MarqueeText export', () => {
+    describe('WHEN its runtime type is inspected', () => {
+      it('THEN it is a function component', () => {
+        const actualType = typeof MarqueeText;
 
-    // WHEN its runtime type is inspected
-    const actualType = typeof MarqueeText;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
+        expect(actualType).toBe('function');
+      });
+    });
   });
 
-  it('should render the provided text', () => {
-    // GIVEN a MarqueeText with a short label
-    // WHEN the component is rendered
-    renderWithTheme(<MarqueeText text="Hello world" />);
+  describe('GIVEN a MarqueeText with a short label', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the text is present in the document', () => {
+        renderWithTheme(<MarqueeText text="Hello world" />);
 
-    // THEN the text is present in the document
-    expect(screen.getAllByText('Hello world').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('Hello world').length).toBeGreaterThan(0);
+      });
+    });
   });
 
-  it('should expose the text as the default accessibility label', () => {
-    // GIVEN a MarqueeText without an explicit accessibilityLabel
-    // WHEN the component is rendered
-    renderWithTheme(<MarqueeText text="Accessible text" />);
+  describe('GIVEN a MarqueeText without an explicit accessibilityLabel', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the text itself is used as the aria label', () => {
+        renderWithTheme(<MarqueeText text="Accessible text" />);
 
-    // THEN the text itself is used as the aria label
-    expect(screen.getByLabelText('Accessible text')).toBeInTheDocument();
+        expect(screen.getByLabelText('Accessible text')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should prefer an explicit `accessibilityLabel` over the raw text', () => {
-    // GIVEN a MarqueeText with a custom aria label
-    // WHEN the component is rendered
-    renderWithTheme(<MarqueeText text="Verbose version" accessibilityLabel="Short label" />);
+  describe('GIVEN a MarqueeText with a custom aria label', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN the custom aria label is exposed instead', () => {
+        renderWithTheme(<MarqueeText text="Verbose version" accessibilityLabel="Short label" />);
 
-    // THEN the custom aria label is exposed instead
-    expect(screen.getByLabelText('Short label')).toBeInTheDocument();
+        expect(screen.getByLabelText('Short label')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render without crashing when custom speed, gap, and pause are passed', () => {
-    // GIVEN a MarqueeText configured with every tuning prop
-    // WHEN the component is rendered
-    const render = () =>
-      renderWithTheme(
-        <MarqueeText
-          text="Scrolling"
-          speed={60}
-          pauseDuration={500}
-          gap={80}
-          overflowTolerance={4}
-        />,
-      );
+  describe('GIVEN a MarqueeText configured with every tuning prop', () => {
+    describe('WHEN the component is rendered', () => {
+      it('THEN no error is thrown', () => {
+        const render = () =>
+          renderWithTheme(
+            <MarqueeText
+              text="Scrolling"
+              speed={60}
+              pauseDuration={500}
+              gap={80}
+              overflowTolerance={4}
+            />,
+          );
 
-    // THEN no error is thrown
-    expect(render).not.toThrow();
+        expect(render).not.toThrow();
+      });
+    });
+  });
+
+  describe('GIVEN a MarqueeText rendered in the dark theme without a style colour', () => {
+    describe('WHEN the visible text is inspected', () => {
+      it('THEN it uses the theme textPrimary so it stays readable on dark surfaces', () => {
+        const dark = { colorMode: 'dark' } as const;
+        const { textPrimary } = captureTheme(dark).colors;
+
+        renderWithTheme(<MarqueeText text="Readable" />, { config: dark });
+        const rendered = screen.getAllByText('Readable');
+
+        /* The last match is the visible text; the first is the hidden measure layer. */
+        expect(rendered[rendered.length - 1]).toHaveStyle({ color: textPrimary });
+      });
+    });
+  });
+
+  describe('GIVEN a MarqueeText with an explicit style colour', () => {
+    describe('WHEN the visible text is inspected', () => {
+      it('THEN the caller colour overrides the theme default', () => {
+        const brand = '#ff0000';
+
+        renderWithTheme(<MarqueeText text="Branded" style={{ color: brand }} />);
+        const rendered = screen.getAllByText('Branded');
+
+        expect(rendered[rendered.length - 1]).toHaveStyle({ color: brand });
+      });
+    });
   });
 });

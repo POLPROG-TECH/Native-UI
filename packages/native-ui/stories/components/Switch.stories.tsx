@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { within, userEvent, expect, fn } from 'storybook/test';
 import { Card } from '../../src/components/Card';

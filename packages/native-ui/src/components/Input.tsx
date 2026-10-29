@@ -4,13 +4,12 @@ import {
   type ForwardRefExoticComponent,
   type RefAttributes,
 } from 'react';
-import { StyleSheet, TextInput, View, type TextInputProps, type ViewStyle } from 'react-native';
+import { TextInput, type StyleProp, type TextInputProps, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
 import { useTextField } from '../hooks/useTextField';
-import { FieldLabel } from './FieldLabel';
-import { FieldError } from './FieldError';
+import { FieldFrame } from './field/FieldFrame';
 
-// Since React Native 0.87 `TextInput` as a type is the component, not its instance.
+/** Since React Native 0.87 `TextInput` as a type is the component, not its instance. */
 type TextInputRef = ComponentRef<typeof TextInput>;
 
 export interface InputProps extends TextInputProps {
@@ -24,14 +23,14 @@ export interface InputProps extends TextInputProps {
    */
   required?: boolean;
   /** Additional styles applied to the outer wrapper `View`. */
-  containerStyle?: ViewStyle;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
-// Explicit type keeps the emitted declaration portable across React Native versions.
+/** Explicit type keeps the emitted declaration portable across React Native versions. */
 type InputType = ForwardRefExoticComponent<InputProps & RefAttributes<TextInputRef>>;
 
 /**
- * Themed text input with label, error state, and animated focus border.
+ * Themed text input with label, error state, and a border that follows focus.
  * Wraps React Native `TextInput` and forwards all standard props. The `ref` is
  * forwarded to the underlying `TextInput`, so consumers can call `.focus()` /
  * `.blur()` imperatively.
@@ -44,54 +43,28 @@ type InputType = ForwardRefExoticComponent<InputProps & RefAttributes<TextInputR
  * ```
  */
 export const Input: InputType = forwardRef<TextInputRef, InputProps>(function Input(
-  { label, error, required, containerStyle, style, onFocus, onBlur, ...props },
+  { label, error, required, containerStyle, style, onFocus, onBlur, testID, ...props },
   ref,
 ) {
-  const theme = useTheme();
-  const { handleFocus, handleBlur, borderColor, inputTypography } = useTextField({
-    error,
-    onFocus,
-    onBlur,
-  });
-
-  const accessibilityLabel = [label, error].filter(Boolean).join(', ') || undefined;
+  const tokens = useTheme().components.input;
+  const field = useTextField({ label, error, editable: props.editable, tokens, onFocus, onBlur });
+  const textAlignVertical = props.multiline ? 'top' : 'center';
 
   return (
-    <View style={[styles.container, containerStyle]}>
-      {label && <FieldLabel label={label} required={required} />}
+    <FieldFrame
+      label={label}
+      required={required}
+      error={error}
+      style={[{ marginBottom: tokens.containerMarginBottom }, containerStyle]}
+      testID={testID ? `${testID}-container` : undefined}
+    >
       <TextInput
         ref={ref}
-        style={[
-          styles.input,
-          inputTypography,
-          {
-            backgroundColor: theme.colors.surfaceSecondary,
-            borderColor,
-            borderRadius: theme.borderRadius.lg,
-            color: theme.colors.textPrimary,
-            textAlignVertical: props.multiline ? 'top' : 'center',
-          },
-          style,
-        ]}
-        placeholderTextColor={theme.colors.textTertiary}
-        accessibilityLabel={accessibilityLabel}
-        accessibilityState={{ disabled: props.editable === false }}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
+        testID={testID}
+        style={[field.inputTypography, { ...field.boxStyle, textAlignVertical }, style]}
+        {...field.inputProps}
         {...props}
       />
-      {error && <FieldError error={error} />}
-    </View>
+    </FieldFrame>
   );
-});
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-  },
-  input: {
-    borderWidth: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-  },
 });

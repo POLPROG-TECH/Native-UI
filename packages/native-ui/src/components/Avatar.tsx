@@ -1,6 +1,7 @@
-import { StyleSheet, View, Text, Image, type ViewStyle } from 'react-native';
+import type { StyleProp, ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
-import { getContrastText } from '../tokens/colors';
+import { AvatarImage, AvatarInitials } from './avatar/AvatarContent';
+import { resolveInitials } from './avatar/initials';
 
 export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
 
@@ -17,12 +18,10 @@ export interface AvatarProps {
   /** Background color for initials avatar (defaults to primary) */
   color?: string;
   size?: AvatarSize;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   accessibilityLabel?: string;
+  testID?: string;
 }
-
-const SIZE_MAP = { sm: 28, md: 36, lg: 48, xl: 64 } as const;
-const FONT_MAP = { sm: 11, md: 14, lg: 18, xl: 24 } as const;
 
 /**
  * Circular avatar showing an image or initials.
@@ -35,69 +34,18 @@ export function Avatar({
   size = 'md',
   style,
   accessibilityLabel,
+  testID,
 }: AvatarProps) {
   const theme = useTheme();
-  const dim = SIZE_MAP[size];
-  const fontSize = FONT_MAP[size];
-  const bg = color ?? theme.colors.primary;
-
-  const containerStyle: ViewStyle = {
-    width: dim,
-    height: dim,
-    borderRadius: dim / 2,
-    backgroundColor: bg,
-    overflow: 'hidden',
-  };
+  const { size: dim, fontSize } = theme.components.avatar[size];
+  const background = color ?? theme.colors.primary;
+  const frame = { dim, background, style, accessibilityLabel, testID };
 
   if (source) {
-    return (
-      <View style={[containerStyle, style]}>
-        <Image
-          source={source}
-          style={styles.image}
-          accessibilityLabel={accessibilityLabel ?? 'Avatar'}
-        />
-      </View>
-    );
+    return <AvatarImage source={source} {...frame} />;
   }
 
-  const textColor = getContrastText(bg);
-  const derivedFromName = name
-    ? name
-        .trim()
-        .split(/\s+/)
-        .slice(0, 2)
-        .map((w) => w.charAt(0))
-        .join('')
-    : undefined;
-  const displayInitials = (initials ?? derivedFromName ?? '?').slice(0, 2).toUpperCase();
-
   return (
-    <View
-      style={[containerStyle, styles.initialsContainer, style]}
-      accessibilityLabel={accessibilityLabel ?? displayInitials}
-    >
-      <Text
-        style={{
-          color: textColor,
-          fontSize,
-          fontWeight: '600',
-          lineHeight: dim,
-        }}
-      >
-        {displayInitials}
-      </Text>
-    </View>
+    <AvatarInitials initials={resolveInitials(initials, name)} fontSize={fontSize} {...frame} />
   );
 }
-
-const styles = StyleSheet.create({
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  initialsContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

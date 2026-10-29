@@ -27,19 +27,25 @@ export function useDebouncedPress(onPress: () => void, delay = 400): () => void 
 
   useEffect(() => {
     return () => {
-      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+      if (resetTimerRef.current) {
+        clearTimeout(resetTimerRef.current);
+      }
     };
   }, []);
 
   return useCallback(() => {
-    if (pressedRef.current) return;
+    if (pressedRef.current) {
+      return;
+    }
 
     pressedRef.current = true;
 
     try {
       onPressRef.current();
     } finally {
-      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+      if (resetTimerRef.current) {
+        clearTimeout(resetTimerRef.current);
+      }
 
       resetTimerRef.current = setTimeout(() => {
         pressedRef.current = false;

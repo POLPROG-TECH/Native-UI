@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { within, userEvent, expect, fn } from 'storybook/test';
 import { Box } from '../../src/primitives/Box';
@@ -71,7 +71,7 @@ export const Playground: Story = {
     editable: true,
     onChangeText: fn(),
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByPlaceholderText('you@example.com');
     await expect(input).toBeInTheDocument();
@@ -165,6 +165,7 @@ const ControlledExample = () => {
 
   const handleChange = (text: string) => {
     setValue(text);
+
     if (text.length > 0 && text.length < 3) {
       setError('Must be at least 3 characters');
     } else {

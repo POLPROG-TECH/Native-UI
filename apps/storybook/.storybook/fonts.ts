@@ -50,11 +50,15 @@ const aliases: Array<[string, string, string]> = [
  * decorators can `await` this to gate first paint.
  */
 export const fontsReady: Promise<void> = (async () => {
-  // SSR guard - Storybook static build can evaluate preview modules in Node.
-  if (typeof document === 'undefined') return;
+  /* SSR guard - Storybook static build can evaluate preview modules in Node. */
+  if (typeof document === 'undefined') {
+    return;
+  }
 
-  // 1) Preload link tags - start the network fetch ASAP, in parallel
-  //    with the rest of preview bundle init. Idempotent on HMR.
+  /*
+   * 1) Preload link tags - start the network fetch ASAP, in parallel
+   *    with the rest of preview bundle init. Idempotent on HMR.
+   */
   if (!document.head.querySelector(`link[data-source="${PRELOAD_SOURCE_ID}"]`)) {
     for (const [, , url] of aliases) {
       const link = document.createElement('link');
@@ -68,8 +72,10 @@ export const fontsReady: Promise<void> = (async () => {
     }
   }
 
-  // 2) Expo-name @font-face aliases. Idempotent guard - HMR re-evaluates
-  //    this module; avoid stacking duplicate <style> tags.
+  /*
+   * 2) Expo-name @font-face aliases. Idempotent guard - HMR re-evaluates
+   *    this module; avoid stacking duplicate <style> tags.
+   */
   if (!document.querySelector(`style[data-source="${STYLE_SOURCE_ID}"]`)) {
     const style = document.createElement('style');
     style.setAttribute('data-source', STYLE_SOURCE_ID);
@@ -87,35 +93,34 @@ export const fontsReady: Promise<void> = (async () => {
     document.head.appendChild(style);
   }
 
-  // 3) Kick off loads explicitly so `document.fonts.ready` flips when
-  //    *these* families are resolved (not just the CSS declarations).
-  //    We also race against a hard timeout so that a broken network
-  //    can't stall the preview module forever (preview.tsx awaits this
-  //    promise at top level).
+  /*
+   * 3) Kick off loads explicitly so `document.fonts.ready` flips when
+   *    *these* families are resolved (not just the CSS declarations).
+   *    We also race against a hard timeout so that a broken network
+   *    can't stall the preview module forever (preview.tsx awaits this
+   *    promise at top level).
+   */
   const timeout = new Promise<void>((resolve) => {
     setTimeout(resolve, 3000);
   });
 
-  const loads =
-    typeof document.fonts?.load === 'function'
-      ? Promise.all(
-          aliases.map(([family, weight]) =>
-            document.fonts.load(`${weight} 1em '${family}'`).catch(() => {
-              /* tolerate individual weight failures; fallback is acceptable */
-            }),
-          ),
-        ).then(() => {})
-      : Promise.resolve();
+  const loads = Promise.all(
+    aliases.map(([family, weight]) =>
+      document.fonts.load(`${weight} 1em '${family}'`).catch(() => {
+        /* tolerate individual weight failures; fallback is acceptable */
+      }),
+    ),
+  ).then(() => {});
 
   await Promise.race([loads, timeout]);
 
-  // 4) Wait until all pending font loads settle (swap-in has happened),
-  //    but again bounded by the same timeout so we never block forever.
-  const ready = document.fonts?.ready
-    ? Promise.resolve(document.fonts.ready).then(() => {
-        /* ignore value */
-      })
-    : Promise.resolve();
+  /*
+   * 4) Wait until all pending font loads settle (swap-in has happened),
+   *    but again bounded by the same timeout so we never block forever.
+   */
+  const ready = document.fonts.ready.then(() => {
+    /* ignore value */
+  });
   await Promise.race([ready, timeout]).catch(() => {
     /* ignore - rendering will proceed with fallback */
   });

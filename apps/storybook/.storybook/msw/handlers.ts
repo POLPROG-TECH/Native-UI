@@ -15,6 +15,7 @@
  *   of the story (`LoadingStates.*`); other stories resolve quickly.
  */
 import { http, HttpResponse, delay } from 'msw';
+import { numberField, stringField } from './json';
 
 const BASE = 'https://api.polprog.dev';
 
@@ -39,36 +40,48 @@ export const DEMO_CATEGORIES = [
 export const defaultHandlers = [
   http.get(`${BASE}/entries`, async () => {
     await delay(600);
+
     return HttpResponse.json(DEMO_ENTRIES);
   }),
 
   http.get(`${BASE}/categories`, async () => {
     await delay(200);
+
     return HttpResponse.json(DEMO_CATEGORIES);
   }),
 
   http.post(`${BASE}/entries`, async ({ request }) => {
-    const body = (await request.json()) as { title?: string; amount?: number };
-    if (!body.title || typeof body.amount !== 'number') {
+    const body: unknown = await request.json();
+    const title = stringField(body, 'title');
+    const amount = numberField(body, 'amount');
+
+    if (!title || amount === undefined) {
       return HttpResponse.json({ message: 'title and amount are required' }, { status: 422 });
     }
+
     await delay(800);
+
     return HttpResponse.json(
-      { id: `e-${Date.now()}`, ...body, date: new Date().toISOString().slice(0, 10) },
+      { id: `e-${Date.now()}`, title, amount, date: new Date().toISOString().slice(0, 10) },
       { status: 201 },
     );
   }),
 
   http.post(`${BASE}/auth/login`, async ({ request }) => {
-    const body = (await request.json()) as { email?: string; password?: string };
+    const body: unknown = await request.json();
+    const email = stringField(body, 'email');
+    const password = stringField(body, 'password');
     await delay(900);
-    if (body.password === 'wrong') {
+
+    if (password === 'wrong') {
       return HttpResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
-    if (!body.email || !body.password) {
+
+    if (!email || !password) {
       return HttpResponse.json({ message: 'Missing credentials' }, { status: 400 });
     }
-    return HttpResponse.json({ token: 'demo-jwt', user: { email: body.email } });
+
+    return HttpResponse.json({ token: 'demo-jwt', user: { email } });
   }),
 ];
 
@@ -81,6 +94,7 @@ export const mockEndpoints = {
   entriesEmpty: () =>
     http.get(`${BASE}/entries`, async () => {
       await delay(500);
+
       return HttpResponse.json([]);
     }),
 
@@ -88,6 +102,7 @@ export const mockEndpoints = {
   entriesError: () =>
     http.get(`${BASE}/entries`, async () => {
       await delay(500);
+
       return HttpResponse.json({ message: 'Upstream unavailable' }, { status: 500 });
     }),
 
@@ -95,6 +110,7 @@ export const mockEndpoints = {
   entriesPending: () =>
     http.get(`${BASE}/entries`, async () => {
       await delay('infinite');
+
       return HttpResponse.json([]);
     }),
 
@@ -102,6 +118,7 @@ export const mockEndpoints = {
   entriesSlow: (ms = 3000) =>
     http.get(`${BASE}/entries`, async () => {
       await delay(ms);
+
       return HttpResponse.json(DEMO_ENTRIES);
     }),
 
@@ -109,6 +126,7 @@ export const mockEndpoints = {
   loginUnauthorized: () =>
     http.post(`${BASE}/auth/login`, async () => {
       await delay(600);
+
       return HttpResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }),
 };

@@ -1,71 +1,66 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { Text } from 'react-native';
 import { EmptyState } from '../../src/components/EmptyState';
-import { NativeUIProvider } from '../../src/theme';
-
-function renderWithTheme(ui: React.ReactElement) {
-  return render(<NativeUIProvider config={{ colorMode: 'light' }}>{ui}</NativeUIProvider>);
-}
+import { renderWithTheme } from '../test-utils';
 
 describe('EmptyState', () => {
-  it('should be exported as a function component', () => {
-    // GIVEN the EmptyState export from the components module
+  describe('GIVEN the EmptyState export from the components module', () => {
+    describe('WHEN its runtime type is inspected', () => {
+      it('THEN it is a function component', () => {
+        const actualType = typeof EmptyState;
 
-    // WHEN its runtime type is inspected
-    const actualType = typeof EmptyState;
-
-    // THEN it is a function component
-    expect(actualType).toBe('function');
+        expect(actualType).toBe('function');
+      });
+    });
   });
 
-  it('should render the title when only a title is provided', () => {
-    // GIVEN an EmptyState with just a title
+  describe('GIVEN an EmptyState with just a title', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the title text is present in the document', () => {
+        renderWithTheme(<EmptyState title="Nothing here" />);
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<EmptyState title="Nothing here" />);
-
-    // THEN the title text is present in the document
-    expect(screen.getByText('Nothing here')).toBeInTheDocument();
+        expect(screen.getByText('Nothing here')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render the icon when the icon prop is provided', () => {
-    // GIVEN an EmptyState with an "📭" icon
+  describe('GIVEN an EmptyState with an "📭" icon', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the icon glyph is present', () => {
+        renderWithTheme(<EmptyState icon="📭" title="No mail" />);
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<EmptyState icon="📭" title="No mail" />);
-
-    // THEN the icon glyph is present
-    expect(screen.getByText('📭')).toBeInTheDocument();
+        expect(screen.getByText('📭')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render the message when the message prop is provided', () => {
-    // GIVEN an EmptyState with a message
+  describe('GIVEN an EmptyState with a message', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the message text is present', () => {
+        renderWithTheme(<EmptyState title="Caught up" message="You are all caught up!" />);
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<EmptyState title="Caught up" message="You are all caught up!" />);
-
-    // THEN the message text is present
-    expect(screen.getByText('You are all caught up!')).toBeInTheDocument();
+        expect(screen.getByText('You are all caught up!')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should render the action element when the action prop is provided', () => {
-    // GIVEN an EmptyState with a custom action element
+  describe('GIVEN an EmptyState with a custom action element', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the action element is present', () => {
+        renderWithTheme(<EmptyState title="Empty" action={<Text>Refresh</Text>} />);
 
-    // WHEN the component is rendered inside a theme provider
-    renderWithTheme(<EmptyState title="Empty" action={<Text>Refresh</Text>} />);
-
-    // THEN the action element is present
-    expect(screen.getByText('Refresh')).toBeInTheDocument();
+        expect(screen.getByText('Refresh')).toBeInTheDocument();
+      });
+    });
   });
 
-  it('should not render an icon when no icon is provided', () => {
-    // GIVEN an EmptyState without an icon
+  describe('GIVEN an EmptyState without an icon', () => {
+    describe('WHEN the component is rendered inside a theme provider', () => {
+      it('THEN the rendered DOM does not contain any common test-emoji glyph', () => {
+        const { container } = renderWithTheme(<EmptyState title="Empty" />);
 
-    // WHEN the component is rendered inside a theme provider
-    const { container } = renderWithTheme(<EmptyState title="Empty" />);
-
-    // THEN the rendered DOM does not contain any common test-emoji glyph
-    expect(container.textContent).toBe('Empty');
+        expect(container.textContent).toBe('Empty');
+      });
+    });
   });
 });

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Text as RNText, View } from 'react-native';
 import type { Meta, StoryObj } from '@storybook/react';
 import { getContrastText, resolveColorScheme, THEME_PRESETS } from '../../src/tokens/colors';
@@ -134,6 +133,14 @@ const PresetCard = ({ preset, mode }: { preset: string; mode: 'light' | 'dark' }
 const meta: Meta = {
   title: 'Tokens/Colors',
   parameters: {
+    a11y: {
+      /*
+       * Swatches show raw palette values (fills, tints, dark-mode colors on a
+       * light canvas), not UI text; contrast of real text tokens is enforced
+       * by the readableText and onColorContrast unit tests.
+       */
+      options: { rules: { 'color-contrast': { enabled: false } } },
+    },
     docs: {
       description: {
         component: [
