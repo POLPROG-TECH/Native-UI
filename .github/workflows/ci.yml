@@ -156,7 +156,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Jest report for the docs stats (tests and coverage on Introduction / Dashboard)
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: coverage
           path: packages/native-ui/coverage
@@ -204,7 +204,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Jest report for the docs stats, so snapshots match the published Storybook
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: coverage
           path: packages/native-ui/coverage
