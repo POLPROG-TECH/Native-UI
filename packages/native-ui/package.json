@@ -132,7 +132,7 @@
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react": "^16.3.3",
-    "@testing-library/react-native": "^13.3.3",
+    "@testing-library/react-native": "^14.1.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
