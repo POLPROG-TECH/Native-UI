@@ -129,7 +129,7 @@
     "@react-native/babel-preset": "0.88.1",
     "@react-native/jest-preset": "0.88.1",
     "@testing-library/dom": "^10.4.2",
-    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/jest-dom": "^8.0.0",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react": "^16.3.3",
     "@testing-library/react-native": "^13.3.3",
