@@ -11,6 +11,7 @@ import {
 import { useTheme } from '../theme';
 import type { Theme } from '../theme/types';
 import { getHaptics } from '../utils/haptics';
+import { accessibilityStateProps } from '../utils/accessibilityStateProps';
 
 export interface SwitchProps {
   /** Whether the switch is on */
@@ -89,10 +90,7 @@ function SwitchControl({ value, onValueChange, disabled, labelledByRow }: Switch
        */
       {...(labelledByRow
         ? { importantForAccessibility: 'no-hide-descendants' as const, accessible: false }
-        : {
-            accessibilityRole: 'switch' as const,
-            accessibilityState: { checked: value, disabled },
-          })}
+        : accessibilityStateProps('switch', { checked: value, disabled }))}
     />
   );
 }
@@ -148,8 +146,7 @@ function LabelledSwitch({
       onPress={handleToggle}
       disabled={disabled}
       style={buildSwitchRowStyle(theme, disabled, style)}
-      accessibilityRole="switch"
-      accessibilityState={{ checked: value, disabled }}
+      {...accessibilityStateProps('switch', { checked: value, disabled })}
       accessibilityLabel={[label, subtitle].filter(Boolean).join(', ')}
     >
       <SwitchText label={label} subtitle={subtitle} />

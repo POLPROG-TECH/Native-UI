@@ -1,16 +1,31 @@
-# Full CI-equivalent check before pushing. Runs lint + typecheck + full test suite + build.
-# Mirrors .github/workflows/ci.yml so failures won't surprise you on GitHub.
+# Fast subset of .github/workflows/ci.yml, so most failures show up before the push.
+# Left to CI because they are slow or need a browser or the network: the Storybook
+# build, the Storybook browser tests, the minimum-peer install and the dependency audit.
 
 set -e
 
-echo "▸ lint"
-npm run lint --workspace=@polprog/native-ui --silent
-echo "▸ typecheck"
+echo "▸ format"
+npm run format:check --silent
+echo "▸ lint (library, Storybook app, example app)"
+npm run lint --silent
+echo "▸ typecheck (library, tests and stories, Storybook app, example app)"
 npm run typecheck --workspace=@polprog/native-ui --silent
+npm run typecheck:all --workspace=@polprog/native-ui --silent
+npm run typecheck --workspace=@polprog/storybook --silent
+npm run typecheck --workspace=@polprog/example --silent
+echo "▸ public API report and exports map"
+npm run api:check --workspace=@polprog/native-ui --silent
+npm run exports:check --workspace=@polprog/native-ui --silent
+echo "▸ import cycles"
+npm run check:cycles --workspace=@polprog/native-ui --silent
 echo "▸ full test suite"
 npm run test:ci --workspace=@polprog/native-ui --silent
+npm run test:scripts --silent
 echo "▸ stories coverage"
 npm run stories:check --workspace=@polprog/native-ui --silent
-echo "▸ build"
+echo "▸ build, tarball, package lint, size budget"
 npm run build --workspace=@polprog/native-ui --silent
+npm run verify-tarball --workspace=@polprog/native-ui --silent
+npm run package:lint --workspace=@polprog/native-ui --silent
+npm run size --workspace=@polprog/native-ui --silent
 echo "✓ pre-push OK"

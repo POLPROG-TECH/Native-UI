@@ -16,8 +16,8 @@ const INCLUDE_HIDDEN = { includeHiddenElements: true } as const;
 describe('Modal (real React Native renderer)', () => {
   describe('GIVEN a visible Modal with a title and body content', () => {
     describe('WHEN it is rendered through the real React Native Modal', () => {
-      it('THEN the title is announced as a header and the body is on screen', () => {
-        renderWithTheme(
+      it('THEN the title is announced as a header and the body is on screen', async () => {
+        await renderWithTheme(
           <Modal visible onClose={jest.fn()} title="Delete item?">
             <Text>This action cannot be undone.</Text>
           </Modal>,
@@ -31,8 +31,8 @@ describe('Modal (real React Native renderer)', () => {
 
   describe('GIVEN a hidden Modal', () => {
     describe('WHEN it is rendered', () => {
-      it('THEN neither the title nor the body is on screen', () => {
-        renderWithTheme(
+      it('THEN neither the title nor the body is on screen', async () => {
+        await renderWithTheme(
           <Modal visible={false} onClose={jest.fn()} title="Delete item?">
             <Text>This action cannot be undone.</Text>
           </Modal>,
@@ -49,7 +49,7 @@ describe('Modal (real React Native renderer)', () => {
       it('THEN it carries button semantics and the modal asks to close', async () => {
         const onClose = jest.fn();
         const user = userEvent.setup();
-        renderWithTheme(
+        await renderWithTheme(
           <Modal visible onClose={onClose} closeAccessibilityLabel={CLOSE_LABEL}>
             <Text>Body</Text>
           </Modal>,
@@ -67,8 +67,8 @@ describe('Modal (real React Native renderer)', () => {
 
   describe('GIVEN a visible Modal that cannot be dismissed from the backdrop', () => {
     describe('WHEN it is rendered', () => {
-      it('THEN no close button is exposed while the content stays reachable', () => {
-        renderWithTheme(
+      it('THEN no close button is exposed while the content stays reachable', async () => {
+        await renderWithTheme(
           <Modal
             visible
             onClose={jest.fn()}
@@ -90,15 +90,15 @@ describe('Modal (real React Native renderer)', () => {
 describe('Modal VoiceOver escape gesture', () => {
   describe('GIVEN a visible, dismissable Modal (its backdrop is unreachable for VoiceOver)', () => {
     describe('WHEN the user performs the two-finger escape gesture on the dialog', () => {
-      it('THEN the modal asks to close', () => {
+      it('THEN the modal asks to close', async () => {
         const onClose = jest.fn();
-        renderWithTheme(
+        await renderWithTheme(
           <Modal visible onClose={onClose} testID="dialog">
             <Text>Body</Text>
           </Modal>,
         );
 
-        fireEvent(screen.getByTestId('dialog'), 'accessibilityEscape');
+        await fireEvent(screen.getByTestId('dialog'), 'accessibilityEscape');
 
         expect(onClose).toHaveBeenCalledTimes(1);
       });
@@ -107,15 +107,15 @@ describe('Modal VoiceOver escape gesture', () => {
 
   describe('GIVEN a Modal that must not be dismissed', () => {
     describe('WHEN the escape gesture is performed', () => {
-      it('THEN nothing happens', () => {
+      it('THEN nothing happens', async () => {
         const onClose = jest.fn();
-        renderWithTheme(
+        await renderWithTheme(
           <Modal visible onClose={onClose} dismissable={false} testID="dialog">
             <Text>Body</Text>
           </Modal>,
         );
 
-        fireEvent(screen.getByTestId('dialog'), 'accessibilityEscape');
+        await fireEvent(screen.getByTestId('dialog'), 'accessibilityEscape');
 
         expect(onClose).not.toHaveBeenCalled();
       });

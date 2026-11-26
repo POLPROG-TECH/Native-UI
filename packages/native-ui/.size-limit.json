@@ -1,0 +1,54 @@
+[
+  {
+    "name": "Whole library (ESM, brotli)",
+    "path": "dist/index.mjs",
+    "import": "*",
+    "limit": "42 kB",
+    "ignore": [
+      "react",
+      "react-native",
+      "react-native-reanimated",
+      "react-native-safe-area-context",
+      "@react-native-community/datetimepicker"
+    ]
+  },
+  {
+    "name": "Button only (tree-shaken)",
+    "path": "dist/index.mjs",
+    "import": "{ NativeUIProvider, Button }",
+    "limit": "12 kB",
+    "ignore": [
+      "react",
+      "react-native",
+      "react-native-reanimated",
+      "react-native-safe-area-context",
+      "@react-native-community/datetimepicker"
+    ]
+  },
+  {
+    "name": "Button subpath entry",
+    "path": "dist/components/Button.mjs",
+    "import": "*",
+    "limit": "7 kB",
+    "ignore": [
+      "react",
+      "react-native",
+      "react-native-reanimated",
+      "react-native-safe-area-context",
+      "@react-native-community/datetimepicker"
+    ]
+  },
+  {
+    "name": "Tokens only",
+    "path": "dist/tokens/index.mjs",
+    "import": "*",
+    "limit": "6 kB",
+    "ignore": [
+      "react",
+      "react-native",
+      "react-native-reanimated",
+      "react-native-safe-area-context",
+      "@react-native-community/datetimepicker"
+    ]
+  }
+]

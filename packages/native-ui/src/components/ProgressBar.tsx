@@ -1,5 +1,6 @@
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useTheme } from '../theme';
+import { accessibilityValueProps } from '../utils/accessibilityValueProps';
 import { ProgressFill } from './progressBar/ProgressFill';
 import { clampProgress, progressAccessibilityValue } from './progressBar/progressValue';
 
@@ -52,7 +53,7 @@ export function ProgressBar({
       testID={testID}
       style={[styles.track, trackStyle(height, theme.colors.controlTrack), style]}
       accessibilityRole="progressbar"
-      accessibilityValue={progressAccessibilityValue(fraction)}
+      {...accessibilityValueProps(progressAccessibilityValue(fraction))}
       accessibilityLabel={accessibilityLabel}
     >
       <ProgressFill

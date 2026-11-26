@@ -11,8 +11,8 @@ import { act, captureTheme, fireEvent, renderWithTheme, screen } from './test-ut
  * from the pressed state, which only the real Pressable resolves.
  */
 
-function readThemeOutlineColor(): string {
-  const theme = captureTheme();
+async function readThemeOutlineColor(): Promise<string> {
+  const theme = await captureTheme();
 
   return theme.components.focusRing.color ?? theme.colors.primaryText;
 }
@@ -26,16 +26,14 @@ function emulateWeb(): void {
   Reflect.set(globalThis, 'document', fakeDocument);
 }
 
-function focusAfter(
+async function focusAfter(
   inputEvent: 'keydown' | 'pointerdown',
   target: ReturnType<typeof screen.getByLabelText>,
 ) {
-  act(() => {
+  await act(async () => {
     fakeDocument.dispatchEvent(new Event(inputEvent));
   });
-  act(() => {
-    fireEvent(target, 'focus');
-  });
+  await fireEvent(target, 'focus');
 }
 
 const controls: ReadonlyArray<[string, React.ReactElement, string]> = [
@@ -63,38 +61,32 @@ describe('focus ring (real React Native renderer)', () => {
 
   describe.each(controls)('GIVEN %s', (_name, ui, accessibleName) => {
     describe('WHEN it receives focus', () => {
-      it('THEN it draws the themed outline', () => {
-        const outlineColor = readThemeOutlineColor();
-        renderWithTheme(ui);
+      it('THEN it draws the themed outline', async () => {
+        const outlineColor = await readThemeOutlineColor();
+        await renderWithTheme(ui);
         const target = screen.getByLabelText(accessibleName);
 
-        act(() => {
-          fireEvent(target, 'focus');
-        });
+        await fireEvent(target, 'focus');
 
         expect(target).toHaveStyle({ outlineStyle: 'solid', outlineWidth: 2, outlineColor });
       });
     });
 
     describe('WHEN it receives focus and then loses it', () => {
-      it('THEN the outline is gone', () => {
-        renderWithTheme(ui);
+      it('THEN the outline is gone', async () => {
+        await renderWithTheme(ui);
         const target = screen.getByLabelText(accessibleName);
 
-        act(() => {
-          fireEvent(target, 'focus');
-        });
-        act(() => {
-          fireEvent(target, 'blur');
-        });
+        await fireEvent(target, 'focus');
+        await fireEvent(target, 'blur');
 
         expect(target).not.toHaveStyle({ outlineStyle: 'solid' });
       });
     });
 
     describe('WHEN it is rendered without focus', () => {
-      it('THEN no outline is drawn', () => {
-        renderWithTheme(ui);
+      it('THEN no outline is drawn', async () => {
+        await renderWithTheme(ui);
 
         const target = screen.getByLabelText(accessibleName);
 
@@ -103,25 +95,25 @@ describe('focus ring (real React Native renderer)', () => {
     });
 
     describe('WHEN it receives focus on web right after a key press', () => {
-      it('THEN it draws the themed outline', () => {
-        const outlineColor = readThemeOutlineColor();
+      it('THEN it draws the themed outline', async () => {
+        const outlineColor = await readThemeOutlineColor();
         emulateWeb();
-        renderWithTheme(ui);
+        await renderWithTheme(ui);
         const target = screen.getByLabelText(accessibleName);
 
-        focusAfter('keydown', target);
+        await focusAfter('keydown', target);
 
         expect(target).toHaveStyle({ outlineStyle: 'solid', outlineWidth: 2, outlineColor });
       });
     });
 
     describe('WHEN it receives focus on web right after a pointer press', () => {
-      it('THEN only the browser outline is suppressed and no ring is drawn', () => {
+      it('THEN only the browser outline is suppressed and no ring is drawn', async () => {
         emulateWeb();
-        renderWithTheme(ui);
+        await renderWithTheme(ui);
         const target = screen.getByLabelText(accessibleName);
 
-        focusAfter('pointerdown', target);
+        await focusAfter('pointerdown', target);
 
         expect(target).toHaveStyle({ outlineWidth: 0 });
         expect(target).not.toHaveStyle({ outlineStyle: 'solid' });

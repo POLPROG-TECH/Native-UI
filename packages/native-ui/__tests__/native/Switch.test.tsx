@@ -8,8 +8,10 @@ describe('Switch (real React Native renderer)', () => {
    */
   describe('GIVEN a Switch with a "Notifications" label', () => {
     describe('WHEN the component is rendered inside a theme provider', () => {
-      it('THEN the label is shown and names the switch', () => {
-        renderWithTheme(<Switch value={false} onValueChange={() => {}} label="Notifications" />);
+      it('THEN the label is shown and names the switch', async () => {
+        await renderWithTheme(
+          <Switch value={false} onValueChange={() => {}} label="Notifications" />,
+        );
 
         expect(
           screen.getByText('Notifications', { includeHiddenElements: true }),
@@ -21,8 +23,8 @@ describe('Switch (real React Native renderer)', () => {
 
   describe('GIVEN a Switch with a subtitle', () => {
     describe('WHEN the component is rendered inside a theme provider', () => {
-      it('THEN the subtitle is shown and completes the switch name', () => {
-        renderWithTheme(
+      it('THEN the subtitle is shown and completes the switch name', async () => {
+        await renderWithTheme(
           <Switch value onValueChange={() => {}} label="Sounds" subtitle="Play a chirp on tap" />,
         );
 
@@ -38,8 +40,8 @@ describe('Switch (real React Native renderer)', () => {
 
   describe('GIVEN a labelled Switch that is on', () => {
     describe('WHEN it is rendered by the real React Native renderer', () => {
-      it('THEN the row is the only switch announced, named by label and subtitle, because the native control inside it is hidden from accessibility', () => {
-        renderWithTheme(
+      it('THEN the row is the only switch announced, named by label and subtitle, because the native control inside it is hidden from accessibility', async () => {
+        await renderWithTheme(
           <Switch value onValueChange={jest.fn()} label="Wi-Fi" subtitle="Connected" />,
         );
 
@@ -56,7 +58,7 @@ describe('Switch (real React Native renderer)', () => {
       it('THEN the row reports unchecked and asks to turn on', async () => {
         const onValueChange = jest.fn();
         const user = userEvent.setup();
-        renderWithTheme(<Switch value={false} onValueChange={onValueChange} label="Wi-Fi" />);
+        await renderWithTheme(<Switch value={false} onValueChange={onValueChange} label="Wi-Fi" />);
         const control = screen.getByRole('switch', { name: 'Wi-Fi' });
 
         await user.press(control);
@@ -72,7 +74,9 @@ describe('Switch (real React Native renderer)', () => {
       it('THEN it is announced as disabled and the value never changes', async () => {
         const onValueChange = jest.fn();
         const user = userEvent.setup();
-        renderWithTheme(<Switch value onValueChange={onValueChange} label="Wi-Fi" disabled />);
+        await renderWithTheme(
+          <Switch value onValueChange={onValueChange} label="Wi-Fi" disabled />,
+        );
         const control = screen.getByRole('switch', { name: 'Wi-Fi' });
 
         await user.press(control);
@@ -85,12 +89,12 @@ describe('Switch (real React Native renderer)', () => {
 
   describe('GIVEN an unlabelled Switch that is off', () => {
     describe('WHEN the native control emits a value change', () => {
-      it('THEN the control itself carries the state and forwards the new value', () => {
+      it('THEN the control itself carries the state and forwards the new value', async () => {
         const onValueChange = jest.fn();
-        renderWithTheme(<Switch value={false} onValueChange={onValueChange} />);
+        await renderWithTheme(<Switch value={false} onValueChange={onValueChange} />);
         const control = screen.getByRole('switch');
 
-        fireEvent(control, 'valueChange', true);
+        await fireEvent(control, 'valueChange', true);
 
         expect(control).not.toBeChecked();
         expect(onValueChange).toHaveBeenCalledWith(true);

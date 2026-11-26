@@ -9,8 +9,8 @@ describe('Radio (real React Native renderer)', () => {
    */
   describe('GIVEN a passive Radio with only the selected prop inside a selectable row', () => {
     describe('WHEN the component is rendered inside a theme provider', () => {
-      it('THEN the indicator is drawn and the row is the only radio announced', () => {
-        renderWithTheme(
+      it('THEN the indicator is drawn and the row is the only radio announced', async () => {
+        await renderWithTheme(
           <Pressable
             accessibilityRole="radio"
             accessibilityState={{ selected: true }}
@@ -28,8 +28,8 @@ describe('Radio (real React Native renderer)', () => {
 
   describe('GIVEN a Radio with a "Option A" label', () => {
     describe('WHEN the component is rendered inside a theme provider', () => {
-      it('THEN the label is on screen and names an unselected radio', () => {
-        renderWithTheme(<Radio selected={false} label="Option A" onPress={() => {}} />);
+      it('THEN the label is on screen and names an unselected radio', async () => {
+        await renderWithTheme(<Radio selected={false} label="Option A" onPress={() => {}} />);
 
         expect(screen.getByText('Option A')).toBeOnTheScreen();
         expect(screen.getByRole('radio', { name: 'Option A' })).not.toBeSelected();
@@ -42,7 +42,7 @@ describe('Radio (real React Native renderer)', () => {
       it('THEN it is announced as disabled and onPress is never invoked', async () => {
         const onPress = jest.fn();
         const user = userEvent.setup();
-        renderWithTheme(<Radio selected={false} label="A" onPress={onPress} disabled />);
+        await renderWithTheme(<Radio selected={false} label="A" onPress={onPress} disabled />);
         const radio = screen.getByRole('radio', { name: 'A' });
 
         await user.press(radio);
@@ -55,8 +55,8 @@ describe('Radio (real React Native renderer)', () => {
 
   describe('GIVEN a Radio with an explicit accessibility label', () => {
     describe('WHEN the component is rendered inside a theme provider', () => {
-      it('THEN assistive technology names the row by the custom label', () => {
-        renderWithTheme(
+      it('THEN assistive technology names the row by the custom label', async () => {
+        await renderWithTheme(
           <Radio selected label="Visible" accessibilityLabel="Custom label" onPress={() => {}} />,
         );
 

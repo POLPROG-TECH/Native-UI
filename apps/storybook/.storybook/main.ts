@@ -91,7 +91,14 @@ export default defineMain({
     disableWhatsNewNotifications: true,
   },
 
-  staticDirs: [{ from: '../../../docs/assets', to: '/brand' }],
+  staticDirs: [
+    { from: '../../../docs/assets', to: '/brand' },
+    /*
+     * Publishes generated/stats.json at /stats.json, so the marketing site
+     * quotes the same test and type-scale figures as the Introduction page.
+     */
+    { from: '../generated', to: '/' },
+  ],
 
   framework: {
     name: '@storybook/react-vite',

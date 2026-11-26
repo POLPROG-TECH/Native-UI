@@ -4,6 +4,9 @@ import { useTheme } from '../theme';
 import type { Spacing, BorderRadius, Elevation } from '../tokens/spacing';
 import { buildSurfaceStyle, takeSurfaceTokens, type ColorToken } from './surfaceTokens';
 
+/** Color key accepted by the `bg` prop; public because the props interface names it. */
+export type { ColorToken } from './surfaceTokens';
+
 export interface BoxProps extends Omit<ViewProps, 'style'> {
   /** Content rendered inside the box. */
   children?: React.ReactNode;

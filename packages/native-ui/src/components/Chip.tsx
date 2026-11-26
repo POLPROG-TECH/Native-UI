@@ -15,6 +15,7 @@ import { type BorderRadius } from '../tokens/spacing';
 import { getHaptics } from '../utils/haptics';
 import { resolveChipColors, type ChipColors } from './chip/chipColors';
 import type { ChipVariant } from './chip/types';
+import { accessibilityStateProps } from '../utils/accessibilityStateProps';
 export type { ChipVariant } from './chip/types';
 
 export type ChipShape = 'pill' | 'rounded' | 'square';
@@ -181,8 +182,7 @@ export function Chip(props: ChipProps) {
       onPress={chip.handlePress}
       disabled={chip.disabled}
       activeOpacity={chip.activeOpacity}
-      accessibilityRole="button"
-      accessibilityState={{ selected: chip.selected, disabled: chip.disabled }}
+      {...accessibilityStateProps('button', { selected: chip.selected, disabled: chip.disabled })}
       accessibilityLabel={label}
     >
       <ChipLeadingIcon icon={icon} renderIcon={renderIcon} color={chip.labelColor} />

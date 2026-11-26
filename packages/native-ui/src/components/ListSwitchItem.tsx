@@ -39,7 +39,13 @@ export function ListSwitchItem({ label, value, onValueChange, ...rowProps }: Lis
       {...rowProps}
       title={label}
       showChevron={false}
-      trailing={<ListRowSwitch value={value} onValueChange={onValueChange} />}
+      trailing={
+        <ListRowSwitch
+          value={value}
+          onValueChange={onValueChange}
+          accessibilityLabel={[label, rowProps.subtitle].filter(Boolean).join(', ')}
+        />
+      }
     />
   );
 }

@@ -27,7 +27,53 @@ We follow [**Semantic Versioning**](https://semver.org):
 
 ---
 
-## Unreleased (2.0.0)
+## Unreleased (2.1.0)
+
+New components, ready-made translations and a stricter package. No breaking
+changes.
+
+### Added
+
+- **Eight components**: `Banner`, `Accordion`, `Tabs`, `Slider`, `Stepper`,
+  `PinInput`, `Tooltip` and `ActionSheet`. Each reads its dimensions from
+  `theme.components.<name>` and ships stories, tests on the real React
+  Native renderer and an axe check in every theme run.
+- **Label packs**: `plLabels`, `esLabels`, `deLabels` and `arLabels`
+  translate every string the library renders. Pass one as `config.labels`.
+- **Label keys**: `dismiss`, `increase`, `decrease` and `pinProgress`.
+- **Example app** (`apps/example`): an Expo app that runs the library on
+  iOS and Android, with a Maestro flow for the main interactions.
+- **Keyboard support for `Slider` on web**: it takes focus and answers to
+  the arrow, Home and End keys.
+- **`ColorToken`** type export (the `bg` prop of `Box`, `VStack`, `HStack`).
+
+### Changed
+
+- Peer ranges start at versions that install together with React Native
+  0.84: `react` 19.2.3 and `react-native-reanimated` 4.2.3. CI type-checks
+  the library against these minimums.
+- ESM and CJS consumers each get their own type declarations.
+- **State reaches the browser.** On web every control now writes the ARIA
+  attribute that is valid for its role (`aria-selected`, `aria-checked`,
+  `aria-pressed`, `aria-expanded`, `aria-value*`); React Native Web ignores
+  `accessibilityState`. Native announcements are unchanged. The
+  `aria-required-attr` axe rule is back on for every story.
+- `Tooltip` flips and slides to stay inside the window.
+- Development: MSW 3 and React Native Testing Library 14.
+
+### Fixed
+
+- The subpath exports (`/components/*`, `/primitives/*`, `/tokens`,
+  `/theme`) now resolve to the same files as the root entry in Metro. Mixing
+  them used to load two copies of the theme context, so `useTheme` threw
+  inside a provider.
+- The switch in `ListSwitchItem` and `SettingsSwitchRow` is named by the
+  row's label, so screen readers no longer announce a bare switch.
+- Wildcard subpaths can no longer reach internal files.
+
+---
+
+## 2.0.0
 
 Breaking release: removes the 1.x deprecations, raises the peer floor and
 changes some visual defaults for accessibility. See **Upgrading to 2.0**.

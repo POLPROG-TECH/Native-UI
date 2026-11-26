@@ -45,8 +45,15 @@ npm run test:watch --workspace=@polprog/native-ui
    `packages/native-ui/stories/`. Run `npm run stories:check` to verify.
 5. **Changeset** - run `npx changeset` and pick the semver bump
    (`patch` / `minor` / `major`). Commit the generated file.
-6. **CI** - all jobs (typecheck, lint, tests, story coverage, Storybook
-   build, Chromatic) must pass.
+6. **CI** - all jobs (typecheck, lint, format, tests, story coverage, import
+   cycles, build with package checks and size budget, minimum peer versions,
+   dependency audit, Storybook build and browser tests, Chromatic) must pass.
+   Chromatic fails on unreviewed visual changes: accept them in Chromatic and
+   rerun the job.
+
+Package-level rules (component standards, tokens, test projects, the PR
+checklist) live in
+[`packages/native-ui/CONTRIBUTING.md`](./packages/native-ui/CONTRIBUTING.md).
 
 ### Commit style
 
@@ -80,8 +87,8 @@ Every component in `@polprog/native-ui` **must**:
 Releases are automated via [Changesets](https://github.com/changesets/changesets):
 
 1. Contributors add `.changeset/*.md` entries in their PRs.
-2. When merged, the `release` workflow opens a **Version Packages** PR that
-   bumps versions and updates `CHANGELOG.md`.
+2. When merged and CI is green for that commit, the `release` workflow opens
+   a **Version Packages** PR that bumps versions and updates `CHANGELOG.md`.
 3. Merging the Version Packages PR publishes to npm and pushes a tag.
 
 Maintainers with `NPM_TOKEN` and `GITHUB_TOKEN` can trigger manual releases

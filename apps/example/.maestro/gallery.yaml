@@ -1,0 +1,53 @@
+appId: pl.polprog.nativeui.example
+---
+- launchApp:
+    clearState: true
+- assertVisible:
+    id: 'theme-probe'
+
+- assertVisible:
+    id: 'offline-banner'
+- tapOn:
+    id: 'offline-banner-dismiss'
+- assertNotVisible:
+    id: 'offline-banner'
+- tapOn:
+    id: 'show-banner'
+- assertVisible:
+    id: 'offline-banner'
+
+- tapOn:
+    id: 'tab-done'
+- assertVisible: 'Showing: done'
+
+- assertNotVisible: 'Orders placed before noon ship the same day.'
+- tapOn:
+    id: 'shipping-header'
+- assertVisible: 'Orders placed before noon ship the same day.'
+
+- scrollUntilVisible:
+    element:
+      id: 'guests-increase'
+- tapOn:
+    id: 'guests-increase'
+- tapOn:
+    id: 'guests-increase'
+- assertVisible: '4'
+
+- scrollUntilVisible:
+    element:
+      id: 'code'
+- tapOn:
+    id: 'code'
+- inputText: '4821'
+- assertVisible: 'Code complete'
+- hideKeyboard
+
+- scrollUntilVisible:
+    element:
+      id: 'open-actions'
+- tapOn:
+    id: 'open-actions'
+- tapOn:
+    id: 'action-duplicate'
+- assertVisible: 'Last action: duplicate'

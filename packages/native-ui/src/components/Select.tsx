@@ -9,6 +9,7 @@ import { useSelectState } from './select/useSelectState';
 import { buildSelectRowStyles, selectStyles } from './select/selectStyles';
 import { useSelectFocusRing } from './select/useSelectFocusRing';
 import type { SelectProps } from './select/types';
+import { accessibilityStateProps } from '../utils/accessibilityStateProps';
 export type { SelectOption, SelectProps } from './select/types';
 
 export interface SelectTriggerProps {
@@ -70,8 +71,7 @@ function SelectTrigger({ children, style, onPress, disabled, testID }: SelectTri
       onPress={disabled ? undefined : onPress}
       {...focusProps}
       style={[selectStyles.trigger, rowStyles.trigger, style, focusRingStyle]}
-      accessibilityRole="button"
-      accessibilityState={{ disabled: !!disabled }}
+      {...accessibilityStateProps('button', { disabled: !!disabled })}
     >
       {children}
     </Pressable>
@@ -92,8 +92,7 @@ function SelectOptionItem({ children, style, selected, onPress, testID }: Select
       onPress={onPress}
       {...focusProps}
       style={[selectStyles.option, rowStyles.option, style, focusRingStyle]}
-      accessibilityRole="radio"
-      accessibilityState={{ selected: !!selected }}
+      {...accessibilityStateProps('radio', { selected: !!selected })}
     >
       {children}
     </Pressable>

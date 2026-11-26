@@ -1,54 +1,57 @@
 #!/usr/bin/env node
 /**
  * Publish smoke-test: runs `npm pack --dry-run --json` in the current
- * working directory, verifies that required files are present in the
- * resulting tarball, and that the tarball stays under a sanity-check
+ * working directory and verifies that required files are present, that every
+ * target of the `exports` map is published and consistent (see
+ * `shared/exportsMap.mjs`), and that the tarball stays under a sanity-check
  * size budget. Exits non-zero on any violation so CI can gate releases.
  *
- * Run from packages/native-ui/ (or pass --cwd).
+ * Run from packages/native-ui/ after `npm run build`.
  */
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { findExportProblems } from './shared/exportsMap.mjs';
 
-const REQUIRED_FILES = [
-  'package.json',
-  'README.md',
-  'LICENSE',
-  'dist/index.js',
-  'dist/index.mjs',
-  'dist/index.d.ts',
-];
-const MAX_PACKED_BYTES = 5 * 1024 * 1024;
+const REQUIRED_FILES = ['package.json', 'README.md', 'LICENSE'];
+const BYTES_PER_KB = 1024;
+const MAX_PACKED_BYTES = 5 * BYTES_PER_KB * BYTES_PER_KB;
 
-const raw = execFileSync('npm', ['pack', '--dry-run', '--json'], {
-  encoding: 'utf8',
-});
-const manifest = JSON.parse(raw)[0];
-const present = new Set(manifest.files.map((f) => f.path));
+function fail(title, lines) {
+  console.error(title);
 
-const missing = REQUIRED_FILES.filter((p) => !present.has(p));
-
-if (missing.length > 0) {
-  console.error('Tarball is missing required files:');
-  for (const p of missing) {
-    console.error('   - ' + p);
+  for (const line of lines) {
+    console.error(`   - ${line}`);
   }
 
   process.exit(1);
 }
 
+const toKb = (bytes) => (bytes / BYTES_PER_KB).toFixed(1);
+
+const raw = execFileSync('npm', ['pack', '--dry-run', '--json'], { encoding: 'utf8' });
+const manifest = JSON.parse(raw)[0];
+const files = manifest.files.map((file) => file.path);
+const missing = REQUIRED_FILES.filter((file) => !files.includes(file));
+
+if (missing.length > 0) {
+  fail('Tarball is missing required files:', missing);
+}
+
+const exportProblems = findExportProblems(
+  JSON.parse(readFileSync('package.json', 'utf8')).exports,
+  files,
+);
+
+if (exportProblems.length > 0) {
+  fail('The exports map does not match the tarball:', exportProblems);
+}
+
 if (manifest.size > MAX_PACKED_BYTES) {
-  console.error(
-    `Tarball exceeds ${(MAX_PACKED_BYTES / 1024 / 1024).toFixed(1)} MB budget: ${(
-      manifest.size /
-      1024 /
-      1024
-    ).toFixed(2)} MB`,
-  );
-  process.exit(1);
+  fail('Tarball exceeds the size budget:', [
+    `${toKb(manifest.size)} KB packed, limit ${toKb(MAX_PACKED_BYTES)} KB`,
+  ]);
 }
 
 console.log(
-  `Tarball OK: ${manifest.files.length} files, ${(manifest.size / 1024).toFixed(
-    1,
-  )} KB packed / ${(manifest.unpackedSize / 1024).toFixed(1)} KB unpacked`,
+  `Tarball OK: ${files.length} files, ${toKb(manifest.size)} KB packed / ${toKb(manifest.unpackedSize)} KB unpacked, exports map consistent`,
 );

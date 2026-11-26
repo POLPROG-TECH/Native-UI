@@ -5,6 +5,7 @@ import { SystemIcon } from '../../primitives/SystemIcon';
 import { renderIconSlot, type IconSlot } from '../../primitives/iconSlot';
 import { buildSelectRowStyles, selectStyles } from './selectStyles';
 import { useSelectFocusRing } from './useSelectFocusRing';
+import { accessibilityStateProps } from '../../utils/accessibilityStateProps';
 
 /**
  * Everything a row needs from the theme, memoized once per theme so the
@@ -63,8 +64,7 @@ export const SelectRow = React.memo(function SelectRow(props: SelectRowProps) {
         isSelected && { backgroundColor: appearance.primaryLightColor },
         focusRingStyle,
       ]}
-      accessibilityRole="radio"
-      accessibilityState={{ selected: isSelected }}
+      {...accessibilityStateProps('radio', { selected: isSelected })}
       accessibilityLabel={props.label}
     >
       <SelectRowContent {...props} />

@@ -39,6 +39,13 @@ export interface NativeUILabels {
   /** Message and retry caption of the default ErrorBoundary fallback. */
   errorMessage: string;
   errorRetry: string;
+  /** Accessible name of the dismiss button of Banner. */
+  dismiss: string;
+  /** Accessible names of the Stepper buttons. */
+  increase: string;
+  decrease: string;
+  /** Spoken value of PinInput, e.g. "3 of 6 digits entered". */
+  pinProgress: (entered: number, total: number) => string;
   /** Accessible label of PaginationDots, e.g. "Step 2 of 5". */
   stepOf: (current: number, total: number) => string;
   /** Capped counter text in Badge / BottomTabBar, e.g. "99+". */
@@ -69,6 +76,10 @@ export const defaultLabels: NativeUILabels = {
   cardHint: 'Tap for details',
   errorMessage: 'Something went wrong.',
   errorRetry: 'Try again',
+  dismiss: 'Dismiss',
+  increase: 'Increase',
+  decrease: 'Decrease',
+  pinProgress: (entered, total) => `${entered} of ${total} digits entered`,
   stepOf: (current, total) => `Step ${current} of ${total}`,
   countOverflow: (max) => `${max}+`,
   statValue: (label, value) => `${label}: ${value}`,

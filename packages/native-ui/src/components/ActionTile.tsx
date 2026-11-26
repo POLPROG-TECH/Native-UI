@@ -7,6 +7,7 @@ import { ActionTileBody } from './actionTile/ActionTileBody';
 import { useActionTileStyles } from './actionTile/actionTileStyles';
 import { useLightHapticPress } from './press/useLightHapticPress';
 import type { ActionTileTone } from './actionTile/types';
+import { accessibilityStateProps } from '../utils/accessibilityStateProps';
 export type { ActionTileTone } from './actionTile/types';
 
 export interface ActionTileProps {
@@ -78,9 +79,8 @@ export const ActionTile = React.memo(function ActionTile({
       disabled={disabled}
       scaleTo={disabled ? NO_PRESS_SCALE : tokens.pressScale}
       style={[styles.tile, style]}
-      accessibilityRole="button"
       accessibilityLabel={accessibilityLabel ?? label}
-      accessibilityState={{ disabled }}
+      {...accessibilityStateProps('button', { disabled })}
       {...(testID ? { testID } : {})}
     >
       <ActionTileBody icon={icon} tone={tone} label={label} iconChipStyle={styles.iconChip} />

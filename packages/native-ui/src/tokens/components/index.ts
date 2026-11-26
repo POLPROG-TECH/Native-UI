@@ -3,13 +3,20 @@ import { buildOverlayTokens, type OverlayTokens } from './overlays';
 import { buildActionTokens, type ActionTokens } from './actions';
 import { buildControlTokens, type ControlTokens } from './controls';
 import { buildLayoutTokens, type LayoutTokens } from './layout';
+import { buildValueInputTokens, type ValueInputTokens } from './inputs';
+import { buildDisclosureTokens, type DisclosureTokens } from './disclosure';
 
 /**
  * Per-component design tokens: every padding, size, duration and threshold a
  * component uses that is not already a global token. Components read them from
  * `theme.components`, and apps override them through `NativeUIConfig.components`.
  */
-export type ComponentTokens = OverlayTokens & ActionTokens & ControlTokens & LayoutTokens;
+export type ComponentTokens = OverlayTokens &
+  ActionTokens &
+  ControlTokens &
+  LayoutTokens &
+  ValueInputTokens &
+  DisclosureTokens;
 
 /** Partial overrides, merged one component at a time. */
 export type ComponentTokenOverrides = TokenGroupOverrides<ComponentTokens>;
@@ -21,6 +28,8 @@ export function buildComponentTokens(context: ComponentTokenContext): ComponentT
     ...buildActionTokens(context),
     ...buildControlTokens(context),
     ...buildLayoutTokens(context),
+    ...buildValueInputTokens(context),
+    ...buildDisclosureTokens(context),
   };
 }
 
@@ -37,3 +46,5 @@ export type * from './overlays';
 export type * from './actions';
 export type * from './controls';
 export type * from './layout';
+export type * from './inputs';
+export type * from './disclosure';

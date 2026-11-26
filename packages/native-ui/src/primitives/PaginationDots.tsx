@@ -1,5 +1,6 @@
 import { View, StyleSheet, type ViewStyle, type StyleProp } from 'react-native';
 import { useTheme } from '../theme';
+import { accessibilityValueProps } from '../utils/accessibilityValueProps';
 import { PaginationDot, resolveDotAppearance } from './paginationDots/PaginationDot';
 
 export interface PaginationDotsProps {
@@ -53,7 +54,7 @@ export function PaginationDots(props: PaginationDotsProps) {
       accessibilityLabel={
         props.accessibilityLabel ?? theme.labels.stepOf(Math.min(current + 1, count), count)
       }
-      accessibilityValue={{ min: 0, max: Math.max(count - 1, 0), now: current }}
+      {...accessibilityValueProps({ min: 0, max: Math.max(count - 1, 0), now: current })}
     >
       {Array.from({ length: count }, (_, index) => (
         <PaginationDot key={index} isActive={index === current} appearance={appearance} />

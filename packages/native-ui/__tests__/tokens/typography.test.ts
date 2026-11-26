@@ -1,4 +1,11 @@
-import { typography, FONT_SCALE } from '../../src/tokens/typography';
+import { systemFontFamilies } from '../../src/tokens/fonts';
+import {
+  typography,
+  FONT_SCALE,
+  buildTypography,
+  compactTypography,
+  resolveTypography,
+} from '../../src/tokens/typography';
 import type { TypographyVariant } from '../../src/tokens/typography';
 import { defined } from '../shared/defined';
 
@@ -202,6 +209,21 @@ describe('FONT_SCALE', () => {
 
         expect(mediumTier).toBeGreaterThan(defaultTier);
         expect(largeTier).toBeGreaterThan(mediumTier);
+      });
+    });
+  });
+});
+
+describe('resolveTypography', () => {
+  describe('GIVEN the two density presets', () => {
+    describe('WHEN each is resolved for the system fonts', () => {
+      it('THEN compact and regular return their own scales', () => {
+        const compact = resolveTypography('compact', systemFontFamilies);
+        const regular = resolveTypography('regular', systemFontFamilies);
+
+        expect(compact).toEqual(compactTypography(systemFontFamilies));
+        expect(regular).toEqual(buildTypography(systemFontFamilies));
+        expect(compact.body.fontSize).toBeLessThan(regular.body.fontSize);
       });
     });
   });

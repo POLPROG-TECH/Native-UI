@@ -15,18 +15,21 @@ export const A11Y_PARAMETERS: A11yParameters = {
    * Disabled for react-native-web false positives; component unit tests
    * cover the labels and roles these would check:
    * - region: rn-web portals overlays outside the story root.
-   * - aria-required-attr / aria-prohibited-attr / aria-allowed-role:
-   *   rn-web maps accessibilityRole to ARIA heuristically.
+   * - aria-prohibited-attr / aria-allowed-role: rn-web maps
+   *   accessibilityRole to ARIA heuristically.
    * - aria-progressbar-name / aria-toggle-field-name / label: rn-web
    *   does not always forward accessibilityLabel to the attribute axe
    *   reads for these roles.
    * - nested-interactive: a Pressable inside a Pressable (list rows
    *   with trailing actions) becomes nested buttons in the DOM.
+   *
+   * `aria-required-attr` stays on: the library writes checked, selected,
+   * expanded and range values as ARIA on web
+   * (`utils/accessibilityStateProps.ts`, `utils/accessibilityValueProps.ts`).
    */
   options: {
     rules: {
       region: { enabled: false },
-      'aria-required-attr': { enabled: false },
       'aria-prohibited-attr': { enabled: false },
       'aria-allowed-role': { enabled: false },
       'aria-progressbar-name': { enabled: false },

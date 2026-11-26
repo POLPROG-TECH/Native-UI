@@ -21,8 +21,6 @@
     "declarationMap": true,
     "sourceMap": true,
     "types": ["jest", "node", "@testing-library/jest-dom"],
-    "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
     "paths": {
       "@polprog/native-ui": ["./src/index.ts"]
     }

@@ -5,15 +5,15 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/@polprog/native-ui"><img src="https://img.shields.io/npm/v/@polprog/native-ui.svg?style=flat-square&color=0A84FF" alt="npm version"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-6366f1?style=flat-square" alt="License: MIT"></a>
-  <img src="https://img.shields.io/badge/tests-1021%20passed-22c55e?style=flat-square&logo=jest&logoColor=white" alt="Tests: 1021 passed">
-  <a href="https://github.com/polprog-tech/native-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/polprog-tech/native-ui/ci.yml?branch=master&style=flat-square" alt="CI"></a>
+  <a href="https://polprog-tech.github.io/Native-UI/stats.json"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fpolprog-tech.github.io%2FNative-UI%2Fstats.json&query=%24.tests.passed&label=tests&suffix=%20passed&color=22c55e&style=flat-square&logo=jest&logoColor=white" alt="Passing tests, read from the published stats.json"></a>
+  <a href="https://github.com/polprog-tech/native-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/polprog-tech/native-ui/ci.yml?branch=main&style=flat-square" alt="CI"></a>
   <a href="https://polprog-tech.github.io/Native-UI"><img src="https://img.shields.io/badge/Storybook-ff4785?style=flat-square&logo=storybook&logoColor=white" alt="Storybook"></a>
-  <img src="https://img.shields.io/badge/React%20Native-0.74%2B-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React Native 0.74+">
+  <img src="https://img.shields.io/badge/React%20Native-0.84%2B-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React Native 0.84+">
 </p>
 
 <p align="center">
   <b>Production-grade React Native design system with native-feeling components on iOS and Android.</b><br>
-  <sub>Design tokens . Primitives . 23 components . Dark mode . A11y-first . Zero-config theming</sub>
+  <sub>Design tokens . Primitives . 50+ components . Dark mode . A11y-first . Zero-config theming</sub>
 </p>
 
 <p align="center">
@@ -38,14 +38,14 @@
 design system. Components are tuned to the platform defaults of iOS and Android
 so that any app built on top gets a native look and feel out of the box.
 
-| Area           | What you get                                                                                                                                                                                                                        |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Tokens**     | Colours (light + dark + high-contrast), typography scale (SF Pro / Roboto), spacing (4-pt grid), radius, shadow, motion, haptics                                                                                                    |
-| **Primitives** | `Box`, `VStack`, `HStack`, `Text`, `Heading`, `Divider`, `PressableScale`                                                                                                                                                           |
-| **Components** | Button, Card, Checkbox, Chip, HeaderBar, IconButton, Input, ListItem, ListSection, ListSwitchItem, Radio, ScreenContainer, SearchBar, Section, SettingsRow, Select, Skeleton, Spinner, Switch, TextArea, Toast, Avatar, InputPrompt |
-| **Theming**    | `NativeUIProvider`, colour presets, system dark mode, font-scale tiers, runtime config                                                                                                                                              |
-| **Platforms**  | iOS 13+ and Android 6+ (React Native 0.74+). All components render and behave natively on both.                                                                                                                                     |
-| **Output**     | ESM + CJS + `.d.ts`, tree-shakeable, zero runtime dependencies beyond peers                                                                                                                                                         |
+| Area           | What you get                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Tokens**     | Colours (light + dark + high-contrast), typography scale (SF Pro / Roboto), spacing (4-pt grid), radius, shadow, motion, haptics                                                                                                                                                                                                                                                                                                                                                                               |
+| **Primitives** | `Box`, `VStack`, `HStack`, `Text`, `Heading`, `Divider`, `PressableScale`                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| **Components** | Actions (Button, IconButton, ActionTile), form controls (Input, TextArea, Select, Checkbox, Radio, Switch, Chip, SearchBar, SegmentedControl, Slider, Stepper, PinInput, date pickers), feedback (Banner, Toast, Tooltip, Spinner, Skeleton, ProgressBar, EmptyState), overlays (Modal, BottomSheet, ActionSheet, InputPrompt), navigation and layout (HeaderBar, BottomTabBar, Tabs, Accordion, lists, sections). The full list is in the [package README](packages/native-ui/README.md#component-reference). |
+| **Theming**    | `NativeUIProvider`, colour presets, system dark mode, font-scale tiers, runtime config                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| **Platforms**  | iOS and Android (React Native 0.84+). All components render and behave natively on both.                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **Output**     | ESM + CJS + `.d.ts`, tree-shakeable, zero runtime dependencies beyond peers                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
 ## Quick Start
 
@@ -121,9 +121,10 @@ Libraries/Native-UI/
 │       ├── src/                Tokens, primitives, components, theme
 │       ├── __tests__/          Jest + @testing-library/react-native
 │       ├── stories/            Storybook stories (source of truth for docs)
-│       └── docs/               ARCHITECTURE.md, CONTRIBUTING.md
+│       └── docs/               ARCHITECTURE.md, RFC_TEMPLATE.md
 ├── apps/
-│   └── storybook/              Storybook host app (deploys to GitHub Pages)
+│   ├── storybook/              Storybook host app (deploys to GitHub Pages)
+│   └── example/                Expo app for checks on iOS and Android
 ├── .changeset/                 Versioning + changelog automation
 └── .github/workflows/          CI, release, deploy-storybook
 ```
@@ -138,6 +139,7 @@ npm run test      --workspace=@polprog/native-ui         # Jest
 npm run build     --workspace=@polprog/native-ui         # tsup - ESM + CJS + d.ts
 npm run storybook                                        # Dev Storybook on :6006
 npm run build-storybook                                  # Static build
+npm run ios       --workspace=@polprog/example           # Example app on an iOS simulator
 ```
 
 ## Releasing

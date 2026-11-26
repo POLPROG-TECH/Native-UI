@@ -2,6 +2,7 @@
   "name": "@polprog/native-ui",
   "version": "2.0.0",
   "description": "Production-grade React Native design system and component library - native-feeling components on iOS and Android",
+  "type": "commonjs",
   "source": "src/index.ts",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -9,30 +10,101 @@
   "react-native": "src/index.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
       "react-native": "./src/index.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     },
     "./primitives/*": {
-      "types": "./dist/primitives/*.d.ts",
-      "import": "./dist/primitives/*.mjs",
-      "require": "./dist/primitives/*.js"
+      "react-native": "./src/primitives/*.tsx",
+      "import": {
+        "types": "./dist/primitives/*.d.mts",
+        "default": "./dist/primitives/*.mjs"
+      },
+      "require": {
+        "types": "./dist/primitives/*.d.ts",
+        "default": "./dist/primitives/*.js"
+      }
     },
+    "./primitives/marquee/*": null,
+    "./primitives/paginationDots/*": null,
+    "./primitives/systemIcon/*": null,
     "./components/*": {
-      "types": "./dist/components/*.d.ts",
-      "import": "./dist/components/*.mjs",
-      "require": "./dist/components/*.js"
+      "react-native": "./src/components/*.tsx",
+      "import": {
+        "types": "./dist/components/*.d.mts",
+        "default": "./dist/components/*.mjs"
+      },
+      "require": {
+        "types": "./dist/components/*.d.ts",
+        "default": "./dist/components/*.js"
+      }
     },
+    "./components/accordion/*": null,
+    "./components/actionSheet/*": null,
+    "./components/actionTile/*": null,
+    "./components/avatar/*": null,
+    "./components/badge/*": null,
+    "./components/banner/*": null,
+    "./components/bottomSheet/*": null,
+    "./components/bottomTabBar/*": null,
+    "./components/button/*": null,
+    "./components/card/*": null,
+    "./components/chip/*": null,
+    "./components/confetti/*": null,
+    "./components/countdown/*": null,
+    "./components/datePicker/*": null,
+    "./components/emptyState/*": null,
+    "./components/errorBoundary/*": null,
+    "./components/field/*": null,
+    "./components/headerBar/*": null,
+    "./components/iconButton/*": null,
+    "./components/inputPrompt/*": null,
+    "./components/listHeader/*": null,
+    "./components/listItem/*": null,
+    "./components/listSection/*": null,
+    "./components/modal/*": null,
+    "./components/pinInput/*": null,
+    "./components/press/*": null,
+    "./components/progressBar/*": null,
+    "./components/searchBar/*": null,
+    "./components/segmentedControl/*": null,
+    "./components/select/*": null,
+    "./components/selection/*": null,
+    "./components/settingsRow/*": null,
+    "./components/skeleton/*": null,
+    "./components/slider/*": null,
+    "./components/statTile/*": null,
+    "./components/stepper/*": null,
+    "./components/tabs/*": null,
+    "./components/toast/*": null,
+    "./components/tooltip/*": null,
     "./tokens": {
-      "types": "./dist/tokens/index.d.ts",
-      "import": "./dist/tokens/index.mjs",
-      "require": "./dist/tokens/index.js"
+      "react-native": "./src/tokens/index.ts",
+      "import": {
+        "types": "./dist/tokens/index.d.mts",
+        "default": "./dist/tokens/index.mjs"
+      },
+      "require": {
+        "types": "./dist/tokens/index.d.ts",
+        "default": "./dist/tokens/index.js"
+      }
     },
     "./theme": {
-      "types": "./dist/theme/index.d.ts",
-      "import": "./dist/theme/index.mjs",
-      "require": "./dist/theme/index.js"
+      "react-native": "./src/theme/index.ts",
+      "import": {
+        "types": "./dist/theme/index.d.mts",
+        "default": "./dist/theme/index.mjs"
+      },
+      "require": {
+        "types": "./dist/theme/index.d.ts",
+        "default": "./dist/theme/index.js"
+      }
     },
     "./package.json": "./package.json"
   },
@@ -60,13 +132,19 @@
     "test:ci": "jest --ci --coverage --maxWorkers=2 --json --outputFile=coverage/jest-results.json",
     "test:report": "jest --coverage --json --outputFile=coverage/jest-results.json",
     "test:native": "jest --selectProjects native",
+    "test:scripts": "node --test \"scripts/__tests__/*.test.mjs\"",
     "stories:check": "node scripts/generate-stories.mjs --check",
     "check:cycles": "madge --circular --extensions ts,tsx src",
     "api:report": "node scripts/api-report.mjs",
     "api:check": "node scripts/api-report.mjs --check",
+    "exports:sync": "node scripts/sync-exports.mjs",
+    "exports:check": "node scripts/sync-exports.mjs --check",
     "stories:generate": "node scripts/generate-stories.mjs --fix",
     "audit": "node scripts/audit-consumer.mjs",
-    "verify-tarball": "node scripts/verify-tarball.mjs"
+    "verify-tarball": "node scripts/verify-tarball.mjs",
+    "package:lint": "publint --strict && attw --pack . --profile node16",
+    "peers:min": "node scripts/install-min-peers.mjs",
+    "size": "size-limit"
   },
   "keywords": [
     "react-native",
@@ -100,13 +178,13 @@
     "registry": "https://registry.npmjs.org/"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20.19.4"
   },
   "peerDependencies": {
     "@react-native-community/datetimepicker": ">=9.0.0",
-    "react": ">=19.0.0",
+    "react": ">=19.2.3",
     "react-native": ">=0.84.0",
-    "react-native-reanimated": ">=4.0.0",
+    "react-native-reanimated": ">=4.2.3",
     "react-native-safe-area-context": ">=5.0.0"
   },
   "peerDependenciesMeta": {
@@ -121,18 +199,15 @@
     }
   },
   "devDependencies": {
-    "@babel/preset-env": "^8.0.7",
-    "@babel/preset-flow": "^8.0.1",
-    "@babel/preset-react": "^8.0.1",
-    "@babel/preset-typescript": "^8.0.7",
+    "@arethetypeswrong/cli": "^0.18.5",
     "@eslint/js": "^10.0.1",
     "@react-native/babel-preset": "0.88.1",
     "@react-native/jest-preset": "0.88.1",
+    "@size-limit/preset-small-lib": "^14.3.0",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^8.0.0",
-    "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react": "^16.3.3",
-    "@testing-library/react-native": "^13.3.3",
+    "@testing-library/react-native": "^14.1.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
@@ -140,21 +215,21 @@
     "@typescript-eslint/parser": "^8.73.0",
     "babel-jest": "^30.5.2",
     "eslint": "^10.15.0",
-    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-native": "^5.0.0",
     "globals": "^17.14.0",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^30.5.2",
     "madge": "8.0.0",
+    "publint": "^0.3.25",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-native": "0.88.1",
     "react-native-reanimated": "^4.8.0",
     "react-native-safe-area-context": "^5.11.1",
     "react-native-worklets": "^0.14.0",
-    "react-test-renderer": "19.3.1",
     "rimraf": "^6.1.4",
+    "size-limit": "^14.3.0",
+    "test-renderer": "^1.0.0",
     "ts-jest": "^29.4.15",
     "tsup": "^9.0.0",
     "typescript": "^6.0.3"

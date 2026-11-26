@@ -3,6 +3,7 @@ import { StyleSheet, View, Pressable, type StyleProp, type ViewStyle } from 'rea
 import { useTheme } from '../theme';
 import { getHaptics } from '../utils/haptics';
 import { SelectionLabel, useSelectionRow } from './selection/selectionRow';
+import { accessibilityStateProps } from '../utils/accessibilityStateProps';
 
 export interface RadioProps {
   /** Whether this radio option is selected */
@@ -58,8 +59,7 @@ function PassiveRadio({ selected, accessibilityLabel, style, testID }: RadioProp
   return (
     <View
       testID={testID}
-      accessibilityRole="radio"
-      accessibilityState={{ selected }}
+      {...accessibilityStateProps('radio', { selected })}
       accessibilityLabel={accessibilityLabel}
       style={style}
     >
@@ -87,8 +87,7 @@ function InteractiveRadio({
       {...focusProps}
       disabled={disabled}
       style={rowStyle}
-      accessibilityRole="radio"
-      accessibilityState={{ selected, disabled }}
+      {...accessibilityStateProps('radio', { selected, disabled })}
       accessibilityLabel={accessibilityLabel ?? label}
     >
       <RadioIndicator selected={selected} testID={indicatorTestID(testID)} />

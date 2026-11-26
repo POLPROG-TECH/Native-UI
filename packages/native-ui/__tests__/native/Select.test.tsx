@@ -9,9 +9,9 @@ const OPTIONS = [
 describe('Select (real React Native renderer)', () => {
   describe('GIVEN an open Select inside its BottomSheet', () => {
     describe('WHEN the sheet container is inspected', () => {
-      it('THEN screen readers are confined to the sheet holding the options', () => {
-        renderWithTheme(<Select options={OPTIONS} label="Currency" testID="currency" />);
-        fireEvent.press(screen.getByRole('button', { name: 'Currency' }));
+      it('THEN screen readers are confined to the sheet holding the options', async () => {
+        await renderWithTheme(<Select options={OPTIONS} label="Currency" testID="currency" />);
+        await fireEvent.press(screen.getByRole('button', { name: 'Currency' }));
 
         const sheet = screen.getByTestId('currency-sheet');
 
@@ -21,14 +21,14 @@ describe('Select (real React Native renderer)', () => {
     });
 
     describe('WHEN the two-finger escape gesture is performed on the sheet', () => {
-      it('THEN the sheet closes without calling onChange', () => {
+      it('THEN the sheet closes without calling onChange', async () => {
         const onChange = jest.fn();
-        renderWithTheme(
+        await renderWithTheme(
           <Select options={OPTIONS} label="Currency" onChange={onChange} testID="currency" />,
         );
-        fireEvent.press(screen.getByRole('button', { name: 'Currency' }));
+        await fireEvent.press(screen.getByRole('button', { name: 'Currency' }));
 
-        fireEvent(screen.getByTestId('currency-sheet'), 'accessibilityEscape');
+        await fireEvent(screen.getByTestId('currency-sheet'), 'accessibilityEscape');
 
         expect(screen.queryByTestId('currency-sheet')).not.toBeOnTheScreen();
         expect(onChange).not.toHaveBeenCalled();
@@ -36,14 +36,14 @@ describe('Select (real React Native renderer)', () => {
     });
 
     describe('WHEN an option is pressed', () => {
-      it('THEN onChange receives its value and the sheet closes', () => {
+      it('THEN onChange receives its value and the sheet closes', async () => {
         const onChange = jest.fn();
-        renderWithTheme(
+        await renderWithTheme(
           <Select options={OPTIONS} label="Currency" onChange={onChange} testID="currency" />,
         );
-        fireEvent.press(screen.getByRole('button', { name: 'Currency' }));
+        await fireEvent.press(screen.getByRole('button', { name: 'Currency' }));
 
-        fireEvent.press(screen.getByRole('radio', { name: 'EUR' }));
+        await fireEvent.press(screen.getByRole('radio', { name: 'EUR' }));
 
         expect(onChange).toHaveBeenCalledWith('eur');
         expect(screen.queryByTestId('currency-sheet')).not.toBeOnTheScreen();

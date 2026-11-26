@@ -12,12 +12,12 @@ const OPTIONS = [
 describe('SegmentedControl (real React Native renderer)', () => {
   describe('GIVEN a control with "dark" selected', () => {
     describe('WHEN the accessibility tree is queried', () => {
-      it('THEN a named radiogroup holds the segments and only the selected one is checked', () => {
+      it('THEN a named radiogroup holds the segments and only the selected one is checked', async () => {
         /*
          * The group cannot be `accessible` without swallowing its segments on
          * iOS, so RNTL does not expose it by role; TalkBack reads these props.
          */
-        renderWithTheme(
+        await renderWithTheme(
           <SegmentedControl<Mode>
             accessibilityLabel="Theme"
             options={OPTIONS}
@@ -38,7 +38,7 @@ describe('SegmentedControl (real React Native renderer)', () => {
       it('THEN the change is blocked and the segment is announced as disabled', async () => {
         const onChange = jest.fn();
         const user = userEvent.setup();
-        renderWithTheme(
+        await renderWithTheme(
           <SegmentedControl<Mode> options={OPTIONS} value="dark" onChange={onChange} />,
         );
         const system = screen.getByRole('radio', { name: 'System' });

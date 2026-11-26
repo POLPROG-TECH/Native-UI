@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="native-ui" src="https://raw.githubusercontent.com/polprog-tech/native-ui/master/docs/assets/logo-full.svg" width="520">
+  <img alt="native-ui" src="https://raw.githubusercontent.com/polprog-tech/native-ui/main/docs/assets/logo-full.svg" width="520">
 </p>
 
 <p align="center">
@@ -7,15 +7,15 @@
   <a href="https://www.npmjs.com/package/@polprog/native-ui"><img src="https://img.shields.io/npm/dm/@polprog/native-ui.svg?style=flat-square&color=6366f1" alt="npm downloads"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-6366f1?style=flat-square" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/TypeScript-strict-0A84FF?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript strict">
-  <img src="https://img.shields.io/badge/tests-1021%20passed-22c55e?style=flat-square&logo=jest&logoColor=white" alt="Tests: 1021 passed">
-  <a href="https://github.com/polprog-tech/native-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/polprog-tech/native-ui/ci.yml?branch=master&style=flat-square" alt="CI"></a>
+  <a href="https://polprog-tech.github.io/Native-UI/stats.json"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fpolprog-tech.github.io%2FNative-UI%2Fstats.json&query=%24.tests.passed&label=tests&suffix=%20passed&color=22c55e&style=flat-square&logo=jest&logoColor=white" alt="Passing tests, read from the published stats.json"></a>
+  <a href="https://github.com/polprog-tech/native-ui/actions"><img src="https://img.shields.io/github/actions/workflow/status/polprog-tech/native-ui/ci.yml?branch=main&style=flat-square" alt="CI"></a>
   <a href="https://polprog-tech.github.io/Native-UI"><img src="https://img.shields.io/badge/Storybook-ff4785?style=flat-square&logo=storybook&logoColor=white" alt="Storybook"></a>
-  <img src="https://img.shields.io/badge/React%20Native-0.74%2B-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React Native 0.74+">
+  <img src="https://img.shields.io/badge/React%20Native-0.84%2B-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React Native 0.84+">
 </p>
 
 <p align="center">
   <b>Production-grade React Native design system with native-feeling components on iOS and Android.</b><br>
-  <sub>Design tokens · Primitives · 24+ components · Dark mode · A11y-first · Zero-config theming</sub>
+  <sub>Design tokens · Primitives · 50+ components · Dark mode · A11y-first · Zero-config theming</sub>
 </p>
 
 <p align="center">
@@ -35,12 +35,14 @@
 - 📐 **Native-accurate metrics** - platform-native typography scale
   (largeTitle 34/41, headline 17/22, body 17/22, footnote 13/18) with correct
   letter-spacing and line heights.
-- 🧩 **24+ production components** built on a small primitive layer
+- 🧩 **50+ production components** built on a small primitive layer
   (`Box`, `VStack`, `HStack`, `Text`, `PressableScale`, …).
 - 🎨 **Theme engine** - two visual variants (Aurora, Bloom), colour presets, dark/light/system mode, high contrast
   and font-scale tiers - all driven by tokens.
-- 🧪 **Tested** - 1021 unit tests (GIVEN/WHEN/THEN) covering tokens,
-  primitives, components, and public exports.
+- 🧪 **Tested** - unit tests (GIVEN/WHEN/THEN) on a jsdom mock and on the real
+  React Native renderer, plus every Storybook story as a browser test with axe.
+  Current numbers are published in
+  [stats.json](https://polprog-tech.github.io/Native-UI/stats.json).
 - 📦 **Tree-shakeable** ESM + CJS build with full `.d.ts` (via `tsup`).
 - ♿ **Accessible by default** - screen-reader labels, roles, reduced motion
   and keyboard support out of the box.
@@ -89,17 +91,20 @@ configureHaptics({
 
 ## Compatibility
 
-Peer dependency ranges start at the versions the library is verified on: CI
-runs React Native 0.88, React 19.3, Reanimated 4.7 and Safe Area Context 5.11,
-and the CostBoard app runs React Native 0.84 with React 19.2 in production.
+Peer dependency ranges start at the versions the library is verified on. CI
+runs the full suite on React Native 0.88, React 19.3, Reanimated 4.7 and Safe
+Area Context 5.11, and a separate job installs the lowest version of every
+required peer (React Native 0.84.0, React 19.2.3, Reanimated 4.2.3, Safe Area
+Context 5.0.0) and type-checks the library against them. The CostBoard app
+runs React Native 0.84 with React 19.2 in production.
 
-| Peer                                                | Supported                                    |
-| --------------------------------------------------- | -------------------------------------------- |
-| `react`                                             | 19.0+                                        |
-| `react-native`                                      | 0.84+                                        |
-| `react-native-reanimated`                           | 4.0+ (with its `react-native-worklets` peer) |
-| `react-native-safe-area-context`                    | 5.0+                                         |
-| `@react-native-community/datetimepicker` (optional) | 9.0+                                         |
+| Peer                                                | Supported                                                                                         |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `react`                                             | 19.2.3+ (what React Native 0.84 requires)                                                         |
+| `react-native`                                      | 0.84+                                                                                             |
+| `react-native-reanimated`                           | 4.2.3+ (the first release that supports React Native 0.84; with its `react-native-worklets` peer) |
+| `react-native-safe-area-context`                    | 5.0+                                                                                              |
+| `@react-native-community/datetimepicker` (optional) | 9.0+                                                                                              |
 
 ## Quick Start
 
@@ -334,6 +339,23 @@ per instance.
 >
 ```
 
+Complete translations ship with the library for Polish, Spanish, German and
+Arabic. Each pack covers every key, so nothing falls back to English:
+
+```tsx
+import { NativeUIProvider, plLabels } from '@polprog/native-ui';
+
+<NativeUIProvider config={{ locale: 'pl-PL', labels: plLabels }}>
+```
+
+| Export     | Language | Suggested `locale` |
+| ---------- | -------- | ------------------ |
+| `plLabels` | Polish   | `pl-PL`            |
+| `esLabels` | Spanish  | `es-ES`            |
+| `deLabels` | German   | `de-DE`            |
+| `arLabels` | Arabic   | `ar`               |
+
+Spread a pack to change single strings: `labels: { ...plLabels, confirm: 'Gotowe' }`.
 Read them in your own components with `useLabels()`.
 
 ### Component tokens
@@ -366,6 +388,16 @@ components from the barrel import:
 ```ts
 import { Button, Card } from '@polprog/native-ui'; // only those ship
 ```
+
+The package also exports subpaths for tools that cannot tree-shake a barrel:
+`@polprog/native-ui/components/<Name>`, `@polprog/native-ui/primitives/<Name>`,
+`@polprog/native-ui/tokens` and `@polprog/native-ui/theme`. Every subpath
+resolves to the same files as the root entry: the TypeScript sources under the
+`react-native` condition (Metro), the built ESM or CJS files elsewhere. Mixing
+the root and subpaths in one app is therefore safe and never loads a second
+copy of the theme context. Internal folders are closed: only the component
+and primitive files themselves can be imported. CI checks this on the published tarball
+(`npm run verify-tarball`).
 
 `react-native-reanimated` is a required peer dependency. `Toast`,
 `BottomSheet`, `Skeleton`, `ConfettiOverlay`, `MarqueeText` and
@@ -406,6 +438,10 @@ package must be installed even if you never render those components.
 | `Radio`              | Radio button with optional label                                                 |
 | `Chip` / `ChipGroup` | Selectable filter chips                                                          |
 | `SearchBar`          | Search input with debounce and clear                                             |
+| `Slider`             | Draggable value in a range; adjustable for screen readers                        |
+| `Stepper`            | Decrease / increase buttons around a number                                      |
+| `PinInput`           | One-time code or PIN entry in separate cells, with SMS autofill                  |
+| `DatePickerInput`    | Date, time (`mode="time"`) or date-time field over the native picker             |
 
 ### Display
 
@@ -419,6 +455,10 @@ package must be installed even if you never render those components.
 | `Spinner`          | Full-screen loading indicator                                    |
 | `EmptyState`       | Zero-state placeholder with icon, title, action; `sm`/`md`/`lg`  |
 | `SegmentedControl` | Single-choice segmented control (radio group)                    |
+| `Banner`           | Inline info, success, warning or error message with an action    |
+| `Tooltip`          | Hint on hover, focus or long press                               |
+| `Tabs`             | Tab row for switching views of one screen                        |
+| `Accordion`        | Collapsible section with a header button                         |
 
 ### Overlay
 
@@ -427,6 +467,7 @@ package must be installed even if you never render those components.
 | `Modal`              | Centered dialog with title, content, footer |
 | `BottomSheet`        | Slide-up bottom sheet with drag-to-dismiss  |
 | `Toast` / `useToast` | Snackbar notification                       |
+| `ActionSheet`        | Menu of actions in a bottom sheet           |
 
 ### Layout
 
@@ -607,13 +648,18 @@ packages/native-ui/
 
 ## Deferred Components
 
-| Component                 | Reason                                                            |
-| ------------------------- | ----------------------------------------------------------------- |
-| DatePickerInput           | Requires `@react-native-community/datetimepicker` + locale config |
-| ErrorBoundary             | Requires app-specific error reporting integration                 |
-| InputPrompt               | Cross-platform prompt - can be added when needed                  |
-| Tabs / TabBar             | Navigation-coupled, best handled by app's navigation library      |
-| BrandIcon / BrandWordmark | App-specific branding assets (belong in the consuming app)        |
+| Component                 | Reason                                                                                                      |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Tab navigator             | Screens, swipe gestures and lazy mounting belong to the navigation library; `Tabs` renders the tab row only |
+| Popover with arbitrary UI | Needs a portal and collision handling; `Tooltip` covers text hints, `ActionSheet` covers menus              |
+| BrandIcon / BrandWordmark | App-specific branding assets (belong in the consuming app)                                                  |
+
+------------------------- | ----------------------------------------------------------------- |
+| DatePickerInput | Requires `@react-native-community/datetimepicker` + locale config |
+| ErrorBoundary | Requires app-specific error reporting integration |
+| InputPrompt | Cross-platform prompt - can be added when needed |
+| Tabs / TabBar | Navigation-coupled, best handled by app's navigation library |
+| BrandIcon / BrandWordmark | App-specific branding assets (belong in the consuming app) |
 
 ---
 

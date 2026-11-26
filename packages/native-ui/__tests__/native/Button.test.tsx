@@ -21,8 +21,8 @@ describe('Button (real React Native renderer)', () => {
 
   describe('GIVEN an enabled Button titled "Save"', () => {
     describe('WHEN it is rendered by the real React Native renderer', () => {
-      it('THEN assistive technology sees an enabled button named "Save"', () => {
-        renderWithTheme(<Button title="Save" onPress={jest.fn()} />);
+      it('THEN assistive technology sees an enabled button named "Save"', async () => {
+        await renderWithTheme(<Button title="Save" onPress={jest.fn()} />);
 
         const button = screen.getByRole('button', { name: 'Save' });
         expect(button).toBeEnabled();
@@ -36,7 +36,7 @@ describe('Button (real React Native renderer)', () => {
       it('THEN it is announced as disabled and the handler never runs', async () => {
         const onPress = jest.fn();
         const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-        renderWithTheme(<Button title="Save" onPress={onPress} disabled />);
+        await renderWithTheme(<Button title="Save" onPress={onPress} disabled />);
         const button = screen.getByRole('button', { name: 'Save' });
 
         await user.press(button);
@@ -50,8 +50,8 @@ describe('Button (real React Native renderer)', () => {
 
   describe('GIVEN a Button in its loading state', () => {
     describe('WHEN it is rendered', () => {
-      it('THEN the button stays reachable by name, is announced as busy and disabled, and the label stays mounted (invisible) so the width is stable', () => {
-        renderWithTheme(<Button title="Save" onPress={jest.fn()} loading />);
+      it('THEN the button stays reachable by name, is announced as busy and disabled, and the label stays mounted (invisible) so the width is stable', async () => {
+        await renderWithTheme(<Button title="Save" onPress={jest.fn()} loading />);
 
         const button = screen.getByRole('button', { name: 'Save' });
         expect(button).toBeDisabled();
@@ -68,7 +68,7 @@ describe('Button (real React Native renderer)', () => {
         const haptics = createHapticsMock();
         configureHaptics(haptics);
         const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-        renderWithTheme(<Button title="Save" onPress={onPress} />);
+        await renderWithTheme(<Button title="Save" onPress={onPress} />);
         const button = screen.getByRole('button', { name: 'Save' });
 
         await user.press(button);

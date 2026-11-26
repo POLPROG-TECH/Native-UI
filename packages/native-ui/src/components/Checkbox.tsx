@@ -4,6 +4,7 @@ import { useTheme } from '../theme';
 import { SystemIcon } from '../primitives/SystemIcon';
 import { getHaptics } from '../utils/haptics';
 import { SelectionLabel, useSelectionRow } from './selection/selectionRow';
+import { accessibilityStateProps } from '../utils/accessibilityStateProps';
 
 export interface CheckboxProps {
   /** Whether the checkbox is checked */
@@ -94,8 +95,7 @@ export const Checkbox = React.memo(function Checkbox({
       {...focusProps}
       disabled={disabled}
       style={rowStyle}
-      accessibilityRole="checkbox"
-      accessibilityState={{ checked, disabled }}
+      {...accessibilityStateProps('checkbox', { checked, disabled })}
       accessibilityLabel={accessibilityLabel ?? label}
     >
       <CheckboxBox checked={checked} size={size} testID={testID} />

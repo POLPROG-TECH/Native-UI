@@ -19,34 +19,37 @@ export interface RenderWithThemeOptions extends RenderOptions {
  * Native counterpart of `__tests__/test-utils.tsx`: renders the UI tree with
  * the real React Native renderer inside {@link NativeUIProvider}. Only use it
  * from `__tests__/native`, which runs under the `native` Jest project.
+ * Rendering is asynchronous since React Native Testing Library 14, so await it.
  *
  * @example
  * ```tsx
- * renderWithTheme(<Button title="Save" onPress={() => {}} />);
+ * await renderWithTheme(<Button title="Save" onPress={() => {}} />);
  * ```
  */
 export function renderWithTheme(
   ui: React.ReactElement,
   { config = DEFAULT_TEST_CONFIG, ...options }: RenderWithThemeOptions = {},
-): RenderResult {
+): Promise<RenderResult> {
   return render(<NativeUIProvider config={config}>{ui}</NativeUIProvider>, options);
 }
 
 /**
  * Resolves the theme {@link NativeUIProvider} builds for `config` under the
- * real React Native renderer.
+ * real React Native renderer. It renders a hook, which rebinds `screen`, so
+ * call it before `renderWithTheme`, never after.
  *
  * @example
  * ```tsx
- * const outline = captureTheme().colors.focusRing;
+ * const outline = (await captureTheme()).colors.focusRing;
  * ```
  */
-export function captureTheme(config: NativeUIConfig = DEFAULT_TEST_CONFIG): Theme {
+export async function captureTheme(config: NativeUIConfig = DEFAULT_TEST_CONFIG): Promise<Theme> {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <NativeUIProvider config={config}>{children}</NativeUIProvider>
   );
+  const { result } = await renderHook(() => useTheme(), { wrapper });
 
-  return renderHook(() => useTheme(), { wrapper }).result.current;
+  return result.current;
 }
 
 export { createHapticsMock } from '../shared/haptics';

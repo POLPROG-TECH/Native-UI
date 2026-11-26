@@ -6,10 +6,11 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import { houseStyle, typeAwareRules, untypedTsHouseStyle } from '../../eslint/house-style.mjs';
 
 /**
- * Note: eslint-plugin-react 7.x is not yet compatible with ESLint 10's
- * rule context API (fails with "contextOrFilename.getFilename is not a function").
- * Dropped from the config until upstream releases an ESLint 10-compatible version.
- * React hooks rules remain via eslint-plugin-react-hooks 7.x which is compatible.
+ * Note: eslint-plugin-react 7.x and eslint-plugin-react-native 5.x are not
+ * compatible with ESLint 10 (their peer ranges stop at ESLint 9, and the
+ * former fails with "contextOrFilename.getFilename is not a function"). They
+ * are out of the config and of the dependencies; add them back once a release
+ * supports ESLint 10. React hooks rules remain via eslint-plugin-react-hooks.
  */
 
 export default [

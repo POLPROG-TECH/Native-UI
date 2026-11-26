@@ -13,6 +13,7 @@ import {
   useTabStyles,
   type TabStyles,
 } from './tabItemStyles';
+import { accessibilityStateProps } from '../../utils/accessibilityStateProps';
 
 interface TabBadgeProps {
   badge: BottomTabBarItem['badge'];
@@ -95,9 +96,8 @@ export const TabItem = React.memo(function TabItem({
       testID={testID}
       onPress={handlePress}
       {...focusProps}
-      accessibilityRole="tab"
       accessibilityLabel={item.accessibilityLabel ?? item.label}
-      accessibilityState={{ selected: focused }}
+      {...accessibilityStateProps('tab', { selected: focused })}
       style={pressableStyle}
       hitSlop={theme.components.bottomTabBar.hitSlop}
     >

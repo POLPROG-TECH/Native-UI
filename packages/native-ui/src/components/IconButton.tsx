@@ -5,6 +5,7 @@ import { PressableScale } from '../primitives/PressableScale';
 import { useIconButtonStyle } from './iconButton/iconButtonStyle';
 import { useLightHapticPress } from './press/useLightHapticPress';
 import type { IconButtonVariant, IconButtonSize } from './iconButton/types';
+import { accessibilityStateProps } from '../utils/accessibilityStateProps';
 export type { IconButtonVariant, IconButtonSize } from './iconButton/types';
 
 export interface IconButtonProps {
@@ -48,9 +49,8 @@ export const IconButton = React.memo(function IconButton({
       disabled={disabled}
       scaleTo={disabled ? NO_PRESS_SCALE : tokens.pressScale}
       style={containerStyle}
-      accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
-      accessibilityState={{ disabled }}
+      {...accessibilityStateProps('button', { disabled })}
       {...(testID ? { testID } : {})}
       hitSlop={theme.hitSlop.ios}
     >

@@ -6,6 +6,22 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
     groups:
+      react-native-runtime:
+        patterns:
+          - 'expo'
+          - 'expo-*'
+          - '@expo/*'
+          - 'react'
+          - 'react-dom'
+          - 'react-native'
+          - '@react-native/*'
+          - 'react-native-reanimated'
+          - 'react-native-worklets'
+          - 'react-native-safe-area-context'
+          - 'test-renderer'
+        update-types:
+          - 'minor'
+          - 'patch'
       dev-dependencies:
         dependency-type: development
         update-types:
@@ -22,6 +38,10 @@ updates:
       - dependency-name: 'react-native'
         update-types: ['version-update:semver-major']
       - dependency-name: 'react-native-reanimated'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'react-native-worklets'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo'
         update-types: ['version-update:semver-major']
       - dependency-name: 'storybook'
         update-types: ['version-update:semver-major']

@@ -4,6 +4,7 @@ import { SystemIcon } from '../../primitives/SystemIcon';
 import { buildSelectTriggerStyle } from './selectStyles';
 import type { SelectState } from './useSelectState';
 import { useSelectFocusRing } from './useSelectFocusRing';
+import { accessibilityStateProps } from '../../utils/accessibilityStateProps';
 
 interface SelectTriggerButtonProps {
   state: Pick<SelectState<string>, 'selectedOption' | 'isOpen' | 'open'>;
@@ -30,10 +31,9 @@ export function SelectTriggerButton(props: SelectTriggerButtonProps) {
       onPress={state.open}
       {...focusProps}
       style={[buildSelectTriggerStyle(theme, Boolean(error), disabled), focusRingStyle]}
-      accessibilityRole="button"
       accessibilityLabel={props.label ?? placeholder}
       accessibilityValue={hasSelection ? { text: selectedLabel } : undefined}
-      accessibilityState={{ disabled, expanded: state.isOpen }}
+      {...accessibilityStateProps('button', { disabled, expanded: state.isOpen })}
     >
       <Text style={[theme.typography.body, { color: textColor, flex: 1 }]} numberOfLines={1}>
         {selectedLabel ?? placeholder}

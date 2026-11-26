@@ -1,5 +1,5 @@
 export { Box } from './Box';
-export type { BoxProps } from './Box';
+export type { BoxProps, ColorToken } from './Box';
 
 export { VStack, HStack } from './Stack';
 export type { VStackProps, HStackProps } from './Stack';

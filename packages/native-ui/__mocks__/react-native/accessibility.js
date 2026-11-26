@@ -11,12 +11,32 @@
 const RN_ONLY_PROPS = new Set([
   'accessibilityViewIsModal',
   'onAccessibilityEscape',
+  'accessibilityActions',
+  'onAccessibilityAction',
+  'secureTextEntry',
+  'caretHidden',
+  'textContentType',
+  'keyboardType',
+  'selectionColor',
   'enabled',
   'behavior',
 ]);
 
-function domProps({ testID, ...props }) {
-  const out = {};
+function valueAria(accessibilityValue) {
+  if (!accessibilityValue) {
+    return {};
+  }
+
+  return {
+    'aria-valuemin': accessibilityValue.min,
+    'aria-valuemax': accessibilityValue.max,
+    'aria-valuenow': accessibilityValue.now,
+    'aria-valuetext': accessibilityValue.text,
+  };
+}
+
+function domProps({ testID, accessibilityValue, ...props }) {
+  const out = valueAria(accessibilityValue);
   for (const key of Object.keys(props)) {
     if (!RN_ONLY_PROPS.has(key)) {
       out[key] = props[key];
@@ -39,6 +59,7 @@ function stateAria(accessibilityState, disabled) {
     'aria-disabled': disabled || accessibilityState?.disabled,
     'aria-checked': accessibilityState?.checked,
     'aria-selected': accessibilityState?.selected,
+    'aria-expanded': accessibilityState?.expanded,
   };
 }
 

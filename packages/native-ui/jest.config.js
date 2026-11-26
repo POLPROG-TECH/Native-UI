@@ -112,12 +112,17 @@ module.exports = {
   collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/**/index.ts'],
   /** Jest defaults plus `json-summary`, which the Storybook stats page reads. */
   coverageReporters: ['clover', 'json', 'json-summary', 'lcov', 'text'],
+  /**
+   * Kept about two points under the measured coverage (branches 93.9,
+   * functions 96.0, lines 98.7, statements 98.6), so a real regression fails
+   * the run while small refactors do not. Raise them when coverage rises.
+   */
   coverageThreshold: {
     global: {
-      branches: 80,
-      functions: 88,
-      lines: 90,
-      statements: 90,
+      branches: 92,
+      functions: 94,
+      lines: 97,
+      statements: 97,
     },
   },
 };

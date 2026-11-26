@@ -7,10 +7,15 @@
  * Test and coverage numbers come from the last Jest report
  * (`npm run test:report` or `test:ci` in packages/native-ui); without one
  * they are `null` and the pages print "n/a" rather than a guess.
+ *
+ * The file is also published at `/stats.json`; its shape is the contract in
+ * `shared/statsContract.mjs`, which rejects a malformed result before it is
+ * written.
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { buildStats } from './shared/statsContract.mjs';
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const libraryRoot = path.resolve(appRoot, '../../packages/native-ui');
@@ -115,13 +120,13 @@ function inventory() {
   };
 }
 
-const stats = {
+const stats = buildStats({
   version: JSON.parse(read('package.json')).version,
   generatedAt: new Date().toISOString(),
-  ...inventory(),
+  inventory: inventory(),
   tests: testStats(),
   coverage: coverageStats(),
-};
+});
 
 mkdirSync(path.dirname(outputFile), { recursive: true });
 writeFileSync(outputFile, `${JSON.stringify(stats, null, 2)}\n`);

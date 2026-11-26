@@ -5,15 +5,15 @@ import { fireEvent, renderWithTheme, screen } from './test-utils';
 describe('BottomSheet (real React Native renderer)', () => {
   describe('GIVEN a visible sheet whose backdrop VoiceOver cannot focus', () => {
     describe('WHEN the two-finger escape gesture is performed on the sheet', () => {
-      it('THEN the sheet asks to close', () => {
+      it('THEN the sheet asks to close', async () => {
         const onClose = jest.fn();
-        renderWithTheme(
+        await renderWithTheme(
           <BottomSheet visible onClose={onClose} testID="sheet">
             <Text>Body</Text>
           </BottomSheet>,
         );
 
-        fireEvent(screen.getByTestId('sheet'), 'accessibilityEscape');
+        await fireEvent(screen.getByTestId('sheet'), 'accessibilityEscape');
 
         expect(onClose).toHaveBeenCalledTimes(1);
       });
@@ -22,8 +22,8 @@ describe('BottomSheet (real React Native renderer)', () => {
 
   describe('GIVEN a visible sheet', () => {
     describe('WHEN the sheet container is inspected', () => {
-      it('THEN screen readers are confined to it', () => {
-        renderWithTheme(
+      it('THEN screen readers are confined to it', async () => {
+        await renderWithTheme(
           <BottomSheet visible onClose={jest.fn()} testID="sheet">
             <Text>Body</Text>
           </BottomSheet>,

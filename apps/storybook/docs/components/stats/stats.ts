@@ -18,6 +18,7 @@ export interface CoverageStats {
 }
 
 export interface LibraryStats {
+  schemaVersion: number;
   version: string;
   generatedAt: string;
   components: number;
@@ -41,6 +42,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isLibraryStats(value: unknown): value is LibraryStats {
   const numeric = [
+    'schemaVersion',
     'components',
     'primitives',
     'documented',

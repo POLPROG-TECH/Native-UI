@@ -6,6 +6,41 @@ const React = require('react');
 const { flattenAndTranslate } = require('./styles');
 const { domProps, stateAria } = require('./accessibility');
 
+/*
+ * Host views in React Native can be measured. The DOM node gets the same
+ * `measureInWindow`, answering from its bounding box (all zeros in jsdom
+ * unless a suite stubs `getBoundingClientRect`).
+ */
+function addMeasure(node) {
+  node.measureInWindow = (callback) => {
+    const box = node.getBoundingClientRect();
+
+    callback(box.left, box.top, box.width, box.height);
+  };
+}
+
+function forwardNode(ref, node) {
+  if (typeof ref === 'function') {
+    ref(node);
+
+    return;
+  }
+
+  if (ref) {
+    ref.current = node;
+  }
+}
+
+function withMeasure(ref) {
+  return (node) => {
+    if (node) {
+      addMeasure(node);
+    }
+
+    forwardNode(ref, node);
+  };
+}
+
 const View = React.forwardRef(function View(
   {
     style,
@@ -27,7 +62,7 @@ const View = React.forwardRef(function View(
   return React.createElement(
     'div',
     {
-      ref,
+      ref: withMeasure(ref),
       style: flattenAndTranslate(style),
       role: accessibilityRole,
       'aria-label': accessibilityLabel,

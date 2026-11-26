@@ -6,6 +6,9 @@ import type { Spacing, BorderRadius, Elevation } from '../tokens/spacing';
 import type { Mutable } from '../utils/types';
 import { buildSurfaceStyle, takeSurfaceTokens, type ColorToken } from './surfaceTokens';
 
+/** Color key accepted by the `bg` prop; public because the props interface names it. */
+export type { ColorToken } from './surfaceTokens';
+
 export interface StackBaseProps extends Omit<ViewProps, 'style'> {
   children?: React.ReactNode;
   style?: StyleProp<ViewStyle>;

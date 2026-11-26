@@ -1,260 +1,177 @@
 # native-ui Architecture
 
-React Native design system providing tokens, primitives, and components for enterprise mobile applications.
+React Native design system: tokens, primitives and components for iOS and
+Android apps, with a web preview through `react-native-web` in Storybook.
+
+The component catalogue, every prop and every token live in Storybook and in
+[`api/native-ui.api.md`](../api/native-ui.api.md). This document explains how
+the parts fit together and why, and deliberately lists no counts or values
+that the code can change.
 
 ---
 
-## Layer Diagram
+## Layers
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                   Consumer Apps                     │
-│          (CostBoard, Invoicer, etc.)                │
+│                   Consumer apps                     │
 ├─────────────────────────────────────────────────────┤
-│                    Patterns                         │
-│       (ScreenContainer, Section, Settings*)         │
+│                    Components                       │
+│  actions, form controls, feedback, overlays,        │
+│  navigation, lists and layout                       │
 ├─────────────────────────────────────────────────────┤
-│                   Components                        │
-│   Button, Card, Input, Modal, Toast, Badge, ...     │
+│                    Primitives                       │
+│  Box, VStack, HStack, Text, Heading, Divider,       │
+│  PressableScale, SystemIcon, PaginationDots, ...    │
 ├─────────────────────────────────────────────────────┤
-│                   Primitives                        │
-│   Box, VStack, HStack, Text, Heading, Divider,      │
-│   PressableScale                                    │
+│          Theme (provider, labels, variants)         │
 ├─────────────────────────────────────────────────────┤
-│                  Design Tokens                      │
-│   Colors, Spacing, Typography, BorderRadius,        │
-│   Elevation, Duration, Opacity, Semantic Tokens     │
+│                   Design tokens                     │
+│  colors, typography, spacing, radius, elevation,    │
+│  motion, semantic aliases, per-component tokens     │
 └─────────────────────────────────────────────────────┘
 ```
 
-Each layer depends only on the layers below it:
+Each layer imports only from the layers below it. `npm run check:cycles`
+fails CI on a circular import.
 
-- **Tokens** - Raw design values (colors, spacing scales, typography definitions). No React code.
-- **Primitives** - Thin wrappers around React Native views that consume tokens via shorthand props (`p`, `m`, `bg`, `gap`). These replace raw `View`, `Text`, etc.
-- **Components** - Feature-rich UI elements built exclusively from primitives and tokens. Never import from `react-native` directly.
-- **Patterns** - Layout-level compositions (screen containers, sections, settings rows) that combine multiple components into recurring UI patterns.
-- **Consumer Apps** - Import from `@polprog/native-ui` and compose screens.
+- **Tokens** (`src/tokens`): plain values and the functions that derive them
+  (contrast-safe text colors, type scales). No React.
+- **Theme** (`src/theme`): `NativeUIProvider` resolves a `NativeUIConfig` into
+  one `Theme` object and serves it through context.
+- **Primitives** (`src/primitives`): thin wrappers over React Native views
+  with token shorthand props (`p`, `gap`, `bg`, `radius`).
+- **Components** (`src/components`): one file per public component, with its
+  hooks, parts and style builders in a folder of the same name
+  (`Button.tsx` and `button/`). Components read every dimension from
+  `theme.components.<name>`. They use primitives where that helps and React
+  Native host views directly where they need full control (pressables, text
+  inputs, animated views).
+- **Hooks and utils** (`src/hooks`, `src/utils`): cross-component behavior
+  such as the keyboard focus ring, haptics and the accessibility prop helpers.
 
 ---
 
-## How Theming Works
+## Theming
 
 ```
 NativeUIProvider (config)
         │
-        ├── Resolves color scheme (light/dark/system)
-        ├── Applies preset (default, midnight, ocean, ...)
-        ├── Applies font scale & color overrides
-        ├── Merges semantic token overrides
+        ├── picks the variant (Aurora or Bloom) and the color mode
+        ├── applies the accent preset or a custom accent
+        ├── computes readable text and `on*` colors (WCAG contrast)
+        ├── builds the type scale, spacing and radius scales
+        ├── builds per-component tokens and merges app overrides
+        ├── resolves labels and the locale
         │
-        └── Provides Theme object via React Context
+        └── provides one Theme object through React context
                 │
-                ├── useTheme()        → full theme object
-                ├── useColors()       → color scheme only
-                └── useSemantic()     → semantic tokens only
+                ├── useTheme()     the whole theme
+                ├── useColors()    the color scheme
+                ├── useSemantic()  semantic aliases
+                └── useLabels()    strings the library renders
 ```
 
-### Provider Configuration
+The hooks throw outside the provider, so tests and stories render inside it.
 
-```tsx
-<NativeUIProvider config={{
-  colorMode: 'system',            // 'light' | 'dark' | 'system'
-  preset: 'default',              // 7 built-in presets
-  fontColor: 'default',           // 'default' | 'warm' | 'cool'
-  fontSize: 'default',            // 'default' | 'medium' | 'large'
-  highContrast: false,
-  reduceAnimations: false,
-  customAccent: null,             // Optional hex override
-  semanticTokens: {},             // Partial overrides
-}}>
-```
+### What the config controls
 
-### Theme Object
+| Group         | Keys                                                              |
+| ------------- | ----------------------------------------------------------------- |
+| Look          | `theme`, `colorMode`, `preset`, `customAccent`, `fontColor`       |
+| Accessibility | `highContrast`, `reduceAnimations`, `fontSize`, `minTextContrast` |
+| Type          | `typography`, `fontFamilies`                                      |
+| Scales        | `spacing`, `borderRadius`, `semanticTokens`                       |
+| Components    | `components` (partial overrides, merged one component at a time)  |
+| Language      | `labels` (or a shipped pack such as `plLabels`), `locale`         |
 
-The `Theme` object provided by context contains:
+The README has the full table with types and defaults.
 
-| Property           | Description                                                         |
-| ------------------ | ------------------------------------------------------------------- |
-| `colors`           | Resolved `ColorScheme` (background, surface, primary, text\*, etc.) |
-| `typography`       | Font variant definitions (displayLarge → captionSmall)              |
-| `spacing`          | Named scale: `2xs` (2) → `6xl` (64)                                 |
-| `borderRadius`     | Named radii: `xs` (6) → `full` (9999)                               |
-| `iconSize`         | `sm` (16), `md` (20), `lg` (24), `xl` (32)                          |
-| `elevation`        | Platform-specific shadow definitions                                |
-| `duration`         | Animation durations: `instant` → `slow`                             |
-| `zIndex`           | Layer ordering: `base`, `dropdown`, `modal`, `toast`                |
-| `opacity`          | `disabled`, `pressed`, `inactive`, `overlay`                        |
-| `borderWidth`      | `none`, `hairline`, `thin`, `thick`                                 |
-| `easing`           | Reanimated easing functions                                         |
-| `glowShadow`       | Glow shadow presets                                                 |
-| `semantic`         | Intent-based token aliases                                          |
-| `isDark`           | Current dark mode state                                             |
-| `reduceAnimations` | Motion preference                                                   |
-| `fontScale`        | Current font scale multiplier                                       |
+### Why per-component tokens
+
+A padding, a duration or a threshold that lives in a component file can only
+be changed by forking the component. Putting it in `theme.components.<name>`
+lets an app tune one component through `config.components` while every other
+token keeps its default, and lets defaults follow the global scales
+(`config.spacing`, `config.borderRadius`).
+
+### Semantic tokens
+
+Semantic tokens name an intent and point at a primitive token:
+`actionPrimary` is `primary`, `surfaceCard` is `surface`, `pageHorizontal` is
+the `lg` spacing step. Changing "card padding" for a whole app is then one
+override in `config.semanticTokens`, not an edit in every screen.
 
 ---
 
-## Semantic Tokens vs Primitive Tokens
+## Accessibility model
 
-### Primitive Tokens
-
-Concrete, context-free values:
-
-```ts
-spacing.lg; // 16
-colors.primary; // '#3B82F6'
-typography.h1; // { fontSize: 28, fontWeight: '700', lineHeight: 34 }
-```
-
-### Semantic Tokens
-
-Intent-based aliases that map to primitive tokens. They answer "what is this for?" rather than "what value is this?":
-
-```ts
-// Color semantics (map to ColorScheme keys)
-actionPrimary    → 'primary'
-feedbackSuccess  → 'success'
-surfaceCard      → 'surface'
-textHeading      → 'textPrimary'
-
-// Spacing semantics (map to spacing keys)
-pageHorizontal   → 'lg'      // 16
-cardPadding      → 'lg'      // 16
-inlineGap        → 'sm'      // 8
-
-// Typography semantics (map to typography keys)
-pageTitle        → 'h1'
-sectionTitle     → 'h2'
-bodyDefault      → 'body'
-```
-
-**Why semantic tokens?** They allow global intent-level changes without touching components. If "card padding" needs to change from 16 to 20, update one semantic mapping - every card updates.
+- Every pressable has a role, an accessible name and its state.
+- Role and state go through `accessibilityStateProps(role, state)`. iOS and
+  Android read `accessibilityState`; React Native Web ignores it, so on web
+  the helper also writes the ARIA attributes that are valid for the role
+  (`aria-selected` for tabs, `aria-checked` for radios, checkboxes and
+  switches, `aria-pressed` for toggle buttons). Range values go through
+  `accessibilityValueProps` in the same way.
+- Text colors are derived, not picked: `primaryText`, `errorText` and the
+  `on*` colors are computed to meet `minTextContrast` on their background.
+- Strings the library renders come from `labels`, never from literals.
+- `theme.reduceAnimations` turns motion off; `useFocusRing()` draws the
+  keyboard focus indicator.
 
 ---
 
-## Consumer App Integration
-
-### 1. Install
-
-```bash
-npm install @polprog/native-ui
-```
-
-### 2. Wrap with Provider
-
-```tsx
-import { NativeUIProvider } from '@polprog/native-ui';
-
-export default function App() {
-  return (
-    <NativeUIProvider config={{ colorMode: 'system', preset: 'default' }}>
-      <Navigation />
-    </NativeUIProvider>
-  );
-}
-```
-
-### 3. Use Components
-
-```tsx
-import { Button, Card, Text, useTheme } from '@polprog/native-ui';
-
-function MyScreen() {
-  const theme = useTheme();
-  return (
-    <Card>
-      <Text variant="h2">Title</Text>
-      <Button title="Action" onPress={handlePress} />
-    </Card>
-  );
-}
-```
-
-### 4. Optional: Configure Haptics
-
-```tsx
-import { configureHaptics } from '@polprog/native-ui';
-
-configureHaptics({
-  light: () => HapticFeedback.trigger('impactLight'),
-  // ...
-});
-```
-
----
-
-## File Structure Convention
+## Package layout and resolution
 
 ```
 src/
-├── index.ts                    ← Public API barrel export
-├── theme/
-│   ├── ThemeProvider.tsx       ← NativeUIProvider + hooks
-│   ├── types.ts                ← Theme, NativeUIConfig types
-│   └── index.ts
-├── tokens/
-│   ├── colors.ts               ← ColorScheme, presets, utilities
-│   ├── typography.ts           ← Font variants, sizes, weights
-│   ├── spacing.ts              ← Spacing, radius, elevation, etc.
-│   ├── semantic.ts             ← Intent-based token aliases
-│   └── index.ts
-├── primitives/
-│   ├── Box.tsx                 ← View + token shorthand props
-│   ├── Stack.tsx               ← VStack, HStack
-│   ├── Text.tsx                ← Typography primitive
-│   ├── Heading.tsx             ← Semantic heading (h1-h3, display)
-│   ├── Divider.tsx             ← Separator
-│   ├── PressableScale.tsx      ← Animated pressable
-│   └── index.ts
-├── components/
-│   ├── Button.tsx
-│   ├── Card.tsx
-│   ├── Input.tsx
-│   ├── Modal.tsx
-│   ├── ... (29+ components)
-│   └── index.ts
-└── utils/
-    ├── haptics.ts              ← Pluggable haptic feedback
-    └── index.ts
+├── index.ts            public entry; each area's barrel decides what it exposes
+├── theme/              provider, types, labels, locales/, variants
+├── tokens/             colors, palettes/, typeScales/, spacing, semantic,
+│                       components/ (per-component tokens)
+├── primitives/         Box, Stack, Text, ... plus a folder per complex primitive
+├── components/         <Name>.tsx plus <name>/ for hooks, parts and styles
+├── hooks/              useFocusRing, useKeyboardLift, useTextField, ...
+└── utils/              haptics, number parsing, accessibility prop helpers
 ```
 
-**Naming conventions:**
+The package ships both `src` and `dist`:
 
-- Files: PascalCase matching the default export (`Button.tsx`, `ListItem.tsx`)
-- Props interfaces: `ComponentNameProps` (`ButtonProps`, `ListItemProps`)
-- Variants: lowercase string unions (`'primary' | 'secondary' | 'danger'`)
-- Sizes: lowercase string unions (`'sm' | 'md' | 'lg'`)
-- Callbacks: `onX` pattern (`onPress`, `onValueChange`, `onSelect`)
+- Metro (the `react-native` export condition) resolves every entry to the
+  TypeScript sources, so the app's Babel setup compiles the library.
+- Node, bundlers and type checkers resolve to `dist` (ESM and CJS, each with
+  its own declarations).
+
+Every subpath (`/components/<Name>`, `/primitives/<Name>`, `/tokens`,
+`/theme`) follows the same rule as the root entry. If one subpath served
+`dist` while the root served `src`, an app would load two copies of the theme
+context. Subfolders are closed with `null` targets, so internal files cannot
+be imported. `npm run exports:sync` generates the map and
+`npm run verify-tarball` checks it against the published files.
 
 ---
 
-## Testing Strategy
+## Verification
 
-### Unit Tests
+| Check                                    | What it proves                                                               |
+| ---------------------------------------- | ---------------------------------------------------------------------------- |
+| `dom` Jest project                       | Logic, styles and tokens on a hand-written React Native mock; coverage       |
+| `native` Jest project                    | Roles, names, state and press handling on the real React Native renderer     |
+| Storybook stories as Vitest tests        | Every story renders, plays and passes axe in light, dark, RTL and large text |
+| `npm run test:scripts`                   | The tooling scripts (exports map, peer ranges, docs stats)                   |
+| `api:check`, `exports:check`             | Public API and exports map changes are reviewed diffs                        |
+| `verify-tarball`, `package:lint`, `size` | The published package: files, types for ESM and CJS, bundle budgets          |
+| `peers:min` then `typecheck`             | The library compiles against the lowest peer versions it declares            |
+| Example app (`apps/example`)             | The library on an iOS or Android runtime, through the real exports map       |
 
-- Every component has a corresponding test file
-- Cover: default render, all variants, interactions, edge cases, disabled states
-- Wrap with `NativeUIProvider` in test setup for theme context
+The mock cannot stand in for a device: a view with zero opacity takes clicks
+in jsdom and in a browser but not on iOS. Behavior that depends on the
+platform is checked in the example app.
 
-### Storybook
+---
 
-- Every component has a `.stories.tsx` file
-- Run `npm run stories:check` in CI to enforce coverage
-- Run `npm run stories:generate` to scaffold stubs
-- Stories demonstrate all variants, sizes, and states
+## Haptics
 
-### Type Checking
-
-- `npm run typecheck` - strict TypeScript, no `any`
-- Run in CI to prevent type regressions
-
-### Linting
-
-- `npm run lint` - ESLint for code quality
-- Enforced in CI
-
-### Consumer Audit
-
-- `npm run audit -- <path>` - scan a consumer app for adoption metrics
-- Reports raw RN usage, hardcoded values, and adoption score
-- Run periodically to track migration progress
+The library has no haptics dependency. An app registers its own
+implementation once with `configureHaptics({ light, medium, success, warning,
+error })`; until then every call is a no-op. Calls are throttled per method.

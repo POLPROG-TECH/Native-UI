@@ -6,6 +6,7 @@ import { ButtonContent } from './button/ButtonContent';
 import { useButtonPress } from './button/useButtonPress';
 import { useButtonStyles } from './button/useButtonStyles';
 import type { ButtonHaptic, ButtonSize, ButtonVariant } from './button/types';
+import { accessibilityStateProps } from '../utils/accessibilityStateProps';
 
 export type { ButtonHaptic, ButtonSize, ButtonVariant } from './button/types';
 
@@ -130,10 +131,9 @@ export const Button = React.memo(function Button(props: ButtonProps) {
       disabled={!isInteractive}
       scaleTo={isInteractive ? tokens.pressScale : 1}
       style={styles.container}
-      accessibilityRole="button"
       accessibilityLabel={props.accessibilityLabel ?? title}
       accessibilityHint={props.accessibilityHint}
-      accessibilityState={{ disabled: !isInteractive, busy: loading }}
+      {...accessibilityStateProps('button', { disabled: !isInteractive, busy: loading })}
     >
       <ButtonContent
         content={props}

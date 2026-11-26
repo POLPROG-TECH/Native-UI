@@ -1,11 +1,16 @@
 name: Release
 
+# Runs only after the CI workflow passed for a push to the default branch, so a
+# commit that fails any CI job (types, lint, tests, Storybook, package checks)
+# can never be versioned or published.
 on:
-  push:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
     branches: [master, main]
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release-${{ github.event.workflow_run.head_branch }}
   cancel-in-progress: false
 
 permissions:
@@ -17,9 +22,12 @@ jobs:
   release:
     name: Version & Publish
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
     steps:
       - uses: actions/checkout@v7
         with:
+          # The exact commit CI verified, not whatever the branch points at now.
+          ref: ${{ github.event.workflow_run.head_sha }}
           fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
@@ -27,15 +35,11 @@ jobs:
           cache: npm
           registry-url: https://registry.npmjs.org
       - run: npm ci
-      - name: Typecheck
-        run: npm run typecheck --workspace=@polprog/native-ui
-      - name: Lint
-        run: npm run lint --workspace=@polprog/native-ui
-      - name: Format check
-        run: npm run format:check
-      - name: Test
-        run: npm run test --workspace=@polprog/native-ui
       - run: npm run build --workspace=@polprog/native-ui
+      - name: Verify publish tarball contents and exports map
+        run: npm run verify-tarball --workspace=@polprog/native-ui
+      - name: Lint the package (publint, are-the-types-wrong)
+        run: npm run package:lint --workspace=@polprog/native-ui
       - name: Create Release PR or publish to npm
         uses: changesets/action@v2
         with:

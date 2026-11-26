@@ -3,6 +3,7 @@ import { useFocusRing } from '../../hooks/useFocusRing';
 import { useTheme } from '../../theme';
 import { buildSegmentLabelStyle, buildSegmentStyle } from './segmentedControlStyles';
 import type { SegmentedControlOption } from './types';
+import { accessibilityStateProps } from '../../utils/accessibilityStateProps';
 
 export interface SegmentProps<T extends string> {
   option: SegmentedControlOption<T>;
@@ -25,9 +26,8 @@ export function Segment<T extends string>(props: SegmentProps<T>) {
       onPress={() => props.onSelect(option.value)}
       {...focusProps}
       disabled={disabled}
-      accessibilityRole="radio"
       accessibilityLabel={option.accessibilityLabel ?? option.label}
-      accessibilityState={{ checked: selected, selected, disabled }}
+      {...accessibilityStateProps('radio', { checked: selected, selected, disabled })}
       style={[buildSegmentStyle(theme, selected, props.segmentStyle), focusRingStyle]}
     >
       {option.leading}

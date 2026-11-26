@@ -27,6 +27,7 @@
     "typecheck": "npm run typecheck --workspace=@polprog/native-ui",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspace=@polprog/native-ui",
+    "test:scripts": "npm run test:scripts --workspaces --if-present",
     "storybook": "npm run storybook --workspace=@polprog/storybook",
     "build-storybook": "npm run build --workspace=@polprog/storybook",
     "test:storybook": "npm run test --workspace=@polprog/storybook",
@@ -51,6 +52,9 @@
     ],
     "**/*.{ts,tsx,js,mjs,json,md}": [
       "prettier --write"
+    ],
+    "apps/example/**/*.{ts,tsx,js,mjs}": [
+      "bash -c 'cd apps/example && npx eslint --max-warnings 0'"
     ]
   },
   "devDependencies": {
@@ -64,5 +68,10 @@
     "workerDirectory": [
       "apps/storybook/public"
     ]
+  },
+  "overrides": {
+    "@expo/fingerprint": {
+      "minimatch": "^11.0.5"
+    }
   }
 }

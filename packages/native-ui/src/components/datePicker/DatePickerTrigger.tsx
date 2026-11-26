@@ -4,6 +4,7 @@ import { useFocusRing } from '../../hooks/useFocusRing';
 import { useTheme } from '../../theme';
 import { SystemIcon } from '../../primitives/SystemIcon';
 import { buildTriggerRowStyle, datePickerStyles, uniformHitSlop } from './datePickerStyles';
+import { accessibilityStateProps } from '../../utils/accessibilityStateProps';
 
 export interface TriggerRowProps {
   icon?: React.ReactNode;
@@ -32,9 +33,8 @@ export function TriggerRow(props: TriggerRowProps) {
       {...focusProps}
       disabled={disabled}
       hitSlop={uniformHitSlop(theme.components.datePicker.triggerHitSlop)}
-      accessibilityRole="button"
       accessibilityLabel={props.label}
-      accessibilityState={{ disabled }}
+      {...accessibilityStateProps('button', { disabled })}
     >
       {props.icon}
       <Text style={[theme.typography.body, datePickerStyles.fill, { color: textColor }]}>
